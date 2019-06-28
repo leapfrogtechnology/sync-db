@@ -1,0 +1,56 @@
+{
+  "name": "@leapfrogtechnology/sync-db",
+  "description": "Database synchronization utility",
+  "version": "1.0.0-alpha.1",
+  "author": "Kabir Baidhya <kabirbaidhya@gmail.com>",
+  "contributors": [
+    "Kabir Baidhya <kabirbaidhya@gmail.com>"
+  ],
+  "bin": {
+    "sync-db": "./bin/run"
+  },
+  "bugs": "https://github.com/leapfrogtechnology/sync-db/issues",
+  "dependencies": {
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/plugin-help": "^2",
+    "tslib": "^1"
+  },
+  "devDependencies": {
+    "@oclif/test": "^1",
+    "@oclif/tslint": "^3",
+    "@types/chai": "^4",
+    "@types/mocha": "^5",
+    "@types/node": "^10",
+    "chai": "^4",
+    "mocha": "^5",
+    "nyc": "^13",
+    "ts-node": "^8",
+    "tslint": "^5",
+    "tslint-config-leapfrog": "^1.0.3",
+    "typescript": "^3.3"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib"
+  ],
+  "homepage": "https://github.com/leapfrogtechnology/sync-db",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "bin": "sync-db"
+  },
+  "repository": "leapfrogtechnology/sync-db",
+  "scripts": {
+    "posttest": "tslint -p test -t stylish",
+    "prepack": "rm -rf lib && tsc -b",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\""
+  },
+  "types": "lib/index.d.ts"
+}
