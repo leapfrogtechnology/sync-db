@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as yaml from 'yamljs';
 import { mergeDeepRight } from 'ramda';
 
+import { log } from './logger';
 import * as fs from './util/fs';
 import SyncDbConfig from './domain/SyncDbConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
@@ -22,8 +23,13 @@ export async function load(): Promise<SyncDbConfig> {
       post_migrate: []
     }
   };
+
+  log('Resolving sync config file.');
+
   const filename = path.resolve(process.cwd(), MIGRATION_FILENAME);
   const migrations = (await yaml.load(filename)) as SyncDbConfig;
+
+  log('Resolved sync config file.');
 
   return mergeDeepRight(defaults, migrations) as SyncDbConfig;
 }
@@ -34,14 +40,25 @@ export async function load(): Promise<SyncDbConfig> {
  * @returns {Promise<ConnectionConfig[]>}
  */
 export async function resolveConnections(): Promise<ConnectionConfig[]> {
+  log('Resolving database connections.');
+
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
+
+  log('Resolving file: %s', filename);
+
   const loaded = await fs.read(filename);
   const connections = JSON.parse(loaded);
 
+  log('Connections parsed: %o', connections);
+
   // TODO: Validate the connections received from file.
 
-  return connections.map((connection: ConnectionConfig) => ({
+  const result = connections.map((connection: ConnectionConfig) => ({
     ...connection,
     id: connection.id || `${connection.host}/${connection.database}`
   }));
+
+  log('Resolved connections: %O', connections);
+
+  return result;
 }

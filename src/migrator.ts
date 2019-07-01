@@ -1,13 +1,12 @@
 import * as path from 'path';
-import * as debug from 'debug';
 
-import { SYNC_DB } from './constants';
+import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import { createInstance } from './util/db';
 import SyncDbConfig from './domain/SyncDbConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 
-const log = debug(SYNC_DB);
+// const log = debug(SYNC_DB);
 const sqlPath = path.resolve(process.cwd(), 'src/sql');
 
 /**
@@ -18,7 +17,9 @@ const sqlPath = path.resolve(process.cwd(), 'src/sql');
  */
 export function setup(config: SyncDbConfig): (dbConfig: ConnectionConfig) => Promise<void> {
   return async (dbConfig: ConnectionConfig) => {
-    log(`Running migrations on a database: ${dbConfig.database}`);
+    const logDb = dbLogger(dbConfig);
+
+    logDb('Running setup');
 
     const db = createInstance(dbConfig);
     const sqlScripts = await sqlRunner.resolveFiles(sqlPath, config.sql);
@@ -28,25 +29,25 @@ export function setup(config: SyncDbConfig): (dbConfig: ConnectionConfig) => Pro
       if (preMigrationScripts.length > 0) {
         const preHookScripts = await sqlRunner.resolveFiles(sqlPath, preMigrationScripts);
 
-        log('PRE-MIGRATION: Begin');
+        logDb('PRE-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSqlSequentially(preHookScripts, trx, loggerOptions);
-        log('PRE-MIGRATION: End');
+        await sqlRunner.runSqlSequentially(preHookScripts, trx, dbConfig);
+        logDb('PRE-SYNC: End');
       }
 
       // Run the migration scripts.
-      await sqlRunner.runSqlSequentially(sqlScripts, trx, loggerOptions);
+      await sqlRunner.runSqlSequentially(sqlScripts, trx, dbConfig);
 
       if (postMigrationScripts.length > 0) {
         const postHookScripts = await sqlRunner.resolveFiles(sqlPath, postMigrationScripts);
 
-        log('POST-MIGRATION: Begin');
+        logDb('POST-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSqlSequentially(postHookScripts, trx, loggerOptions);
-        log('POST-MIGRATION: End');
+        await sqlRunner.runSqlSequentially(postHookScripts, trx, dbConfig);
+        logDb('POST-SYNC: End');
       }
 
-      log(`Finished running migrations`);
+      logDb('Finished setup');
     });
   };
 }
@@ -61,14 +62,16 @@ export function setup(config: SyncDbConfig): (dbConfig: ConnectionConfig) => Pro
  */
 export function teardown(files: string[]): (dbConfig: ConnectionConfig) => Promise<void> {
   return async (dbConfig: ConnectionConfig) => {
-    log(`Running rollback on a database: ${dbConfig.id}`);
+    const logDb = dbLogger(dbConfig);
+
+    logDb(`Running rollback on a database: ${dbConfig.id}`);
 
     const db = createInstance(dbConfig);
     const fileInfoList = files.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${sqlPath}/`, '')));
 
-    await sqlRunner.rollbackSqlFilesSequentially(fileInfoList, db, { slug });
+    await sqlRunner.rollbackSqlFilesSequentially(fileInfoList, db, dbConfig);
 
-    log(`Finished running rollback`);
+    logDb('Finished running rollback');
   };
 }
 
@@ -94,7 +97,9 @@ export async function synchronize(syncConfig: SyncDbConfig, connections: Connect
  * @param {SyncDbConfig} syncConfig
  */
 async function syncDatabase(dbConfig: ConnectionConfig, syncConfig: SyncDbConfig) {
-  log('Synchronize database %s', dbConfig.id);
+  const dbLog = dbLogger(dbConfig);
+
+  dbLog('Synchronize database');
 
   await teardown(syncConfig.sql)(dbConfig);
   await setup(syncConfig)(dbConfig);

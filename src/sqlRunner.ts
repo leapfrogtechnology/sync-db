@@ -1,17 +1,15 @@
-import debug from 'debug';
 import * as path from 'path';
 import * as Knex from 'knex';
 import { reverse } from 'ramda';
 
 import * as fs from './util/fs';
-import { SYNC_DB } from './constants';
+import { dbLogger } from './logger';
 import Mapping from './domain/Mapping';
 import SqlCode from './domain/SqlCode';
 import * as promise from './util/promise';
 import SqlFileInfo from './domain/SqlFileInfo';
 import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
-
-const log = debug(SYNC_DB);
+import ConnectionConfig from './domain/ConnectionConfig';
 
 /**
  * SQL DROP statements mapping for different object types.
@@ -107,9 +105,10 @@ export function getDropStatement(type: string, fqon: string): string {
  * @param {Knex.Transaction} trx
  * @returns {Promise<void>}
  */
-export function runSqlSequentially(files: SqlCode[], trx: Knex.Transaction): Promise<void> {
+export function runSqlSequentially(files: SqlCode[], trx: Knex.Transaction, dbConfig: ConnectionConfig): Promise<void> {
+  const logDb = dbLogger(dbConfig);
   const promises = files.map(file => {
-    log(`Running ${file.name}`);
+    logDb(`Running ${file.name}`);
 
     return trx.raw(file.sql);
   });
@@ -124,17 +123,22 @@ export function runSqlSequentially(files: SqlCode[], trx: Knex.Transaction): Pro
  * @param {Knex} db
  * @returns {Promise<void>}
  */
-export async function rollbackSqlFilesSequentially(fileInfoList: SqlFileInfo[], db: Knex): Promise<void> {
+export async function rollbackSqlFilesSequentially(
+  fileInfoList: SqlFileInfo[],
+  db: Knex,
+  dbConfig: ConnectionConfig
+): Promise<void> {
+  const logDb = dbLogger(dbConfig);
   const sqlFiles = fileInfoList.map(info => ({
     fqon: info.fqon,
     dropStatement: getDropStatement(info.type, info.fqon)
   }));
 
   for (const sql of reverse(sqlFiles)) {
-    log(`Rolling back: ${sql.fqon}`);
+    logDb(`Rolling back: ${sql.fqon}`);
 
     await db.raw(sql.dropStatement);
 
-    log('Executed: ', sql.dropStatement);
+    logDb('Executed: ', sql.dropStatement);
   }
 }
