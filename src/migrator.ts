@@ -6,7 +6,6 @@ import { createInstance } from './util/db';
 import SyncDbConfig from './domain/SyncDbConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 
-// const log = debug(SYNC_DB);
 const sqlPath = path.resolve(process.cwd(), 'src/sql');
 
 /**
