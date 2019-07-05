@@ -6,9 +6,7 @@ import { log } from './logger';
 import * as fs from './util/fs';
 import SyncDbConfig from './domain/SyncDbConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
-
-const SYNC_CONFIG_FILENAME = 'sync-db.yml';
-const CONNECTIONS_FILENAME = 'connections.sync-db.json';
+import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME } from './constants';
 
 /**
  * Load config yaml file.
@@ -16,22 +14,14 @@ const CONNECTIONS_FILENAME = 'connections.sync-db.json';
  * @returns {Promise<SyncDbConfig>}
  */
 export async function loadConfig(): Promise<SyncDbConfig> {
-  const defaults: SyncDbConfig = {
-    sql: [],
-    hooks: {
-      pre_migrate: [],
-      post_migrate: []
-    }
-  };
-
   log('Resolving sync config file.');
 
-  const filename = path.resolve(process.cwd(), SYNC_CONFIG_FILENAME);
+  const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
   const migrations = (await yaml.load(filename)) as SyncDbConfig;
 
   log('Resolved sync config file.');
 
-  return mergeDeepRight(defaults, migrations) as SyncDbConfig;
+  return mergeDeepRight(DEFAULT_CONFIG, migrations) as SyncDbConfig;
 }
 
 /**
