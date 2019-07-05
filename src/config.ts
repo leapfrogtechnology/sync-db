@@ -7,7 +7,7 @@ import * as fs from './util/fs';
 import SyncDbConfig from './domain/SyncDbConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 
-const MIGRATION_FILENAME = 'sync-db.yml';
+const SYNC_CONFIG_FILENAME = 'sync-db.yml';
 const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
 /**
@@ -26,7 +26,7 @@ export async function load(): Promise<SyncDbConfig> {
 
   log('Resolving sync config file.');
 
-  const filename = path.resolve(process.cwd(), MIGRATION_FILENAME);
+  const filename = path.resolve(process.cwd(), SYNC_CONFIG_FILENAME);
   const migrations = (await yaml.load(filename)) as SyncDbConfig;
 
   log('Resolved sync config file.');
