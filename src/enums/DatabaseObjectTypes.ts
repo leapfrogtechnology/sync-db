@@ -1,8 +1,11 @@
+/**
+ * Database object types.
+ */
 enum DatabaseObjectTypes {
-  VIEW = 'views',
-  SCHEMA = 'schemas',
-  FUNCTION = 'functions',
-  PROCEDURE = 'procedures'
+  VIEW = 'view',
+  SCHEMA = 'schema',
+  FUNCTION = 'function',
+  PROCEDURE = 'procedure'
 }
 
 export default DatabaseObjectTypes;
