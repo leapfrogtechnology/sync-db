@@ -5,6 +5,7 @@ import * as sqlRunner from './sqlRunner';
 import { createInstance } from './util/db';
 import SyncDbConfig from './domain/SyncDbConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
+import SyncParams from './domain/SyncParams';
 
 const sqlPath = path.resolve(process.cwd(), 'src/sql');
 
@@ -75,12 +76,13 @@ export function teardown(files: string[]): (dbConfig: ConnectionConfig) => Promi
 }
 
 /**
- * Synchronize.
+ * Synchronize database.
  *
  * @param {SyncDbConfig} syncConfig
  * @param {ConnectionConfig[]} connections
+ * @param {SyncParams} params
  */
-export async function synchronize(syncConfig: SyncDbConfig, connections: ConnectionConfig[]) {
+export async function synchronize(syncConfig: SyncDbConfig, connections: ConnectionConfig[], params: SyncParams) {
   log('Starting to synchronize.');
   const promises = connections.map(dbConfig => syncDatabase(dbConfig, syncConfig));
 

@@ -11,11 +11,11 @@ const SYNC_CONFIG_FILENAME = 'sync-db.yml';
 const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
 /**
- * Load migration config yaml file.
+ * Load config yaml file.
  *
  * @returns {Promise<SyncDbConfig>}
  */
-export async function load(): Promise<SyncDbConfig> {
+export async function loadConfig(): Promise<SyncDbConfig> {
   const defaults: SyncDbConfig = {
     sql: [],
     hooks: {
