@@ -1,6 +1,7 @@
 import { Command, flags } from '@oclif/command';
 
 import { loadConfig, resolveConnections } from './config';
+import { log } from './logger';
 
 /**
  * SyncDB CLI handler.
@@ -23,16 +24,22 @@ class SyncDb extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(SyncDb);
-    const config = await loadConfig();
-    const connections = await resolveConnections();
-    const params = {
-      force: parsedFlags.force
-    };
+    try {
+      const { flags: parsedFlags } = this.parse(SyncDb);
+      const params = {
+        force: parsedFlags.force
+      };
 
-    const { synchronize } = await import('./migrator');
+      const config = await loadConfig();
+      const connections = await resolveConnections();
 
-    await synchronize(config, connections, params);
+      const { synchronize } = await import('./migrator');
+
+      await synchronize(config, connections, params);
+    } catch (e) {
+      log('Error caught: ', e, '\n');
+      this.error('An error occurred: ' + e);
+    }
   }
 }
 
