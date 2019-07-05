@@ -1,7 +1,7 @@
 /**
  * Database connection configuration.
  */
-interface ConnectionConfig {
+interface Connection {
   id?: string;
   host: string;
   port: string;
@@ -14,4 +14,4 @@ interface ConnectionConfig {
   options?: any;
 }
 
-export default ConnectionConfig;
+export default Connection;

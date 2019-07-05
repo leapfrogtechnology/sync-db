@@ -3,27 +3,27 @@ import * as path from 'path';
 import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import { createInstance } from './util/db';
-import SyncDbConfig from './domain/SyncDbConfig';
-import ConnectionConfig from './domain/ConnectionConfig';
 import SyncParams from './domain/SyncParams';
+import Connection from './domain/Connection';
+import Configuration from './domain/Configuration';
 
 const sqlPath = path.resolve(process.cwd(), 'src/sql');
 
 /**
  * Migrate SQL on a database.
  *
- * @param {SyncDbConfig} config
- * @returns {((dbConfig: ConnectionConfig) => Promise<void>)}
+ * @param {Configuration} config
+ * @returns {((dbConfig: Connection) => Promise<void>)}
  */
-export function setup(config: SyncDbConfig): (dbConfig: ConnectionConfig) => Promise<void> {
-  return async (dbConfig: ConnectionConfig) => {
+export function setup(config: Configuration): (dbConfig: Connection) => Promise<void> {
+  return async (dbConfig: Connection) => {
     const logDb = dbLogger(dbConfig);
 
     logDb('Running setup');
 
     const db = createInstance(dbConfig);
     const sqlScripts = await sqlRunner.resolveFiles(sqlPath, config.sql);
-    const { pre_migrate: preMigrationScripts, post_migrate: postMigrationScripts } = config.hooks;
+    const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = config.hooks;
 
     await db.transaction(async trx => {
       if (preMigrationScripts.length > 0) {
@@ -58,10 +58,10 @@ export function setup(config: SyncDbConfig): (dbConfig: ConnectionConfig) => Pro
  * They're executed in the reverse order of their creation.
  *
  * @param {string[]} files
- * @returns {((dbConfig: ConnectionConfig) => Promise<void>)}
+ * @returns {((dbConfig: Connection) => Promise<void>)}
  */
-export function teardown(files: string[]): (dbConfig: ConnectionConfig) => Promise<void> {
-  return async (dbConfig: ConnectionConfig) => {
+export function teardown(files: string[]): (dbConfig: Connection) => Promise<void> {
+  return async (dbConfig: Connection) => {
     const logDb = dbLogger(dbConfig);
 
     logDb(`Running rollback on a database: ${dbConfig.id}`);
@@ -78,11 +78,11 @@ export function teardown(files: string[]): (dbConfig: ConnectionConfig) => Promi
 /**
  * Synchronize database.
  *
- * @param {SyncDbConfig} syncConfig
- * @param {ConnectionConfig[]} connections
+ * @param {Configuration} syncConfig
+ * @param {Connection[]} connections
  * @param {SyncParams} params
  */
-export async function synchronize(syncConfig: SyncDbConfig, connections: ConnectionConfig[], params: SyncParams) {
+export async function synchronize(syncConfig: Configuration, connections: Connection[], params: SyncParams) {
   log('Starting to synchronize.');
   const promises = connections.map(dbConfig => syncDatabase(dbConfig, syncConfig));
 
@@ -94,10 +94,10 @@ export async function synchronize(syncConfig: SyncDbConfig, connections: Connect
 /**
  * Synchronize a specific database.
  *
- * @param {ConnectionConfig} dbConfig
- * @param {SyncDbConfig} syncConfig
+ * @param {Connection} dbConfig
+ * @param {Configuration} syncConfig
  */
-async function syncDatabase(dbConfig: ConnectionConfig, syncConfig: SyncDbConfig) {
+async function syncDatabase(dbConfig: Connection, syncConfig: Configuration) {
   const dbLog = dbLogger(dbConfig);
 
   dbLog('Synchronize database');

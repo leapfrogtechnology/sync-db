@@ -1,5 +1,6 @@
 import * as Knex from 'knex';
-import ConnectionConfig from '../domain/ConnectionConfig';
+
+import Connection from '../domain/Connection';
 
 /**
  * Creates a knex database connection instance from
@@ -8,7 +9,7 @@ import ConnectionConfig from '../domain/ConnectionConfig';
  * @param {Knex.Config} dbConfig
  * @returns {Knex}
  */
-export function createInstance(dbConfig: ConnectionConfig): Knex {
+export function createInstance(dbConfig: Connection): Knex {
   return Knex({
     client: dbConfig.client,
     connection: dbConfig

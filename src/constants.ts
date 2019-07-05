@@ -1,14 +1,14 @@
 /* Global Constants */
 
-import SyncDbConfig from './domain/SyncDbConfig';
+import Configuration from './domain/Configuration';
 
 export const CONFIG_FILENAME = 'sync-db.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
-export const DEFAULT_CONFIG: SyncDbConfig = {
+export const DEFAULT_CONFIG: Configuration = {
   sql: [],
   hooks: {
-    pre_migrate: [],
-    post_migrate: []
+    pre_sync: [],
+    post_sync: []
   }
 };

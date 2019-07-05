@@ -4,32 +4,32 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
 import * as fs from './util/fs';
-import SyncDbConfig from './domain/SyncDbConfig';
-import ConnectionConfig from './domain/ConnectionConfig';
+import Connection from './domain/Connection';
+import Configuration from './domain/Configuration';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME } from './constants';
 
 /**
  * Load config yaml file.
  *
- * @returns {Promise<SyncDbConfig>}
+ * @returns {Promise<Configuration>}
  */
-export async function loadConfig(): Promise<SyncDbConfig> {
+export async function loadConfig(): Promise<Configuration> {
   log('Resolving sync config file.');
 
   const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
-  const migrations = (await yaml.load(filename)) as SyncDbConfig;
+  const migrations = (await yaml.load(filename)) as Configuration;
 
   log('Resolved sync config file.');
 
-  return mergeDeepRight(DEFAULT_CONFIG, migrations) as SyncDbConfig;
+  return mergeDeepRight(DEFAULT_CONFIG, migrations) as Configuration;
 }
 
 /**
  * Resolve database connections.
  *
- * @returns {Promise<ConnectionConfig[]>}
+ * @returns {Promise<Connection[]>}
  */
-export async function resolveConnections(): Promise<ConnectionConfig[]> {
+export async function resolveConnections(): Promise<Connection[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
@@ -43,7 +43,7 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
 
   // TODO: Validate the connections received from file.
 
-  const result = connections.map((connection: ConnectionConfig) => ({
+  const result = connections.map((connection: Connection) => ({
     ...connection,
     id: connection.id || `${connection.host}/${connection.database}`
   }));
