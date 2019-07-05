@@ -21,7 +21,11 @@ export async function loadConfig(): Promise<Configuration> {
 
   log('Resolved sync config file.');
 
-  return mergeDeepRight(DEFAULT_CONFIG, migrations) as Configuration;
+  const loaded = mergeDeepRight(DEFAULT_CONFIG, migrations) as Configuration;
+
+  // TODO: Validate the loaded config.
+
+  return loaded;
 }
 
 /**
