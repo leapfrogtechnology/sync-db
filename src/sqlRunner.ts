@@ -105,7 +105,7 @@ export function getDropStatement(type: string, fqon: string): string {
  * @param {Knex.Transaction} trx
  * @returns {Promise<void>}
  */
-export function runSqlSequentially(files: SqlCode[], trx: Knex.Transaction, dbConfig: Connection): Promise<void> {
+export function runSequentially(files: SqlCode[], trx: Knex.Transaction, dbConfig: Connection): Promise<void> {
   const logDb = dbLogger(dbConfig);
   const promises = files.map(file => {
     logDb(`Running ${file.name}`);

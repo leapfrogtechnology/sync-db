@@ -31,19 +31,19 @@ export function setup(config: Configuration): (dbConfig: Connection) => Promise<
 
         logDb('PRE-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSqlSequentially(preHookScripts, trx, dbConfig);
+        await sqlRunner.runSequentially(preHookScripts, trx, dbConfig);
         logDb('PRE-SYNC: End');
       }
 
       // Run the migration scripts.
-      await sqlRunner.runSqlSequentially(sqlScripts, trx, dbConfig);
+      await sqlRunner.runSequentially(sqlScripts, trx, dbConfig);
 
       if (postMigrationScripts.length > 0) {
         const postHookScripts = await sqlRunner.resolveFiles(sqlPath, postMigrationScripts);
 
         logDb('POST-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSqlSequentially(postHookScripts, trx, dbConfig);
+        await sqlRunner.runSequentially(postHookScripts, trx, dbConfig);
         logDb('POST-SYNC: End');
       }
 
