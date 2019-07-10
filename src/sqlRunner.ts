@@ -119,17 +119,13 @@ export function runSequentially(files: SqlCode[], trx: Knex.Transaction, dbConfi
 /**
  * Rollback SQL files sequentially in reverse order of the file list.
  *
- * @param {SqlFileInfo[]} fileInfoList
+ * @param {SqlFileInfo[]} files
  * @param {Knex} db
  * @returns {Promise<void>}
  */
-export async function rollbackSqlFilesSequentially(
-  fileInfoList: SqlFileInfo[],
-  db: Knex,
-  dbConfig: Connection
-): Promise<void> {
+export async function rollbackSequentially(files: SqlFileInfo[], db: Knex, dbConfig: Connection): Promise<void> {
   const logDb = dbLogger(dbConfig);
-  const sqlFiles = fileInfoList.map(info => ({
+  const sqlFiles = files.map(info => ({
     fqon: info.fqon,
     dropStatement: getDropStatement(info.type, info.fqon)
   }));

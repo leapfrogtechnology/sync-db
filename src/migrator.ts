@@ -69,7 +69,7 @@ export function teardown(files: string[]): (dbConfig: Connection) => Promise<voi
     const db = createInstance(dbConfig);
     const fileInfoList = files.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${sqlPath}/`, '')));
 
-    await sqlRunner.rollbackSqlFilesSequentially(fileInfoList, db, dbConfig);
+    await sqlRunner.rollbackSequentially(fileInfoList, db, dbConfig);
 
     logDb('Finished running rollback');
   };
