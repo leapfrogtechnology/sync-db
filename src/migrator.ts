@@ -98,9 +98,9 @@ export async function synchronize(syncConfig: Configuration, connections: Connec
  * @param {Configuration} syncConfig
  */
 async function syncDatabase(dbConfig: Connection, syncConfig: Configuration) {
-  const dbLog = dbLogger(dbConfig);
+  const logDb = dbLogger(dbConfig);
 
-  dbLog('Synchronize database');
+  logDb('Synchronize database');
 
   await teardown(syncConfig.sql)(dbConfig);
   await setup(syncConfig)(dbConfig);
