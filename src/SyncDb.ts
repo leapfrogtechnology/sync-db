@@ -25,14 +25,16 @@ class SyncDb extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(SyncDb);
+    const params = {
+      force: parsedFlags.force
+    };
 
     try {
-      const params = {
-        force: parsedFlags.force
-      };
       const config = await loadConfig();
       const connections = await resolveConnections();
+
       const { synchronize } = await import('./migrator');
+
       await synchronize(config, connections, params);
     } catch (e) {
       log('Error caught: ', e, '\n');
