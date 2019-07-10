@@ -10,9 +10,7 @@ export function read(filename: string): Promise<string> {
   return new Promise((resolve, reject) => {
     fs.readFile(filename, (err, data) => {
       if (err) {
-        reject(err);
-
-        return;
+        return reject(err);
       }
 
       resolve(data.toString());
@@ -42,9 +40,7 @@ export function glob(pathName: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
     fs.readdir(pathName, (err, data) => {
       if (err) {
-        reject(err);
-
-        return;
+        return reject(err);
       }
 
       resolve(data);
