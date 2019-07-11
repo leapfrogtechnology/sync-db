@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 
-import { loadConfig, resolveConnections } from './config';
 import { log } from './logger';
+import { loadConfig, resolveConnections } from './config';
 
 /**
  * SyncDB CLI handler.
