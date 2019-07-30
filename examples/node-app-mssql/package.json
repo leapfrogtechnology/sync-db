@@ -1,0 +1,14 @@
+{
+  "name": "sync-db-demo",
+  "version": "1.0.0",
+  "description": "Sample project using sync-db",
+  "scripts": {
+    "sync": "../../bin/run",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@leapfrogtechnology/sync-db": "../../",
+    "mssql": "^5.1.0"
+  },
+  "license": "MIT"
+}

@@ -1,0 +1,8 @@
+sql:
+  - schema/utils.sql
+  - function/dbo/calc_sum.sql
+  - function/dbo/calc_square.sql
+  - function/utils/calc_multiply.sql
+  - procedure/utils/exec_get_date.sql
+  - view/utils/vw_table_names.sql
+  - view/utils/vw_user_names.sql
