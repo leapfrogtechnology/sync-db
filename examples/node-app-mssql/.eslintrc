@@ -1,0 +1,11 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": [
+    "eslint-config-leapfrog"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2017
+  }
+}

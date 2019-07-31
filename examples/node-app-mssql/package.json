@@ -1,8 +1,9 @@
 {
-  "name": "sync-db-demo",
-  "version": "1.0.0",
+  "name": "node-app-mssql",
   "description": "Sample project using sync-db",
   "scripts": {
+    "lint": "eslint src/index.js",
+    "lint:fix": "eslint --fix src/index.js",
     "sync": "../../bin/run",
     "start": "node src/index.js"
   },
@@ -10,5 +11,9 @@
     "@leapfrogtechnology/sync-db": "../../",
     "mssql": "^5.1.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^6.1.0",
+    "eslint-config-leapfrog": "^2.0.0-beta.0"
+  }
 }
