@@ -8,7 +8,7 @@ export const CONFIG_FILENAME = 'sync-db.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
 export const DEFAULT_CONFIG: Configuration = {
-  basePath: path.resolve(process.cwd() + 'src/sql/'),
+  basePath: path.resolve(process.cwd(), 'src/sql'),
   sql: [],
   hooks: {
     pre_sync: [],

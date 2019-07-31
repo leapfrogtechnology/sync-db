@@ -1,13 +1,9 @@
-import * as path from 'path';
-
 import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import { createInstance } from './util/db';
 import SyncParams from './domain/SyncParams';
 import Connection from './domain/Connection';
 import Configuration from './domain/Configuration';
-
-const sqlPath = path.resolve(process.cwd(), 'src/sql');
 
 /**
  * Migrate SQL on a database.
@@ -16,18 +12,20 @@ const sqlPath = path.resolve(process.cwd(), 'src/sql');
  * @returns {((dbConfig: Connection) => Promise<void>)}
  */
 export function setup(config: Configuration): (dbConfig: Connection) => Promise<void> {
+  const { basePath, hooks, sql } = config;
+
   return async (dbConfig: Connection) => {
     const logDb = dbLogger(dbConfig);
 
     logDb('Running setup');
 
     const db = createInstance(dbConfig);
-    const sqlScripts = await sqlRunner.resolveFiles(sqlPath, config.sql);
-    const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = config.hooks;
+    const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
+    const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
     await db.transaction(async trx => {
       if (preMigrationScripts.length > 0) {
-        const preHookScripts = await sqlRunner.resolveFiles(sqlPath, preMigrationScripts);
+        const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
 
         logDb('PRE-SYNC: Begin');
         // Run the pre hook scripts
@@ -39,7 +37,7 @@ export function setup(config: Configuration): (dbConfig: Connection) => Promise<
       await sqlRunner.runSequentially(sqlScripts, trx, dbConfig);
 
       if (postMigrationScripts.length > 0) {
-        const postHookScripts = await sqlRunner.resolveFiles(sqlPath, postMigrationScripts);
+        const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
 
         logDb('POST-SYNC: Begin');
         // Run the pre hook scripts
@@ -57,17 +55,19 @@ export function setup(config: Configuration): (dbConfig: Connection) => Promise<
  * that have been created in the database.
  * They're executed in the reverse order of their creation.
  *
- * @param {string[]} files
- * @returns {((dbConfig: Connection) => Promise<void>)}
+ * @param {Configuration} config
+ * @returns {(dbConfig: Connection) => Promise<void>}
  */
-export function teardown(files: string[]): (dbConfig: Connection) => Promise<void> {
+export function teardown(config: Configuration): (dbConfig: Connection) => Promise<void> {
+  const { basePath, sql } = config;
+
   return async (dbConfig: Connection) => {
     const logDb = dbLogger(dbConfig);
 
     logDb(`Running rollback on a database: ${dbConfig.id}`);
 
     const db = createInstance(dbConfig);
-    const fileInfoList = files.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${sqlPath}/`, '')));
+    const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
 
     await sqlRunner.rollbackSequentially(fileInfoList, db, dbConfig);
 
@@ -78,30 +78,30 @@ export function teardown(files: string[]): (dbConfig: Connection) => Promise<voi
 /**
  * Synchronize database.
  *
- * @param {Configuration} syncConfig
+ * @param {Configuration} config
  * @param {Connection[]} connections
  * @param {SyncParams} params
  */
-export async function synchronize(syncConfig: Configuration, connections: Connection[], params: SyncParams) {
+export async function synchronize(config: Configuration, connections: Connection[], params: SyncParams) {
   log('Starting to synchronize.');
-  const promises = connections.map(dbConfig => syncDatabase(dbConfig, syncConfig));
+  const promises = connections.map(dbConfig => syncDatabase(dbConfig, config));
 
   await Promise.all(promises);
 
-  log('Done.');
+  log('All synchronized');
 }
 
 /**
  * Synchronize a specific database.
  *
  * @param {Connection} dbConfig
- * @param {Configuration} syncConfig
+ * @param {Configuration} config
  */
-async function syncDatabase(dbConfig: Connection, syncConfig: Configuration) {
+async function syncDatabase(dbConfig: Connection, config: Configuration) {
   const logDb = dbLogger(dbConfig);
 
   logDb('Synchronize database');
 
-  await teardown(syncConfig.sql)(dbConfig);
-  await setup(syncConfig)(dbConfig);
+  await teardown(config)(dbConfig);
+  await setup(config)(dbConfig);
 }
