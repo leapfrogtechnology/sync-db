@@ -5,10 +5,10 @@
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
     "sync": "../../bin/run",
-    "start": "node src/index.js"
+    "start": "yarn lint && node src/index.js"
   },
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "../../",
+    "knex": "^0.19.1",
     "mssql": "^5.1.0"
   },
   "license": "MIT",

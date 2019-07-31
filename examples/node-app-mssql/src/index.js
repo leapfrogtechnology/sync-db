@@ -1,24 +1,25 @@
-const _db = require('@leapfrogtechnology/sync-db/lib/util/db');
-const _config = require('@leapfrogtechnology/sync-db/lib/config');
+/**
+ * Demonstrations of functions, procedures and views that were generated using sync-db.
+ */
+
+const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
 (async () => {
   try {
     // Getting db connection
     const db = await getDbConnection();
 
-    // Demonstrations of functions, procedures and views that were generated using sync-db
-
     // view/vw_table_names
     const tables = await db.raw('SELECT * FROM utils.vw_table_names');
 
     process.stdout.write('List of table names in the database\n');
-    tables.map((table) => process.stdout.write(table.name));
+    tables.map(table => process.stdout.write(table.name));
 
     // view/vw_user_names
     const users = await db.raw('SELECT * FROM utils.vw_user_names');
 
     process.stdout.write('List of user names in the database\n');
-    users.map((user) => process.stdout.write(user.name + '\n'));
+    users.map(user => process.stdout.write(user.name + '\n'));
 
     // function/calc_multipy
     const a = 6,
@@ -41,16 +42,42 @@ const _config = require('@leapfrogtechnology/sync-db/lib/config');
 })();
 
 /**
- * Returns instance of database connection
+ * Returns instance of knex database connection
  * by extracting the first db configuration from a file.
  *
  */
 async function getDbConnection() {
   // Extracts list of database connections from a json file
-  const connections = await _config.resolveConnections();
+  const path = require('path');
+  const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
+  const loaded = await read(filename);
+  const connections = JSON.parse(loaded);
 
   // Creates db instance first connection
-  const db = await _db.createInstance(connections[0]);
+  const db = require('knex')({
+    client: 'mssql',
+    connection: connections[0]
+  });
 
   return db;
+}
+
+/**
+ * Returns promise consisting of
+ * data extracted from a file.
+ *
+ * @param {string} filename The path of file.
+ */
+function read(filename) {
+  return new Promise((resolve, reject) => {
+    const fs = require('fs');
+
+    fs.readFile(filename, (err, data) => {
+      if (err) {
+        return reject(err);
+      }
+
+      resolve(data.toString());
+    });
+  });
 }
