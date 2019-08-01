@@ -9,3 +9,5 @@ sql:
   - procedure/utils/get_date.sql
   - view/utils/vw_table_names.sql
   - view/utils/vw_user_names.sql
+
+basePath: src/sql
