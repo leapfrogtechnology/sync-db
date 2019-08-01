@@ -6,12 +6,12 @@ import Connection from '../domain/Connection';
  * Creates a knex database connection instance from
  * the provided database configuration.
  *
- * @param {Knex.Config} dbConfig
+ * @param {Knex.Config} connectionConfig
  * @returns {Knex}
  */
-export function createInstance(dbConfig: Connection): Knex {
+export function createInstance(connectionConfig: Connection): Knex {
   return Knex({
-    client: dbConfig.client,
-    connection: dbConfig
+    client: connectionConfig.client,
+    connection: connectionConfig
   });
 }

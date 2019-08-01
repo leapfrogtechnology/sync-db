@@ -56,7 +56,8 @@
   "repository": "leapfrogtechnology/sync-db",
   "scripts": {
     "posttest": "tslint -p test -t stylish",
-    "prepack": "rm -rf lib && tsc -b",
+    "build": "rm -rf lib && tsc -b",
+    "prepack": "yarn build",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "watch": "tsc --watch"
   },

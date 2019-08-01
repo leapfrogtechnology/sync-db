@@ -2,6 +2,7 @@
  * Configuration.
  */
 interface Configuration {
+  basePath: string;
   sql: string[];
   hooks: {
     pre_sync: string[];
