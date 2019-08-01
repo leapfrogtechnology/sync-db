@@ -1,83 +1,40 @@
 /**
- * Demonstrations of functions, procedures and views that were generated using sync-db.
+ * Demonstrates use of sync-db to create functions, procedures and views in MSSQL.
  */
-
-const CONNECTIONS_FILENAME = 'connections.sync-db.json';
+const knex = require('knex');
+const connections = require('../connections.sync-db.json');
 
 (async () => {
   try {
-    // Getting db connection
-    const db = await getDbConnection();
+    // Getting configuration of database with id db1.
+    const db1Connection = connections.find(({ id }) => id === 'db1');
 
-    // view/vw_table_names
-    const tables = await db.raw('SELECT * FROM utils.vw_table_names');
+    // Getting knex instance of the database.
+    const db1Instance = knex({
+      client: 'mssql',
+      connection: db1Connection
+    });
 
-    process.stdout.write('List of table names in the database\n');
-    tables.map(table => process.stdout.write(table.name));
+    const tables = await db1Instance.raw('SELECT * FROM utils.vw_table_names');
+    const users = await db1Instance.raw('SELECT * FROM utils.vw_user_names');
+    const multiply = await db1Instance.raw('SELECT utils.calc_multiply(' + 6 + ', ' + 7 + ') AS result;');
+    const date = await db1Instance.raw('EXEC utils.get_date;');
 
-    // view/vw_user_names
-    const users = await db.raw('SELECT * FROM utils.vw_user_names');
+    console.log('List of table names in the database.');
+    tables.map(table => console.log(table.name));
 
-    process.stdout.write('List of user names in the database\n');
-    users.map(user => process.stdout.write(user.name + '\n'));
+    console.log('List of user names in the database.');
+    users.map(user => console.log(user.name));
 
-    // function/calc_multipy
-    const a = 6,
-      b = 7;
+    console.log('Multiplication of two numbers.');
+    console.log('6 X 7 = ' + multiply[0].result);
 
-    const multiply = await db.raw('SELECT utils.calc_multiply(' + a + ', ' + b + ') AS result;');
-
-    process.stdout.write(a + ' X ' + b + ' = ' + multiply[0].result + ' \n');
-
-    // procedure/print_date
-    const date = await db.raw('EXEC utils.get_date;');
-
-    process.stdout.write(date[0].result + '\n');
+    console.log('Current date time.');
+    console.log(date[0].result);
 
     process.exit(0);
   } catch (err) {
-    process.stdout.write(err);
+    console.log(err);
     process.exit(-1);
   }
 })();
-
-/**
- * Returns instance of knex database connection
- * by extracting the first db configuration from a file.
- *
- */
-async function getDbConnection() {
-  // Extracts list of database connections from a json file
-  const path = require('path');
-  const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
-  const loaded = await read(filename);
-  const connections = JSON.parse(loaded);
-
-  // Creates db instance first connection
-  const db = require('knex')({
-    client: 'mssql',
-    connection: connections[0]
-  });
-
-  return db;
-}
-
-/**
- * Returns promise consisting of
- * data extracted from a file.
- *
- * @param {string} filename The path of file.
- */
-function read(filename) {
-  return new Promise((resolve, reject) => {
-    const fs = require('fs');
-
-    fs.readFile(filename, (err, data) => {
-      if (err) {
-        return reject(err);
-      }
-
-      resolve(data.toString());
-    });
-  });
-}
