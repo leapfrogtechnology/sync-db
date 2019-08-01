@@ -1,7 +1,10 @@
 sql:
-  - schema/utils.sql
+  # Create objects in dbo schema
   - function/dbo/calc_sum.sql
   - function/dbo/calc_square.sql
+
+  # Create objects in utils schema
+  - schema/utils.sql
   - function/utils/calc_multiply.sql
   - procedure/utils/get_date.sql
   - view/utils/vw_table_names.sql
