@@ -36,9 +36,11 @@ class SyncDb extends Command {
       const { synchronize } = await import('./migrator');
 
       await synchronize(config, connections, params);
+      process.exit(0);
     } catch (e) {
       log('Error caught: ', e, '\n');
       this.error('An error occurred: ' + e);
+      process.exit(-1);
     }
   }
 }
