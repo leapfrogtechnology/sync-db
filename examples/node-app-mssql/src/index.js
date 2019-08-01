@@ -17,8 +17,8 @@ const connections = require('../connections.sync-db.json');
 
     const tables = await db1Instance.raw('SELECT * FROM utils.vw_table_names');
     const users = await db1Instance.raw('SELECT * FROM utils.vw_user_names');
-    const multiply = await db1Instance.raw('SELECT utils.calc_multiply(' + 6 + ', ' + 7 + ') AS result;');
-    const date = await db1Instance.raw('EXEC utils.get_date;');
+    const [{ result: multiply }] = await db1Instance.raw('SELECT utils.calc_multiply(6, 7) AS result;');
+    const [{ result: date }] = await db1Instance.raw('EXEC utils.get_date;');
 
     console.log('List of table names in the database.');
     tables.map(table => console.log(table.name));
@@ -27,10 +27,10 @@ const connections = require('../connections.sync-db.json');
     users.map(user => console.log(user.name));
 
     console.log('Multiplication of two numbers.');
-    console.log('6 X 7 = ' + multiply[0].result);
+    console.log('6 X 7 = ' + multiply);
 
     console.log('Current date time.');
-    console.log(date[0].result);
+    console.log(date);
 
     process.exit(0);
   } catch (err) {
