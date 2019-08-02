@@ -41,7 +41,7 @@ export async function resolveConnections(): Promise<Connection[]> {
   log('Resolving file: %s', filename);
 
   const loaded = await fs.read(filename);
-  const connections = JSON.parse(loaded);
+  const connections = (JSON.parse(loaded)).connections;
 
   log('Connections parsed: %o', connections);
 
