@@ -19,14 +19,14 @@ const connections = require('../connections.sync-db.json');
     const [{ result: square }] = await db.raw('SELECT dbo.square(6) AS result;');
     const [{ result: date }] = await db.raw('EXEC utils.get_date;');
 
-    console.log('List of table names in the database:\n', tables.map(({ name }) => name));
-    console.log('List of user names in the database.\n', users.map(({ name }) => name));
-    console.log('Calculations:\n', {
-      'Sum of 6 and 7 is': sum,
-      'Product of 6 and 7 is': product,
-      'Square of 6 is': square
+    console.log('\nList of table names in the database:\n', tables.map(({ name }) => name));
+    console.log('\nList of user names in the database:\n', users.map(({ name }) => name));
+    console.log('\nCalculations:\n', {
+      'Sum of 6 and 7': sum,
+      'Product of 6 and 7': product,
+      'Square of 6': square
     });
-    console.log('Current date time is ', date);
+    console.log('\nCurrent date time:', date);
 
     process.exit(0);
   } catch (err) {
