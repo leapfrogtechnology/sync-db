@@ -1,5 +1,4 @@
 basePath: src/sql
-
 sql:
   # Create objects in dbo schema
   - function/dbo/sum.sql
