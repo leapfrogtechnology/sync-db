@@ -1,0 +1,11 @@
+[
+  {
+    "id": "db1",
+    "host": "localhost",
+    "port": 1433,
+    "user": "admin",
+    "database": "test",
+    "password": "password",
+    "client": "mssql"
+  }
+]
