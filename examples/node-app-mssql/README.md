@@ -2,7 +2,7 @@
 
 Sample project for Microsoft SQL Server.
 
-## Running
+## Setup
 
 Install dependencies.
 
@@ -10,21 +10,21 @@ Install dependencies.
 $ yarn
 ```
 
-Configure database connection(s).
+Configure database connection(s) in the `connections.sync-db.json`. 
 
 ```bash
 $ cp connections.sync-db.json.example connections.sync-db.json
 ```
 
-Edit your `connections.sync-db.json` with the db creds.
+## Running
 
-Synchronize all database objects (views, functions, procedures, schemas, etc)
+Run `sync-db` to synchronize all database objects (views, functions, procedures, schemas, etc) in the configured database(s).
 
 ```
 $ yarn sync
 ```
 
-Run the node application.
+Run the sample node app.
 
 ```
 $ yarn start
