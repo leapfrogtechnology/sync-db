@@ -1,5 +1,4 @@
-sync-db
-=======
+# sync-db
 
 Database synchronization utility.
 
@@ -9,10 +8,114 @@ Database synchronization utility.
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
 [![License](https://img.shields.io/npm/l/@leapfrogtechnology/sync-db.svg)](https://github.com/kabirbaidhya/sync-db/blob/master/package.json)
 
+# Set up
+
+## Install sync-db
+
+Install `sync-db` globally.
+
+    $ yarn global add @lftechnology/sync-db
+
+Install database driver(s) of the database(s) that are to be synced.
+
+## Configure Database Connections
+
+Create `connections-sync-db.json` in your project and configure database connection(s) to be synced.
+
+```json
+{
+  "connections": [
+    {
+      "id": "db1",
+      "host": "localhost",
+      "port": 1433,
+      "user": "admin",
+      "database": "foo",
+      "password": "password",
+      "client": "mssql"
+    },
+    {
+      "id": "db2",
+      "host": "localhost",
+      "port": 1433,
+      "user": "admin",
+      "database": "bar",
+      "password": "password",
+      "client": "mysql2"
+    }
+  ]
+}
+```
+
+## Configure Path to Path To SQL Database Objects
+
+1. Copy the sql files in your project in following folder structure
+
+```
+ └─ sql
+    ├─ schema
+    │  ├─ schema1.sql
+    │  ├─ schema2.sql
+    │  ├─ schema3.sql
+    │  └─ ...
+    │
+    ├─ function
+    │  ├─ schema1
+    │  │  ├─ function1.sql
+    │  │  ├─ function2.sql
+    │  │  └─ ...
+    │  ├─ schema2
+    │  │  ├─ function3.sql
+    │  │  ├─ function4.sql
+    │  │  └─ ...
+    │  ├─ function5.sql
+    │  └─ ...
+    │
+    ├─ procedure
+    │  ├─ schema1
+    │  │  ├─ procedure1.sql
+    │  │  ├─ procedure2.sql
+    │  │  └─ ...
+    │  ├─ schema2
+    │  │  ├─ procedure3.sql
+    │  │  ├─ procedure4.sql
+    │  │  └─ ...
+    │  ├─ procedure5.sql
+    │  └─ ...
+    │
+    └─...
+
+```
+
+**Note: When procedures and functions aren't placed inside a schema folder, they are associated with default schema.**
+
+2. Create `sync-db.yml` file.
+
+3. Specify the base path of the folder for sql files through `basePath` key.
+
+4. List database objects in the order they need to be synced through `sql` parent.
+
+Here is a what your `sync-db.yml` should look like
+
+```yml
+basePath: /path/to/sql
+sql:
+  - schema/<schema_name>.sql
+  - function/<schema_name>/<function_name>.sql
+  - procedure/<schema_name>/<procedure_name>.sql
+```
+
+**Note: Default the basePath would be `src/sql`.**
+
 # Usage
+
 ```bash
 $ sync-db
 ```
+
+# Sample Projects
+
+1. [Microsoft SQL Sample](examples/node-app-mssql)
 
 # License
 
