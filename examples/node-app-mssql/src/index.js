@@ -6,31 +6,24 @@ const connections = require('../connections.sync-db.json');
 
 (async () => {
   try {
-    // Getting configuration of database with id db1.
-    const db1Connection = connections.find(({ id }) => id === 'db1');
-
-    // Getting knex instance of the database.
-    const db1Instance = knex({
+    // Getting knex instance of mssql database with id db1.
+    const db = knex({
       client: 'mssql',
-      connection: db1Connection
+      connection: connections.find(({ id }) => id === 'db1')
     });
 
-    const tables = await db1Instance.raw('SELECT * FROM utils.vw_table_names');
-    const users = await db1Instance.raw('SELECT * FROM utils.vw_user_names');
-    const [{ result: multiply }] = await db1Instance.raw('SELECT utils.calc_multiply(6, 7) AS result;');
-    const [{ result: date }] = await db1Instance.raw('EXEC utils.get_date;');
+    const tables = await db.raw('SELECT * FROM utils.vw_table_names');
+    const users = await db.raw('SELECT * FROM utils.vw_user_names');
+    const [{ result: product }] = await db.raw('SELECT utils.product(6, 7) AS result;');
+    const [{ result: date }] = await db.raw('EXEC utils.get_date;');
 
-    console.log('List of table names in the database.');
-    tables.map(table => console.log(table.name));
+    console.log('List of table names in the database.', tables);
 
-    console.log('List of user names in the database.');
-    users.map(user => console.log(user.name));
+    console.log('List of user names in the database.', users);
 
-    console.log('Multiplication of two numbers.');
-    console.log('6 X 7 = ' + multiply);
+    console.log('Product of 6 and 7 is', product);
 
-    console.log('Current date time.');
-    console.log(date);
+    console.log('Current date time is ', date);
 
     process.exit(0);
   } catch (err) {

@@ -1,13 +1,13 @@
+basePath: src/sql
+
 sql:
   # Create objects in dbo schema
-  - function/dbo/calc_sum.sql
-  - function/dbo/calc_square.sql
+  - function/dbo/sum.sql
+  - function/dbo/square.sql
 
   # Create objects in utils schema
   - schema/utils.sql
-  - function/utils/calc_multiply.sql
+  - function/utils/product.sql
   - procedure/utils/get_date.sql
   - view/utils/vw_table_names.sql
   - view/utils/vw_user_names.sql
-
-basePath: src/sql
