@@ -5,7 +5,7 @@
       "host": "localhost",
       "port": 1433,
       "user": "admin",
-      "database": "test",
+      "database": "db1",
       "password": "password",
       "client": "mssql"
     }

@@ -1,6 +1,6 @@
 # sync-db
 
-Database synchronization utility.
+Command line utility to synchronize and version control relational database objects across databases.
 
 [![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
 [![Version](https://img.shields.io/npm/v/@leapfrogtechnology/sync-db.svg)](https://npmjs.org/package/@leapfrogtechnology/sync-db)
@@ -8,19 +8,23 @@ Database synchronization utility.
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
 [![License](https://img.shields.io/npm/l/@leapfrogtechnology/sync-db.svg)](https://github.com/kabirbaidhya/sync-db/blob/master/package.json)
 
-# Set up
+# Setup
 
-## Install sync-db
+## Installation of sync-db
 
 Install `sync-db` globally.
 
-    $ yarn global add @lftechnology/sync-db
+    $ yarn global add @leapfrogtechnology/sync-db
 
-Install database driver(s) of the database(s) that are to be synced.
+Globally, install node database driver(s) of the database(s) that are to be synced, for example this is how you would install driver mssql:
+
+    $ yarn global add mssql
 
 ## Configure Database Connections
 
 Create `connections-sync-db.json` in your project and configure database connection(s) to be synced.
+
+Your file should look something like this
 
 ```json
 {
@@ -30,7 +34,7 @@ Create `connections-sync-db.json` in your project and configure database connect
       "host": "localhost",
       "port": 1433,
       "user": "admin",
-      "database": "foo",
+      "database": "db1",
       "password": "password",
       "client": "mssql"
     },
@@ -39,9 +43,9 @@ Create `connections-sync-db.json` in your project and configure database connect
       "host": "localhost",
       "port": 1433,
       "user": "admin",
-      "database": "bar",
+      "database": "db2",
       "password": "password",
-      "client": "mysql2"
+      "client": "mssql"
     }
   ]
 }
@@ -115,7 +119,7 @@ $ sync-db
 
 # Sample Projects
 
-1. [Microsoft SQL Sample](examples/node-app-mssql)
+1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
 
 # License
 
