@@ -103,7 +103,7 @@ sql:
 
 **Note: Default the basePath is `src/sql`.**
 
-3. Specify the base path of the folder for sql files through `basePath` key.
+3. Specify the base path of the folder for SQL files through `basePath` key.
 
 4. List database objects in the order they need to be synced through `sql` parent.
 
