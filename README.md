@@ -10,9 +10,7 @@ Command line utility to synchronize and version control relational database obje
 
 # Setup
 
-## Installation of sync-db
-
-Install `sync-db` in your project.
+## Installation
 
     $ yarn add @leapfrogtechnology/sync-db
 
@@ -51,7 +49,7 @@ Create `connections-sync-db.json` in your project folder and configure your data
 
 ## Configure Path To SQL Database Objects
 
-1. Copy the sql files in your project in following folder structure
+1. Copy the SQL files in your project in following folder structure
 
 ```
  └─ sql
