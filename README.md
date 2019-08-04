@@ -12,19 +12,17 @@ Command line utility to synchronize and version control relational database obje
 
 ## Installation of sync-db
 
-Install `sync-db` globally.
+Install `sync-db` in your project.
 
-    $ yarn global add @leapfrogtechnology/sync-db
+    $ yarn add @leapfrogtechnology/sync-db
 
-Globally, install node database driver(s) of the database(s) that are to be synced, for example this is how you would install driver mssql:
+Install node database driver(s) of the database(s) that are to be synced in your project, for example this is how you would install the mssql driver:
 
-    $ yarn global add mssql
+    $ yarn add mssql
 
 ## Configure Database Connections
 
-Create `connections-sync-db.json` in your project and configure database connection(s) to be synced.
-
-Your file should look something like this
+Create `connections-sync-db.json` in your project folder and configure your database connection(s) to be synced.
 
 ```json
 {
@@ -33,7 +31,7 @@ Your file should look something like this
       "id": "db1",
       "host": "localhost",
       "port": 1433,
-      "user": "admin",
+      "user": "db1user",
       "database": "db1",
       "password": "password",
       "client": "mssql"
@@ -42,7 +40,7 @@ Your file should look something like this
       "id": "db2",
       "host": "localhost",
       "port": 1433,
-      "user": "admin",
+      "user": "db2user",
       "database": "db2",
       "password": "password",
       "client": "mssql"
@@ -51,7 +49,7 @@ Your file should look something like this
 }
 ```
 
-## Configure Path to Path To SQL Database Objects
+## Configure Path To SQL Database Objects
 
 1. Copy the sql files in your project in following folder structure
 
@@ -91,15 +89,9 @@ Your file should look something like this
 
 ```
 
-**Note: When procedures and functions aren't placed inside a schema folder, they are associated with default schema.**
+**Note: When procedures and functions aren't placed inside a schema folder, they are associated with the default schema.**
 
-2. Create `sync-db.yml` file.
-
-3. Specify the base path of the folder for sql files through `basePath` key.
-
-4. List database objects in the order they need to be synced through `sql` parent.
-
-Here is a what your `sync-db.yml` should look like
+2. Create `sync-db.yml` file in your project folder.
 
 ```yml
 basePath: /path/to/sql
@@ -109,12 +101,16 @@ sql:
   - procedure/<schema_name>/<procedure_name>.sql
 ```
 
-**Note: Default the basePath would be `src/sql`.**
+**Note: Default the basePath is `src/sql`.**
+
+3. Specify the base path of the folder for sql files through `basePath` key.
+
+4. List database objects in the order they need to be synced through `sql` parent.
 
 # Usage
 
 ```bash
-$ sync-db
+$ npx sync-db
 ```
 
 # Sample Projects
