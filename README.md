@@ -107,7 +107,8 @@ sql:
 
 # Usage
 
-Add script in your `package.json`
+Add `sync-db` script in your `package.json` file.
+
 ```json
 {
   "name": "my-package",
