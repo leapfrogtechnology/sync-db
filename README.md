@@ -8,9 +8,9 @@ Command line utility to synchronize and version control relational database obje
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
 [![License](https://img.shields.io/npm/l/@leapfrogtechnology/sync-db.svg)](https://github.com/kabirbaidhya/sync-db/blob/master/package.json)
 
-# Setup
+## Setup
 
-## Installation
+### Installation
 
     $ yarn add @leapfrogtechnology/sync-db
 
@@ -18,7 +18,7 @@ Install node database driver(s) of the database(s) that are to be synced in your
 
     $ yarn add mssql
 
-## Configure Database Connections
+### Configure Database Connections
 
 Create `connections-sync-db.json` in your project folder and configure your database connection(s) to be synced.
 
@@ -47,7 +47,7 @@ Create `connections-sync-db.json` in your project folder and configure your data
 }
 ```
 
-## Configure Path To SQL Database Objects
+### Configure Path To SQL Database Objects
 
 1. Copy the SQL files in your project in following folder structure.
 
@@ -93,6 +93,7 @@ Create `connections-sync-db.json` in your project folder and configure your data
 
 ```yml
 basePath: /path/to/sql
+
 sql:
   - schema/<schema_name>.sql
   - function/<schema_name>/<function_name>.sql
@@ -105,13 +106,12 @@ sql:
 
 4. List database objects in the order they need to be synced under the `sql` key.
 
-# Usage
+## Usage
 
 Add `sync-db` script in your `package.json` file.
 
 ```json
 {
-  "name": "my-package",
   "scripts": {
     "sync-db": "sync-db",
   }
@@ -124,10 +124,10 @@ Run
 $ yarn sync-db
 ```
 
-# Sample Projects
+## Sample Projects
 
 1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
 
-# License
+## License
 
 Licensed under [The MIT License](LICENSE).
