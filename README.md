@@ -49,7 +49,7 @@ Create `connections-sync-db.json` in your project folder and configure your data
 
 ## Configure Path To SQL Database Objects
 
-1. Copy the SQL files in your project in following folder structure
+1. Copy the SQL files in your project in following folder structure.
 
 ```
  └─ sql
@@ -101,9 +101,9 @@ sql:
 
 **Note: Default basePath is `src/sql`.**
 
-3. Specify the base path of the folder for SQL files through `basePath` key.
+3. Specify the base path of the folder for SQL files in `basePath` key.
 
-4. List database objects in the order they need to be synced through `sql` parent.
+4. List database objects in the order they need to be synced under the `sql` key.
 
 # Usage
 
@@ -112,7 +112,7 @@ Add script in your `package.json`
 {
   "name": "my-package",
   "scripts": {
-    "sync:db": "sync-db",
+    "sync-db": "sync-db",
   }
 }
 ```
@@ -120,7 +120,7 @@ Add script in your `package.json`
 Run
 
 ```bash
-$ yarn sync:db
+$ yarn sync-db
 ```
 
 # Sample Projects
