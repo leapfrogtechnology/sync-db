@@ -99,7 +99,7 @@ sql:
   - procedure/<schema_name>/<procedure_name>.sql
 ```
 
-**Note: Default the basePath is `src/sql`.**
+**Note: Default basePath is `src/sql`.**
 
 3. Specify the base path of the folder for SQL files through `basePath` key.
 
@@ -107,8 +107,20 @@ sql:
 
 # Usage
 
+Add script in your `package.json`
+```json
+{
+  "name": "my-package",
+  "scripts": {
+    "sync:db": "sync-db",
+  }
+}
+```
+
+Run
+
 ```bash
-$ npx sync-db
+$ yarn sync:db
 ```
 
 # Sample Projects
