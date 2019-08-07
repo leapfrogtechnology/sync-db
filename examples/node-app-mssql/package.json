@@ -4,10 +4,11 @@
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
-    "sync": "../../bin/run",
+    "sync-db": "sync-db",
     "start": "yarn lint && node src/index.js"
   },
   "dependencies": {
+    "@leapfrogtechnology/sync-db": "^1.0.0-alpha.1",
     "knex": "^0.19.1",
     "mssql": "^5.1.0"
   },

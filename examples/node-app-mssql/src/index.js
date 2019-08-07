@@ -2,7 +2,7 @@
  * Demonstrates use of sync-db to create functions, procedures and views in MSSQL.
  */
 const knex = require('knex');
-const connections = require('../connections.sync-db.json');
+const { connections } = require('../connections.sync-db.json');
 
 (async () => {
   try {
