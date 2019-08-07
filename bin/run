@@ -2,12 +2,12 @@
 
 const fs = require('fs')
 const path = require('path')
-const project = path.join(__dirname, '../tsconfig.json')
-const dev = fs.existsSync(project)
+const project = path.join(__dirname, '../lib/')
+const prod = fs.existsSync(project)
 
-if (dev) {
+if (!prod) {
   require('ts-node').register({project})
 }
 
-require(`../${dev ? 'src' : 'lib'}`).run()
+require(`../${prod ? 'lib' : 'src'}`).run()
 .catch(require('@oclif/errors/handle'))

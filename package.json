@@ -59,7 +59,8 @@
     "build": "rm -rf lib && tsc -b",
     "prepack": "yarn build",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "postinstall": "npm run build"
   },
   "types": "lib/index.d.ts"
 }
