@@ -24,7 +24,7 @@ Install node database driver(s) of the database(s) that are to be synced, for ex
 
 **Note: If sync-db is installed globally, install database driver(s) globally too.**
 
-## Configure Database Connections
+### Configure Database Connections
 
 Create `connections-sync-db.json` in your project folder and configure your database connection(s) to be synced.
 
@@ -116,7 +116,7 @@ sql:
 
 Add `sync-db` script in your `package.json` file.
 
-## Add sync-db script in package json
+### Add sync-db script in package.json
 
 1. Add script in your `package.json`
 ```json
@@ -133,7 +133,7 @@ Add `sync-db` script in your `package.json` file.
 $ yarn sync-db
 ```
 
-## Use npx
+### Usage with npx
 
 1. Install npx globally on your machine
 
@@ -147,7 +147,7 @@ npm install -g npx
 npx sync-db
 ```
 
-# Sample Projects
+## Sample Projects
 
 1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
 
