@@ -14,17 +14,15 @@ Command line utility to synchronize and version control relational database obje
 
     $ yarn add @leapfrogtechnology/sync-db
 
-Install node database driver(s) of the database(s) that are to be synced in your project, for example this is how you would install the mssql driver:
-
-    $ yarn add mssql
-
-### Global
+**Global Installation**
 
     $ yarn global add @leapfrogtechnology/sync-db
 
-Install node database driver(s) of the database(s) that are to be synced globally, for example this is how you would install the mssql driver:
+Install node database driver(s) of the database(s) that are to be synced, for example this is how you would install the mssql driver:
 
-    $ yarn global add mssql
+    $ yarn add mssql
+
+**Note: If sync-db is installed globally, install database driver(s) globally too.**
 
 ## Configure Database Connections
 
@@ -147,12 +145,6 @@ npm install -g npx
 
 ```
 npx sync-db
-```
-
-## Installed Globally
-
-```
-sync-db
 ```
 
 # Sample Projects
