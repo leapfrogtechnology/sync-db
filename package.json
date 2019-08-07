@@ -1,10 +1,12 @@
 {
   "name": "@leapfrogtechnology/sync-db",
-  "description": "Database synchronization utility",
+  "description": "Command line utility to synchronize and version control relational database objects across databases",
   "version": "1.0.0-alpha.1",
   "author": "Kabir Baidhya <kabirbaidhya@gmail.com>",
   "contributors": [
-    "Kabir Baidhya <kabirbaidhya@gmail.com>"
+    "Kabir Baidhya <kabirbaidhya@gmail.com>",
+    "Saugat Acharya <mesaugat@gmail.com>",
+    "Shraday Shakya <shradayshakya@gmail.com>"
   ],
   "bin": {
     "sync-db": "./bin/run"
@@ -46,7 +48,10 @@
   ],
   "homepage": "https://github.com/leapfrogtechnology/sync-db",
   "keywords": [
-    "oclif"
+    "sync-db",
+    "dbo",
+    "db-synchronize",
+    "synchronize-db"
   ],
   "license": "MIT",
   "main": "lib/index.js",
