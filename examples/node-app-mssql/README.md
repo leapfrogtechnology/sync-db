@@ -21,7 +21,7 @@ $ cp connections.sync-db.json.example connections.sync-db.json
 Run `sync-db` to synchronize all database objects (views, functions, procedures, schemas, etc) in the configured database(s).
 
 ```
-$ yarn sync
+$ yarn sync-db
 ```
 
 Run the sample node app.

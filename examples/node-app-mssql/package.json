@@ -4,7 +4,7 @@
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
-    "sync": "../../bin/run",
+    "sync-db": "sync-db",
     "start": "yarn lint && node src/index.js"
   },
   "dependencies": {
@@ -13,6 +13,7 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@leapfrogtechnology/sync-db": "^1.0.0-alpha.1",
     "eslint": "^6.1.0",
     "eslint-config-leapfrog": "^2.0.0-beta.0"
   }
