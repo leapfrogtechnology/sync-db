@@ -2,16 +2,41 @@
   "name": "@leapfrogtechnology/sync-db",
   "description": "Command line utility to synchronize and version control relational database objects across databases",
   "version": "1.0.0-alpha.1",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "/bin",
+    "/lib"
+  ],
+  "bin": {
+    "sync-db": "./bin/run"
+  },
+  "repository": "https://github.com/leapfrogtechnology/sync-db",
+  "homepage": "https://github.com/leapfrogtechnology/sync-db",
+  "bugs": "https://github.com/leapfrogtechnology/sync-db/issues",
+  "keywords": [
+    "sync-db",
+    "dbo",
+    "db-synchronize",
+    "synchronize-db"
+  ],
   "author": "Kabir Baidhya <kabirbaidhya@gmail.com>",
   "contributors": [
     "Kabir Baidhya <kabirbaidhya@gmail.com>",
     "Saugat Acharya <mesaugat@gmail.com>",
     "Shraday Shakya <shradayshakya@gmail.com>"
   ],
-  "bin": {
-    "sync-db": "./bin/run"
+  "oclif": {
+    "bin": "sync-db"
   },
-  "bugs": "https://github.com/leapfrogtechnology/sync-db/issues",
+  "scripts": {
+    "posttest": "tslint -p test -t stylish",
+    "build": "rm -rf lib && tsc -b",
+    "prepack": "yarn build",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "watch": "tsc --watch"
+  },
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
@@ -42,29 +67,7 @@
   "engines": {
     "node": ">=8.0.0"
   },
-  "files": [
-    "/bin",
-    "/lib"
-  ],
-  "homepage": "https://github.com/leapfrogtechnology/sync-db",
-  "keywords": [
-    "sync-db",
-    "dbo",
-    "db-synchronize",
-    "synchronize-db"
-  ],
-  "license": "MIT",
-  "main": "lib/index.js",
-  "oclif": {
-    "bin": "sync-db"
-  },
-  "repository": "leapfrogtechnology/sync-db",
-  "scripts": {
-    "posttest": "tslint -p test -t stylish",
-    "build": "rm -rf lib && tsc -b",
-    "prepack": "yarn build",
-    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "watch": "tsc --watch"
-  },
-  "types": "lib/index.d.ts"
+  "publishConfig": {
+    "access": "public"
+  }
 }
