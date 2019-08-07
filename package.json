@@ -12,6 +12,9 @@
   "bin": {
     "sync-db": "./bin/run"
   },
+  "oclif": {
+    "bin": "sync-db"
+  },
   "repository": "https://github.com/leapfrogtechnology/sync-db",
   "homepage": "https://github.com/leapfrogtechnology/sync-db",
   "bugs": "https://github.com/leapfrogtechnology/sync-db/issues",
@@ -27,9 +30,6 @@
     "Saugat Acharya <mesaugat@gmail.com>",
     "Shraday Shakya <shradayshakya@gmail.com>"
   ],
-  "oclif": {
-    "bin": "sync-db"
-  },
   "scripts": {
     "posttest": "tslint -p test -t stylish",
     "build": "rm -rf lib && tsc -b",
