@@ -51,7 +51,7 @@ export async function resolveConnections(): Promise<Connection[]> {
     id: connection.id || `${connection.host}/${connection.database}`
   }));
 
-  log('Resolved connections: %O', connections.map(({ id, host, database }) => ({ id, host, database })));
+  log('Resolved connections: %O', result.map(({ id, host, database }) => ({ id, host, database })));
 
   return result;
 }
