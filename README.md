@@ -136,10 +136,7 @@ When installed globally, you can just invoke the CLI directly.
 $ sync-db
 ```
 
-### Using npx
-
-If installed globally you can
-
+For local installation you can trigger it with `npx`.
 ```
 $ npx sync-db
 ```
@@ -165,6 +162,14 @@ $ yarn sync-db
 ## Sample Projects
 
 1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
+
+## Changelog
+
+Check the [CHANGELOG](CHANGELOG.md) for release history.
+
+## Contributing
+
+Feel free to send pull requests.
 
 ## License
 
