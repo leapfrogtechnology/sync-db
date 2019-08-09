@@ -6,6 +6,7 @@ import { log } from './logger';
 import * as fs from './util/fs';
 import Connection from './domain/Connection';
 import Configuration from './domain/Configuration';
+import ConnectionConfig from './domain/ConnectionConfig';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME } from './constants';
 
 /**
@@ -41,18 +42,16 @@ export async function resolveConnections(): Promise<Connection[]> {
   log('Resolving file: %s', filename);
 
   const loaded = await fs.read(filename);
-  const { connections } = JSON.parse(loaded);
-
-  log('Connections parsed: %o', connections);
+  const { connections } = JSON.parse(loaded) as ConnectionConfig;
 
   // TODO: Validate the connections received from file.
 
-  const result = connections.map((connection: Connection) => ({
+  const result = connections.map(connection => ({
     ...connection,
     id: connection.id || `${connection.host}/${connection.database}`
   }));
 
-  log('Resolved connections: %O', connections);
+  log('Resolved connections: %O', result.map(({ id, host, database }) => ({ id, host, database })));
 
   return result;
 }
