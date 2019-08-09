@@ -53,15 +53,8 @@ export async function resolveConnections(): Promise<Connection[]> {
   log('Resolved connections: %O', connections.map((connection: Connection) => {
     return {
       id: connection.id,
-      client: connection.client,
       host: connection.host,
-      port: connection.port,
-      user: connection.user,
       database: connection.database,
-      requestTimeout: connection.requestTimeout,
-      options: {
-        encrypt: connection.options.encrypt
-      }
     }
   }
   ));
