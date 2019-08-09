@@ -35,7 +35,9 @@
     "build": "rm -rf lib && tsc -b",
     "prepack": "yarn build",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "changelog": "./release.sh changelog",
+    "release": "./release.sh bump"
   },
   "dependencies": {
     "@oclif/command": "^1",
