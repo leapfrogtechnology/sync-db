@@ -136,7 +136,7 @@ When installed globally, you can just invoke the CLI directly.
 $ sync-db
 ```
 
-For local installation you can trigger it with `npx`.
+For local installation you can trigger it with [`npx`](https://www.npmjs.com/package/npx).
 ```
 $ npx sync-db
 ```
