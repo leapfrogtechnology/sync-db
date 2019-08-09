@@ -4,7 +4,6 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
 import * as fs from './util/fs';
-import { listWithoutAttrs } from './util/object';
 import Connection from './domain/Connection';
 import Configuration from './domain/Configuration';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME } from './constants';
@@ -44,8 +43,6 @@ export async function resolveConnections(): Promise<Connection[]> {
   const loaded = await fs.read(filename);
   const { connections } = JSON.parse(loaded);
 
-  log('Connections parsed: %o', listWithoutAttrs<Connection>(connections, ['password']));
-
   // TODO: Validate the connections received from file.
 
   const result = connections.map((connection: Connection) => ({
@@ -53,7 +50,21 @@ export async function resolveConnections(): Promise<Connection[]> {
     id: connection.id || `${connection.host}/${connection.database}`
   }));
 
-  log('Resolved connections: %O', listWithoutAttrs<Connection>(connections, ['password']));
+  log('Resolved connections: %O', connections.map((connection: Connection) => {
+    return {
+      id: connection.id,
+      client: connection.client,
+      host: connection.host,
+      port: connection.port,
+      user: connection.user,
+      database: connection.database,
+      requestTimeout: connection.requestTimeout,
+      options: {
+        encrypt: connection.options.encrypt
+      }
+    }
+  }
+  ));
 
   return result;
 }
