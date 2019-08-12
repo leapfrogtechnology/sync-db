@@ -23,7 +23,7 @@ $ yarn add @leapfrogtechnology/sync-db
 You can install it globally too.
 
 ```bash
-$ npm install @leapfrogtechnology/sync-db
+$ npm install -g @leapfrogtechnology/sync-db
 # OR
 $ yarn global add @leapfrogtechnology/sync-db
 ```
