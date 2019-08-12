@@ -2,31 +2,51 @@
 
 Command line utility to synchronize and version control relational database objects across databases.
 
-[![oclif](https://img.shields.io/badge/cli-oclif-brightgreen.svg)](https://oclif.io)
-[![Version](https://img.shields.io/npm/v/@leapfrogtechnology/sync-db.svg)](https://npmjs.org/package/@leapfrogtechnology/sync-db)
-[![Downloads/week](https://img.shields.io/npm/dw/@leapfrogtechnology/sync-db.svg)](https://npmjs.org/package/@leapfrogtechnology/sync-db)
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
-[![License](https://img.shields.io/npm/l/@leapfrogtechnology/sync-db.svg)](https://github.com/leapfrogtechnology/sync-db/blob/master/package.json)
+[![Version](https://img.shields.io/npm/v/@leapfrogtechnology/sync-db.svg?style=flat-square)](https://npmjs.org/package/@leapfrogtechnology/sync-db)
+[![Travis](https://img.shields.io/travis/com/leapfrogtechnology/sync-db.svg?style=flat-square)](https://travis-ci.com/leapfrogtechnology/sync-db)
+[![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
+[![LICENSE](https://img.shields.io/github/license/leapfrogtechnology/sync-db.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db/blob/master/LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db#contributing)
 
 ## Setup
 
 ### Installation
 
-    $ yarn add @leapfrogtechnology/sync-db
+You can install it using `npm` or `yarn`.
 
-**Global Installation**
+```bash
+$ npm install @leapfrogtechnology/sync-db
+# OR
+$ yarn add @leapfrogtechnology/sync-db
+```
 
-    $ yarn global add @leapfrogtechnology/sync-db
+You can install it globally too.
 
-Install node database driver(s) of the database(s) that are to be synced, for example this is how you would install the mssql driver:
+```bash
+$ npm install -g @leapfrogtechnology/sync-db
+# OR
+$ yarn global add @leapfrogtechnology/sync-db
+```
 
-    $ yarn add mssql
+Verify the installation.
 
-**Note: If sync-db is installed globally, install database driver(s) globally too.**
+```bash
+$ sync-db --version
+```
 
-### Configure Database Connections
+Additionally, you'll need to install the database driver specific to your project.
 
-Create `connections-sync-db.json` in your project folder and configure your database connection(s) to be synced.
+For instance - if you're using MSSQL, you can do:
+
+```
+$ yarn add mssql
+```
+
+This utility uses [Knex](http://knexjs.org/) under the hood so these are the [supported drivers](http://knexjs.org/#Installation-node).
+
+### Configuring Connections
+
+You'll need a `connections-sync-db.json` file in your project folder as shown below with all the databases connections.
 
 ```json
 {
@@ -53,9 +73,9 @@ Create `connections-sync-db.json` in your project folder and configure your data
 }
 ```
 
-### Configure Path To SQL Database Objects
+### Directory Structure
 
-1. Copy the SQL files in your project in following folder structure.
+1. The SQL codebase containing all your database objects need to follow the following directory structure.
 
 ```
  └─ sql
@@ -98,6 +118,8 @@ Create `connections-sync-db.json` in your project folder and configure your data
 2. Create `sync-db.yml` file in your project folder.
 
 ```yml
+# Base path for the SQL source files.
+# If omitted, "src/sql" will be the default base path.
 basePath: /path/to/sql
 
 sql:
@@ -106,50 +128,52 @@ sql:
   - procedure/<schema_name>/<procedure_name>.sql
 ```
 
-**Note: Default basePath is `src/sql`.**
-
-3. Specify the base path of the folder for SQL files in `basePath` key.
-
-4. List database objects in the order they need to be synced under the `sql` key.
-
 ## Usage
 
-Add `sync-db` script in your `package.json` file.
+When installed globally, you can just invoke the CLI directly.
 
-### Add sync-db script in package.json
+```bash
+$ sync-db
+```
 
-1. Add script in your `package.json`
+For local installation you can trigger it with [`npx`](https://www.npmjs.com/package/npx).
+```
+$ npx sync-db
+```
+
+### Using npm script
+
+You can also add a script into your project's `package.json` file like this:
+
 ```json
 {
   "scripts": {
-    "sync-db": "sync-db",
+    "sync-db": "sync-db"
   }
 }
 ```
 
-2. Run
+This allows you to trigger `sync-db` like this:
 
 ```bash
 $ yarn sync-db
 ```
-
-### Usage with npx
-
-1. Install npx globally on your machine
-
-```
-npm install -g npx
-```
-
-2. Run
-
-```
-npx sync-db
+Or,
+```bash
+$ npm run sync-db
 ```
 
 ## Sample Projects
 
 1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
+
+## Changelog
+
+Check the [CHANGELOG](CHANGELOG.md) for release history.
+
+## Contributing
+
+Feel free to send pull requests.
 
 ## License
 
