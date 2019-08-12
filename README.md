@@ -36,7 +36,7 @@ $ sync-db --version
 
 Additionally, you'll need to install the database driver specific to your project.
 
-For instance - if you're using MS SQL, you can do:
+For instance - if you're using MSSQL, you can do:
 
 ```
 $ yarn add mssql
@@ -119,7 +119,7 @@ You'll need a `connections-sync-db.json` file in your project folder as shown be
 
 ```yml
 # Base path for the SQL source files.
-# If omitted, "src/sql" be assumed to be default base path.
+# If omitted, "src/sql" will be the default base path.
 basePath: /path/to/sql
 
 sql:
@@ -153,10 +153,14 @@ You can also add a script into your project's `package.json` file like this:
 }
 ```
 
-This allows you to trigger it like this:
+This allows you to trigger `sync-db` like this:
 
 ```bash
 $ yarn sync-db
+```
+Or,
+```bash
+$ npm run sync-db
 ```
 
 ## Sample Projects
