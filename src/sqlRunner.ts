@@ -7,7 +7,7 @@ import { dbLogger } from './logger';
 import Mapping from './domain/Mapping';
 import SqlCode from './domain/SqlCode';
 import * as promise from './util/promise';
-import Connection from './domain/Connection';
+import ConnectionConfig from './domain/ConnectionConfig';
 import SqlFileInfo from './domain/SqlFileInfo';
 import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
 
@@ -103,10 +103,14 @@ export function getDropStatement(type: string, fqon: string): string {
  *
  * @param {SqlCode[]} files
  * @param {Knex.Transaction} trx
- * @param {Connection} connectionConfig
+ * @param {ConnectionConfig} connectionConfig
  * @returns {Promise<void>}
  */
-export function runSequentially(files: SqlCode[], trx: Knex.Transaction, connectionConfig: Connection): Promise<void> {
+export function runSequentially(
+  files: SqlCode[],
+  trx: Knex.Transaction,
+  connectionConfig: ConnectionConfig
+): Promise<void> {
   const logDb = dbLogger(connectionConfig);
   const promises = files.map(file => {
     logDb(`Running ${file.name}`);
@@ -122,13 +126,13 @@ export function runSequentially(files: SqlCode[], trx: Knex.Transaction, connect
  *
  * @param {SqlFileInfo[]} files
  * @param {Knex} db
- * @param {Connection} connectionConfig
+ * @param {ConnectionConfig} connectionConfig
  * @returns {Promise<void>}
  */
 export async function rollbackSequentially(
   files: SqlFileInfo[],
   db: Knex,
-  connectionConfig: Connection
+  connectionConfig: ConnectionConfig
 ): Promise<void> {
   const logDb = dbLogger(connectionConfig);
   const sqlFiles = files.map(info => ({
