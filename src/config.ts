@@ -4,7 +4,7 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
 import * as fs from './util/fs';
-import Connection from './domain/Connection';
+import Config from './domain/Config';
 import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME } from './constants';
@@ -32,9 +32,9 @@ export async function loadConfig(): Promise<Configuration> {
 /**
  * Resolve database connections.
  *
- * @returns {Promise<Connection[]>}
+ * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnections(): Promise<Connection[]> {
+export async function resolveConnections(): Promise<ConnectionConfig[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
@@ -42,10 +42,9 @@ export async function resolveConnections(): Promise<Connection[]> {
   log('Resolving file: %s', filename);
 
   const loaded = await fs.read(filename);
-  const { connections } = JSON.parse(loaded) as ConnectionConfig;
+  const { connections } = JSON.parse(loaded) as Config;
 
   // TODO: Validate the connections received from file.
-
   const result = connections.map(connection => ({
     ...connection,
     id: connection.id || `${connection.host}/${connection.database}`

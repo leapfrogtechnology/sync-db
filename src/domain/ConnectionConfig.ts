@@ -1,10 +1,17 @@
-import Connection from './Connection'
-
 /**
- * Interface for sync-db connection file (connections.sync-db.json).
+ * Database connection configuration.
  */
 interface ConnectionConfig {
-  connections: Connection[];
+  id?: string;
+  host: string;
+  port: string;
+  user: string;
+  database: string;
+  password: string;
+  client: string;
+  requestTimeout?: number;
+  charset?: string;
+  options?: any;
 }
 
 export default ConnectionConfig;
