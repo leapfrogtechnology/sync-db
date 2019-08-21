@@ -1,4 +1,3 @@
-import { all } from './util/common';
 import Connection from './Connection';
 import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
@@ -91,15 +90,16 @@ export async function synchronize(
   log('Starting to synchronize.');
   let connections: ConnectionConfig[] | ConnectionInstance[] | Connection[];
 
-  connections = Array.isArray(conn) ? (conn as ConnectionConfig[] | ConnectionInstance[]) : (
-    [conn] as ConnectionConfig[] | ConnectionInstance[]
-  );
+  connections = (Array.isArray(conn) ? conn : [conn]) as ConnectionConfig[] | ConnectionInstance[];
 
-  if (all<boolean>((connections as any[]).map(connection => !!connection.client.config))) {
-    connections = (connections as ConnectionInstance[]).map(connection => Connection.withInstance(connection));
-  } else {
-    connections = (connections as ConnectionConfig[]).map(connection => new Connection(connection));
-  }
+  connections = (connections as any[]).map(connection => {
+    if (connection.client.config) {
+      // If the connection object has 'client.config' property consider it to be a connection instance.
+      return Connection.withInstance(connection as ConnectionInstance);
+    }
+
+    return new Connection((connection as ConnectionConfig));
+  });
 
   const promises = (connections as Connection[]).map(connection => syncDatabase(connection, config));
 
