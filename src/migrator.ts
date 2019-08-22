@@ -2,6 +2,7 @@ import Connection from './Connection';
 import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import SyncParams from './domain/SyncParams';
+import { isConnectionInstance } from './util/db';
 import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionInstance from './domain/ConnectionInstance';
@@ -93,8 +94,7 @@ export async function synchronize(
   connections = (Array.isArray(conn) ? conn : [conn]) as ConnectionConfig[] | ConnectionInstance[];
 
   connections = (connections as any[]).map(connection => {
-    if (connection.client.config) {
-      // If the connection object has 'client.config' property consider it to be a connection instance.
+    if (isConnectionInstance(connection)) {
       log(`Received connection instance to database: ${connection.client.config.connection.database}`);
 
       return Connection.withInstance(connection as ConnectionInstance);
