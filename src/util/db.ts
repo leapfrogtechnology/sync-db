@@ -30,3 +30,13 @@ export function getConfig(db: ConnectionInstance): ConnectionConfig {
     client: db.client.config.client
   };
 }
+
+/**
+ * Returns true if the provided object is a connection instance.
+ *
+ * @param {any} obj
+ * @returns {boolean}
+ */
+export function isConnectionInstance(obj: any): boolean {
+  return !!(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
+}
