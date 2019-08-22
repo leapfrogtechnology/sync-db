@@ -130,6 +130,10 @@ sql:
 
 ## Usage
 
+You can use sync-db as a CLI tool as well as within your scripts.
+
+### CLI
+
 When installed globally, you can just invoke the CLI directly.
 
 ```bash
@@ -141,7 +145,7 @@ For local installation you can trigger it with [`npx`](https://www.npmjs.com/pac
 $ npx sync-db
 ```
 
-### Using npm script
+#### Using npm script
 
 You can also add a script into your project's `package.json` file like this:
 
@@ -162,6 +166,51 @@ Or,
 ```bash
 $ npm run sync-db
 ```
+
+### With scripts
+
+Use sync-db's `synchronize` function within your `ts` scripts. You can use `synchronize` as follows:
+
+```ts
+import { createInstance } from '@leapfrogtechnology/sync-db/lib/util/db';
+
+import { loadConfig } from '@leapfrogtechnology/sync-db/lib/config';
+import { synchronize } from '@leapfrogtechnology/sync-db/lib/migrator';
+
+(async () => {
+  // Load sync-db.yml
+  const config = await loadConfig();
+
+  const db = createInstance({
+    client: 'mssql',
+    host: 'host',
+    port: 'dbPort',
+    user: 'userName',
+    password: 'password',
+    database: 'dbName'
+  });
+
+  // Rollback and create all db objects using config.
+  await synchronize(config, db, { force: false });
+
+  // Perform other db operations
+  // ...
+})();
+```
+
+#### Caveat
+
+Setup and Teardown steps aren't always run within a single transaction. **You need to specifically pass a trx object to make sure this happens.**
+
+  ```ts
+  await db.transaction(async trx => {
+    // Rollback and create all db objects using config.
+    await synchronize(config, (trx as any), { force: false });
+
+    // Perform other db operations
+    // ...
+  });
+  ```
 
 ## Sample Projects
 
