@@ -10,9 +10,9 @@ import ConnectionInstance from './domain/ConnectionInstance';
  * Migrate SQL on a database.
  *
  * @param {Configuration} config
- * @returns {(connectionConfig: ConnectionConfig) => Promise<void>}
+ * @returns {(connection: Connection) => Promise<void>}
  */
-export function setup(config: Configuration): (connectionConfig: Connection) => Promise<void> {
+export function setup(config: Configuration): (connection: Connection) => Promise<void> {
   const { basePath, hooks, sql } = config;
 
   return async (connection: Connection) => {
@@ -56,7 +56,7 @@ export function setup(config: Configuration): (connectionConfig: Connection) => 
  * They're executed in the reverse order of their creation.
  *
  * @param {Configuration} config
- * @returns {(connectionConfig: Connection) => Promise<void>}
+ * @returns {(connection: Connection) => Promise<void>}
  */
 export function teardown(config: Configuration): (connection: Connection) => Promise<void> {
   const { basePath, sql } = config;
@@ -79,7 +79,7 @@ export function teardown(config: Configuration): (connection: Connection) => Pro
  * Synchronize database.
  *
  * @param {Configuration} config
- * @param {ConnectionConfig[]} connections
+ * @param {ConnectionConfig[] | ConnectionInstance[] | ConnectionConfig | ConnectionInstance} connections
  * @param {SyncParams} params
  */
 export async function synchronize(
@@ -101,6 +101,7 @@ export async function synchronize(
     }
 
     log(`Received connection config to database: ${connection.database}`);
+
     return new Connection((connection as ConnectionConfig));
   });
 
@@ -114,7 +115,7 @@ export async function synchronize(
 /**
  * Synchronize a specific database.
  *
- * @param {ConnectionConfig} connectionConfig
+ * @param {ConnectionConfig} connection
  * @param {Configuration} config
  */
 async function syncDatabase(connection: Connection, config: Configuration) {
