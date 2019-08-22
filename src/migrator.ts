@@ -102,7 +102,7 @@ export async function synchronize(
 
     log(`Received connection config to database: ${connection.database}`);
 
-    return new Connection((connection as ConnectionConfig));
+    return new Connection(connection as ConnectionConfig);
   });
 
   const promises = (connections as Connection[]).map(connection => syncDatabase(connection, config));
