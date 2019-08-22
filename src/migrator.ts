@@ -95,9 +95,12 @@ export async function synchronize(
   connections = (connections as any[]).map(connection => {
     if (connection.client.config) {
       // If the connection object has 'client.config' property consider it to be a connection instance.
+      log(`Received connection instance to database: ${connection.client.config.connection.database}`);
+
       return Connection.withInstance(connection as ConnectionInstance);
     }
 
+    log(`Received connection config to database: ${connection.database}`);
     return new Connection((connection as ConnectionConfig));
   });
 
