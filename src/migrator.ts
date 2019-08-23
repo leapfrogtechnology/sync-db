@@ -89,23 +89,21 @@ export async function synchronize(
   params: SyncParams
 ) {
   log('Starting to synchronize.');
-  let connections: ConnectionConfig[] | ConnectionInstance[] | Connection[];
+  const connArr = Array.isArray(conn) ? conn : [conn];
 
-  connections = (Array.isArray(conn) ? conn : [conn]) as ConnectionConfig[] | ConnectionInstance[];
+  const connections = connArr.map(con => {
+    if (isConnectionInstance(con)) {
+      log(`Received connection instance to database: ${con.client.config.connection.database}`);
 
-  connections = (connections as any[]).map(connection => {
-    if (isConnectionInstance(connection)) {
-      log(`Received connection instance to database: ${connection.client.config.connection.database}`);
-
-      return Connection.withInstance(connection as ConnectionInstance);
+      return Connection.withInstance(con);
     }
 
-    log(`Received connection config to database: ${connection.database}`);
+    log(`Received connection config to database: ${con.database}`);
 
-    return new Connection(connection as ConnectionConfig);
+    return new Connection(con);
   });
 
-  const promises = (connections as Connection[]).map(connection => syncDatabase(connection, config));
+  const promises = connections.map(connection => syncDatabase(connection, config));
 
   await Promise.all(promises);
 

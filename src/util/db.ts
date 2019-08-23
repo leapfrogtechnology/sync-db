@@ -37,6 +37,6 @@ export function getConfig(db: ConnectionInstance): ConnectionConfig {
  * @param {any} obj
  * @returns {boolean}
  */
-export function isConnectionInstance(obj: any): boolean {
+export function isConnectionInstance(obj: any): obj is ConnectionInstance {
   return !!(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
 }
