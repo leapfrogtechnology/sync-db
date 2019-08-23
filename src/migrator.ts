@@ -2,8 +2,8 @@ import Connection from './Connection';
 import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import SyncParams from './domain/SyncParams';
-import { isConnectionInstance } from './util/db';
 import SyncConfig from './domain/SyncConfig';
+import { isConnectionInstance } from './util/db';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionInstance from './domain/ConnectionInstance';
 
@@ -19,7 +19,7 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
   return async (connection: Connection) => {
     const logDb = dbLogger(connection.config);
 
-    logDb('Running setup');
+    logDb(`Running setup on connection id: ${connection.config.id}`);
 
     const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
     const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
@@ -65,7 +65,7 @@ export function teardown(config: SyncConfig): (connection: Connection) => Promis
   return async (connection: Connection) => {
     const logDb = dbLogger(connection.config);
 
-    logDb(`Running rollback on a database: ${connection.config.id}`);
+    logDb(`Running rollback on connection id: ${connection.config.id}`);
 
     const db = connection.instance;
     const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));

@@ -26,8 +26,8 @@ export function createInstance(connectionConfig: ConnectionConfig): ConnectionIn
 export function getConfig(db: ConnectionInstance): ConnectionConfig {
   return {
     ...db.client.config.connection,
-    id: db.client.config.connection.database,
-    client: db.client.config.client
+    client: db.client.config.client,
+    id: db.client.config.connection.database
   };
 }
 

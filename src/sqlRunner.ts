@@ -7,8 +7,8 @@ import { dbLogger } from './logger';
 import Mapping from './domain/Mapping';
 import SqlCode from './domain/SqlCode';
 import * as promise from './util/promise';
-import ConnectionConfig from './domain/ConnectionConfig';
 import SqlFileInfo from './domain/SqlFileInfo';
+import ConnectionConfig from './domain/ConnectionConfig';
 import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
 
 /**
