@@ -1,17 +1,19 @@
+import * as Knex from 'knex';
+
 /**
  * Database connection configuration.
  */
-interface ConnectionConfig {
-  id?: string;
-  host: string;
-  port: string;
-  user: string;
-  database: string;
-  password: string;
-  client: string;
-  requestTimeout?: number;
-  charset?: string;
-  options?: any;
-}
+type KnexConnections = Knex.ConnectionConfig
+  & Knex.MariaSqlConnectionConfig
+  & Knex.MySqlConnectionConfig
+  & Knex.MsSqlConnectionConfig
+  & Knex.SocketConnectionConfig
+  & Knex.Sqlite3ConnectionConfig;
+
+type ConnectionConfig = KnexConnections
+  & {
+    id?: string;
+    client: string;
+  };
 
 export default ConnectionConfig;

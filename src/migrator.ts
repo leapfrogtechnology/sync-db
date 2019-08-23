@@ -3,17 +3,17 @@ import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import SyncParams from './domain/SyncParams';
 import { isConnectionInstance } from './util/db';
-import Configuration from './domain/Configuration';
+import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionInstance from './domain/ConnectionInstance';
 
 /**
  * Migrate SQL on a database.
  *
- * @param {Configuration} config
+ * @param {SyncConfig} config
  * @returns {(connection: Connection) => Promise<void>}
  */
-export function setup(config: Configuration): (connection: Connection) => Promise<void> {
+export function setup(config: SyncConfig): (connection: Connection) => Promise<void> {
   const { basePath, hooks, sql } = config;
 
   return async (connection: Connection) => {
@@ -56,10 +56,10 @@ export function setup(config: Configuration): (connection: Connection) => Promis
  * that have been created in the database.
  * They're executed in the reverse order of their creation.
  *
- * @param {Configuration} config
+ * @param {SyncConfig} config
  * @returns {(connection: Connection) => Promise<void>}
  */
-export function teardown(config: Configuration): (connection: Connection) => Promise<void> {
+export function teardown(config: SyncConfig): (connection: Connection) => Promise<void> {
   const { basePath, sql } = config;
 
   return async (connection: Connection) => {
@@ -79,12 +79,12 @@ export function teardown(config: Configuration): (connection: Connection) => Pro
 /**
  * Synchronize database.
  *
- * @param {Configuration} config
+ * @param {SyncConfig} config
  * @param {ConnectionConfig[] | ConnectionInstance[] | ConnectionConfig | ConnectionInstance} connections
  * @param {SyncParams} params
  */
 export async function synchronize(
-  config: Configuration,
+  config: SyncConfig,
   conn: ConnectionConfig[] | ConnectionInstance[] | ConnectionConfig | ConnectionInstance,
   params: SyncParams
 ) {
@@ -114,9 +114,9 @@ export async function synchronize(
  * Synchronize a specific database.
  *
  * @param {ConnectionConfig} connection
- * @param {Configuration} config
+ * @param {SyncConfig} config
  */
-async function syncDatabase(connection: Connection, config: Configuration) {
+async function syncDatabase(connection: Connection, config: SyncConfig) {
   const logDb = dbLogger(connection.config);
 
   logDb('Synchronize database');
