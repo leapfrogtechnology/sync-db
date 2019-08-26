@@ -1,5 +1,16 @@
 # Change Log
 
+## [v1.0.0-alpha.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.3) (2019-08-26)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.2...v1.0.0-alpha.3)
+
+**Implemented enhancements:**
+
+- Enable passing connection instance as well as connection config for synchronization [\#10](https://github.com/leapfrogtechnology/sync-db/pull/10) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([SafalPandey](https://github.com/SafalPandey))
+
+**Changes**
+
+- Improvements on the README Documentation [\#7](https://github.com/leapfrogtechnology/sync-db/pull/7) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+
 ## [v1.0.0-alpha.2](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.2) (2019-08-09)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.1...v1.0.0-alpha.2)
 
