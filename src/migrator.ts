@@ -85,7 +85,7 @@ export function teardown(config: SyncConfig): (connection: Connection) => Promis
 export async function synchronize(
   config: SyncConfig,
   conn: ConnectionConfig[] | Knex[] | ConnectionConfig | Knex,
-  params: SyncParams
+  params?: SyncParams
 ) {
   log('Starting to synchronize.');
   const connArr = Array.isArray(conn) ? conn : [conn];
