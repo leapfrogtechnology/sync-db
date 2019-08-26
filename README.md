@@ -55,7 +55,6 @@ sync-db expects the configuration file `sync-db.yml` to be present in your worki
 **sync-db.yml**
 ```yml
 # Base path for the SQL source files.
-# If omitted, "src/sql" will be the default base path.
 basePath: /path/to/sql
 
 sql:
@@ -63,6 +62,11 @@ sql:
   - function/<schema_name>/<function_name>.sql
   - procedure/<schema_name>/<procedure_name>.sql
 ```
+
+#### Configuration Options
+ * **`basePath`** `(string)` - Base directory to hold all your SQL source files (default: "src/sql").
+ * **`sql`** `(array)` - A series of SQL file paths that are to be run in ordered sequence (top to bottom), based on dependency. It should be noted that the source files needs to follow this convention of [directory hierarchy](docs/sql.md). 
+  File paths listed here are relative to `basePath` value. 
 
 ### 2. Database Connections
 
