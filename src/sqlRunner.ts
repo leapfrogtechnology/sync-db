@@ -112,7 +112,7 @@ export function runSequentially(
   const promises = files.map(file => {
     logDb(`Running ${file.name}`);
 
-    return connection.instance.raw(file.sql);
+    return connection.query(file.sql);
   });
 
   return promise.runSequentially(promises);
@@ -138,7 +138,7 @@ export async function rollbackSequentially(
   for (const sql of reverse(sqlFiles)) {
     logDb(`Rolling back: ${sql.fqon}`);
 
-    await connection.instance.raw(sql.dropStatement);
+    await connection.query(sql.dropStatement);
 
     logDb('Executed: ', sql.dropStatement);
   }
