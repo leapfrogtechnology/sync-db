@@ -1,5 +1,5 @@
 import SyncDb from './SyncDb';
-import { loadConfig } from './config';
+import { loadConfig, resolveConnections } from './config';
 import { synchronize } from './migrator';
 
-export { SyncDb, loadConfig, synchronize };
+export { SyncDb, loadConfig, synchronize, resolveConnections };
