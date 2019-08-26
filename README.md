@@ -134,41 +134,33 @@ You can use sync-db as a CLI tool as well as within your scripts.
 
 ### CLI
 
-When installed globally, you can just invoke the CLI directly.
+When installed globally, you can invoke the CLI directly. 
 
-```bash
-$ sync-db
+Try running `sync-db --version` to check the installation which should print the version installed. 
+```
+$ sync-db --version
+@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
 ```
 
-For local installation you can trigger it with [`npx`](https://www.npmjs.com/package/npx).
+The CLI exposes a single command `sync-db` that should run synchronize operation based on the configurations provided. 
+
+**CLI Options**
+
+Below shown are the available CLI options , which is also the output printed by `sync-db --help`. 
 
 ```
-$ npx sync-db
+Synchronize database
+
+USAGE
+  $ sync-db
+
+OPTIONS
+  -f, --force    Force synchronization
+  -h, --help     Print help information
+  -v, --version  Print version
 ```
 
-#### Using npm script
-
-You can also add a script into your project's `package.json` file like this:
-
-```json
-{
-  "scripts": {
-    "sync-db": "sync-db"
-  }
-}
-```
-
-This allows you to trigger `sync-db` like this:
-
-```bash
-$ yarn sync-db
-```
-
-Or,
-
-```bash
-$ npm run sync-db
-```
+Refer to the [examples](#examples) section below for full example with CLI usage. 
 
 ### Programmatic Usage
 
@@ -211,6 +203,8 @@ import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
 })();
 ```
 
+**TODO: Example project on programmatic usage.**
+
 #### Caveat
 
 Setup and Teardown steps aren't always run within a single transaction. **You need to specifically pass a trx object to make sure this happens.**
@@ -225,7 +219,7 @@ await db.transaction(async trx => {
 });
 ```
 
-## Sample Projects
+## Examples
 
 1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
 
