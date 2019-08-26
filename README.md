@@ -141,6 +141,7 @@ $ sync-db
 ```
 
 For local installation you can trigger it with [`npx`](https://www.npmjs.com/package/npx).
+
 ```
 $ npx sync-db
 ```
@@ -162,36 +163,51 @@ This allows you to trigger `sync-db` like this:
 ```bash
 $ yarn sync-db
 ```
+
 Or,
+
 ```bash
 $ npm run sync-db
 ```
 
 ### Programmatic Usage
 
-Use sync-db's `synchronize` function within your `ts` scripts. You can use `synchronize` as follows:
+You may use programmatic API as shown below in case you need better flexibility based on your needs.
+
+```ts
+import { synchronize, loadConfig, resolveConnections } from '@leapfrogtechnology/sync-db';
+
+(async () => {
+  const config = await loadConfig(); // Load sync-db.yml
+  const connections = await resolveConnections(); // Load connections.sync-db.json
+
+  // Invoke the command.
+  await synchronize(config, connections);
+})();
+```
+
+You can also pass your own database connection (eg: Knex connection) instead of resolving `connections.sync-db.json` file.
 
 ```ts
 import * as Knex from 'knex';
-
-import { loadConfig, synchronize } from '@leapfrogtechnology/sync-db';
+import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
 
 (async () => {
-  const config = await loadConfig();  // Load sync-db.yml
-
-  const db = Knex({
+  const config = await loadConfig(); // Load sync-db.yml
+  const connection = Knex({
+    // Your Knex connection instance.
     client: 'mssql',
     connection: {
       host: 'host',
-      port: 'dbPort',
       user: 'userName',
       password: 'password',
       database: 'dbName'
     }
   });
+  const options = { force: false };
 
-  // Rollback and create all db objects using config.
-  await synchronize(config, db, { force: false });
+  // Invoke the command.
+  await synchronize(config, connection, options);
 })();
 ```
 
@@ -202,7 +218,7 @@ Setup and Teardown steps aren't always run within a single transaction. **You ne
 ```ts
 await db.transaction(async trx => {
   // Rollback and create all db objects using config.
-  await synchronize(config, (trx as any), { force: false });
+  await synchronize(config, trx as any, { force: false });
 
   // Perform other db operations
   // ...
