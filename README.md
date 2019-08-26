@@ -167,26 +167,29 @@ Or,
 $ npm run sync-db
 ```
 
-### With scripts
+### Programmatic usage
 
 Use sync-db's `synchronize` function within your `ts` scripts. You can use `synchronize` as follows:
 
 ```ts
+import * as Knex from 'knex';
+
 import { loadConfig } from '@leapfrogtechnology/sync-db/lib/config';
 import { synchronize } from '@leapfrogtechnology/sync-db/lib/migrator';
-import { createInstance } from '@leapfrogtechnology/sync-db/lib/util/db';
 
 (async () => {
   // Load sync-db.yml
   const config = await loadConfig();
 
-  const db = createInstance({
+  const db = Knex({
     client: 'mssql',
-    host: 'host',
-    port: 'dbPort',
-    user: 'userName',
-    password: 'password',
-    database: 'dbName'
+    connection: {
+      host: 'host',
+      port: 'dbPort',
+      user: 'userName',
+      password: 'password',
+      database: 'dbName'
+    }
   });
 
   // Rollback and create all db objects using config.
