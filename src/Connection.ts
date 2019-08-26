@@ -1,6 +1,7 @@
 import * as Knex from 'knex';
 
 import ConnectionConfig from './domain/ConnectionConfig';
+import RawBindingParams, { ValueMap } from './domain/RawBingingParams';
 
 /**
  * Connection class wrapper with
@@ -14,15 +15,11 @@ class Connection {
    * @param {Knex} db
    * @returns {Connection}
    */
-  static withKnex(db: Knex): Connection {
-    if (!this.isKnexInstance(db)) {
-      throw new Error('Provided argument is not a valid knex instance.');
-    }
-
+  public static withKnex(db: Knex): Connection {
     return new Connection({
       ...db.client.config.connection,
       client: db.client.config.client,
-      id: db.client.config.connection.database
+      id: `${db.client.config.connection.host}/${db.client.config.connection.database}`
     });
   }
 
@@ -32,12 +29,12 @@ class Connection {
    * @param {any} obj
    * @returns {boolean}
    */
-  static isKnexInstance(obj: any): obj is Knex {
+  public static isKnexInstance(obj: any): obj is Knex {
     return !!(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
   }
 
-  instance: Knex;
-  config: ConnectionConfig;
+  private instance: Knex;
+  private config: ConnectionConfig;
 
   /**
    * Constructor.
@@ -56,13 +53,42 @@ class Connection {
    * @param {ConnectionConfig} connectionConfig
    * @returns {Knex}
    */
-  createInstance(): Knex {
+  public createInstance(): Knex {
     return Knex({
       client: this.config.client,
       connection: this.config
     });
   }
 
+  /**
+   * Runs a query.
+   *
+   * @param {string}  sql
+   * @param {RawBindingParams | ValueMap} params
+   * @returns {Promise<T[]>}
+   */
+  public query<T>(sql: string, params: RawBindingParams | ValueMap = []): Promise<T[]> {
+    return this.instance.raw(sql, params);
+  }
+
+  /**
+   * Runs a callback within transaction.
+   *
+   * @param {(trx: Connection) => any}  callback
+   * @returns {any}
+   */
+  public transaction(callback: (trx: Connection) => any): Promise<any> {
+    return this.instance.transaction(trx => callback(Connection.withKnex(trx)));
+  }
+
+  /**
+   * Returns connection config.
+   *
+   * @returns {ConnectionConfig}
+   */
+  public getConfig(): ConnectionConfig {
+    return this.config;
+  }
 }
 
 export default Connection;
