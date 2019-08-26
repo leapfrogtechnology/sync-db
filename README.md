@@ -44,6 +44,7 @@ $ yarn add mssql
 
 This utility uses [Knex](http://knexjs.org/) under the hood so these are the [supported drivers](http://knexjs.org/#Installation-node).
 
+## Configurations
 ### Configuring Connections
 
 You'll need a `connections-sync-db.json` file in your project folder as shown below with all the databases connections.
@@ -136,13 +137,14 @@ You can use sync-db as a CLI tool as well as within your scripts.
 
 When installed globally, you can invoke the CLI directly. 
 
-Try running `sync-db --version` to check the installation which should print the version installed. 
+Check your installation with `sync-db --version` that prints the version installed.
+
 ```
 $ sync-db --version
 @leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
 ```
 
-The CLI exposes a single command `sync-db` that should run synchronize operation based on the configurations provided. 
+The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configurations](#configurations).
 
 **CLI Options**
 
