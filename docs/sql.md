@@ -1,9 +1,10 @@
 # SQL
-This utility expects all your database scripts and objects (schemas, views, procedures, functions, etc) be defined as SQL source files. 
 
-Additionally, your sql source files are expected to follow the opinionated [directory structure](#directory-structure) as shown below under the sql base directory. 
+This utility expects all your database scripts and objects (schemas, views, procedures, functions, etc) be defined as SQL source files.
 
-By default the sql base directory i.e `basePath` is `src/sql` unless changed via [configuration](..#configuration). 
+Additionally, your sql source files are expected to follow the opinionated [directory structure](#directory-structure) as shown below under the sql base directory.
+
+By default the sql base directory i.e `basePath` is `src/sql` unless changed via [configuration](..#configuration).
 
 ## Directory Structure
 

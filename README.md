@@ -10,8 +10,6 @@ Command line utility to synchronize and version control relational database obje
 
 ## Setup
 
-### Installation
-
 You can install it using `npm` or `yarn`.
 
 ```bash
@@ -44,62 +42,13 @@ $ yarn add mssql
 
 This utility uses [Knex](http://knexjs.org/) under the hood so these are the [supported drivers](http://knexjs.org/#Installation-node).
 
-## Configuration
- 1. [Sync Configuration](#1-sync-configuration)
- 2. [Database Connections](#2-database-connections)
-
-
-### 1. Sync Configuration
-sync-db expects the configuration file `sync-db.yml` to be present in your working directory. This holds all your configurations.
-
-**sync-db.yml**
-```yml
-# Base path for the SQL source files.
-basePath: /path/to/sql
-
-sql:
-  - schema/<schema_name>.sql
-  - function/<schema_name>/<function_name>.sql
-  - procedure/<schema_name>/<procedure_name>.sql
-```
-
-#### Configuration Options
- * **`basePath`** `(string)` - Base directory to hold all your SQL source files (default: "src/sql").
- * **`sql`** `(array)` - A series of SQL file paths that are to be run in ordered sequence (top to bottom), based on dependency. It should be noted that the source files needs to follow this convention of [directory hierarchy](docs/sql.md). 
-  File paths listed here are relative to `basePath` value. 
-
-### 2. Database Connections
-
-Database connections are configured in `connections-sync-db.json` file in your project root directory as shown below.
-
-Since it contains all your database credentails, it is recommended that you **DO NOT COMMIT** it to VCS. 
-
-**connections-sync-db.json**
-```json
-{
-  "connections": [
-    {
-      "id": "db1",
-      "host": "localhost",
-      "port": 1433,
-      "user": "db1user",
-      "database": "db1",
-      "password": "password",
-      "client": "mssql"
-    }
-  ]
-}
-```
-
-Note: The `connections` key expects an array, so you can also provide multiple databases and `sync-db` ensures your configured db objects are synced across all these databases.
-
 ## Usage
 
 You can use sync-db as a CLI tool as well as within your scripts.
 
 ### CLI
 
-When installed globally, you can invoke the CLI directly. 
+When installed globally, you can invoke the CLI directly.
 
 Check your installation with `sync-db --version` that prints the version installed.
 
@@ -112,7 +61,7 @@ The CLI exposes a single command `sync-db` that runs synchronize operation based
 
 **CLI Options**
 
-Below shown are the available CLI options , which is also the output printed by `sync-db --help`. 
+Below shown are the available CLI options , which is also the output printed by `sync-db --help`.
 
 ```
 Synchronize database
@@ -126,7 +75,7 @@ OPTIONS
   -v, --version  Print version
 ```
 
-Refer to the [examples](#examples) section below for full example with CLI usage. 
+Refer to the [examples](#examples) section below for full example with CLI usage.
 
 ### Programmatic Usage
 
@@ -170,6 +119,59 @@ import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
 ```
 
 **TODO: Example project on programmatic usage.**
+
+## Configuration
+
+1.  [Sync Configuration](#1-sync-configuration)
+2.  [Database Connections](#2-database-connections)
+
+### 1. Sync Configuration
+
+sync-db expects the configuration file `sync-db.yml` to be present in your working directory. This holds all your configurations.
+
+**sync-db.yml**
+
+```yml
+# Base path for the SQL source files.
+basePath: /path/to/sql
+
+sql:
+  - schema/<schema_name>.sql
+  - function/<schema_name>/<function_name>.sql
+  - procedure/<schema_name>/<procedure_name>.sql
+```
+
+#### Configuration Options
+
+- **`basePath`** `(string)` - Base directory to hold all your SQL source files (default: "src/sql").
+- **`sql`** `(array)` - A series of SQL file paths that are to be run in ordered sequence (top to bottom), based on dependency. It should be noted that the source files needs to follow this convention of [directory hierarchy](docs/sql.md).
+  File paths listed here are relative to `basePath` value.
+
+### 2. Database Connections
+
+Database connections are configured in `connections-sync-db.json` file in your project root directory as shown below.
+
+Since it contains all your database credentails, it is recommended that you **DO NOT COMMIT** it to VCS.
+
+**connections-sync-db.json**
+
+```json
+{
+  "connections": [
+    {
+      "id": "db1",
+      "host": "localhost",
+      "port": 1433,
+      "user": "db1user",
+      "database": "db1",
+      "password": "password",
+      "client": "mssql"
+    }
+  ]
+}
+```
+
+Note: The `connections` key expects an array, so you can also provide multiple databases and `sync-db` ensures your configured db objects are synced across all these databases.
 
 #### Caveat
 
