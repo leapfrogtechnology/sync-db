@@ -44,11 +44,33 @@ $ yarn add mssql
 
 This utility uses [Knex](http://knexjs.org/) under the hood so these are the [supported drivers](http://knexjs.org/#Installation-node).
 
-## Configurations
-### Configuring Connections
+## Configuration
+ 1. [Sync Configuration](#1-sync-configuration)
+ 2. [Database Connections](#2-database-connections)
 
-You'll need a `connections-sync-db.json` file in your project folder as shown below with all the databases connections.
 
+### 1. Sync Configuration
+sync-db expects the configuration file `sync-db.yml` to be present in your working directory. This holds all your configurations.
+
+**sync-db.yml**
+```yml
+# Base path for the SQL source files.
+# If omitted, "src/sql" will be the default base path.
+basePath: /path/to/sql
+
+sql:
+  - schema/<schema_name>.sql
+  - function/<schema_name>/<function_name>.sql
+  - procedure/<schema_name>/<procedure_name>.sql
+```
+
+### 2. Database Connections
+
+Database connections are configured in `connections-sync-db.json` file in your project root directory as shown below.
+
+Since it contains all your database credentails, it is recommended that you do not commit it to VCS. 
+
+**connections-sync-db.json**
 ```json
 {
   "connections": [
@@ -60,19 +82,12 @@ You'll need a `connections-sync-db.json` file in your project folder as shown be
       "database": "db1",
       "password": "password",
       "client": "mssql"
-    },
-    {
-      "id": "db2",
-      "host": "localhost",
-      "port": 1433,
-      "user": "db2user",
-      "database": "db2",
-      "password": "password",
-      "client": "mssql"
     }
   ]
 }
 ```
+
+Note: The `connections` key expects an array, so you can also provide multiple databases and `sync-db` ensures your configured db objects are synced across all these databases.
 
 ### Directory Structure
 
@@ -116,19 +131,6 @@ You'll need a `connections-sync-db.json` file in your project folder as shown be
 
 **Note: When procedures and functions aren't placed inside a schema folder, they are associated with the default schema.**
 
-2. Create `sync-db.yml` file in your project folder.
-
-```yml
-# Base path for the SQL source files.
-# If omitted, "src/sql" will be the default base path.
-basePath: /path/to/sql
-
-sql:
-  - schema/<schema_name>.sql
-  - function/<schema_name>/<function_name>.sql
-  - procedure/<schema_name>/<procedure_name>.sql
-```
-
 ## Usage
 
 You can use sync-db as a CLI tool as well as within your scripts.
@@ -144,7 +146,7 @@ $ sync-db --version
 @leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
 ```
 
-The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configurations](#configurations).
+The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configuration](#configuration).
 
 **CLI Options**
 
