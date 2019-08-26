@@ -19,30 +19,30 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
   return async (connection: Connection) => {
     const logDb = dbLogger(connection);
 
-    logDb(`Running setup on connection id: ${connection.config.id}`);
+    logDb(`Running setup on connection id: ${connection.getConfig().id}`);
 
     const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
     const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
-    await connection.instance.transaction(async trx => {
+    await connection.transaction(async t => {
       if (preMigrationScripts.length > 0) {
         const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
 
         logDb('PRE-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSequentially(preHookScripts, connection);
+        await sqlRunner.runSequentially(preHookScripts, t);
         logDb('PRE-SYNC: End');
       }
 
       // Run the migration scripts.
-      await sqlRunner.runSequentially(sqlScripts, connection);
+      await sqlRunner.runSequentially(sqlScripts, t);
 
       if (postMigrationScripts.length > 0) {
         const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
 
         logDb('POST-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSequentially(postHookScripts, connection);
+        await sqlRunner.runSequentially(postHookScripts, t);
         logDb('POST-SYNC: End');
       }
 
@@ -65,7 +65,7 @@ export function teardown(config: SyncConfig): (connection: Connection) => Promis
   return async (connection: Connection) => {
     const logDb = dbLogger(connection);
 
-    logDb(`Running rollback on connection id: ${connection.config.id}`);
+    logDb(`Running rollback on connection id: ${connection.getConfig().id}`);
 
     const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
 
