@@ -1,14 +1,13 @@
 import * as path from 'path';
-import * as Knex from 'knex';
 import { reverse } from 'ramda';
 
 import * as fs from './util/fs';
 import { dbLogger } from './logger';
+import Connection from './Connection';
 import Mapping from './domain/Mapping';
 import SqlCode from './domain/SqlCode';
 import * as promise from './util/promise';
 import SqlFileInfo from './domain/SqlFileInfo';
-import ConnectionConfig from './domain/ConnectionConfig';
 import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
 
 /**
@@ -102,20 +101,18 @@ export function getDropStatement(type: string, fqon: string): string {
  * Run raw queries in the transaction sequentially.
  *
  * @param {SqlCode[]} files
- * @param {Knex.Transaction} trx
- * @param {ConnectionConfig} connectionConfig
+ * @param {Connection} connection
  * @returns {Promise<void>}
  */
 export function runSequentially(
   files: SqlCode[],
-  trx: Knex.Transaction,
-  connectionConfig: ConnectionConfig
+  connection: Connection
 ): Promise<void> {
-  const logDb = dbLogger(connectionConfig);
+  const logDb = dbLogger(connection);
   const promises = files.map(file => {
     logDb(`Running ${file.name}`);
 
-    return trx.raw(file.sql);
+    return connection.instance.raw(file.sql);
   });
 
   return promise.runSequentially(promises);
@@ -125,16 +122,14 @@ export function runSequentially(
  * Rollback SQL files sequentially in reverse order of the file list.
  *
  * @param {SqlFileInfo[]} files
- * @param {Knex} db
- * @param {ConnectionConfig} connectionConfig
+ * @param {Connection} connection
  * @returns {Promise<void>}
  */
 export async function rollbackSequentially(
   files: SqlFileInfo[],
-  db: Knex,
-  connectionConfig: ConnectionConfig
+  connection: Connection
 ): Promise<void> {
-  const logDb = dbLogger(connectionConfig);
+  const logDb = dbLogger(connection);
   const sqlFiles = files.map(info => ({
     fqon: info.fqon,
     dropStatement: getDropStatement(info.type, info.fqon)
@@ -143,7 +138,7 @@ export async function rollbackSequentially(
   for (const sql of reverse(sqlFiles)) {
     logDb(`Rolling back: ${sql.fqon}`);
 
-    await db.raw(sql.dropStatement);
+    await connection.instance.raw(sql.dropStatement);
 
     logDb('Executed: ', sql.dropStatement);
   }

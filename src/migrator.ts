@@ -1,11 +1,11 @@
+import * as Knex from 'knex';
+
 import Connection from './Connection';
 import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
-import { isConnectionInstance } from './util/db';
 import ConnectionConfig from './domain/ConnectionConfig';
-import ConnectionInstance from './domain/ConnectionInstance';
 
 /**
  * Migrate SQL on a database.
@@ -17,7 +17,7 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
   const { basePath, hooks, sql } = config;
 
   return async (connection: Connection) => {
-    const logDb = dbLogger(connection.config);
+    const logDb = dbLogger(connection);
 
     logDb(`Running setup on connection id: ${connection.config.id}`);
 
@@ -30,19 +30,19 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
 
         logDb('PRE-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSequentially(preHookScripts, trx, connection.config);
+        await sqlRunner.runSequentially(preHookScripts, connection);
         logDb('PRE-SYNC: End');
       }
 
       // Run the migration scripts.
-      await sqlRunner.runSequentially(sqlScripts, trx, connection.config);
+      await sqlRunner.runSequentially(sqlScripts, connection);
 
       if (postMigrationScripts.length > 0) {
         const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
 
         logDb('POST-SYNC: Begin');
         // Run the pre hook scripts
-        await sqlRunner.runSequentially(postHookScripts, trx, connection.config);
+        await sqlRunner.runSequentially(postHookScripts, connection);
         logDb('POST-SYNC: End');
       }
 
@@ -63,14 +63,13 @@ export function teardown(config: SyncConfig): (connection: Connection) => Promis
   const { basePath, sql } = config;
 
   return async (connection: Connection) => {
-    const logDb = dbLogger(connection.config);
+    const logDb = dbLogger(connection);
 
     logDb(`Running rollback on connection id: ${connection.config.id}`);
 
-    const db = connection.instance;
     const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
 
-    await sqlRunner.rollbackSequentially(fileInfoList, db, connection.config);
+    await sqlRunner.rollbackSequentially(fileInfoList, connection);
 
     logDb('Finished running rollback');
   };
@@ -80,22 +79,22 @@ export function teardown(config: SyncConfig): (connection: Connection) => Promis
  * Synchronize database.
  *
  * @param {SyncConfig} config
- * @param {ConnectionConfig[] | ConnectionInstance[] | ConnectionConfig | ConnectionInstance} connections
+ * @param {ConnectionConfig[] | Knex[] | ConnectionConfig | Knex} connections
  * @param {SyncParams} params
  */
 export async function synchronize(
   config: SyncConfig,
-  conn: ConnectionConfig[] | ConnectionInstance[] | ConnectionConfig | ConnectionInstance,
+  conn: ConnectionConfig[] | Knex[] | ConnectionConfig | Knex,
   params: SyncParams
 ) {
   log('Starting to synchronize.');
   const connArr = Array.isArray(conn) ? conn : [conn];
 
   const connections = connArr.map(con => {
-    if (isConnectionInstance(con)) {
+    if (Connection.isKnexInstance(con)) {
       log(`Received connection instance to database: ${con.client.config.connection.database}`);
 
-      return Connection.withInstance(con);
+      return Connection.withKnex(con);
     }
 
     log(`Received connection config to database: ${con.database}`);
@@ -113,11 +112,11 @@ export async function synchronize(
 /**
  * Synchronize a specific database.
  *
- * @param {ConnectionConfig} connection
+ * @param {Connection} connection
  * @param {SyncConfig} config
  */
 async function syncDatabase(connection: Connection, config: SyncConfig) {
-  const logDb = dbLogger(connection.config);
+  const logDb = dbLogger(connection);
 
   logDb('Synchronize database');
 

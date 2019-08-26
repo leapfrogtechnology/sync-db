@@ -1,7 +1,7 @@
 import * as debug from 'debug';
 
-import ConnectionConfig from './domain/ConnectionConfig';
+import Connection from './Connection';
 
 export const SYNC_DB = 'sync-db';
 export const log = debug(SYNC_DB);
-export const dbLogger = (db: ConnectionConfig) => log.extend(db.id || db.database);
+export const dbLogger = (conn: Connection) => log.extend(conn.config.id || conn.config.database);
