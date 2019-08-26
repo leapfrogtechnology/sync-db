@@ -68,7 +68,7 @@ sql:
 
 Database connections are configured in `connections-sync-db.json` file in your project root directory as shown below.
 
-Since it contains all your database credentails, it is recommended that you do not commit it to VCS. 
+Since it contains all your database credentails, it is recommended that you **DO NOT COMMIT** it to VCS. 
 
 **connections-sync-db.json**
 ```json
@@ -88,48 +88,6 @@ Since it contains all your database credentails, it is recommended that you do n
 ```
 
 Note: The `connections` key expects an array, so you can also provide multiple databases and `sync-db` ensures your configured db objects are synced across all these databases.
-
-### Directory Structure
-
-1. The SQL codebase containing all your database objects need to follow the following directory structure.
-
-```
- └─ sql
-    ├─ schema
-    │  ├─ schema1.sql
-    │  ├─ schema2.sql
-    │  ├─ schema3.sql
-    │  └─ ...
-    │
-    ├─ function
-    │  ├─ schema1
-    │  │  ├─ function1.sql
-    │  │  ├─ function2.sql
-    │  │  └─ ...
-    │  ├─ schema2
-    │  │  ├─ function3.sql
-    │  │  ├─ function4.sql
-    │  │  └─ ...
-    │  ├─ function5.sql
-    │  └─ ...
-    │
-    ├─ procedure
-    │  ├─ schema1
-    │  │  ├─ procedure1.sql
-    │  │  ├─ procedure2.sql
-    │  │  └─ ...
-    │  ├─ schema2
-    │  │  ├─ procedure3.sql
-    │  │  ├─ procedure4.sql
-    │  │  └─ ...
-    │  ├─ procedure5.sql
-    │  └─ ...
-    │
-    └─...
-
-```
-
-**Note: When procedures and functions aren't placed inside a schema folder, they are associated with the default schema.**
 
 ## Usage
 
