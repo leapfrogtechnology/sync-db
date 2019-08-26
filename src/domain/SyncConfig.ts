@@ -1,7 +1,7 @@
 /**
- * Configuration.
+ * Interface for synchronization configuration sycn-db.yml.
  */
-interface Configuration {
+interface SyncConfig {
   basePath: string;
   sql: string[];
   hooks: {
@@ -10,4 +10,4 @@ interface Configuration {
   };
 }
 
-export default Configuration;
+export default SyncConfig;

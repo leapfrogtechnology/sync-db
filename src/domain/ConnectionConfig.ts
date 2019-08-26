@@ -1,10 +1,19 @@
-import Connection from './Connection'
+import * as Knex from 'knex';
 
 /**
- * Interface for sync-db connection file (connections.sync-db.json).
+ * Database connection configuration.
  */
-interface ConnectionConfig {
-  connections: Connection[];
-}
+type KnexConnections = Knex.ConnectionConfig
+  & Knex.MariaSqlConnectionConfig
+  & Knex.MySqlConnectionConfig
+  & Knex.MsSqlConnectionConfig
+  & Knex.SocketConnectionConfig
+  & Knex.Sqlite3ConnectionConfig;
+
+type ConnectionConfig = KnexConnections
+  & {
+    id?: string;
+    client: string;
+  };
 
 export default ConnectionConfig;

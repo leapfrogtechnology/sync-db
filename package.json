@@ -28,7 +28,8 @@
   "contributors": [
     "Kabir Baidhya <kabirbaidhya@gmail.com>",
     "Saugat Acharya <mesaugat@gmail.com>",
-    "Shraday Shakya <shradayshakya@gmail.com>"
+    "Shraday Shakya <shradayshakya@gmail.com>",
+    "Safal Raj Pandey <safal.pandey.sp@gmail.com>"
   ],
   "scripts": {
     "posttest": "tslint -p test -t stylish",
