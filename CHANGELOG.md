@@ -1,5 +1,13 @@
 # Change Log
 
+## [v1.0.0-alpha.4](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.4) (2019-08-27)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.3...v1.0.0-alpha.4)
+
+**Changes**
+
+- Configure Travis CI for running tests [\#13](https://github.com/leapfrogtechnology/sync-db/pull/13) [[test](https://github.com/leapfrogtechnology/sync-db/labels/test)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Simplify programmatic usage and documentation [\#11](https://github.com/leapfrogtechnology/sync-db/pull/11) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[programmatic-api](https://github.com/leapfrogtechnology/sync-db/labels/programmatic-api)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+
 ## [v1.0.0-alpha.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.3) (2019-08-26)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.2...v1.0.0-alpha.3)
 
