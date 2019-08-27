@@ -8,35 +8,45 @@ Command line utility to synchronize and version control relational database obje
 [![LICENSE](https://img.shields.io/github/license/leapfrogtechnology/sync-db.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db#contributing)
 
-## Setup
+## Installation
 
-### Installation
-
-You can install it using `npm` or `yarn`.
+**Using npm:**
 
 ```bash
-$ npm install @leapfrogtechnology/sync-db
-# OR
-$ yarn add @leapfrogtechnology/sync-db
+$ npm install @leapfrogtechnology/sync-db # local installation
 ```
 
-You can install it globally too.
+**Using yarn:**
 
 ```bash
-$ npm install -g @leapfrogtechnology/sync-db
-# OR
-$ yarn global add @leapfrogtechnology/sync-db
+$ yarn add @leapfrogtechnology/sync-db # local installation
 ```
 
-Verify the installation.
+You can install it globally as well.
+
+```bash
+$ npm install -g @leapfrogtechnology/sync-db # global installation
+```
+
+Check your installation with the command below.
 
 ```bash
 $ sync-db --version
+@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
 ```
 
-Additionally, you'll need to install the database driver specific to your project.
+In case of local installation, you can verify using `npx`:
 
-For instance - if you're using MSSQL, you can do:
+```bash
+$ npx sync-db --version
+@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
+```
+
+### Drivers Installation
+
+You'll need to install the database driver specific to your project separately.
+
+For instance - if your project uses MSSQL, you will need to do:
 
 ```
 $ yarn add mssql
@@ -44,9 +54,111 @@ $ yarn add mssql
 
 This utility uses [Knex](http://knexjs.org/) under the hood so these are the [supported drivers](http://knexjs.org/#Installation-node).
 
-### Configuring Connections
+## Usage
 
-You'll need a `connections-sync-db.json` file in your project folder as shown below with all the databases connections.
+You can use `sync-db` both as a CLI utility and programmatically.
+
+### CLI
+
+When installed globally, you can invoke the CLI directly.
+
+The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configuration](#configuration).
+
+**CLI Options**
+
+Below shown are the available CLI options , which is also the output printed by `sync-db --help`.
+
+```
+Synchronize database
+
+USAGE
+  $ sync-db
+
+OPTIONS
+  -f, --force    Force synchronization
+  -h, --help     Print help information
+  -v, --version  Print version
+```
+
+Refer to the [examples](#examples) section below for full example with CLI usage.
+
+### Programmatic Usage
+
+You may use programmatic API as shown below in case you need better flexibility based on your needs.
+
+```ts
+import { synchronize, loadConfig, resolveConnections } from '@leapfrogtechnology/sync-db';
+
+(async () => {
+  const config = await loadConfig(); // Load sync-db.yml
+  const connections = await resolveConnections(); // Load connections.sync-db.json
+
+  // Invoke the command.
+  await synchronize(config, connections);
+})();
+```
+
+You can also pass your own database connection (eg: Knex connection) instead of resolving `connections.sync-db.json` file.
+
+```ts
+import * as Knex from 'knex';
+import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
+
+(async () => {
+  const config = await loadConfig(); // Load sync-db.yml
+  const connection = Knex({
+    // Your Knex connection instance.
+    client: 'mssql',
+    connection: {
+      host: 'host',
+      user: 'userName',
+      password: 'password',
+      database: 'dbName'
+    }
+  });
+  const options = { force: false };
+
+  // Invoke the command.
+  await synchronize(config, connection, options);
+})();
+```
+
+**TODO: Example project on programmatic usage.**
+
+## Configuration
+
+1.  [Sync Configuration](#1-sync-configuration)
+2.  [Database Connections](#2-database-connections)
+
+### 1. Sync Configuration
+
+sync-db expects the configuration file `sync-db.yml` to be present in your working directory. This holds all your configurations.
+
+**sync-db.yml**
+
+```yml
+# Base path for the SQL source files.
+basePath: /path/to/sql
+
+sql:
+  - schema/<schema_name>.sql
+  - function/<schema_name>/<function_name>.sql
+  - procedure/<schema_name>/<procedure_name>.sql
+```
+
+#### Configuration Options
+
+- **`basePath`** `(string)` - Base directory to hold all your SQL source files (default: "src/sql").
+- **`sql`** `(array)` - A series of SQL file paths that are to be run in ordered sequence (top to bottom), based on dependency. It should be noted that the source files needs to follow this convention of [directory hierarchy](docs/sql.md).
+  File paths listed here are relative to `basePath` value.
+
+### 2. Database Connections
+
+Database connections are configured in `connections-sync-db.json` file in your project root directory as shown below.
+
+Since it contains all your database credentails, it is recommended that you **DO NOT COMMIT** it to VCS.
+
+**connections-sync-db.json**
 
 ```json
 {
@@ -59,162 +171,28 @@ You'll need a `connections-sync-db.json` file in your project folder as shown be
       "database": "db1",
       "password": "password",
       "client": "mssql"
-    },
-    {
-      "id": "db2",
-      "host": "localhost",
-      "port": 1433,
-      "user": "db2user",
-      "database": "db2",
-      "password": "password",
-      "client": "mssql"
     }
   ]
 }
 ```
 
-### Directory Structure
-
-1. The SQL codebase containing all your database objects need to follow the following directory structure.
-
-```
- └─ sql
-    ├─ schema
-    │  ├─ schema1.sql
-    │  ├─ schema2.sql
-    │  ├─ schema3.sql
-    │  └─ ...
-    │
-    ├─ function
-    │  ├─ schema1
-    │  │  ├─ function1.sql
-    │  │  ├─ function2.sql
-    │  │  └─ ...
-    │  ├─ schema2
-    │  │  ├─ function3.sql
-    │  │  ├─ function4.sql
-    │  │  └─ ...
-    │  ├─ function5.sql
-    │  └─ ...
-    │
-    ├─ procedure
-    │  ├─ schema1
-    │  │  ├─ procedure1.sql
-    │  │  ├─ procedure2.sql
-    │  │  └─ ...
-    │  ├─ schema2
-    │  │  ├─ procedure3.sql
-    │  │  ├─ procedure4.sql
-    │  │  └─ ...
-    │  ├─ procedure5.sql
-    │  └─ ...
-    │
-    └─...
-
-```
-
-**Note: When procedures and functions aren't placed inside a schema folder, they are associated with the default schema.**
-
-2. Create `sync-db.yml` file in your project folder.
-
-```yml
-# Base path for the SQL source files.
-# If omitted, "src/sql" will be the default base path.
-basePath: /path/to/sql
-
-sql:
-  - schema/<schema_name>.sql
-  - function/<schema_name>/<function_name>.sql
-  - procedure/<schema_name>/<procedure_name>.sql
-```
-
-## Usage
-
-You can use sync-db as a CLI tool as well as within your scripts.
-
-### CLI
-
-When installed globally, you can just invoke the CLI directly.
-
-```bash
-$ sync-db
-```
-
-For local installation you can trigger it with [`npx`](https://www.npmjs.com/package/npx).
-```
-$ npx sync-db
-```
-
-#### Using npm script
-
-You can also add a script into your project's `package.json` file like this:
-
-```json
-{
-  "scripts": {
-    "sync-db": "sync-db"
-  }
-}
-```
-
-This allows you to trigger `sync-db` like this:
-
-```bash
-$ yarn sync-db
-```
-Or,
-```bash
-$ npm run sync-db
-```
-
-### Programmatic usage
-
-Use sync-db's `synchronize` function within your `ts` scripts. You can use `synchronize` as follows:
-
-```ts
-import * as Knex from 'knex';
-
-import { loadConfig } from '@leapfrogtechnology/sync-db/lib/config';
-import { synchronize } from '@leapfrogtechnology/sync-db/lib/migrator';
-
-(async () => {
-  // Load sync-db.yml
-  const config = await loadConfig();
-
-  const db = Knex({
-    client: 'mssql',
-    connection: {
-      host: 'host',
-      port: 'dbPort',
-      user: 'userName',
-      password: 'password',
-      database: 'dbName'
-    }
-  });
-
-  // Rollback and create all db objects using config.
-  await synchronize(config, db, { force: false });
-
-  // Perform other db operations
-  // ...
-})();
-```
+Note: The `connections` key expects an array, so you can also provide multiple databases and `sync-db` ensures your configured db objects are synced across all these databases.
 
 #### Caveat
 
-Setup and Teardown steps aren't always run within a single transaction. **You need to specifically pass a trx object to make sure this happens.**
+Setup and Teardown steps aren't always run within a single transaction. **You need to pass the transaction instance object explicitly to make sure this happens.**
 
 ```ts
 await db.transaction(async trx => {
   // Rollback and create all db objects using config.
-  await synchronize(config, (trx as any), { force: false });
+  await synchronize(config, trx, { force: false });
 
   // Perform other db operations
   // ...
 });
 ```
 
-## Sample Projects
+## Examples
 
 1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
 
