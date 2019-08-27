@@ -4,11 +4,11 @@ This utility expects all your database scripts and objects (schemas, views, proc
 
 Additionally, your sql source files are expected to follow the opinionated [directory structure](#directory-structure) as shown below under the sql base directory.
 
-By default the sql base directory i.e `basePath` is `src/sql` unless changed via [configuration](..#configuration).
+By default the sql base directory i.e `basePath` is `src/sql` unless changed via [configuration](../README.md#configuration).
 
 ## Directory Structure
 
-The SQL source directory directory structure.
+The SQL source directory structure.
 
 ```
  └─ sql

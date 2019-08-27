@@ -52,7 +52,7 @@ This utility uses [Knex](http://knexjs.org/) under the hood so these are the [su
 
 ## Usage
 
-You can use sync-db as a CLI tool as well as within your scripts.
+You can use `sync-db` both as a CLI utility and programmatically.
 
 ### CLI
 
