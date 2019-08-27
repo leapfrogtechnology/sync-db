@@ -164,9 +164,6 @@ Setup and Teardown steps aren't always run within a single transaction. **You ne
 await db.transaction(async trx => {
   // Rollback and create all db objects using config.
   await synchronize(config, trx, { force: false });
-
-  // Perform other db operations
-  // ...
 });
 ```
 
