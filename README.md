@@ -8,33 +8,41 @@ Command line utility to synchronize and version control relational database obje
 [![LICENSE](https://img.shields.io/github/license/leapfrogtechnology/sync-db.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db#contributing)
 
-## Setup
+## Installation
 
-You can install it using `npm` or `yarn`.
-
-```bash
-$ npm install @leapfrogtechnology/sync-db
-# OR
-$ yarn add @leapfrogtechnology/sync-db
-```
-
-You can install it globally too.
+**Using npm:**
 
 ```bash
-$ npm install -g @leapfrogtechnology/sync-db
-# OR
-$ yarn global add @leapfrogtechnology/sync-db
+$ npm install @leapfrogtechnology/sync-db # local installation
 ```
 
-Verify the installation.
+**Using yarn:**
+
+```bash
+$ yarn add @leapfrogtechnology/sync-db # local installation
+```
+
+You can install it globally as well.  
+```bash
+$ npm install -g @leapfrogtechnology/sync-db # global installation
+```
+
+Check your installation with the command below that prints the version installed.
 
 ```bash
 $ sync-db --version
+@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
+```
+In case of local installation, you can verify using `npx`:
+```bash
+$ npx sync-db --version
+@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
 ```
 
-Additionally, you'll need to install the database driver specific to your project.
+### Drivers Installation
+You'll need to install the database driver specific to your project separately.
 
-For instance - if you're using MSSQL, you can do:
+For instance - if your project uses MSSQL, you will need to do:
 
 ```
 $ yarn add mssql
@@ -49,13 +57,6 @@ You can use sync-db as a CLI tool as well as within your scripts.
 ### CLI
 
 When installed globally, you can invoke the CLI directly.
-
-Check your installation with `sync-db --version` that prints the version installed.
-
-```
-$ sync-db --version
-@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
-```
 
 The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configuration](#configuration).
 
@@ -180,7 +181,7 @@ Setup and Teardown steps aren't always run within a single transaction. **You ne
 ```ts
 await db.transaction(async trx => {
   // Rollback and create all db objects using config.
-  await synchronize(config, trx as any, { force: false });
+  await synchronize(config, trx, { force: false });
 
   // Perform other db operations
   // ...
