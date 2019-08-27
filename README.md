@@ -22,24 +22,28 @@ $ npm install @leapfrogtechnology/sync-db # local installation
 $ yarn add @leapfrogtechnology/sync-db # local installation
 ```
 
-You can install it globally as well.  
+You can install it globally as well.
+
 ```bash
 $ npm install -g @leapfrogtechnology/sync-db # global installation
 ```
 
-Check your installation with the command below that prints the version installed.
+Check your installation with the command below.
 
 ```bash
 $ sync-db --version
 @leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
 ```
+
 In case of local installation, you can verify using `npx`:
+
 ```bash
 $ npx sync-db --version
 @leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
 ```
 
 ### Drivers Installation
+
 You'll need to install the database driver specific to your project separately.
 
 For instance - if your project uses MSSQL, you will need to do:
@@ -176,7 +180,7 @@ Note: The `connections` key expects an array, so you can also provide multiple d
 
 #### Caveat
 
-Setup and Teardown steps aren't always run within a single transaction. **You need to specifically pass a trx object to make sure this happens.**
+Setup and Teardown steps aren't always run within a single transaction. **You need to pass the transaction instance object explicitly to make sure this happens.**
 
 ```ts
 await db.transaction(async trx => {

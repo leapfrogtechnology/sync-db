@@ -46,4 +46,4 @@ The SQL source directory structure.
 
 ```
 
-**Note: When the object sql files aren't placed under the directories named after the schema, they are associated with the default schema.**
+**Note: When the SQL files aren't placed under the schema directories, they are associated with the default schema.**
