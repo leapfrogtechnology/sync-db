@@ -13,33 +13,13 @@ Command line utility to synchronize and version control relational database obje
 **Using npm:**
 
 ```bash
-$ npm install @leapfrogtechnology/sync-db # local installation
+$ npm install @leapfrogtechnology/sync-db
 ```
 
-**Using yarn:**
+You can install it **globally** as well.
 
 ```bash
-$ yarn add @leapfrogtechnology/sync-db # local installation
-```
-
-You can install it globally as well.
-
-```bash
-$ npm install -g @leapfrogtechnology/sync-db # global installation
-```
-
-Check your installation with the command below.
-
-```bash
-$ sync-db --version
-@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
-```
-
-In case of local installation, you can verify using `npx`:
-
-```bash
-$ npx sync-db --version
-@leapfrogtechnology/sync-db/1.0.0-alpha.3 linux-x64 node-v8.15.1
+$ npm install -g @leapfrogtechnology/sync-db
 ```
 
 ### Drivers Installation
@@ -122,8 +102,6 @@ import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
   await synchronize(config, connection, options);
 })();
 ```
-
-**TODO: Example project on programmatic usage.**
 
 ## Configuration
 
