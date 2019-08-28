@@ -1,7 +1,7 @@
 {
   "name": "@leapfrogtechnology/sync-db",
   "description": "Command line utility to synchronize and version control relational database objects across databases",
-  "version": "1.0.0-alpha.5",
+  "version": "1.0.0-alpha.6",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -45,7 +45,7 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
     "debug": "^4.1.1",
-    "knex": "^0.19.0",
+    "knex": "0.16.3",
     "ramda": "^0.26.1",
     "tslib": "^1",
     "yamljs": "^0.3.0"
