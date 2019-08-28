@@ -1,10 +1,11 @@
+import * as Knex from 'knex';
+
 import Connection from './Connection';
 import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
-import DbConnectionInstance from './domain/DbConnectionInstance';
 
 /**
  * Migrate SQL on a database.
@@ -78,12 +79,12 @@ export function teardown(config: SyncConfig): (connection: Connection) => Promis
  * Synchronize database.
  *
  * @param {SyncConfig} config
- * @param {ConnectionConfig[] | DbConnectionInstance[] | ConnectionConfig | DbConnectionInstance} conn
+ * @param {ConnectionConfig[] | ConnectionConfig | Knex[] | Knex} conn
  * @param {SyncParams} params
  */
 export async function synchronize(
   config: SyncConfig,
-  conn: ConnectionConfig[] | DbConnectionInstance[] | ConnectionConfig | DbConnectionInstance,
+  conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   params?: SyncParams
 ) {
   log('Starting to synchronize.');

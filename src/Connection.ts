@@ -1,7 +1,6 @@
 import * as Knex from 'knex';
 
 import ConnectionConfig from './domain/ConnectionConfig';
-import DbConnectionInstance from './domain/DbConnectionInstance';
 import RawBindingParams, { ValueMap } from './domain/RawBingingParams';
 
 /**
@@ -30,7 +29,7 @@ class Connection {
    * @param {any} obj
    * @returns {boolean}
    */
-  public static isKnexInstance(obj: any): obj is DbConnectionInstance {
+  public static isKnexInstance(obj: any): obj is Knex {
     return !!(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
   }
 
