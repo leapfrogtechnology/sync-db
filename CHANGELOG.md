@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.0.0-alpha.5](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.5) (2019-08-28)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.4...v1.0.0-alpha.5)
+
+**Implemented enhancements:**
+
+- Support knex transactions in synchronize [\#15](https://github.com/leapfrogtechnology/sync-db/pull/15) [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] ([SafalPandey](https://github.com/SafalPandey))
+
 ## [v1.0.0-alpha.4](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.4) (2019-08-27)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.3...v1.0.0-alpha.4)
 
