@@ -78,7 +78,7 @@ export function teardown(config: SyncConfig): (connection: Connection) => Promis
  * Synchronize database.
  *
  * @param {SyncConfig} config
- * @param {ConnectionConfig[] | DbConnectionInstance[] | ConnectionConfig | DbConnectionInstance} connections
+ * @param {ConnectionConfig[] | DbConnectionInstance[] | ConnectionConfig | DbConnectionInstance} conn
  * @param {SyncParams} params
  */
 export async function synchronize(
