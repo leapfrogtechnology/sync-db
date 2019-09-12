@@ -1,6 +1,6 @@
 {
-  "cache": false,
   "extends": "@istanbuljs/nyc-config-typescript",
+  "cache": false,
   "sourceMap": true,
   "all": true,
   "instrument": true,
