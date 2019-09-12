@@ -1,0 +1,11 @@
+{
+  "cache": false,
+  "sourceMap": true,
+  "all": true,
+  "instrument": true,
+  "reporter": [
+    "lcov",
+    "text",
+    "text-summary"
+  ]
+}
