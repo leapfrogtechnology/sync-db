@@ -36,6 +36,7 @@
     "build": "rm -rf lib && tsc -b",
     "prepack": "yarn build",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "test:coverage": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
     "watch": "tsc --watch",
     "changelog": "./release.sh changelog",
     "release": "./release.sh bump"
