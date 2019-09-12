@@ -62,6 +62,7 @@
     "@types/ramda": "^0.26.12",
     "@types/yamljs": "^0.2.30",
     "chai": "^4",
+    "codecov": "^3.5.0",
     "mocha": "^5",
     "nyc": "^13",
     "ts-node": "^8",
