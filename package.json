@@ -34,6 +34,7 @@
   "scripts": {
     "posttest": "tslint -p test -t stylish",
     "build": "rm -rf lib && tsc -b",
+    "codecov": "codecov",
     "prepack": "yarn build",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "test:coverage": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
