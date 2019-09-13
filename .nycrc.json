@@ -3,6 +3,9 @@
   "include": [
     "src"
   ],
+  "require": [
+    "ts-node/register"
+  ],
   "cache": false,
   "sourceMap": true,
   "all": true,
