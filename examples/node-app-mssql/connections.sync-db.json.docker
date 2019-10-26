@@ -1,0 +1,13 @@
+{
+  "connections": [
+    {
+      "id": "db1",
+      "host": "mssql",
+      "port": 1433,
+      "user": "sa",
+      "database": "master",
+      "password": "password",
+      "client": "mssql"
+    }
+  ]
+}
