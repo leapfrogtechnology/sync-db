@@ -4,6 +4,6 @@ WORKDIR /app/
 
 COPY . .
 
-RUN yarn && yarn sync-db
+RUN yarn
 
-CMD ["yarn", "start"]
+CMD ["yarn", "docker-start"]
