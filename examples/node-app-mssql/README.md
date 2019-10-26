@@ -52,11 +52,20 @@ Current date time: 2019-08-02T09:29:24.730Z
 ```
 
 ## Docker
+
 Set `DB_PASSWORD` (password for `SA` user) in environment. e.g 
 ```bash
 $ export DB_PASSWORD=Password@123
 ```
-Then
+
+Configure database connection(s) in the `connections.sync-db.json`. Use same `password` as `DB_PASSWORD`
+Note: `host` has to be the service name of docker container for `mssql`.
+
+```bash
+$ cp connections.sync-db.json.docker connections.sync-db.json
+```
+
+Then run (in order).
 ```bash
 $ docker-compose up mssql
 $ docker-compose up app
