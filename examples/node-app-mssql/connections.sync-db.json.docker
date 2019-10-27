@@ -6,7 +6,7 @@
       "port": 1433,
       "user": "sa",
       "database": "master",
-      "password": "password",
+      "password": "Password@123",
       "client": "mssql"
     }
   ]
