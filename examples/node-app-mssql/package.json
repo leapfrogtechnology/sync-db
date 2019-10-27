@@ -5,8 +5,7 @@
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
     "sync-db": "sync-db",
-    "start": "yarn lint && node src/index.js",
-    "docker-start": "yarn sync-db && yarn start"
+    "start": "yarn lint && node src/index.js"
   },
   "dependencies": {
     "@leapfrogtechnology/sync-db": "^1.0.0-alpha.4",

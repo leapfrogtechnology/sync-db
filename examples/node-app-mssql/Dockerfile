@@ -6,4 +6,4 @@ COPY . .
 
 RUN yarn
 
-CMD ["yarn", "docker-start"]
+CMD yarn sync-db && yarn start
