@@ -20,7 +20,7 @@ $ cp connections.sync-db.json.example connections.sync-db.json
 
 Create a configuration file `knexfile.ts` in the root directory.
 
-```
+```js
 import { connections } from "./connections.sync-db";
 
 module.exports = {
@@ -55,7 +55,7 @@ Now we'll create users table using knex built-in methods
 
 Example: `20191122122354_create_users_table.ts`
 
-```
+```js
 exports.up = function(knex, Promise) {
   return knex.schema.createTable("users", function(table) {
     table.increments();
