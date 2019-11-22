@@ -21,19 +21,19 @@ $ cp connections.sync-db.json.example connections.sync-db.json
 Create a configuration file `knexfile.ts` in the root directory.
 
 ```js
-import { connections } from "./connections.sync-db";
+import { connections } from './connections.sync-db';
 
 module.exports = {
-  client: "mssql",
+  client: 'mssql',
   connection: connections[0],
   migrations: {
-    directory: "./src/sql/migrations",
-    tableName: "knex_migrations"
+    directory: './src/sql/migrations',
+    tableName: 'knex_migrations'
   }
 };
 ```
 
-Let's add scripts to create, run and rollback migrations in `package.json` file
+Let's add scripts to create, run and rollback migrations in `package.json` file:
 
 ```
 "make": "knex --knexfile=knexfile.ts migrate:make -x ts",
@@ -49,35 +49,31 @@ Create a migration file for users table using the `make` script in `package.json
 $ yarn make create_users_table
 ```
 
-The above command will generate a migration script in `src/sql/migrations/`.
-
-Now we'll create users table using knex built-in methods
-
 Example: `20191122122354_create_users_table.ts`
 
 ```js
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable("users", function(table) {
+  return knex.schema.createTable('users', function(table) {
     table.increments();
-    table.string("email").notNullable();
-    table.string("password").notNullable();
-    table.timestamp("created_at").defaultTo(knex.fn.now());
-    table.timestamp("updated_at").defaultTo(knex.fn.now());
+    table.string('email').notNullable();
+    table.string('password').notNullable();
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
 };
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTable("users");
+  return knex.schema.dropTable('users');
 };
 ```
 
-Now we can run the below command performing a migration and updating our database:
+Run the command below to perform a migration:
 
 ```
 $ yarn migrate
 ```
 
-for rollback use
+For rollback:
 
 ```
 $ yarn rollback
