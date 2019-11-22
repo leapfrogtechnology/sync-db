@@ -16,70 +16,12 @@ Configure database connection(s) in the `connections.sync-db.json`.
 $ cp connections.sync-db.json.example connections.sync-db.json
 ```
 
-## Migrations
-
-Create a configuration file `knexfile.ts` in the root directory.
-
-```js
-import { connections } from './connections.sync-db';
-
-module.exports = {
-  client: 'mssql',
-  connection: connections[0],
-  migrations: {
-    directory: './src/sql/migrations',
-    tableName: 'knex_migrations'
-  }
-};
-```
-
-Let's add scripts to create, run and rollback migrations in `package.json` file:
-
-```
-"make": "knex --knexfile=knexfile.ts migrate:make -x ts",
-"migrate": "knex --knexfile=knexfile.ts migrate:latest",
-"rollback": "knex --knexfile=knexfile.ts migrate:rollback"
-```
-
-## Creating/Dropping Tables
-
-Create a migration file for users table using the `make` script in `package.json`. Run the following command from the root of the project:
-
-```
-$ yarn make create_users_table
-```
-
-Example: `20191122122354_create_users_table.ts`
-
-```js
-exports.up = function(knex, Promise) {
-  return knex.schema.createTable('users', function(table) {
-    table.increments();
-    table.string('email').notNullable();
-    table.string('password').notNullable();
-    table.timestamp('created_at').defaultTo(knex.fn.now());
-    table.timestamp('updated_at').defaultTo(knex.fn.now());
-  });
-};
-
-exports.down = function(knex, Promise) {
-  return knex.schema.dropTable('users');
-};
-```
+## Running
 
 Run the command below to perform a migration:
-
 ```
 $ yarn migrate
 ```
-
-For rollback:
-
-```
-$ yarn rollback
-```
-
-## Running
 
 Run `sync-db` to synchronize all database objects (views, functions, procedures, schemas, etc) in the configured database(s).
 
@@ -97,21 +39,37 @@ $ yarn start
 
 ```
 List of table names in the database:
-[ 'table1',
-  'table2',
-  'table3' ]
+ [ 'knex_migrations', 'knex_migrations_lock', 'users', 'tasks' ]
 
 List of user names in the database:
-[ 'user1',
-  'user2',
-  'user3' ]
+ [
+  'sa',
+  'public',
+  'sysadmin',
+  'securityadmin',
+  'serveradmin',
+  'setupadmin',
+  'processadmin',
+  'diskadmin',
+  'dbcreator',
+  'bulkadmin',
+  '##MS_SQLResourceSigningCertificate##',
+  '##MS_SQLReplicationSigningCertificate##',
+  '##MS_SQLAuthenticatorCertificate##',
+  '##MS_PolicySigningCertificate##',
+  '##MS_SmoExtendedSigningCertificate##',
+  '##MS_PolicyEventProcessingLogin##',
+  '##MS_PolicyTsqlExecutionLogin##',
+  '##MS_AgentSigningCertificate##',
+  'BUILTIN\\Administrators',
+  'NT AUTHORITY\\NETWORK SERVICE',
+  'NT AUTHORITY\\SYSTEM'
+]
 
 Calculations:
- { 'Sum of 6 and 7': 13,
-  'Product of 6 and 7': 42,
-  'Square of 6': 36 }
+ { 'Sum of 6 and 7': 13, 'Product of 6 and 7': 42, 'Square of 6': 36 }
 
-Current date time: 2019-08-02T09:29:24.730Z
+Current date time: 2019-11-22T11:52:29.237Z
 ```
 
 ## Docker
