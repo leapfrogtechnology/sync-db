@@ -19,6 +19,7 @@ $ cp connections.sync-db.json.example connections.sync-db.json
 ## Running
 
 Run the command below to perform a migration:
+
 ```
 $ yarn migrate
 ```

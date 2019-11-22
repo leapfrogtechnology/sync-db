@@ -1,7 +1,13 @@
 import * as Knex from 'knex';
 
+/**
+ * Create table `users`.
+ *
+ * @param {Knex} knex
+ * @returns {Promise<any>}
+ */
 export async function up(knex: Knex): Promise<any> {
-  return knex.schema.createTable('users', function (table) {
+  return knex.schema.createTable('users', table => {
     table.increments();
     table.string('email').notNullable();
     table.string('password').notNullable();
@@ -10,6 +16,12 @@ export async function up(knex: Knex): Promise<any> {
   });
 }
 
+/**
+ * Drop table `users`.
+ *
+ * @param {Knex} knex
+ * @returns {Promise<any>}
+ */
 export async function down(knex: Knex): Promise<any> {
   return knex.schema.dropTable('users');
 }

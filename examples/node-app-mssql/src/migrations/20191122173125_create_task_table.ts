@@ -1,7 +1,13 @@
 import * as Knex from 'knex';
 
+/**
+ * Create table `tasks`.
+ *
+ * @param knex
+ * @returns {Promise<any>}
+ */
 export async function up(knex: Knex): Promise<any> {
-  return knex.schema.createTable('tasks', function(table) {
+  return knex.schema.createTable('tasks', table => {
     table.increments();
     table.string('title').notNullable();
     table.string('description').notNullable();
@@ -18,6 +24,12 @@ export async function up(knex: Knex): Promise<any> {
   });
 }
 
+/**
+ * Drop table `tasks`.
+ *
+ * @param {Knex} knex
+ * @returns {Promise<any>}
+ */
 export async function down(knex: Knex): Promise<any> {
   return knex.schema.dropTable('tasks');
 }
