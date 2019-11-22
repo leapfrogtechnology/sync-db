@@ -5,7 +5,10 @@
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
     "sync-db": "sync-db",
-    "start": "yarn lint && node src/index.js"
+    "start": "yarn lint && node src/index.js",
+    "make": "knex --knexfile=knexfile.ts migrate:make -x ts",
+    "migrate": "knex --knexfile=knexfile.ts migrate:latest",
+    "rollback": "knex --knexfile=knexfile.ts migrate:rollback"
   },
   "dependencies": {
     "@leapfrogtechnology/sync-db": "^1.0.0-alpha.4",
