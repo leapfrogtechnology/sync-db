@@ -21,8 +21,7 @@ $ cp connections.sync-db.json.example connections.sync-db.json
 Create a configuration file `knexfile.ts` in the root directory.
 
 ```
-
-import { connections } from './connections.sync-db';
+import { connections } from "./connections.sync-db";
 
 module.exports = {
   client: "mssql",
@@ -34,7 +33,7 @@ module.exports = {
 };
 ```
 
-Let's create the scripts to create, run and rollback migrations in `package.json` file
+Let's add scripts to create, run and rollback migrations in `package.json` file
 
 ```
 "make": "knex --knexfile=knexfile.ts migrate:make -x ts",
@@ -44,13 +43,13 @@ Let's create the scripts to create, run and rollback migrations in `package.json
 
 ## Creating/Dropping Tables
 
-Let's create a migration file for user using the script. In the root of our project run the following commands
+Create a migration file for users table using the `make` script in `package.json`. Run the following command from the root of the project:
 
 ```
 $ yarn make create_users_table
 ```
 
-The above command will generate a migration script in `src/sql/migrations/`
+The above command will generate a migration script in `src/sql/migrations/`.
 
 Now we'll create users table using knex built-in methods
 
@@ -58,18 +57,18 @@ Example: `20191122122354_create_users_table.ts`
 
 ```
 exports.up = function(knex, Promise) {
-  return knex.schema.createTable('users', function(table) {
+  return knex.schema.createTable("users", function(table) {
     table.increments();
-    table.string('email').notNullable();
-    table.string('password').notNullable();
-    table.timestamp('created_at').defaultTo(knex.fn.now())
-    table.timestamp('updated_at').defaultTo(knex.fn.now())
-  })
-}
+    table.string("email").notNullable();
+    table.string("password").notNullable();
+    table.timestamp("created_at").defaultTo(knex.fn.now());
+    table.timestamp("updated_at").defaultTo(knex.fn.now());
+  });
+};
 
 exports.down = function(knex, Promise) {
-  return knex.schema.dropTable('users');
-}
+  return knex.schema.dropTable("users");
+};
 ```
 
 Now we can run the below command performing a migration and updating our database:
@@ -121,7 +120,7 @@ Current date time: 2019-08-02T09:29:24.730Z
 
 ## Docker
 
-Set `DB_PASSWORD` (password for `SA` user) in environment. e.g
+Set `DB_PASSWORD` (password for `SA` user) in environment. e.g.
 
 ```bash
 $ export DB_PASSWORD=Password@123
