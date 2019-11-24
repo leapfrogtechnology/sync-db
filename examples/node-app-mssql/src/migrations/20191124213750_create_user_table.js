@@ -1,12 +1,12 @@
-import * as Knex from 'knex';
-
 /**
- * Create table `users`.
+ * Create table `users`
  *
  * @param {Knex} knex
  * @returns {Promise<any>}
+ *
  */
-export async function up(knex: Knex): Promise<any> {
+
+exports.up = function(knex) {
   return knex.schema.createTable('users', table => {
     table.increments();
     table.string('email').notNullable();
@@ -14,14 +14,16 @@ export async function up(knex: Knex): Promise<any> {
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
-}
+};
 
 /**
- * Drop table `users`.
+ * Drop table `users`
  *
  * @param {Knex} knex
  * @returns {Promise<any>}
+ *
  */
-export async function down(knex: Knex): Promise<any> {
+
+exports.down = function(knex) {
   return knex.schema.dropTable('users');
-}
+};

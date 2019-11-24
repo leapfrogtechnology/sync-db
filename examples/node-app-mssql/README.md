@@ -40,7 +40,7 @@ $ yarn start
 
 ```
 List of table names in the database:
- [ 'knex_migrations', 'knex_migrations_lock', 'users', 'tasks' ]
+ [ 'users', 'tasks', 'knex_migrations', 'knex_migrations_lock' ]
 
 List of user names in the database:
  [
@@ -70,7 +70,7 @@ List of user names in the database:
 Calculations:
  { 'Sum of 6 and 7': 13, 'Product of 6 and 7': 42, 'Square of 6': 36 }
 
-Current date time: 2019-11-22T11:52:29.237Z
+Current date time: 2019-11-22T12:42:42.347Z
 ```
 
 ## Docker

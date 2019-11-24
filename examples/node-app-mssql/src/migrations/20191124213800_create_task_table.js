@@ -1,12 +1,12 @@
-import * as Knex from 'knex';
-
 /**
- * Create table `tasks`.
+ * Create table `tasks`
  *
- * @param knex
+ * @param {Knex} knex
  * @returns {Promise<any>}
+ *
  */
-export async function up(knex: Knex): Promise<any> {
+
+exports.up = function(knex) {
   return knex.schema.createTable('tasks', table => {
     table.increments();
     table.string('title').notNullable();
@@ -22,14 +22,16 @@ export async function up(knex: Knex): Promise<any> {
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
-}
+};
+
 
 /**
- * Drop table `tasks`.
+ * Drop table `tasks`
  *
  * @param {Knex} knex
  * @returns {Promise<any>}
  */
-export async function down(knex: Knex): Promise<any> {
+
+exports.down = function(knex) {
   return knex.schema.dropTable('tasks');
-}
+};

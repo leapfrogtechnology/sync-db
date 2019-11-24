@@ -1,4 +1,4 @@
-import { connections } from './connections.sync-db.json';
+const { connections } = require('./connections.sync-db.json');
 
 module.exports = {
   client: 'mssql',
