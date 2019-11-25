@@ -10,13 +10,19 @@ Install dependencies.
 $ yarn
 ```
 
-Configure database connection(s) in the `connections.sync-db.json`. 
+Configure database connection(s) in the `connections.sync-db.json`.
 
 ```bash
 $ cp connections.sync-db.json.example connections.sync-db.json
 ```
 
 ## Running
+
+Run the command below to perform a migration:
+
+```
+$ yarn migrate
+```
 
 Run `sync-db` to synchronize all database objects (views, functions, procedures, schemas, etc) in the configured database(s).
 
@@ -34,26 +40,43 @@ $ yarn start
 
 ```
 List of table names in the database:
-[ 'table1',
-  'table2',
-  'table3' ]
+ [ 'users', 'tasks', 'knex_migrations', 'knex_migrations_lock' ]
 
 List of user names in the database:
-[ 'user1',
-  'user2',
-  'user3' ]
+ [
+  'sa',
+  'public',
+  'sysadmin',
+  'securityadmin',
+  'serveradmin',
+  'setupadmin',
+  'processadmin',
+  'diskadmin',
+  'dbcreator',
+  'bulkadmin',
+  '##MS_SQLResourceSigningCertificate##',
+  '##MS_SQLReplicationSigningCertificate##',
+  '##MS_SQLAuthenticatorCertificate##',
+  '##MS_PolicySigningCertificate##',
+  '##MS_SmoExtendedSigningCertificate##',
+  '##MS_PolicyEventProcessingLogin##',
+  '##MS_PolicyTsqlExecutionLogin##',
+  '##MS_AgentSigningCertificate##',
+  'BUILTIN\\Administrators',
+  'NT AUTHORITY\\NETWORK SERVICE',
+  'NT AUTHORITY\\SYSTEM'
+]
 
 Calculations:
- { 'Sum of 6 and 7': 13,
-  'Product of 6 and 7': 42,
-  'Square of 6': 36 }
+ { 'Sum of 6 and 7': 13, 'Product of 6 and 7': 42, 'Square of 6': 36 }
 
-Current date time: 2019-08-02T09:29:24.730Z
+Current date time: 2019-11-22T12:42:42.347Z
 ```
 
 ## Docker
 
-Set `DB_PASSWORD` (password for `SA` user) in environment. e.g 
+Set `DB_PASSWORD` (password for `SA` user) in environment. e.g.
+
 ```bash
 $ export DB_PASSWORD=Password@123
 ```
@@ -66,6 +89,7 @@ $ cp connections.sync-db.json.docker connections.sync-db.json
 ```
 
 Then run (in order).
+
 ```bash
 $ docker-compose up mssql
 $ docker-compose up app
