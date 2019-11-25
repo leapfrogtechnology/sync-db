@@ -1,11 +1,8 @@
 /**
- * Create table `tasks`
- *
+ * Create table `tasks`.
  * @param {Knex} knex
  * @returns {Promise<any>}
- *
  */
-
 exports.up = function(knex) {
   return knex.schema.createTable('tasks', table => {
     table.increments();
@@ -24,14 +21,11 @@ exports.up = function(knex) {
   });
 };
 
-
 /**
- * Drop table `tasks`
- *
+ * Drop table `tasks`.
  * @param {Knex} knex
  * @returns {Promise<any>}
  */
-
 exports.down = function(knex) {
   return knex.schema.dropTable('tasks');
 };
