@@ -4,7 +4,7 @@
  * @param {Knex} knex
  * @returns {Promise<any>}
  */
-exports.up = function(knex) {
+export function up(knex) {
   return knex.schema.createTable('users', table => {
     table.increments();
     table.string('email').notNullable();
@@ -12,7 +12,7 @@ exports.up = function(knex) {
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
-};
+}
 
 /**
  * Drop table `users`.
@@ -20,6 +20,6 @@ exports.up = function(knex) {
  * @param {Knex} knex
  * @returns {Promise<any>}
  */
-exports.down = function(knex) {
+export function down(knex) {
   return knex.schema.dropTable('users');
-};
+}
