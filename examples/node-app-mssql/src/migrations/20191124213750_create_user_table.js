@@ -1,5 +1,6 @@
 /**
  * Create table `users`.
+ *
  * @param {Knex} knex
  * @returns {Promise<any>}
  */
@@ -15,6 +16,7 @@ exports.up = function(knex) {
 
 /**
  * Drop table `users`.
+ *
  * @param {Knex} knex
  * @returns {Promise<any>}
  */

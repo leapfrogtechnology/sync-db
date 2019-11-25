@@ -1,5 +1,6 @@
 /**
  * Create table `tasks`.
+ *
  * @param {Knex} knex
  * @returns {Promise<any>}
  */
@@ -23,6 +24,7 @@ exports.up = function(knex) {
 
 /**
  * Drop table `tasks`.
+ *
  * @param {Knex} knex
  * @returns {Promise<any>}
  */
