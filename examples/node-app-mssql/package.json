@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@leapfrogtechnology/sync-db": "^1.0.0-alpha.4",
-    "knex": "^0.19.2",
+    "knex": "^0.20.2",
     "mssql": "^5.1.0"
   },
   "license": "MIT",
