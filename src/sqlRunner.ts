@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { reverse } from 'ramda';
+import { reverse, keys } from 'ramda';
 
 import * as fs from './util/fs';
 import { dbLogger } from './logger';
@@ -94,7 +94,13 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 export function getDropStatement(type: string, fqon: string): string {
   const dropStatement = dropStatementsMap[type];
 
-  return dropStatement ? `${dropStatement} ${fqon}` : '';
+  if (!dropStatement) {
+    const message = `Naming convention must be one of: ${keys(dropStatementsMap)}.`;
+
+    throw new Error(`No database object type: ${type}. ${message}`);
+  }
+
+  return `${dropStatement} ${fqon}`;
 }
 
 /**
