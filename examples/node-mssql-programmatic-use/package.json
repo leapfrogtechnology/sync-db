@@ -1,0 +1,27 @@
+{
+  "name": "node-mssql-programmatic-use",
+  "description": "Sample project using Programmatic API.",
+  "scripts": {
+    "lint": "eslint src/index.js",
+    "lint:fix": "eslint --fix src/index.js",
+    "sync-db": "babel-node src/sync-db.js",
+    "start": "yarn lint && babel-node src/index.js",
+    "make": "knex --knexfile=knexfile.js migrate:make",
+    "migrate": "knex --knexfile=knexfile.js migrate:latest",
+    "rollback": "knex --knexfile=knexfile.js migrate:rollback"
+  },
+  "dependencies": {
+    "@leapfrogtechnology/sync-db": "^1.0.0-alpha.4",
+    "knex": "^0.19.2",
+    "mssql": "^5.1.0"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.7.4",
+    "@babel/node": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/register": "^7.7.4",
+    "eslint": "^6.2.2",
+    "eslint-config-leapfrog": "^2.0.1"
+  }
+}
