@@ -171,8 +171,7 @@ await db.transaction(async trx => {
 ## Examples
 
 1. [Node MSSQL Sample (JavaScript)](examples/node-app-mssql)
-2. [Node MSSQL Programmatic API (JavaScript)
-](examples/node-mssql-programmatic-use)
+2. [Node MSSQL Programmatic API (JavaScript)](examples/node-mssql-programmatic-use)
 
 ## Changelog
 
