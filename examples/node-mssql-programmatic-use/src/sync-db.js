@@ -1,4 +1,4 @@
-const { synchronize, loadConfig, resolveConnections } = require('@leapfrogtechnology/sync-db');
+import { synchronize, loadConfig, resolveConnections } from '@leapfrogtechnology/sync-db';
 
 (async function sync() {
   try {
