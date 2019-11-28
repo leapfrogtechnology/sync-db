@@ -8,6 +8,7 @@ import Mapping from './domain/Mapping';
 import SqlCode from './domain/SqlCode';
 import * as promise from './util/promise';
 import SqlFileInfo from './domain/SqlFileInfo';
+import ObjectTypeError from './util/ErrorHandler';
 import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
 
 /**
@@ -94,7 +95,10 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 export function getDropStatement(type: string, fqon: string): string {
   const dropStatement = dropStatementsMap[type];
 
-  return dropStatement ? `${dropStatement} ${fqon}` : '';
+  if (dropStatement) { return `${dropStatement} ${fqon}`; }
+
+  const message = `Naming convention must be exact as the directory names inside src/`;
+  throw new ObjectTypeError(`No database object type: ${type}. ${message}`);
 }
 
 /**
