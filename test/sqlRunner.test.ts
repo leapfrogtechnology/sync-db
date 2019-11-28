@@ -65,7 +65,7 @@ describe('UTIL: sqlRunner', () => {
       expect(sqlRunner.getDropStatement('view', 'test.hello_world')).to.equal('DROP VIEW IF EXISTS test.hello_world');
     });
 
-    it('should throw an error if naming convention of view is wrong', () => {
+    it('should throw an error if naming convention of the object is wrong', () => {
       expect(() => sqlRunner.getDropStatement('views', 'test.hello_world')).to.throw(Error);
     });
   });
