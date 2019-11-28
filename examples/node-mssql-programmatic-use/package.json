@@ -1,6 +1,6 @@
 {
-  "name": "node-app-mssql",
-  "description": "Sample project using sync-db",
+  "name": "node-mssql-programmatic-use",
+  "description": "Sample project using Programmatic API.",
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
