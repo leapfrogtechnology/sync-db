@@ -1,6 +1,6 @@
 import { synchronize, loadConfig, resolveConnections } from '@leapfrogtechnology/sync-db';
 
-(async function sync() {
+(async () => {
   try {
     const config = await loadConfig(); // Load sync-db.yml
     const connections = await resolveConnections(); // Load connections.sync-db.json
