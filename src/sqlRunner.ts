@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { reverse } from 'ramda';
+import { reverse, keys } from 'ramda';
 
 import * as fs from './util/fs';
 import { dbLogger } from './logger';
@@ -8,7 +8,6 @@ import Mapping from './domain/Mapping';
 import SqlCode from './domain/SqlCode';
 import * as promise from './util/promise';
 import SqlFileInfo from './domain/SqlFileInfo';
-import ObjectTypeError from './util/ErrorHandler';
 import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
 
 /**
@@ -95,10 +94,13 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 export function getDropStatement(type: string, fqon: string): string {
   const dropStatement = dropStatementsMap[type];
 
-  if (dropStatement) { return `${dropStatement} ${fqon}`; }
+  if (!dropStatement) {
+    const message = `Naming convention must be one of: ${keys(dropStatementsMap)}.`;
 
-  const message = `Naming convention must be exact as the directory names inside src/`;
-  throw new ObjectTypeError(`No database object type: ${type}. ${message}`);
+    throw new Error(`No database object type: ${type}. ${message}`);
+  }
+
+  return `${dropStatement} ${fqon}`;
 }
 
 /**
