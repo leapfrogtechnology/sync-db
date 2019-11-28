@@ -48,7 +48,7 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
     "debug": "^4.1.1",
-    "knex": "0.16.3",
+    "knex": "^0.19.5",
     "ramda": "^0.26.1",
     "tslib": "^1",
     "yamljs": "^0.3.0"
@@ -69,7 +69,7 @@
     "ts-node": "^8",
     "tslint": "^5",
     "tslint-config-leapfrog": "^1.0.3",
-    "typescript": "^3.3"
+    "typescript": "^3.7.2"
   },
   "engines": {
     "node": ">=8.0.0"
