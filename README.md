@@ -133,11 +133,11 @@ sql:
 
 ### 2. Database Connections
 
-Database connections are configured in `connections-sync-db.json` file in your project root directory as shown below.
+Database connections are configured in `connections.sync-db.json` file in your project root directory as shown below.
 
 Since it contains all your database credentails, it is recommended that you **DO NOT COMMIT** it to VCS.
 
-**connections-sync-db.json**
+**connections.sync-db.json**
 
 ```json
 {
