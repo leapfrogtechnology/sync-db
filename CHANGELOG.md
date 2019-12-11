@@ -1,5 +1,33 @@
 # Change Log
 
+## [v1.0.0-alpha.7](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.7) (2019-12-11)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.6...v1.0.0-alpha.7)
+
+**Implemented enhancements:**
+
+- Setup docker and docker-compose configuration for the node-app-mssql example [\#23](https://github.com/leapfrogtechnology/sync-db/pull/23) [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] ([silwalanish](https://github.com/silwalanish))
+
+**Bug Fixes**
+
+- Logs are misleading in rollback / teardown stage [\#5](https://github.com/leapfrogtechnology/sync-db/issues/5) [[bug](https://github.com/leapfrogtechnology/sync-db/labels/bug)] [[good first issue](https://github.com/leapfrogtechnology/sync-db/labels/good%20first%20issue)]
+
+**Closed Issues**
+
+- Add sample tables using knex migrations for the node-app-mssql example [\#21](https://github.com/leapfrogtechnology/sync-db/issues/21) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[good first issue](https://github.com/leapfrogtechnology/sync-db/labels/good%20first%20issue)] [[hacktoberfest](https://github.com/leapfrogtechnology/sync-db/labels/hacktoberfest)]
+- CI - Integrate test code coverage reporting. [\#18](https://github.com/leapfrogtechnology/sync-db/issues/18) [[good first issue](https://github.com/leapfrogtechnology/sync-db/labels/good%20first%20issue)] [[help wanted](https://github.com/leapfrogtechnology/sync-db/labels/help%20wanted)] [[test](https://github.com/leapfrogtechnology/sync-db/labels/test)]
+- Add an example with showing the programmatic usage in Node / JavaScript [\#12](https://github.com/leapfrogtechnology/sync-db/issues/12) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[good first issue](https://github.com/leapfrogtechnology/sync-db/labels/good%20first%20issue)] [[hacktoberfest](https://github.com/leapfrogtechnology/sync-db/labels/hacktoberfest)] [[help wanted](https://github.com/leapfrogtechnology/sync-db/labels/help%20wanted)]
+- Setup docker and docker-compose configuration for the node-app-mssql example [\#8](https://github.com/leapfrogtechnology/sync-db/issues/8) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[good first issue](https://github.com/leapfrogtechnology/sync-db/labels/good%20first%20issue)] [[hacktoberfest](https://github.com/leapfrogtechnology/sync-db/labels/hacktoberfest)]
+
+**Changes**
+
+- Fix file name mistake [\#30](https://github.com/leapfrogtechnology/sync-db/pull/30) ([p0k8h](https://github.com/p0k8h))
+- Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[programmatic-api](https://github.com/leapfrogtechnology/sync-db/labels/programmatic-api)] ([p0k8h](https://github.com/p0k8h))
+- Throw an error if object type names doesn't match directory convention [\#28](https://github.com/leapfrogtechnology/sync-db/pull/28) [[bugfix](https://github.com/leapfrogtechnology/sync-db/labels/bugfix)] ([p0k8h](https://github.com/p0k8h))
+- Upgrade TypeScript to 3.7.2 [\#27](https://github.com/leapfrogtechnology/sync-db/pull/27) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Upgrade knex minimum version to 0.19.5 [\#26](https://github.com/leapfrogtechnology/sync-db/pull/26) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] [[security](https://github.com/leapfrogtechnology/sync-db/labels/security)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Use knex to create, run, rollback migrations with samples [\#24](https://github.com/leapfrogtechnology/sync-db/pull/24) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] ([p0k8h](https://github.com/p0k8h))
+- Integrate test code coverage reporting with Codecov and Travis. [\#19](https://github.com/leapfrogtechnology/sync-db/pull/19) [[test](https://github.com/leapfrogtechnology/sync-db/labels/test)] ([ghost](https://github.com/ghost))
+
 ## [v1.0.0-alpha.6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.6) (2019-08-28)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.5...v1.0.0-alpha.6)
 
