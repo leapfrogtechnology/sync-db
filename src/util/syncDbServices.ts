@@ -6,6 +6,7 @@ import { Iflags, Ilogger } from './types';
  *
  * @param {Iflags} flags
  * @param {Ilogger} logger
+ * @returns {Promise<void>}
  */
 export async function syncDbServices(flags: Iflags, logger: Ilogger): Promise<void> {
 

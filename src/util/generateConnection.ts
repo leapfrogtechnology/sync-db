@@ -8,6 +8,7 @@ const KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB
  * Reads values from ENV from provide keys.
  *
  * @param {string[]} keys
+ * @returns {string[] | Ikeys}
  */
 function extractValuesFromENV(keys: string[]): string[] | Ikeys {
   const errors: string[] = [];
@@ -39,6 +40,7 @@ function extractValuesFromENV(keys: string[]): string[] | Ikeys {
  * Generates connections.sync-db.json file.
  *
  * @param {Ilogger} logger
+ * @returns {Promise<void>}
  */
 export async function generateConnection(logger: Ilogger): Promise<void> {
   try {
