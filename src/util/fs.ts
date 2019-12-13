@@ -47,3 +47,21 @@ export function glob(pathName: string): Promise<string[]> {
     });
   });
 }
+
+/**
+ * Write contents to file.
+ *
+ * @param {string} filepath
+ * @param {any} data
+ * @returns {Promise<string>}
+ */
+export function write(filepath: string, data: any): Promise<string> {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(filepath, data, err => {
+      if (err) {
+        return reject(err);
+      }
+      resolve();
+    });
+  });
+}
