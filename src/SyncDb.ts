@@ -2,6 +2,7 @@ import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
 import { loadConfig, resolveConnections } from './config';
+import { syncDbServices } from './util/syncDbServices';
 
 /**
  * SyncDB CLI handler.
@@ -15,7 +16,8 @@ class SyncDb extends Command {
   static flags = {
     version: flags.version({ char: 'v', description: 'Print version', name: 'sync-db' }),
     help: flags.help({ char: 'h', description: 'Print help information' }),
-    force: flags.boolean({ char: 'f', description: 'Force synchronization' })
+    force: flags.boolean({ char: 'f', description: 'Force synchronization' }),
+    'generate-connections': flags.boolean({ description: 'Generate connections' })
   };
 
   /**
@@ -30,6 +32,11 @@ class SyncDb extends Command {
     };
 
     try {
+
+      await syncDbServices(parsedFlags, {
+        info: this.log,
+        error: this.error
+      });
       const config = await loadConfig();
       const connections = await resolveConnections();
 
