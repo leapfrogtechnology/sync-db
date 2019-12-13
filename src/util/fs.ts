@@ -61,7 +61,8 @@ export function write(filepath: string, data: any): Promise<string> {
       if (err) {
         return reject(err);
       }
-      resolve();
+
+      return resolve();
     });
   });
 }

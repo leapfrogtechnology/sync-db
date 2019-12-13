@@ -49,12 +49,12 @@ function extractValuesFromENV(keys: string[]): string[] | Ikeys {
  */
 export async function generateConnection(logger: Ilogger): Promise<void> {
   try {
-
     const filePath = `${process.cwd()}/${CONNECTIONS_FILE_NAME}`;
     const conn = extractValuesFromENV(KEYS);
     const data = JSON.stringify({
       connections: [conn]
     });
+
     await fs.write(filePath, data).then(() => {
       logger.info(`Generated file: ${CONNECTIONS_FILE_NAME}`);
     });
