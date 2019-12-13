@@ -1,8 +1,12 @@
 import * as fs from './fs';
-import { Ikeys, Ilogger } from './types';
+import { Ikeys, Ilogger, Imappings } from './types';
 
 const CONNECTIONS_FILE_NAME = 'connections.sync-db.json';
 const KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];
+const mappings: Imappings = {
+  USERNAME: 'name',
+  NAME: 'database'
+};
 
 /**
  * Reads values from ENV from provide keys.
@@ -24,7 +28,8 @@ function extractValuesFromENV(keys: string[]): string[] | Ikeys {
       errors.push(element);
     } else {
       const [, b] = element.split('_');
-      connection[b.toLowerCase()] = String(process.env[element]);
+      const key = mappings[b] ? mappings[b].toLowerCase() : b.toLowerCase();
+      connection[key] = String(process.env[element]);
     }
 
   });

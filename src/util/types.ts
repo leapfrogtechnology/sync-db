@@ -18,3 +18,7 @@ export interface Ilogger {
     exit: false;
   }) => void;
 }
+
+export interface Imappings {
+  [key: string]: string;
+}
