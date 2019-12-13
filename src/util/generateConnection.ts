@@ -7,7 +7,7 @@ const KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB
 /**
  * Reads values from ENV from provide keys.
  *
- * @param keys
+ * @param {string[]} keys
  */
 function extractValuesFromENV(keys: string[]): string[] | Ikeys {
   const errors: string[] = [];
