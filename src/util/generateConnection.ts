@@ -1,9 +1,9 @@
 import * as fs from './fs';
-import { Ikeys, Ilogger, Imappings } from './types';
+import { Key, Logger, Mapping } from './types';
 
 const CONNECTIONS_FILE_NAME = 'connections.sync-db.json';
 const KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];
-const mappings: Imappings = {
+const mapping: Mapping<string> = {
   USERNAME: 'name',
   NAME: 'database'
 };
@@ -12,11 +12,11 @@ const mappings: Imappings = {
  * Reads values from ENV from provide keys.
  *
  * @param {string[]} keys
- * @returns {string[] | Ikeys}
+ * @returns {string[] | Key}
  */
-function extractValuesFromENV(keys: string[]): string[] | Ikeys {
+function extractFromEnv(keys: string[]): string[] | Key {
   const errors: string[] = [];
-  const connection: Ikeys = {};
+  const connection: Key = {};
 
   keys.forEach((element: string) => {
 
@@ -28,7 +28,7 @@ function extractValuesFromENV(keys: string[]): string[] | Ikeys {
       errors.push(element);
     } else {
       const [, b] = element.split('_');
-      const key = mappings[b] ? mappings[b].toLowerCase() : b.toLowerCase();
+      const key = mapping[b] ? mapping[b].toLowerCase() : b.toLowerCase();
       connection[key] = String(process.env[element]);
     }
 
@@ -44,13 +44,13 @@ function extractValuesFromENV(keys: string[]): string[] | Ikeys {
 /**
  * Generates connections.sync-db.json file.
  *
- * @param {Ilogger} logger
+ * @param {Logger} logger
  * @returns {Promise<void>}
  */
-export async function generateConnection(logger: Ilogger): Promise<void> {
+export async function generateConnection(logger: Logger): Promise<void> {
   try {
     const filePath = `${process.cwd()}/${CONNECTIONS_FILE_NAME}`;
-    const conn = extractValuesFromENV(KEYS);
+    const conn = extractFromEnv(KEYS);
     const data = JSON.stringify({
       connections: [conn]
     });

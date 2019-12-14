@@ -1,14 +1,14 @@
 import { generateConnection } from './generateConnection';
-import { Iflags, Ilogger } from './types';
+import { SyncDbOptions, Logger } from './types';
 
 /**
  * Services to run depending upon the flags provided.
  *
- * @param {Iflags} flags
- * @param {Ilogger} logger
+ * @param {SyncDbOptions} flags
+ * @param {Logger} logger
  * @returns {Promise<void>}
  */
-export async function syncDbServices(flags: Iflags, logger: Ilogger): Promise<void> {
+export async function syncDbServices(flags: SyncDbOptions, logger: Logger): Promise<void> {
 
   if (flags['generate-connections']) {
     await generateConnection(logger);

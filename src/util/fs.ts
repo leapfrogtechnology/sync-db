@@ -55,7 +55,7 @@ export function glob(pathName: string): Promise<string[]> {
  * @param {any} data
  * @returns {Promise<string>}
  */
-export function write(filepath: string, data: any): Promise<string> {
+export function write(filepath: string, data: any): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.writeFile(filepath, data, err => {
       if (err) {
