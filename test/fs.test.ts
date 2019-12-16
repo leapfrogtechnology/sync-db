@@ -16,14 +16,14 @@ describe('UTIL: fs', () => {
     expect(error.syscall).to.equal('open');
   };
 
-  it('should write to data to the filePath', done => {
+  it('should write content to the filepath', done => {
     fs.write(filePath, fileContent).then(result => {
       expect(result).to.equal(undefined);
       done();
     });
   });
 
-  it('should read the file contents', done => {
+  it('should read the content from the filepath', done => {
     fs.read(filePath).then(res => {
       expect(res).to.equal(fileContent);
       done();
@@ -37,7 +37,7 @@ describe('UTIL: fs', () => {
     });
   });
 
-  it('should throw error if filepath is invalued', done => {
+  it('should throw error if filepath is invalid (fs.write)', done => {
     fs.write(invalidFilePath, fileContent)
       .catch(e => {
         rejectionCallback(e);
@@ -45,7 +45,7 @@ describe('UTIL: fs', () => {
       });
   });
 
-  it('should throw error if filepath is invalid', done => {
+  it('should throw error if filepath is invalid (fs.read)', done => {
     fs.read(invalidFilePath)
       .catch(e => {
         rejectionCallback(e);
