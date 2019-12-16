@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
-import { syncDbServices } from './util/syncDbServices';
+import { syncDbServices } from './services/syncDbServices';
 import { loadConfig, resolveConnections } from './config';
 
 /**
