@@ -1,9 +1,3 @@
-export interface Key {
-  [key: string]: string | {
-    [key: string]: boolean
-  };
-}
-
 export interface SyncDbOptions {
   version: void;
   help: void;
@@ -17,8 +11,4 @@ export interface Logger {
     code?: string | undefined;
     exit: false;
   }) => void;
-}
-
-export interface Mapping<T> {
-  [key: string]: T;
 }
