@@ -7,4 +7,4 @@
 /tmp
 node_modules
 /coverage
-/test/.tmp
+/test/.tmp/*
