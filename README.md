@@ -4,7 +4,7 @@ Command line utility to synchronize and version control relational database obje
 
 [![Version](https://img.shields.io/npm/v/@leapfrogtechnology/sync-db.svg?style=flat-square)](https://npmjs.org/package/@leapfrogtechnology/sync-db)
 [![Travis](https://img.shields.io/travis/com/leapfrogtechnology/sync-db.svg?style=flat-square)](https://travis-ci.com/leapfrogtechnology/sync-db)
-[![Language grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?style=flat-square&logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
+[![Language Grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?style=flat-square&logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
 [![Codecov](https://img.shields.io/codecov/c/github/leapfrogtechnology/sync-db?style=flat-square)](https://codecov.io/gh/leapfrogtechnology/sync-db)
 [![LICENSE](https://img.shields.io/github/license/leapfrogtechnology/sync-db.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db#contributing)
@@ -49,7 +49,7 @@ The CLI exposes a single command `sync-db` that runs synchronize operation based
 
 Below shown are the available CLI options , which is also the output printed by `sync-db --help`.
 
-```
+```bash
 Synchronize database
 
 USAGE
@@ -106,8 +106,8 @@ import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
 
 ## Configuration
 
-1.  [Sync Configuration](#1-sync-configuration)
-2.  [Database Connections](#2-database-connections)
+1. [Sync Configuration](#1-sync-configuration)
+2. [Database Connections](#2-database-connections)
 
 ### 1. Sync Configuration
 
@@ -135,7 +135,7 @@ sql:
 
 Database connections are configured in `connections.sync-db.json` file in your project root directory as shown below.
 
-Since it contains all your database credentails, it is recommended that you **DO NOT COMMIT** it to VCS.
+Since it contains all your database credentials, it is recommended that you **DO NOT COMMIT** it to VCS.
 
 **connections.sync-db.json**
 
@@ -161,7 +161,7 @@ Note: The `connections` key expects an array, so you can also provide multiple d
 
 Setup and Teardown steps aren't always run within a single transaction. **You need to pass the transaction instance object explicitly to make sure this happens.**
 
-```ts
+```js
 await db.transaction(async trx => {
   // Rollback and create all db objects using config.
   await synchronize(config, trx);
