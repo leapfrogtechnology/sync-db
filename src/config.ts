@@ -63,11 +63,13 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
  */
 function validateConnections(keys: string[]): void {
   const errors: string[] = [];
+
   keys.forEach(element => {
     if (!process.env[element]) {
       errors.push(element);
     }
   });
+
   if (errors.length) {
     throw new Error(`Following environment variables were not set: ${errors}`);
   }
@@ -91,9 +93,9 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     options: {
-      encrypt: process.env.DB_ENCRYPTION || false
+      encrypt: process.env.DB_ENCRYPTION === 'true'
     }
-  };
+  } as ConnectionConfig;
 
-  return [connection as ConnectionConfig];
+  return [connection];
 }

@@ -7,5 +7,4 @@
 /tmp
 node_modules
 /coverage
-/test/hello.txt
-/fake_file.txt/random
+/test/.tmp

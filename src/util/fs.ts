@@ -53,7 +53,7 @@ export function glob(pathName: string): Promise<string[]> {
  *
  * @param {string} filepath
  * @param {any} data
- * @returns {Promise<string>}
+ * @returns {Promise<void>}
  */
 export function write(filepath: string, data: any): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -71,15 +71,16 @@ export function write(filepath: string, data: any): Promise<void> {
  * Remove the file.
  *
  * @param { string } filepath
+ * @returns {Promise<void>}
  */
-export function remove(filepath: string): Promise<string> {
+export function remove(filepath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     fs.unlink(filepath, err => {
       if (err) {
         return reject(err);
       }
 
-      return resolve(`${filepath} was removed`);
+      return resolve();
     });
   });
 }

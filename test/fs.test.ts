@@ -6,8 +6,8 @@ import * as fs from '../src/util/fs';
 
 describe('UTIL: fs', () => {
 
-  const filePath = path.resolve(__dirname, 'hello.txt');
-  const invalidFilePath = path.resolve(__dirname, 'fake_file.txt/random');
+  const filePath = path.resolve(__dirname, '.tmp/hello.txt');
+  const invalidFilePath = path.resolve(__dirname, '.tmp/fake_file.txt/random');
   const fileContent = 'hello@123';
 
   const rejectionCallback = (error: { errno: any; code: any; syscall: any; }) => {
@@ -32,7 +32,7 @@ describe('UTIL: fs', () => {
 
   it('should remove the file', done => {
     fs.remove(filePath).then(res => {
-      expect(res).to.equal(`${filePath} was removed`);
+      expect(res).to.equal(undefined);
       done();
     });
   });
