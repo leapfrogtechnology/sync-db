@@ -1,11 +1,19 @@
 # Change Log
 
+## [v1.0.0-alpha.8](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.8) (2019-12-18)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.7...v1.0.0-alpha.8)
+
+**Changes**
+
+- Bump knex to version 0.20.4 and upgrade vulnerable packages [\#34](https://github.com/leapfrogtechnology/sync-db/pull/34) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([mesaugat](https://github.com/mesaugat))
+
 ## [v1.0.0-alpha.7](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.7) (2019-12-11)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.6...v1.0.0-alpha.7)
 
 **Implemented enhancements:**
 
 - Setup docker and docker-compose configuration for the node-app-mssql example [\#23](https://github.com/leapfrogtechnology/sync-db/pull/23) [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] ([silwalanish](https://github.com/silwalanish))
+- Enable passing connection instance as well as connection config for synchronization [\#10](https://github.com/leapfrogtechnology/sync-db/pull/10) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([SafalPandey](https://github.com/SafalPandey))
 
 **Bug Fixes**
 
@@ -52,10 +60,6 @@
 
 ## [v1.0.0-alpha.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.3) (2019-08-26)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.2...v1.0.0-alpha.3)
-
-**Implemented enhancements:**
-
-- Enable passing connection instance as well as connection config for synchronization [\#10](https://github.com/leapfrogtechnology/sync-db/pull/10) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([SafalPandey](https://github.com/SafalPandey))
 
 **Changes**
 
