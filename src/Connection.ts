@@ -63,11 +63,11 @@ class Connection {
   /**
    * Runs a query.
    *
-   * @param {string}  sql
+   * @param {string} sql
    * @param {RawBindingParams | ValueMap} params
-   * @returns {Promise<T[]>}
+   * @returns {PromiseLike<T[]>}
    */
-  public query<T>(sql: string, params: RawBindingParams | ValueMap = []): Promise<T[]> {
+  public query<T>(sql: string, params: RawBindingParams | ValueMap = []): PromiseLike<T[]> {
     return this.instance.raw(sql, params);
   }
 
