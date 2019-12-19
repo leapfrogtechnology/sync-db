@@ -1,0 +1,12 @@
+{
+  "connections": [
+    {
+      "id": "db1",
+      "user": "",
+      "host": "localhost",
+      "port": 5432,
+      "database": "mydatabasename",
+      "client": "postgresql"
+    }
+  ]
+}
