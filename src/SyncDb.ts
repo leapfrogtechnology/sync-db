@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
-import { syncDbServices } from './services/syncDbServices';
+import { flagConfigs } from './services/syncDb';
 import { loadConfig, resolveConnections } from './config';
 
 /**
@@ -32,7 +32,7 @@ class SyncDb extends Command {
     };
 
     try {
-      await syncDbServices(parsedFlags, {
+      await flagConfigs(parsedFlags, {
         info: this.log,
         error: this.error
       });

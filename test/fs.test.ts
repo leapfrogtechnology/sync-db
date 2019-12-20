@@ -1,65 +1,67 @@
 import 'mocha';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as chai from 'chai';
 import * as path from 'path';
-import { expect } from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
 
-import * as fs from '../src/util/fs';
+import { write, read, remove } from '../src/util/fs';
+
+chai.use(chaiAsPromised);
+const { expect } = chai;
 
 describe('UTIL: fs', () => {
+  let filePath: string;
+  let invalidFilePath: string;
+  const fileContent = 'this is random text content';
 
-  const filePath = path.resolve(__dirname, '.tmp/hello.txt');
-  const invalidFilePath = path.resolve(__dirname, '.tmp/fake_file.txt/random');
-  const fileContent = 'hello@123';
+  beforeEach(done => {
+    fs.mkdtemp(`${os.tmpdir()}${path.sep}`, async (err, dirPath) => {
+      if (err) {
+        done(err);
+      }
 
-  const rejectionCallback = (error: { errno: any; code: any; syscall: any; }) => {
-    expect(error.errno).to.equal(-2);
-    expect(error.code).to.equal('ENOENT');
-    expect(error.syscall).to.equal('open');
-  };
-
-  it('should write content to the filepath', done => {
-    fs.write(filePath, fileContent).then(result => {
-      expect(result).to.equal(undefined);
+      filePath = (`${dirPath}/hello.txt`);
+      invalidFilePath = (`${dirPath}/file.txt/random`);
+      await write(filePath, fileContent).catch(e => done(e));
       done();
     });
   });
 
+  it('should write content to the filepath', done => {
+    write(filePath, fileContent).then(result => {
+      read(filePath).then(res => {
+        expect(res).to.equal(fileContent);
+        done();
+      });
+    });
+  });
+
   it('should read the content from the filepath', done => {
-    fs.read(filePath).then(res => {
+    read(filePath).then(res => {
       expect(res).to.equal(fileContent);
       done();
     });
   });
 
   it('should remove the file', done => {
-    fs.remove(filePath).then(res => {
-      expect(res).to.equal(undefined);
-      done();
+    remove(filePath).then(() => {
+      fs.stat(filePath, err => {
+        expect(err && err.code).to.be.equal('ENOENT');
+        done();
+      });
     });
   });
 
-  it('should throw error if filepath is invalid (fs.write)', done => {
-    fs.write(invalidFilePath, fileContent)
-      .catch(e => {
-        rejectionCallback(e);
-        done();
-      });
+  it('should throw error if filepath is invalid (fs.write)', () => {
+    return expect(write(invalidFilePath, fileContent)).to.eventually.rejected;
   });
 
-  it('should throw error if filepath is invalid (fs.read)', done => {
-    fs.read(invalidFilePath)
-      .catch(e => {
-        rejectionCallback(e);
-        done();
-      });
+  it('should throw error if filepath is invalid (fs.read)', () => {
+    return expect(read(invalidFilePath)).to.eventually.rejected;
   });
 
-  it('should throw an error if no such file or directory', done => {
-    fs.remove(invalidFilePath)
-      .catch(error => {
-        expect(error.errno).to.equal(-2);
-        expect(error.code).to.equal('ENOENT');
-        expect(error.syscall).to.equal('unlink');
-        done();
-      });
+  it('should throw an error if no such file or directory to remove', () => {
+    return expect(remove(invalidFilePath)).to.eventually.rejected;
   });
 });

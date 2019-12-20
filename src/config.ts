@@ -62,27 +62,19 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
  * @returns {void}
  */
 function validateConnections(keys: string[]): void {
-  const errors: string[] = [];
+  const missingVars: string[] = keys.filter(key => !process.env[key]);
 
-  keys.forEach(element => {
-    if (!process.env[element]) {
-      errors.push(element);
-    }
-  });
-
-  if (errors.length) {
-    throw new Error(`Following environment variables were not set: ${errors}`);
+  if (missingVars.length) {
+    throw new Error('Following environment variables were not set: ' + missingVars.join(', '));
   }
 }
 
 /**
  * Resolve database connections from Env.
  *
- * @param {string[]} keys
  * @returns {ConnectionConfig[]}
  */
 export function resolveConnectionsFromEnv(): ConnectionConfig[] {
-
   validateConnections(ENV_KEYS);
 
   const connection = {
