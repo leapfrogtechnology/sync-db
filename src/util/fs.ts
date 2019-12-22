@@ -70,7 +70,7 @@ export function write(filepath: string, data: any): Promise<void> {
 /**
  * Remove the file.
  *
- * @param { string } filepath
+ * @param {string} filepath
  * @returns {Promise<void>}
  */
 export function remove(filepath: string): Promise<void> {

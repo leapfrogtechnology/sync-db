@@ -1,7 +1,7 @@
 import * as path from 'path';
 
 import * as fs from '../util/fs';
-import OcliffLogger from '../domain/OcliffLogger';
+import OclifLogger from '../domain/OclifLogger';
 import SyncDbOptions from '../domain/SyncDbOptions';
 import { CONNECTIONS_FILENAME } from '../constants';
 import { resolveConnectionsFromEnv } from '../config';
@@ -9,19 +9,18 @@ import { resolveConnectionsFromEnv } from '../config';
 /**
  * Generates connections.sync-db.json file.
  *
- * @param {OcliffLogger} logger
+ * @param {OclifLogger} logger
  * @returns {Promise<void>}
  */
-async function generateConnection(logger: OcliffLogger): Promise<void> {
+async function generateConnection(logger: OclifLogger): Promise<void> {
   try {
     const filePath = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
 
     const connections = resolveConnectionsFromEnv();
-    await fs.write(filePath, JSON.stringify({ connections })).then(() => {
-      logger.info(`Generated file: ${CONNECTIONS_FILENAME}`);
-    });
+    const contents = JSON.stringify({ connections });
+    await fs.write(filePath, contents);
 
-    return Promise.resolve();
+    logger.info(`Generated file: ${CONNECTIONS_FILENAME}`);
   } catch (error) {
     logger.error(error, { exit: false });
     process.exit(-1);
@@ -35,7 +34,7 @@ async function generateConnection(logger: OcliffLogger): Promise<void> {
  * @param {Logger} logger
  * @returns {Promise<void>}
  */
-export async function flagConfigs(flags: SyncDbOptions, logger: OcliffLogger): Promise<void> {
+export async function flagConfigs(flags: SyncDbOptions, logger: OclifLogger): Promise<void> {
   if (flags['generate-connections']) {
     await generateConnection(logger);
     process.exit(0);
