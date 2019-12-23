@@ -16,40 +16,42 @@ describe('UTIL: fs', () => {
   const fileContent = 'this is random text content';
 
   beforeEach(done => {
-    fs.mkdtemp(`${os.tmpdir()}${path.sep}`, async (err, dirPath) => {
-      if (err) {
-        done(err);
-      }
+    try {
+      fs.mkdtemp(`${os.tmpdir()}${path.sep}`, async (err, dirPath) => {
+        if (err) {
+          done(err);
+        }
 
-      filePath = (`${dirPath}/hello.txt`);
-      invalidFilePath = (`${dirPath}/file.txt/random`);
-      await write(filePath, fileContent).catch(e => done(e));
-      done();
-    });
-  });
+        filePath = `${dirPath}/hello.txt`;
+        invalidFilePath = `${dirPath}/file.txtfgf`;
 
-  it('should write content to the filepath', done => {
-    write(filePath, fileContent).then(result => {
-      read(filePath).then(res => {
-        expect(res).to.equal(fileContent);
+        await write(filePath, fileContent);
         done();
       });
-    });
+    } catch (error) {
+      done(error);
+    }
   });
 
-  it('should read the content from the filepath', done => {
-    read(filePath).then(res => {
-      expect(res).to.equal(fileContent);
-      done();
-    });
+  it('should write content to the filepath', async () => {
+    await write(filePath, fileContent);
+
+    const res = await read(filePath);
+
+    expect(res).to.equal(fileContent);
   });
 
-  it('should remove the file', done => {
-    remove(filePath).then(() => {
-      fs.stat(filePath, err => {
-        expect(err && err.code).to.be.equal('ENOENT');
-        done();
-      });
+  it('should read the content from the filepath', async () => {
+    const res = await read(filePath);
+
+    expect(res).to.equal(fileContent);
+  });
+
+  it('should remove the file', async () => {
+    await remove(filePath);
+
+    fs.stat(filePath, err => {
+      expect(err && err.code).to.be.equal('ENOENT');
     });
   });
 
