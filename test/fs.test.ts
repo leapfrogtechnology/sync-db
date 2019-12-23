@@ -23,7 +23,7 @@ describe('UTIL: fs', () => {
         }
 
         filePath = `${dirPath}/hello.txt`;
-        invalidFilePath = `${dirPath}/file.txtfgf`;
+        invalidFilePath = `${dirPath}/file.txt/random`;
 
         await write(filePath, fileContent);
         done();
