@@ -1,4 +1,10 @@
-exports.up = function(knex) {
+/**
+ * Create table `todos`.
+ *
+ * @param {Knex} knex
+ * @returns {Promise<any>}
+ */
+exports.up = knex => {
   return knex.schema.createTable("todos", table => {
     table.increments("tableId");
     table.string("name").notNullable();
@@ -12,6 +18,12 @@ exports.up = function(knex) {
   });
 };
 
-exports.down = function(knex) {
+/**
+ * Drop table `users`.
+ *
+ * @param {Knex} knex
+ * @returns {Promise<any>}
+ */
+exports.down = knex => {
   return knex.schema.dropTable("todos");
 };

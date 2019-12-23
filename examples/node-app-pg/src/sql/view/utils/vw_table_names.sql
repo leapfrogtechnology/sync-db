@@ -3,9 +3,5 @@
 --
 CREATE VIEW [utils].vw_table_names
 AS
-    (
-    SELECT t.name
-    FROM sys.tables t
-);
-
-
+    (SELECT t.name
+    FROM sys.tables t);

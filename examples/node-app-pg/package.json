@@ -1,8 +1,6 @@
 {
   "name": "app-pg",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Sample project using sync-db",
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
@@ -14,9 +12,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "^1.0.0-alpha.6",
-    "eslint": "^6.7.2",
-    "eslint-config-leapfrog": "^2.0.1",
+    "@leapfrogtechnology/sync-db": "^1.0.0-alpha.8",
     "knex": "^0.20.3",
     "pg": "^7.14.0"
   },
@@ -24,6 +20,8 @@
     "@babel/core": "^7.7.4",
     "@babel/node": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
-    "@babel/register": "^7.7.4"
+    "@babel/register": "^7.7.4",
+    "eslint": "^6.7.2",
+    "eslint-config-leapfrog": "^2.0.1"
   }
 }
