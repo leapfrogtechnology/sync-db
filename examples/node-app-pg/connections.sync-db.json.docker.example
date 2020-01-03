@@ -1,0 +1,12 @@
+{
+  "connections": [
+    {
+      "id": "db1",
+      "host": "postgresdb",
+      "user": "testdb",
+      "port": 5432,
+      "database_url": "postgresql://<username>:<databasepassword>@postgres:5432/<database>",
+      "client": "postgresql"
+    }
+  ]
+}

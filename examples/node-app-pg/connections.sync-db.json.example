@@ -1,0 +1,11 @@
+{
+  "connections": [
+    {
+      "id": "db1",
+      "host": "localhost",
+      "user": "testdb",
+      "database": "testdb",
+      "client": "postgresql"
+    }
+  ]
+}

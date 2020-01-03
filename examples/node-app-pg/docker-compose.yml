@@ -1,0 +1,13 @@
+version: "3.3"
+services:
+  db:
+    image: "postgres"
+    container_name: "example-pg"
+    ports:
+      - "5432:5432"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      POSTGRES_DB: "mydatabasename"
+  app:
+    container_name: "example-app"
+    build: .
