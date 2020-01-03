@@ -6,7 +6,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      DATABASE_URL: ${connectionString}
+      DATABASE_URL: ${DATABASE_URL}
       POSTGRES_DB: "mydatabasename"
   app:
     container_name: "example-app"

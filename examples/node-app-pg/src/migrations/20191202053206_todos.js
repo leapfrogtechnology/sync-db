@@ -5,16 +5,16 @@
  * @returns {Promise<any>}
  */
 exports.up = knex => {
-  return knex.schema.createTable("todos", table => {
-    table.increments("tableId");
-    table.string("name").notNullable();
-    table.enu("status", ["active", "inactive"]).notNullable();
+  return knex.schema.createTable('todos', table => {
+    table.increments('id');
+    table.string('name').notNullable();
+    table.enu('status', ['active', 'inactive']).notNullable();
     table
-      .foreign("user")
-      .references("userId")
-      .inTable("users");
-    table.timestamp("created_at").defaultTo(knex.fn.now());
-    table.timestamp("updated_at").defaultTo(knex.fn.now());
+      .foreign('user')
+      .references('id')
+      .inTable('users');
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
 };
 
@@ -25,5 +25,5 @@ exports.up = knex => {
  * @returns {Promise<any>}
  */
 exports.down = knex => {
-  return knex.schema.dropTable("todos");
+  return knex.schema.dropTable('todos');
 };

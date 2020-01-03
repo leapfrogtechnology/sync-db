@@ -172,6 +172,7 @@ await db.transaction(async trx => {
 
 1. [Node MSSQL Sample](examples/node-app-mssql)
 2. [Node MSSQL Programmatic Usage Sample](examples/node-mssql-programmatic-use)
+3. [Node POSTGRESQL Sample](examples/node-app-pg)
 
 ## Changelog
 

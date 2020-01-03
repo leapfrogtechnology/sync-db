@@ -1,11 +1,11 @@
-require("@babel/register");
-const { connections } = require("./connections.sync-db.json");
+require('@babel/register');
+const { connections } = require('./connections.sync-db.json');
 
 module.exports = {
-  client: "postgresql",
+  client: 'postgresql',
   connection: connections[0],
   migrations: {
-    directory: "./src/migrations",
-    tableName: "knex_migrations"
+    directory: './src/migrations',
+    tableName: 'knex_migrations'
   }
 };

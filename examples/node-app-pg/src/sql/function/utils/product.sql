@@ -4,5 +4,5 @@
 CREATE FUNCTION [utils].product(@a INT, @b INT) RETURNS INT
 AS
 BEGIN
-    RETURN @a * @b;
+  RETURN @a * @b;
 END

@@ -4,5 +4,5 @@
 --
 CREATE VIEW [utils].vw_user_names
 AS
-    (SELECT name
-    FROM sys.server_principals);
+  (SELECT name
+  FROM sys.server_principals);
