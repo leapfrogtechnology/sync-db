@@ -56,9 +56,10 @@ USAGE
   $ sync-db
 
 OPTIONS
-  -f, --force    Force synchronization
-  -h, --help     Print help information
-  -v, --version  Print version
+  -f, --force                 Force synchronization
+  -h, --help                  Print help information
+  -v, --version               Print version
+  -c, --generate-connections  Generate connections.sync-db.json file
 ```
 
 Refer to the [examples](#examples) section below for full example with CLI usage.

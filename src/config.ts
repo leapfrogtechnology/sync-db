@@ -7,7 +7,7 @@ import * as fs from './util/fs';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
-import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME } from './constants';
+import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, ENV_KEYS } from './constants';
 
 /**
  * Load config yaml file.
@@ -53,4 +53,41 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
   log('Resolved connections: %O', result.map(({ id, host, database }) => ({ id, host, database })));
 
   return result;
+}
+
+/**
+ * Validate connection keys.
+ *
+ * @param {string[]} keys
+ * @returns {void}
+ */
+function validateConnections(keys: string[]): void {
+  const missingVars: string[] = keys.filter(key => !process.env[key]);
+
+  if (missingVars.length) {
+    throw new Error('Following environment variables were not set: ' + missingVars.join(', '));
+  }
+}
+
+/**
+ * Resolve database connections from Env.
+ *
+ * @returns {ConnectionConfig[]}
+ */
+export function resolveConnectionsFromEnv(): ConnectionConfig[] {
+  validateConnections(ENV_KEYS);
+
+  const connection = {
+    client: process.env.DB_CLIENT,
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    options: {
+      encrypt: process.env.DB_ENCRYPTION === 'true'
+    }
+  } as ConnectionConfig;
+
+  return [connection];
 }
