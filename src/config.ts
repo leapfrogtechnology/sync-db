@@ -4,11 +4,11 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
 import * as fs from './util/fs';
-import Mapping from './domain/Mapping';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, ENV_KEYS } from './constants';
+import { prepareInjectionConfigVars } from './services/configInjection';
 
 /**
  * Load config yaml file.
@@ -31,14 +31,9 @@ export async function loadConfig(): Promise<SyncConfig> {
     ...loaded,
     injectedConfig: {
       ...loaded.injectedConfig,
-      variables: updateInjectedConfigVars(loaded.injectedConfig.variables)
+      vars: prepareInjectionConfigVars(loaded.injectedConfig.vars)
     }
   };
-}
-
-function updateInjectedConfigVars(vars: Mapping<string>): Mapping<string> {
-  // TODO: Implement this.
-  return { ...vars };
 }
 
 /**
