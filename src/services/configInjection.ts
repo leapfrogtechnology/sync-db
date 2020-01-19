@@ -1,4 +1,5 @@
 import Mapping from '../domain/Mapping';
+import { expandEnvVars } from '../util/env';
 
 /**
  * Update variables to be injected and expand
@@ -10,7 +11,7 @@ import Mapping from '../domain/Mapping';
 export function updateInjectedConfigVars(vars: Mapping<string>): Mapping<string> {
   const entries = Object.entries(vars);
   const result = entries.reduce(
-    (acc, entry) => Object.assign({}, acc, { [entry[0]]: entry[1] }) as Mapping<string>,
+    (acc, entry) => Object.assign({}, acc, { [entry[0]]: expandEnvVars(entry[1]) }) as Mapping<string>,
     {} as Mapping<string>
   );
 
