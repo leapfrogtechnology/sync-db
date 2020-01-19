@@ -18,11 +18,11 @@ export async function loadConfig(): Promise<SyncConfig> {
   log('Resolving sync config file.');
 
   const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
-  const migrations = await yaml.load(filename) as SyncConfig;
+  const loadedConfig = (await yaml.load(filename)) as SyncConfig;
 
   log('Resolved sync config file.');
 
-  const loaded = mergeDeepRight(DEFAULT_CONFIG, migrations) as SyncConfig;
+  const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as SyncConfig;
 
   // TODO: Validate the loaded config.
 
@@ -50,7 +50,10 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
     id: connection.id || `${connection.host}/${connection.database}`
   }));
 
-  log('Resolved connections: %O', result.map(({ id, host, database }) => ({ id, host, database })));
+  log(
+    'Resolved connections: %O',
+    result.map(({ id, host, database }) => ({ id, host, database }))
+  );
 
   return result;
 }
