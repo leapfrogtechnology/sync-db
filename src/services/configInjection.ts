@@ -1,3 +1,7 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
+import { dbLogger } from '../logger';
 import Mapping from '../domain/Mapping';
 import { expandEnvVarsInMap } from '../util/env';
 
@@ -5,8 +9,14 @@ import Connection from '../Connection';
 import SyncConfig from '../domain/SyncConfig';
 import KeyValuePair from '../domain/KeyValuePair';
 
-import { dbLogger } from '../logger';
-import { version as syncDbVersion } from '../../package.json';
+/**
+ * Reads and returns the package.json contents.
+ *
+ * @returns {*}
+ */
+export function getPackageMetadata(): any {
+  return JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json')).toString());
+}
 
 /**
  * Gets all the default config / environment variables
@@ -15,8 +25,10 @@ import { version as syncDbVersion } from '../../package.json';
  * @returns {Mapping<string>}
  */
 function getDefaultSystemVars(): Mapping<string> {
+  const { version } = getPackageMetadata();
+
   return {
-    sync_db_version: syncDbVersion
+    sync_db_version: version
   };
 }
 
