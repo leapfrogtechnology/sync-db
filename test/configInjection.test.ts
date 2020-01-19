@@ -1,6 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
+import { version as syncDbVersion } from '../package.json';
 import { updateInjectedConfigVars, prepareInjectionConfigVars } from '../src/services/configInjection';
 
 describe('Services: configInjection', () => {
@@ -56,9 +57,7 @@ describe('Services: configInjection', () => {
     });
   });
 
-  describe('prepareInjectionConfigVars', async () => {
-    const { version: syncDbVersion } = await import('../package.json');
-
+  describe('prepareInjectionConfigVars', () => {
     it('should return the default vars for injection even if empty object is given', async () => {
       const result = prepareInjectionConfigVars({});
 

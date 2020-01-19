@@ -1,7 +1,7 @@
 import Mapping from '../domain/Mapping';
 import { expandEnvVars } from '../util/env';
 
-import * as pkg from '../../package.json';
+import { version as syncDbVersion } from '../../package.json';
 
 /**
  * Gets all the default config / environment variables
@@ -11,7 +11,7 @@ import * as pkg from '../../package.json';
  */
 function getDefaultSystemVars(): Mapping<string> {
   return {
-    sync_db_version: pkg.version
+    sync_db_version: syncDbVersion
   };
 }
 
