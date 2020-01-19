@@ -1,6 +1,10 @@
 import Mapping from '../domain/Mapping';
 import { expandEnvVars } from '../util/env';
 
+import Connection from '../Connection';
+import SyncConfig from '../domain/SyncConfig';
+import KeyValuePair from '../domain/KeyValuePair';
+
 import { version as syncDbVersion } from '../../package.json';
 
 /**
@@ -40,4 +44,14 @@ export function updateInjectedConfigVars(vars: Mapping<string>): Mapping<string>
   );
 
   return result;
+}
+
+/**
+ * Convert an object (map of key => value) into an array of key / value pairs.
+ *
+ * @param {Mapping<string>} vars
+ * @returns {KeyValuePair[]}
+ */
+export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
+  return Object.entries(vars).map(([key, value]) => ({ key, value }));
 }
