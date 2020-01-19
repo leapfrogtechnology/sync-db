@@ -51,7 +51,7 @@ function validate(config: SyncConfig) {
   }
 
   // Shouldn't reach under here unless the user has mismatched the value.
-  if (!injectedConfig.vars || isObject(injectedConfig.vars)) {
+  if (!injectedConfig.vars || !isObject(injectedConfig.vars)) {
     throw new Error('Invalid configuration value for `injectedConfig.vars`.');
   }
 
