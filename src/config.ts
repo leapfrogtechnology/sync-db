@@ -38,12 +38,23 @@ export async function loadConfig(): Promise<SyncConfig> {
 
 /**
  * Validate the loaded configuration.
- * TODO: IMPLEMENT THIS.
  *
  * @param {SyncConfig} config
  */
 function validate(config: SyncConfig) {
-  // TODO: Validate the loaded config.
+  const { injectedConfig } = config;
+
+  // Shouldn't reach under here unless the user has mismatched the value.
+  if (!injectedConfig.table || !injectedConfig.table.trim()) {
+    throw new Error('Invalid configuration value for `injectedConfig.table`.');
+  }
+
+  // Shouldn't reach under here unless the user has mismatched the value.
+  if (!injectedConfig.vars || isObject(injectedConfig.vars)) {
+    throw new Error('Invalid configuration value for `injectedConfig.vars`.');
+  }
+
+  // TODO: Validate the remaining loaded config.
   // Throw error if validation fails.
 }
 
