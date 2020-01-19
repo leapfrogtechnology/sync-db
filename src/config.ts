@@ -7,8 +7,8 @@ import * as fs from './util/fs';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
-import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, ENV_KEYS } from './constants';
 import { prepareInjectionConfigVars } from './services/configInjection';
+import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, ENV_KEYS } from './constants';
 
 /**
  * Load config yaml file.
@@ -25,7 +25,7 @@ export async function loadConfig(): Promise<SyncConfig> {
 
   const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as SyncConfig;
 
-  // TODO: Validate the loaded config.
+  validate(loaded);
 
   return {
     ...loaded,
@@ -34,6 +34,17 @@ export async function loadConfig(): Promise<SyncConfig> {
       vars: prepareInjectionConfigVars(loaded.injectedConfig.vars)
     }
   };
+}
+
+/**
+ * Validate the loaded configuration.
+ * TODO: IMPLEMENT THIS.
+ *
+ * @param {SyncConfig} config
+ */
+function validate(config: SyncConfig) {
+  // TODO: Validate the loaded config.
+  // Throw error if validation fails.
 }
 
 /**
