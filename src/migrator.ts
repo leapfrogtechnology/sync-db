@@ -27,9 +27,9 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
     const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
     await connection.transaction(async t => {
-      // Setup - Config Injection .
+      // Config Injection: Setup
       // This will setup a config table (temporary and accessible only to this transaction).
-      configInjection.setup(t, config);
+      await configInjection.setup(t, config);
 
       if (preMigrationScripts.length > 0) {
         const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
@@ -52,9 +52,9 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
         logDb('POST-SYNC: End');
       }
 
-      // Clean up - Config Injection.
+      // Config Injection: Cleanup
       // Cleans up the injected config and the table.
-      configInjection.cleanup(t, config);
+      await configInjection.cleanup(t, config);
 
       logDb('Finished setup');
     });
