@@ -5,7 +5,7 @@
  * @param {*} value
  * @returns {boolean}
  */
-function isObject(value: any): boolean {
+export function isObject(value: any): boolean {
   if (value === null) {
     return false;
   }
