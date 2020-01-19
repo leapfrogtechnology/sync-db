@@ -2,7 +2,11 @@ import 'mocha';
 import { expect } from 'chai';
 
 import { version as syncDbVersion } from '../package.json';
-import { updateInjectedConfigVars, prepareInjectionConfigVars } from '../src/services/configInjection';
+import {
+  updateInjectedConfigVars,
+  prepareInjectionConfigVars,
+  convertToKeyValuePairs
+} from '../src/services/configInjection';
 
 describe('Services: configInjection', () => {
   describe('updateInjectedConfigVars', () => {
@@ -82,6 +86,25 @@ describe('Services: configInjection', () => {
 
       // Cleanup
       process.env.TEST_ENV_VALUE1 = undefined;
+    });
+  });
+
+  describe('convertToKeyValuePairs', () => {
+    it('should convert an empty object into an empty array', () => {
+      expect(convertToKeyValuePairs({})).to.deep.equal([]);
+    });
+
+    it('should convert an object into an array of key / value pairs', () => {
+      const input = {
+        flag1: 'true',
+        flag2: 'false'
+      };
+      const expected = [
+        { key: 'flag1', value: 'true' },
+        { key: 'flag2', value: 'false' }
+      ];
+
+      expect(convertToKeyValuePairs(input)).to.deep.equal(expected);
     });
   });
 });
