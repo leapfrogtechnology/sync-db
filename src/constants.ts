@@ -16,7 +16,7 @@ export const DEFAULT_CONFIG: SyncConfig = {
   },
   injectedConfig: {
     table: '__injected_config',
-    variables: {}
+    vars: {}
   }
 };
 
