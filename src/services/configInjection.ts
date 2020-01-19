@@ -1,6 +1,30 @@
 import Mapping from '../domain/Mapping';
 import { expandEnvVars } from '../util/env';
 
+import * as pkg from '../../package.json';
+
+/**
+ * Gets all the default config / environment variables
+ * that are always available in the injected config table.
+ *
+ * @returns {Mapping<string>}
+ */
+function getDefaultSystemVars(): Mapping<string> {
+  return {
+    sync_db_version: pkg.version
+  };
+}
+
+/**
+ * Prepares config vars for injecting into the target database.
+ *
+ * @param {Mapping<string>} vars
+ * @returns {Mapping<string>}
+ */
+export function prepareInjectionConfigVars(vars: Mapping<string>): Mapping<string> {
+  return updateInjectedConfigVars({ ...vars, ...getDefaultSystemVars() });
+}
+
 /**
  * Update variables to be injected and expand
  * environment variables to be expanded.

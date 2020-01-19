@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import { updateInjectedConfigVars } from '../src/services/configInjection';
+import { updateInjectedConfigVars, prepareInjectionConfigVars } from '../src/services/configInjection';
 
 describe('Services: configInjection', () => {
   describe('updateInjectedConfigVars', () => {
@@ -53,6 +53,36 @@ describe('Services: configInjection', () => {
       process.env.TEST_ENV_VALUE2 = undefined;
       process.env.TEST_FIRST_NAME = undefined;
       process.env.TEST_LAST_NAME = undefined;
+    });
+  });
+
+  describe('prepareInjectionConfigVars', async () => {
+    const { version: syncDbVersion } = await import('../package.json');
+
+    it('should return the default vars for injection even if empty object is given', async () => {
+      const result = prepareInjectionConfigVars({});
+
+      expect(result).to.deep.equal({
+        sync_db_version: syncDbVersion
+      });
+    });
+
+    it('should return both the added vars and the default vars for injection', async () => {
+      process.env.TEST_ENV_VALUE1 = 'Bar';
+
+      const result = prepareInjectionConfigVars({
+        var1: 'Foo',
+        var2: '${TEST_ENV_VALUE1}'
+      });
+
+      expect(result).to.deep.equal({
+        var1: 'Foo',
+        var2: 'Bar',
+        sync_db_version: syncDbVersion
+      });
+
+      // Cleanup
+      process.env.TEST_ENV_VALUE1 = undefined;
     });
   });
 });
