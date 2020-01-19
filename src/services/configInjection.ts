@@ -45,7 +45,7 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
  * @param {Connection} connection
  * @param {SyncConfig} config
  */
-export async function setupTable(connection: Connection, config: SyncConfig) {
+export async function setup(connection: Connection, config: SyncConfig) {
   const { injectedConfig } = config;
 
   const exists = await connection.schema().hasTable(injectedConfig.table);
@@ -73,6 +73,6 @@ export async function setupTable(connection: Connection, config: SyncConfig) {
  * @param {Connection} connection
  * @param {SyncConfig} config
  */
-export async function dropTable(connection: Connection, config: SyncConfig) {
+export async function cleanup(connection: Connection, config: SyncConfig) {
   await connection.schema().dropTableIfExists(config.injectedConfig.table);
 }
