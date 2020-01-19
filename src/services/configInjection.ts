@@ -26,7 +26,7 @@ function getDefaultSystemVars(): Mapping<string> {
  * @returns {Mapping<string>}
  */
 export function prepareInjectionConfigVars(vars: Mapping<string>): Mapping<string> {
-  return updateInjectedConfigVars({ ...vars, ...getDefaultSystemVars() });
+  return expandEnvVariables({ ...vars, ...getDefaultSystemVars() });
 }
 
 /**
@@ -36,7 +36,7 @@ export function prepareInjectionConfigVars(vars: Mapping<string>): Mapping<strin
  * @param {Mapping<string>} vars
  * @returns {Mapping<string>}
  */
-export function updateInjectedConfigVars(vars: Mapping<string>): Mapping<string> {
+export function expandEnvVariables(vars: Mapping<string>): Mapping<string> {
   const entries = Object.entries(vars);
   const result = entries.reduce(
     (acc, entry) => Object.assign({}, acc, { [entry[0]]: expandEnvVars(entry[1]) }) as Mapping<string>,
