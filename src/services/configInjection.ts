@@ -55,3 +55,31 @@ export function updateInjectedConfigVars(vars: Mapping<string>): Mapping<string>
 export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
   return Object.entries(vars).map(([key, value]) => ({ key, value }));
 }
+
+/**
+ * Setup the table in the database for config injection.
+ *
+ * @param {Connection} connection
+ * @param {SyncConfig} config
+ */
+export async function setupTable(connection: Connection, config: SyncConfig) {
+  const { injectedConfig } = config;
+
+  const exists = await connection.schema().hasTable(injectedConfig.table);
+
+  if (exists) {
+    throw new Error(`Table "${injectedConfig.table}" already exists.`);
+  }
+
+  const values = convertToKeyValuePairs(injectedConfig.vars);
+
+  await connection.schema().createTable(injectedConfig.table, table => {
+    table.string('key').primary();
+    table.string('value');
+  });
+
+  await connection
+    .getInstance()
+    .insert(values)
+    .into(injectedConfig.table);
+}
