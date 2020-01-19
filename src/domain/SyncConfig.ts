@@ -12,7 +12,7 @@ interface SyncConfig {
   };
   injectedConfig: {
     table: string;
-    variables: Mapping<string>;
+    vars: Mapping<string>;
   };
 }
 
