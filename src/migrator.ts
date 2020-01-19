@@ -89,8 +89,22 @@ export async function synchronize(
 ) {
   log('Starting to synchronize.');
   const connArr = Array.isArray(conn) ? conn : [conn];
+  const connections = mapToConnectionInstances(connArr);
+  const promises = connections.map(connection => syncDatabase(connection, config));
 
-  const connections = connArr.map(con => {
+  await Promise.all(promises);
+
+  log('All synchronized');
+}
+
+/**
+ * Map connection configuration list to the connection instances.
+ *
+ * @param {((ConnectionConfig | Knex)[])} connectionList
+ * @returns {Connection[]}
+ */
+function mapToConnectionInstances(connectionList: (ConnectionConfig | Knex)[]): Connection[] {
+  return connectionList.map(con => {
     if (Connection.isKnexInstance(con)) {
       log(`Received connection instance to database: ${con.client.config.connection.database}`);
 
@@ -101,12 +115,6 @@ export async function synchronize(
 
     return new Connection(con);
   });
-
-  const promises = connections.map(connection => syncDatabase(connection, config));
-
-  await Promise.all(promises);
-
-  log('All synchronized');
 }
 
 /**
