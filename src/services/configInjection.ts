@@ -1,5 +1,5 @@
 import Mapping from '../domain/Mapping';
-import { expandEnvVars } from '../util/env';
+import { expandEnvVarsInMap } from '../util/env';
 
 import Connection from '../Connection';
 import SyncConfig from '../domain/SyncConfig';
@@ -26,24 +26,7 @@ function getDefaultSystemVars(): Mapping<string> {
  * @returns {Mapping<string>}
  */
 export function prepareInjectionConfigVars(vars: Mapping<string>): Mapping<string> {
-  return expandEnvVariables({ ...vars, ...getDefaultSystemVars() });
-}
-
-/**
- * Update variables to be injected and expand
- * environment variables to be expanded.
- *
- * @param {Mapping<string>} vars
- * @returns {Mapping<string>}
- */
-export function expandEnvVariables(vars: Mapping<string>): Mapping<string> {
-  const entries = Object.entries(vars);
-  const result = entries.reduce(
-    (acc, entry) => Object.assign({}, acc, { [entry[0]]: expandEnvVars(entry[1]) }) as Mapping<string>,
-    {} as Mapping<string>
-  );
-
-  return result;
+  return expandEnvVarsInMap({ ...vars, ...getDefaultSystemVars() });
 }
 
 /**
