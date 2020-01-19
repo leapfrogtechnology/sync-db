@@ -8,5 +8,14 @@ sql:
   - schema/utils.sql
   - function/utils/product.sql
   - procedure/utils/get_date.sql
+  - procedure/utils/setup_data.sql
   - view/utils/vw_table_names.sql
   - view/utils/vw_user_names.sql
+
+hooks:
+  post_sync:
+    - scripts/setup.sql
+injectedConfig:
+  vars:
+    create_admin: 'true'
+    admin_email: 'admin@example.com'
