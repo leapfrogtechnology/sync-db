@@ -13,6 +13,10 @@ export const DEFAULT_CONFIG: SyncConfig = {
   hooks: {
     pre_sync: [],
     post_sync: []
+  },
+  injectedConfig: {
+    table: '__injected_config',
+    variables: {}
   }
 };
 
