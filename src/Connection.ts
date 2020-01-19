@@ -82,6 +82,15 @@ class Connection {
   }
 
   /**
+   * Returns the underlying Knex instance.
+   *
+   * @returns {Knex}
+   */
+  public getInstance(): Knex {
+    return this.instance;
+  }
+
+  /**
    * Gets access to the schema builder.
    *
    * @returns {Knex.SchemaBuilder}
