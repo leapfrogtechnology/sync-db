@@ -4,6 +4,7 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
 import * as fs from './util/fs';
+import Mapping from './domain/Mapping';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
@@ -26,7 +27,18 @@ export async function loadConfig(): Promise<SyncConfig> {
 
   // TODO: Validate the loaded config.
 
-  return loaded;
+  return {
+    ...loaded,
+    injectedConfig: {
+      ...loaded.injectedConfig,
+      variables: updateInjectedConfigVars(loaded.injectedConfig.variables)
+    }
+  };
+}
+
+function updateInjectedConfigVars(vars: Mapping<string>): Mapping<string> {
+  // TODO: Implement this.
+  return { ...vars };
 }
 
 /**
