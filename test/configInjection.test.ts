@@ -1,16 +1,21 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import { version as syncDbVersion } from '../package.json';
-import { prepareInjectionConfigVars, convertToKeyValuePairs } from '../src/services/configInjection';
+import {
+  prepareInjectionConfigVars,
+  convertToKeyValuePairs,
+  getPackageMetadata
+} from '../src/services/configInjection';
 
 describe('Services: configInjection', () => {
+  const { version } = getPackageMetadata();
+
   describe('prepareInjectionConfigVars', () => {
     it('should return the default vars for injection even if empty object is given', async () => {
       const result = prepareInjectionConfigVars({});
 
       expect(result).to.deep.equal({
-        sync_db_version: syncDbVersion
+        sync_db_version: version
       });
     });
 
@@ -25,7 +30,7 @@ describe('Services: configInjection', () => {
       expect(result).to.deep.equal({
         var1: 'Foo',
         var2: 'Bar',
-        sync_db_version: syncDbVersion
+        sync_db_version: version
       });
 
       // Cleanup
