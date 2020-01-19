@@ -57,7 +57,7 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
 }
 
 /**
- * Setup the table in the database for config injection.
+ * Setup the table in the database with the injected config.
  *
  * @param {Connection} connection
  * @param {SyncConfig} config
@@ -82,4 +82,14 @@ export async function setupTable(connection: Connection, config: SyncConfig) {
     .getInstance()
     .insert(values)
     .into(injectedConfig.table);
+}
+
+/**
+ * Drop the injected config table.
+ *
+ * @param {Connection} connection
+ * @param {SyncConfig} config
+ */
+export async function dropTable(connection: Connection, config: SyncConfig) {
+  await connection.schema().dropTableIfExists(config.injectedConfig.table);
 }
