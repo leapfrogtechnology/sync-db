@@ -5,6 +5,13 @@ import { updateInjectedConfigVars } from '../src/services/configInjection';
 
 describe('Services: configInjection', () => {
   describe('updateInjectedConfigVars', () => {
+    it('should return an empty object just-as-is', () => {
+      const vars = {};
+      const result = updateInjectedConfigVars(vars);
+
+      expect(result).to.deep.equal(vars);
+    });
+
     it('should return a normal map of object just-as-is', () => {
       const vars = {
         var1: 'Foo',
