@@ -82,6 +82,16 @@ class Connection {
   }
 
   /**
+   * Gets access to the schema builder.
+   *
+   * @returns {Knex.SchemaBuilder}
+   * @memberof Connection
+   */
+  public schema(): Knex.SchemaBuilder {
+    return this.instance.schema;
+  }
+
+  /**
    * Returns connection config.
    *
    * @returns {ConnectionConfig}
