@@ -5,6 +5,7 @@ import Connection from '../Connection';
 import SyncConfig from '../domain/SyncConfig';
 import KeyValuePair from '../domain/KeyValuePair';
 
+import { dbLogger } from '../logger';
 import { version as syncDbVersion } from '../../package.json';
 
 /**
@@ -46,7 +47,10 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
  * @param {SyncConfig} config
  */
 export async function setup(connection: Connection, config: SyncConfig) {
+  const logDb = dbLogger(connection);
   const { injectedConfig } = config;
+
+  logDb(`Making sure table ${injectedConfig.table} doesn't already exists.`);
 
   const exists = await connection.schema().hasTable(injectedConfig.table);
 
@@ -56,15 +60,21 @@ export async function setup(connection: Connection, config: SyncConfig) {
 
   const values = convertToKeyValuePairs(injectedConfig.vars);
 
+  // Create table
+  logDb(`Creating table ${injectedConfig.table}.`);
   await connection.schema().createTable(injectedConfig.table, table => {
     table.string('key').primary();
     table.string('value');
   });
 
+  // Inject the configurations into the created table.
+  logDb(`Injecting config into ${injectedConfig.table}.`);
   await connection
     .getInstance()
     .insert(values)
     .into(injectedConfig.table);
+
+  logDb(`Inserted configurations: ${values.length}.`);
 }
 
 /**
@@ -74,5 +84,9 @@ export async function setup(connection: Connection, config: SyncConfig) {
  * @param {SyncConfig} config
  */
 export async function cleanup(connection: Connection, config: SyncConfig) {
+  const logDb = dbLogger(connection);
+
   await connection.schema().dropTableIfExists(config.injectedConfig.table);
+
+  logDb(`Cleaned up table ${config.injectedConfig.table}.`);
 }
