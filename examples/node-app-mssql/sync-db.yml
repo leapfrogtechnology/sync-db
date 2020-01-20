@@ -17,5 +17,5 @@ hooks:
     - scripts/setup.sql
 injectedConfig:
   vars:
-    create_admin: 'true'
+    create_admin: ${CREATE_ADMIN}
     admin_email: 'admin@example.com'
