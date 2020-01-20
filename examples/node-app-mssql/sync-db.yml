@@ -9,8 +9,8 @@ sql:
   - function/utils/product.sql
   - procedure/utils/get_date.sql
   - procedure/utils/setup_data.sql
-  - view/utils/vw_table_names.sql
   - view/utils/vw_users.sql
+  - view/utils/vw_tasks.sql
 
 hooks:
   post_sync:
