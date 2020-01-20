@@ -1,5 +1,5 @@
 --
--- View to fetch server login names.
+-- View to fetch users persisted in the database.
 --
 CREATE VIEW [utils].vw_users
 AS (
