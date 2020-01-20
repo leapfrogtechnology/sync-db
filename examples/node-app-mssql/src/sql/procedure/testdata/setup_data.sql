@@ -3,7 +3,8 @@
 --
 CREATE PROCEDURE [testdata].setup_data(
   @create_admin BIT = 0,
-  @admin_email VARCHAR(100) = NULL
+  @admin_email VARCHAR(100) = NULL,
+  @task_status VARCHAR(100) = NULL
 )
 AS
 BEGIN
@@ -67,5 +68,12 @@ BEGIN
       ('user4@example.com', 'Task 20', 'This is task 20.', 0)
   ) AS t(user_email, title, description, is_complete)
   INNER JOIN dbo.users u ON u.email = t.user_email
+
+  -- Update status according to the @task_status flag.
+  IF (@task_status = 'all_complete')
+    UPDATE dbo.tasks SET is_complete = 1;
+
+  IF (@task_status = 'none_complete')
+    UPDATE dbo.tasks SET is_complete = 0;
 
 END
