@@ -22,3 +22,4 @@ injectedConfig:
   vars:
     create_admin: ${CREATE_ADMIN}
     admin_email: 'admin@example.com'
+    task_status: ${TASK_STATUS}
