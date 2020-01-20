@@ -13,7 +13,7 @@ sql:
 
   # Create objects in testdata schema
   - schema/testdata.sql
-  - procedure/testdata/setup_users.sql
+  - procedure/testdata/setup_data.sql
 
 hooks:
   post_sync:
