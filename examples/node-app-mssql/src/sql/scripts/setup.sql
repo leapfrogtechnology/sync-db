@@ -8,4 +8,4 @@ SET @create_admin = (SELECT IIF([value] = 'true', 1, 0) FROM __injected_config W
 SET @admin_email = (SELECT [value] FROM __injected_config WHERE [key] = 'admin_email');
 
 -- Setup data.
-EXEC utils.setup_data @create_admin, @admin_email;
+EXEC testdata.setup_users @create_admin, @admin_email;
