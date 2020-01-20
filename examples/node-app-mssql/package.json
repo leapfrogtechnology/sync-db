@@ -4,7 +4,7 @@
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
-    "sync-db": "sync-db",
+    "synchronize": "yarn migrate && sync-db",
     "start": "yarn lint && babel-node src/index.js",
     "make": "knex --knexfile=knexfile.js migrate:make",
     "migrate": "knex --knexfile=knexfile.js migrate:latest",
