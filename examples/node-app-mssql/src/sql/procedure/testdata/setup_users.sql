@@ -1,7 +1,7 @@
 --
 -- Procedure to setup data for the tables.
 --
-CREATE PROCEDURE [utils].setup_data(
+CREATE PROCEDURE [testdata].setup_users(
   @create_admin BIT = 0,
   @admin_email VARCHAR(100) = NULL
 )

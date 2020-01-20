@@ -8,9 +8,12 @@ sql:
   - schema/utils.sql
   - function/utils/product.sql
   - procedure/utils/get_date.sql
-  - procedure/utils/setup_data.sql
   - view/utils/vw_users.sql
   - view/utils/vw_tasks.sql
+
+  # Create objects in testdata schema
+  - schema/testdata.sql
+  - procedure/testdata/setup_users.sql
 
 hooks:
   post_sync:
