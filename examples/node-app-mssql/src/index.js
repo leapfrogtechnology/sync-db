@@ -23,7 +23,10 @@ const { connections } = require('../connections.sync-db.json');
       '\nList of users:\n',
       users.map(({ email }) => email)
     );
-    console.log('\nList of completed tasks:\n', tasks.filter(task => !!task.is_complete);
+    console.log(
+      '\nList of completed tasks:\n',
+      tasks.filter(task => !!task.is_complete)
+    );
     console.log('\nCalculations:\n', {
       'Sum of 6 and 7': sum,
       'Product of 6 and 7': product,
