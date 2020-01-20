@@ -11,10 +11,10 @@ BEGIN
   MERGE dbo.users t
     USING (
       VALUES
-        ('user1@example.com', CONVERT(varchar(100), REPLACE(NEWID(), '-', ''))),
-        ('user2@example.com', CONVERT(varchar(100), REPLACE(NEWID(), '-', ''))),
-        ('user3@example.com', CONVERT(varchar(100), REPLACE(NEWID(), '-', ''))),
-        ('user4@example.com', CONVERT(varchar(100), REPLACE(NEWID(), '-', '')))
+        ('user1@example.com', CONVERT(VARCHAR(100), REPLACE(NEWID(), '-', ''))),
+        ('user2@example.com', CONVERT(VARCHAR(100), REPLACE(NEWID(), '-', ''))),
+        ('user3@example.com', CONVERT(VARCHAR(100), REPLACE(NEWID(), '-', ''))),
+        ('user4@example.com', CONVERT(VARCHAR(100), REPLACE(NEWID(), '-', '')))
     ) AS s(email, password) ON t.email = s.email
   WHEN NOT MATCHED BY TARGET THEN
     INSERT (email, password)
@@ -30,6 +30,6 @@ BEGIN
   -- Add admin user if needed.
   IF (@create_admin = 1)
     INSERT INTO dbo.users (email, password)
-    VALUES (@admin_email, CONVERT(varchar(100), REPLACE(NEWID(), '-', '')));
+    VALUES (@admin_email, CONVERT(VARCHAR(100), REPLACE(NEWID(), '-', '')));
 
 END
