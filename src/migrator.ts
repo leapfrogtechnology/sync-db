@@ -6,6 +6,7 @@ import { log, dbLogger } from './logger';
 import { getConnectionId } from './config';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
+import SyncResult from './domain/SyncResult';
 import SyncContext from './domain/SyncContext';
 import ConnectionConfig from './domain/ConnectionConfig';
 
@@ -131,19 +132,32 @@ function mapToConnectionInstances(connectionList: (ConnectionConfig | Knex)[]): 
 }
 
 /**
- * Synchronize a specific database.
+ * Synchronize on a single database connection.
  *
  * @param {Knex} connection
  * @param {SyncContext} context
+ * @returns {Promise<SyncResult>}
  */
-async function syncDatabase(connection: Knex, context: SyncContext) {
-  const logDb = dbLogger(context.connectionId);
+async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<SyncResult> {
+  const { connectionId } = context;
+  const logDb = dbLogger(connectionId);
+  const result: SyncResult = { connectionId, success: false };
 
-  logDb('Synchronize database');
+  try {
+    logDb('Starting synchronization.');
 
-  // Run the process in a single transaction for a database connection.
-  await connection.transaction(async trx => {
-    await teardown(trx, context);
-    await setup(trx, context);
-  });
+    // Run the process in a single transaction for a database connection.
+    await connection.transaction(async trx => {
+      await teardown(trx, context);
+      await setup(trx, context);
+    });
+
+    logDb(`Synchronization successful.`);
+    result.success = true;
+  } catch (e) {
+    logDb(`Error caught for connection ${connectionId}:`, e);
+    result.error = e;
+  }
+
+  return result;
 }
