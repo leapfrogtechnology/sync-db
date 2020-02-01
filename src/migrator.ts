@@ -18,7 +18,7 @@ import * as configInjection from './services/configInjection';
  * @param {SyncContext} context
  * @returns {Promise<void>}
  */
-export async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
   const { basePath, hooks, sql } = context.config;
   const logDb = dbLogger(context.connectionId);
 
@@ -68,7 +68,7 @@ export async function setup(trx: Knex.Transaction, context: SyncContext): Promis
  * @param {SyncContext} context
  * @returns {Promise<void>}
  */
-export async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
   const { basePath, sql } = context.config;
   const logDb = dbLogger(context.connectionId);
 
