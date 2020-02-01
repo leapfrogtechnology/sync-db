@@ -1,10 +1,12 @@
 import * as Knex from 'knex';
 
 import Connection from './Connection';
-import { log, dbLogger } from './logger';
 import * as sqlRunner from './sqlRunner';
+import { log, dbLogger } from './logger';
+import { getConnectionId } from './config';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
+import SyncContext from './domain/SyncContext';
 import ConnectionConfig from './domain/ConnectionConfig';
 
 import * as configInjection from './services/configInjection';
@@ -12,53 +14,49 @@ import * as configInjection from './services/configInjection';
 /**
  * Migrate SQL on a database.
  *
- * @param {SyncConfig} config
- * @returns {(connection: Connection) => Promise<void>}
+ * @param {Knex.Transaction} trx
+ * @param {SyncContext} context
+ * @returns {Promise<void>}
  */
-export function setup(config: SyncConfig): (connection: Connection) => Promise<void> {
-  const { basePath, hooks, sql } = config;
+export async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+  const { basePath, hooks, sql } = context.config;
+  const logDb = dbLogger(context.connectionId);
 
-  return async (connection: Connection) => {
-    const logDb = dbLogger(connection);
+  logDb(`Running setup on connection: ${context.connectionId}`);
 
-    logDb(`Running setup on connection id: ${connection.getConfig().id}`);
+  const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
+  const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
-    const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
-    const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
+  // Config Injection: Setup
+  // This will setup a config table (temporary and accessible only to this transaction).
+  await configInjection.setup(trx, config);
 
-    await connection.transaction(async t => {
-      // Config Injection: Setup
-      // This will setup a config table (temporary and accessible only to this transaction).
-      await configInjection.setup(t, config);
+  if (preMigrationScripts.length > 0) {
+    const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
 
-      if (preMigrationScripts.length > 0) {
-        const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
+    logDb('PRE-SYNC: Begin');
+    // Run the pre hook scripts
+    await sqlRunner.runSequentially(trx, preHookScripts, context.connectionId);
+    logDb('PRE-SYNC: End');
+  }
 
-        logDb('PRE-SYNC: Begin');
-        // Run the pre hook scripts
-        await sqlRunner.runSequentially(preHookScripts, t);
-        logDb('PRE-SYNC: End');
-      }
+  // Run the migration scripts.
+  await sqlRunner.runSequentially(trx, sqlScripts, context.connectionId);
 
-      // Run the migration scripts.
-      await sqlRunner.runSequentially(sqlScripts, t);
+  if (postMigrationScripts.length > 0) {
+    const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
 
-      if (postMigrationScripts.length > 0) {
-        const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
+    logDb('POST-SYNC: Begin');
+    // Run the pre hook scripts
+    await sqlRunner.runSequentially(trx, postHookScripts, context.connectionId);
+    logDb('POST-SYNC: End');
+  }
 
-        logDb('POST-SYNC: Begin');
-        // Run the pre hook scripts
-        await sqlRunner.runSequentially(postHookScripts, t);
-        logDb('POST-SYNC: End');
-      }
+  // Config Injection: Cleanup
+  // Cleans up the injected config and the table.
+  await configInjection.cleanup(trx, config);
 
-      // Config Injection: Cleanup
-      // Cleans up the injected config and the table.
-      await configInjection.cleanup(t, config);
-
-      logDb('Finished setup');
-    });
-  };
+  logDb('Finished setup');
 }
 
 /**
@@ -66,29 +64,27 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
  * that have been created in the database.
  * They're executed in the reverse order of their creation.
  *
- * @param {SyncConfig} config
- * @returns {(connection: Connection) => Promise<void>}
+ * @param {Knex.Transaction} trx
+ * @param {SyncContext} context
+ * @returns {Promise<void>}
  */
-export function teardown(config: SyncConfig): (connection: Connection) => Promise<void> {
-  const { basePath, sql } = config;
+export async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+  const { basePath, sql } = context.config;
+  const logDb = dbLogger(context.connectionId);
 
-  return async (connection: Connection) => {
-    const logDb = dbLogger(connection);
+  logDb(`Running rollback on connection id: ${context.connectionId}`);
 
-    logDb(`Running rollback on connection id: ${connection.getConfig().id}`);
+  const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
 
-    const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
+  await sqlRunner.rollbackSequentially(trx, fileInfoList, context.connectionId);
 
-    await sqlRunner.rollbackSequentially(fileInfoList, connection);
-
-    logDb('Finished running rollback');
-  };
+  logDb('Finished running rollback');
 }
 
 /**
  * Synchronize database.
  *
- * @param {SyncConfig} config
+ * @param {SyncContext} config
  * @param {ConnectionConfig[] | ConnectionConfig | Knex[] | Knex} conn
  * @param {SyncParams} params
  */
@@ -100,7 +96,12 @@ export async function synchronize(
   log('Starting to synchronize.');
   const connArr = Array.isArray(conn) ? conn : [conn];
   const connections = mapToConnectionInstances(connArr);
-  const promises = connections.map(connection => syncDatabase(connection, config));
+  const promises = connections.map(connection =>
+    syncDatabase(connection.getInstance(), {
+      config,
+      connectionId: getConnectionId(connection.getConfig())
+    })
+  );
 
   await Promise.all(promises);
 
@@ -130,14 +131,17 @@ function mapToConnectionInstances(connectionList: (ConnectionConfig | Knex)[]): 
 /**
  * Synchronize a specific database.
  *
- * @param {Connection} connection
- * @param {SyncConfig} config
+ * @param {Knex} connection
+ * @param {SyncContext} context
  */
-async function syncDatabase(connection: Connection, config: SyncConfig) {
-  const logDb = dbLogger(connection);
+async function syncDatabase(connection: Knex, context: SyncContext) {
+  const logDb = dbLogger(context.connectionId);
 
   logDb('Synchronize database');
 
-  await teardown(config)(connection);
-  await setup(config)(connection);
+  // Run the process in a single transaction for a database connection.
+  await connection.transaction(async trx => {
+    await teardown(trx, context);
+    await setup(trx, context);
+  });
 }
