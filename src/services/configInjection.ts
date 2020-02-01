@@ -57,8 +57,9 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
  *
  * @param {Connection} connection
  * @param {SyncConfig} config
+ * @returns {Promise<void>}
  */
-export async function setup(connection: Connection, config: SyncConfig) {
+export async function setup(connection: Connection, config: SyncConfig): Promise<void> {
   const logDb = dbLogger(connection);
   const { injectedConfig } = config;
 
@@ -66,8 +67,11 @@ export async function setup(connection: Connection, config: SyncConfig) {
 
   const exists = await connection.schema().hasTable(injectedConfig.table);
 
+  // TODO: Think about a better solution; it shouldn't hav existed in the first place.
   if (exists) {
-    throw new Error(`Table "${injectedConfig.table}" already exists.`);
+    logDb('Warning: Table "${injectedConfig.table}" already exists. It will be dropped.');
+
+    await cleanup(connection, config);
   }
 
   const values = convertToKeyValuePairs(injectedConfig.vars);
@@ -94,8 +98,9 @@ export async function setup(connection: Connection, config: SyncConfig) {
  *
  * @param {Connection} connection
  * @param {SyncConfig} config
+ * @returns {Promise<void>}
  */
-export async function cleanup(connection: Connection, config: SyncConfig) {
+export async function cleanup(connection: Connection, config: SyncConfig): Promise<void> {
   const logDb = dbLogger(connection);
 
   await connection.schema().dropTableIfExists(config.injectedConfig.table);
