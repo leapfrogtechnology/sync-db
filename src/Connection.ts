@@ -1,5 +1,6 @@
 import * as Knex from 'knex';
 
+import { getConnectionId } from './config';
 import ConnectionConfig from './domain/ConnectionConfig';
 import RawBindingParams, { ValueMap } from './domain/RawBingingParams';
 
@@ -19,7 +20,7 @@ class Connection {
     return new Connection({
       ...db.client.config.connection,
       client: db.client.config.client,
-      id: `${db.client.config.connection.host}/${db.client.config.connection.database}`
+      id: getConnectionId(db.client.config.connection)
     });
   }
 
