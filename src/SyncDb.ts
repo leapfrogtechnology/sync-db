@@ -2,6 +2,7 @@ import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
 import SyncResult from './domain/SyncResult';
+import SyncParams from './domain/SyncParams';
 import { handleFlags } from './services/syncDb';
 import { loadConfig, resolveConnections } from './config';
 
@@ -22,6 +23,23 @@ class SyncDb extends Command {
   };
 
   /**
+   * Default CLI options for running synchronize.
+   *
+   * @param {*} userParams
+   * @returns {SyncParams}
+   */
+  getSyncParams(userParams: any): SyncParams {
+    return {
+      ...userParams,
+      // Individual success handler
+      onSuccess: (connectionId: string) => this.log(` [✓] ${connectionId} - Successful`),
+
+      // Individual error handler
+      onFailed: (connectionId: string) => this.warn(` [✖] ${connectionId} - Failed`)
+    };
+  }
+
+  /**
    * CLI command execution handler.
    *
    * @returns {Promise<void>}
@@ -31,9 +49,7 @@ class SyncDb extends Command {
     process.env.SYNC_DB_CLI = 'true';
 
     const { flags: parsedFlags } = this.parse(SyncDb);
-    const params = {
-      force: parsedFlags.force
-    };
+    const params = this.getSyncParams({ ...parsedFlags });
 
     try {
       await handleFlags(parsedFlags, {

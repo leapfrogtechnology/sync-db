@@ -22,7 +22,9 @@ export const DEFAULT_CONFIG: SyncConfig = {
 };
 
 export const DEFAULT_SYNC_PARAMS: SyncParams = {
-  force: false
+  force: false,
+  onSuccess: (connectionId: string) => null,
+  onFailed: (connectionId: string) => null
 };
 
 export const ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];
