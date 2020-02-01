@@ -23,7 +23,7 @@ describe('UTIL: env', () => {
       expect(result).to.equal('Foo bar');
     });
 
-    it("should substitute an empty string in-place of the variable if the variable isn't defined.", () => {
+    it('should substitute an empty string in-place of the variable if the variable isn\'t defined.', () => {
       expect(expandEnvVars('${TEST_UNDEFINED_VARIABLE}')).to.equal('');
       expect(expandEnvVars('Substituted value = "${TEST_UNDEFINED_VARIABLE}"')).to.equal('Substituted value = ""');
     });
