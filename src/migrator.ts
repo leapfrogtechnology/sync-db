@@ -116,6 +116,8 @@ export async function synchronize(
  */
 function mapToConnectionInstances(connectionList: (ConnectionConfig | Knex)[]): Connection[] {
   return connectionList.map(con => {
+    // TODO: Ask for id in for programmatic API too -
+    // when Knex instance is passed directly.
     if (Connection.isKnexInstance(con)) {
       log(`Received connection instance to database: ${con.client.config.connection.database}`);
 
