@@ -1,4 +1,5 @@
 import * as Knex from 'knex';
+import mergeDeepRight from 'ramda/es/mergeDeepRight';
 
 import Connection from './Connection';
 import * as sqlRunner from './sqlRunner';
@@ -8,6 +9,7 @@ import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
 import SyncContext from './domain/SyncContext';
+import { DEFAULT_SYNC_PARAMS } from './constants';
 import ConnectionConfig from './domain/ConnectionConfig';
 
 import * as configInjection from './services/configInjection';
@@ -20,10 +22,11 @@ import * as configInjection from './services/configInjection';
  * @returns {Promise<void>}
  */
 async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+  const { connectionId } = context;
   const { basePath, hooks, sql } = context.config;
-  const logDb = dbLogger(context.connectionId);
+  const logDb = dbLogger(connectionId);
 
-  logDb(`Running setup on connection: ${context.connectionId}`);
+  logDb(`Running setup.`);
 
   const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
@@ -37,19 +40,19 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
 
     logDb('PRE-SYNC: Begin');
     // Run the pre hook scripts
-    await sqlRunner.runSequentially(trx, preHookScripts, context.connectionId);
+    await sqlRunner.runSequentially(trx, preHookScripts, connectionId);
     logDb('PRE-SYNC: End');
   }
 
   // Run the migration scripts.
-  await sqlRunner.runSequentially(trx, sqlScripts, context.connectionId);
+  await sqlRunner.runSequentially(trx, sqlScripts, connectionId);
 
   if (postMigrationScripts.length > 0) {
     const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
 
     logDb('POST-SYNC: Begin');
     // Run the pre hook scripts
-    await sqlRunner.runSequentially(trx, postHookScripts, context.connectionId);
+    await sqlRunner.runSequentially(trx, postHookScripts, connectionId);
     logDb('POST-SYNC: End');
   }
 
@@ -83,30 +86,37 @@ async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<vo
 }
 
 /**
- * Synchronize database.
+ * Synchronize all the configured database connections.
  *
- * @param {SyncContext} config
- * @param {ConnectionConfig[] | ConnectionConfig | Knex[] | Knex} conn
- * @param {SyncParams} params
+ * @param {SyncConfig} config
+ * @param {(ConnectionConfig[] | ConnectionConfig | Knex[] | Knex)} conn
+ * @param {SyncParams} [options]
+ * @returns {Promise<SyncResult[]>}
  */
 export async function synchronize(
   config: SyncConfig,
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
-  params?: SyncParams
-) {
+  options?: SyncParams
+): Promise<SyncResult[]> {
   log('Starting to synchronize.');
   const connArr = Array.isArray(conn) ? conn : [conn];
   const connections = mapToConnectionInstances(connArr);
+  const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options);
+  const cliEnvironment = process.env.SYNC_DB_CLI === 'true';
   const promises = connections.map(connection =>
-    syncDatabase(connection.getInstance(), {
+    synchronizeDatabase(connection.getInstance(), {
       config,
+      params,
+      cliEnvironment,
       connectionId: getConnectionId(connection.getConfig())
     })
   );
 
-  await Promise.all(promises);
+  const result = await Promise.all(promises);
 
   log('All synchronized');
+
+  return result;
 }
 
 /**
