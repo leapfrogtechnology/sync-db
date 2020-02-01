@@ -3,6 +3,7 @@
 import * as path from 'path';
 
 import SyncConfig from './domain/SyncConfig';
+import SyncParams from './domain/SyncParams';
 
 export const CONFIG_FILENAME = 'sync-db.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
@@ -18,6 +19,10 @@ export const DEFAULT_CONFIG: SyncConfig = {
   injectedConfig: {
     vars: {}
   }
+};
+
+export const DEFAULT_SYNC_PARAMS: SyncParams = {
+  force: false
 };
 
 export const ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];
