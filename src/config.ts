@@ -42,7 +42,7 @@ export async function loadConfig(): Promise<SyncConfig> {
  *
  * @param {SyncConfig} config
  */
-function validate(config: SyncConfig) {
+export function validate(config: SyncConfig) {
   const { injectedConfig } = config;
 
   // Shouldn't reach under here unless the user has mismatched the value.
