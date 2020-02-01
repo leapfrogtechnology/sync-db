@@ -114,7 +114,7 @@ export async function synchronize(
 
   const result = await Promise.all(promises);
 
-  log('All synchronized');
+  log('Finished all');
 
   return result;
 }

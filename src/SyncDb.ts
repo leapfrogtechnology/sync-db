@@ -1,6 +1,7 @@
 import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
+import SyncResult from './domain/SyncResult';
 import { handleFlags } from './services/syncDb';
 import { loadConfig, resolveConnections } from './config';
 
@@ -44,13 +45,44 @@ class SyncDb extends Command {
 
       const { synchronize } = await import('./migrator');
 
-      await synchronize(config, connections, params);
-      process.exit(0);
+      const result = await synchronize(config, connections, params);
+
+      this.displayResult(result);
     } catch (e) {
       log('Error caught: ', e, '\n');
       this.error('An error occurred: ' + e);
       process.exit(-1);
     }
+  }
+
+  /**
+   * Display the result.
+   *
+   * @param {SyncResult[]} result
+   */
+  displayResult(result: SyncResult[]) {
+    const failed = result.filter(attempt => !attempt.success);
+
+    const totalCount = result.length;
+    const failedCount = failed.length;
+    const successfulCount = totalCount - failedCount;
+
+    // Display output.
+    this.log(`${successfulCount} / ${totalCount} completed successfully.`);
+
+    if (failed.length === 0) {
+      return process.exit(0);
+    }
+
+    // Display all errors.
+    this.warn(`${failedCount} error(s) found.`);
+
+    failed.forEach(attempt => {
+      this.warn(`Synchronize failed for ${attempt.connectionId}`);
+      this.warn(attempt.error);
+      this.log('\n');
+    });
+    process.exit(-1);
   }
 }
 
