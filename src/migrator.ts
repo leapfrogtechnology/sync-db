@@ -169,5 +169,12 @@ async function synchronizeDatabase(connection: Knex, context: SyncContext): Prom
     result.error = e;
   }
 
+  // If it's a CLI environment, invoke the handler.
+  if (context.cliEnvironment) {
+    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
+
+    handler(connectionId);
+  }
+
   return result;
 }
