@@ -1,3 +1,6 @@
+/**
+ * Synchronize parameters.
+ */
 interface SyncParams {
   force: boolean;
 }
