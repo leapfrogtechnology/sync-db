@@ -11,7 +11,7 @@
     "rollback": "knex --knexfile=knexfile.js migrate:rollback"
   },
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "^1.0.0-experimental.8-4",
+    "@leapfrogtechnology/sync-db": "^1.0.0-experimental.8-5",
     "knex": "^0.20.2",
     "mssql": "^5.1.0"
   },
