@@ -77,7 +77,7 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 
   const fileParts = filePath.split('/');
   const fileName = fileParts.pop() || '';
-  const [type, schema] = fileParts;
+  const [type, schema] = fileParts.slice(-2);
   const name = fileName.replace('.sql', '');
   const fqon = getFQON(type, name, schema);
 

@@ -40,6 +40,29 @@ describe('UTIL: sqlRunner', () => {
         schema: undefined
       });
     });
+
+    it('should be able to parse absolute paths too.', () => {
+      expect(sqlRunner.extractSqlFileInfo('/home/user/project/src/sql/procedure/test/test_data.sql')).to.deep.equal({
+        name: 'test_data',
+        fqon: 'test.test_data',
+        type: 'procedure',
+        schema: 'test'
+      });
+
+      expect(sqlRunner.extractSqlFileInfo('/home/user/project/src/sql/view/test/test_data.sql')).to.deep.equal({
+        name: 'test_data',
+        fqon: 'test.test_data',
+        type: 'view',
+        schema: 'test'
+      });
+
+      expect(sqlRunner.extractSqlFileInfo('/home/user/project/src/sql/function/test/test_data.sql')).to.deep.equal({
+        name: 'test_data',
+        fqon: 'test.test_data',
+        type: 'function',
+        schema: 'test'
+      });
+    });
   });
 
   describe('getDropStatement()', () => {
