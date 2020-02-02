@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import { extractSqlFileInfo, getDropStatement } from '../src/sqlRunner';
+import { extractSqlFileInfo, getDropStatement } from '../src/util/sql';
 
 describe('UTIL: sqlRunner', () => {
   describe('extractSqlFileInfo()', () => {
