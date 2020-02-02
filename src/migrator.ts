@@ -1,5 +1,5 @@
 import * as Knex from 'knex';
-import mergeDeepRight from 'ramda/es/mergeDeepRight';
+import { mergeDeepRight } from 'ramda';
 
 import Connection from './Connection';
 import * as sqlRunner from './sqlRunner';
