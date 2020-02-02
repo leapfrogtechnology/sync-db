@@ -1,12 +1,12 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import * as sqlRunner from '../src/services/sqlRunner';
+import { extractSqlFileInfo, getDropStatement } from '../src/sqlRunner';
 
 describe('UTIL: sqlRunner', () => {
   describe('extractSqlFileInfo()', () => {
     it('should return the parsed sql file info from the path (type = function)', () => {
-      expect(sqlRunner.extractSqlFileInfo('function/test_data/test_function_name.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('function/test_data/test_function_name.sql')).to.deep.equal({
         name: 'test_function_name',
         fqon: 'test_data.test_function_name',
         type: 'function',
@@ -15,7 +15,7 @@ describe('UTIL: sqlRunner', () => {
     });
 
     it('should return the parsed sql file info from the path (type = procedure)', () => {
-      expect(sqlRunner.extractSqlFileInfo('procedure/test_data/test_procedure_name.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('procedure/test_data/test_procedure_name.sql')).to.deep.equal({
         name: 'test_procedure_name',
         fqon: 'test_data.test_procedure_name',
         type: 'procedure',
@@ -24,7 +24,7 @@ describe('UTIL: sqlRunner', () => {
     });
 
     it('should return the parsed sql file info from the path (type = view)', () => {
-      expect(sqlRunner.extractSqlFileInfo('view/test_data/test_view_name.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('view/test_data/test_view_name.sql')).to.deep.equal({
         name: 'test_view_name',
         fqon: 'test_data.test_view_name',
         type: 'view',
@@ -33,7 +33,7 @@ describe('UTIL: sqlRunner', () => {
     });
 
     it('should return the parsed sql file info from the path (type = schema)', () => {
-      expect(sqlRunner.extractSqlFileInfo('schema/test_data.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('schema/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test_data',
         type: 'schema',
@@ -42,21 +42,21 @@ describe('UTIL: sqlRunner', () => {
     });
 
     it('should omit the schema if the files are defined directly under the "type" directory.', () => {
-      expect(sqlRunner.extractSqlFileInfo('view/test_data.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('view/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test_data',
         type: 'view',
         schema: undefined
       });
 
-      expect(sqlRunner.extractSqlFileInfo('procedure/test_data.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('procedure/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test_data',
         type: 'procedure',
         schema: undefined
       });
 
-      expect(sqlRunner.extractSqlFileInfo('function/test_data.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('function/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test_data',
         type: 'function',
@@ -65,21 +65,21 @@ describe('UTIL: sqlRunner', () => {
     });
 
     it('should be able to parse absolute paths too.', () => {
-      expect(sqlRunner.extractSqlFileInfo('/home/user/project/src/sql/procedure/test/test_data.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('/home/user/project/src/sql/procedure/test/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test.test_data',
         type: 'procedure',
         schema: 'test'
       });
 
-      expect(sqlRunner.extractSqlFileInfo('/home/user/project/src/sql/view/test/test_data.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('/home/user/project/src/sql/view/test/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test.test_data',
         type: 'view',
         schema: 'test'
       });
 
-      expect(sqlRunner.extractSqlFileInfo('/home/user/project/src/sql/function/test/test_data.sql')).to.deep.equal({
+      expect(extractSqlFileInfo('/home/user/project/src/sql/function/test/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test.test_data',
         type: 'function',
@@ -90,29 +90,23 @@ describe('UTIL: sqlRunner', () => {
 
   describe('getDropStatement()', () => {
     it('should return DROP statement for a function', () => {
-      expect(sqlRunner.getDropStatement('function', 'test.hello_world')).to.equal(
-        'DROP FUNCTION IF EXISTS test.hello_world'
-      );
+      expect(getDropStatement('function', 'test.hello_world')).to.equal('DROP FUNCTION IF EXISTS test.hello_world');
     });
 
     it('should return DROP statement for a procedure', () => {
-      expect(sqlRunner.getDropStatement('procedure', 'test.hello_world')).to.equal(
-        'DROP PROCEDURE IF EXISTS test.hello_world'
-      );
+      expect(getDropStatement('procedure', 'test.hello_world')).to.equal('DROP PROCEDURE IF EXISTS test.hello_world');
     });
 
     it('should return DROP statement for a schema', () => {
-      expect(sqlRunner.getDropStatement('schema', 'test.hello_world')).to.equal(
-        'DROP SCHEMA IF EXISTS test.hello_world'
-      );
+      expect(getDropStatement('schema', 'test.hello_world')).to.equal('DROP SCHEMA IF EXISTS test.hello_world');
     });
 
     it('should return DROP statement for a view', () => {
-      expect(sqlRunner.getDropStatement('view', 'test.hello_world')).to.equal('DROP VIEW IF EXISTS test.hello_world');
+      expect(getDropStatement('view', 'test.hello_world')).to.equal('DROP VIEW IF EXISTS test.hello_world');
     });
 
     it('should throw an error if naming convention of the object is wrong', () => {
-      expect(() => sqlRunner.getDropStatement('views', 'test.hello_world')).to.throw(Error);
+      expect(() => getDropStatement('views', 'test.hello_world')).to.throw(Error);
     });
   });
 });
