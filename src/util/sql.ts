@@ -62,20 +62,26 @@ export function getFQON(type: string, name: string, schema?: string): string {
 }
 
 /**
- * Extract sql file info from the filePath
+ * Extract sql file info from the filePath (relative to basePath).
  *
  * @param {string} filePath
  * @returns {SqlFileInfo}
  */
 export function extractSqlFileInfo(filePath: string): SqlFileInfo {
-  // filePath can have multiple sub directories e.g. views/dbo/vw_example.sql
-  // The first directory is taken as the object type e.g. views
-  // The first sub-directory is taken as the schema name (Optional)
-  // The last part of the path is taken as the filename.
+  // Note: It supports only relative path for now;
+  // in order to support absolute paths, the current logic needs
+  // to be changed which implies a breaking change.
+  if (path.isAbsolute(filePath)) {
+    throw new Error(`Path must be relative to the 'basePath'. Invalid path provided "${filePath}".`);
+  }
 
+  // The filePath can have multiple sub directories e.g. view/dbo/vw_example.sql.
+  // - The first directory in the path is taken as the object type e.g. view
+  // - The first sub-directory is taken as the schema name (Optional)
+  // - The last part of the path is taken as the filename.
   const fileParts = filePath.split('/');
   const fileName = fileParts.pop() || '';
-  const [type, schema] = fileParts.slice(-2);
+  const [type, schema] = fileParts;
 
   // Type-checking - throw an error if not a supported type.
   if (!SUPPORTED_TYPES.includes(type)) {

@@ -5,7 +5,7 @@ import { extractSqlFileInfo, getDropStatement } from '../src/util/sql';
 
 describe('UTIL: sqlRunner', () => {
   describe('extractSqlFileInfo()', () => {
-    it('should return the parsed sql file info from the path (type = function)', () => {
+    it('should return the parsed sql file info from the relative path (type = function)', () => {
       expect(extractSqlFileInfo('function/test_data/test_function_name.sql')).to.deep.equal({
         name: 'test_function_name',
         fqon: 'test_data.test_function_name',
@@ -14,7 +14,7 @@ describe('UTIL: sqlRunner', () => {
       });
     });
 
-    it('should return the parsed sql file info from the path (type = procedure)', () => {
+    it('should return the parsed sql file info from the relative path (type = procedure)', () => {
       expect(extractSqlFileInfo('procedure/test_data/test_procedure_name.sql')).to.deep.equal({
         name: 'test_procedure_name',
         fqon: 'test_data.test_procedure_name',
@@ -23,7 +23,7 @@ describe('UTIL: sqlRunner', () => {
       });
     });
 
-    it('should return the parsed sql file info from the path (type = view)', () => {
+    it('should return the parsed sql file info from the relative path (type = view)', () => {
       expect(extractSqlFileInfo('view/test_data/test_view_name.sql')).to.deep.equal({
         name: 'test_view_name',
         fqon: 'test_data.test_view_name',
@@ -32,13 +32,21 @@ describe('UTIL: sqlRunner', () => {
       });
     });
 
-    it('should return the parsed sql file info from the path (type = schema)', () => {
+    it('should return the parsed sql file info from the relative path (type = schema)', () => {
       expect(extractSqlFileInfo('schema/test_data.sql')).to.deep.equal({
         name: 'test_data',
         fqon: 'test_data',
         type: 'schema',
         schema: undefined
       });
+    });
+
+    it('does not support absolute paths and throws error if given.', () => {
+      const path1 = '/home/user/project/src/sql/procedure/test/test_data.sql';
+
+      expect(() => extractSqlFileInfo(path1)).to.throw(
+        `Path must be relative to the 'basePath'. Invalid path provided "${path1}".`
+      );
     });
 
     it('should omit the schema if the files are defined directly under the "type" directory.', () => {
@@ -71,32 +79,6 @@ describe('UTIL: sqlRunner', () => {
       expect(() => extractSqlFileInfo('xyz/abc/test_data.sql')).to.throw(
         'Unsupported object type "xyz". The only supported types are: schema, view, function, procedure.'
       );
-      expect(() => extractSqlFileInfo('/home/user/project/sql/xyz/abc/test_data.sql')).to.throw(
-        'Unsupported object type "xyz". The only supported types are: schema, view, function, procedure.'
-      );
-    });
-
-    it('should be able to parse absolute paths too.', () => {
-      expect(extractSqlFileInfo('/home/user/project/src/sql/procedure/test/test_data.sql')).to.deep.equal({
-        name: 'test_data',
-        fqon: 'test.test_data',
-        type: 'procedure',
-        schema: 'test'
-      });
-
-      expect(extractSqlFileInfo('/home/user/project/src/sql/view/test/test_data.sql')).to.deep.equal({
-        name: 'test_data',
-        fqon: 'test.test_data',
-        type: 'view',
-        schema: 'test'
-      });
-
-      expect(extractSqlFileInfo('/home/user/project/src/sql/function/test/test_data.sql')).to.deep.equal({
-        name: 'test_data',
-        fqon: 'test.test_data',
-        type: 'function',
-        schema: 'test'
-      });
     });
   });
 
