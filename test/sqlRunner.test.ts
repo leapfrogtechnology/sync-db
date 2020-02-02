@@ -41,6 +41,29 @@ describe('UTIL: sqlRunner', () => {
       });
     });
 
+    it('should omit the schema if the files are defined directly under the "type" directory.', () => {
+      expect(sqlRunner.extractSqlFileInfo('view/test_data.sql')).to.deep.equal({
+        name: 'test_data',
+        fqon: 'test_data',
+        type: 'view',
+        schema: undefined
+      });
+
+      expect(sqlRunner.extractSqlFileInfo('procedure/test_data.sql')).to.deep.equal({
+        name: 'test_data',
+        fqon: 'test_data',
+        type: 'procedure',
+        schema: undefined
+      });
+
+      expect(sqlRunner.extractSqlFileInfo('function/test_data.sql')).to.deep.equal({
+        name: 'test_data',
+        fqon: 'test_data',
+        type: 'function',
+        schema: undefined
+      });
+    });
+
     it('should be able to parse absolute paths too.', () => {
       expect(sqlRunner.extractSqlFileInfo('/home/user/project/src/sql/procedure/test/test_data.sql')).to.deep.equal({
         name: 'test_data',
