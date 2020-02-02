@@ -64,6 +64,18 @@ describe('UTIL: sqlRunner', () => {
       });
     });
 
+    it('should check the type and throw an error if the an unsupported type directory is found.', () => {
+      expect(() => extractSqlFileInfo('xyz/test_data.sql')).to.throw(
+        'Unsupported object type "xyz". The only supported types are: schema, view, function, procedure.'
+      );
+      expect(() => extractSqlFileInfo('xyz/abc/test_data.sql')).to.throw(
+        'Unsupported object type "xyz". The only supported types are: schema, view, function, procedure.'
+      );
+      expect(() => extractSqlFileInfo('/home/user/project/sql/xyz/abc/test_data.sql')).to.throw(
+        'Unsupported object type "xyz". The only supported types are: schema, view, function, procedure.'
+      );
+    });
+
     it('should be able to parse absolute paths too.', () => {
       expect(extractSqlFileInfo('/home/user/project/src/sql/procedure/test/test_data.sql')).to.deep.equal({
         name: 'test_data',

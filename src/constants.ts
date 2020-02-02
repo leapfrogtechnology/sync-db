@@ -5,6 +5,7 @@ import * as path from 'path';
 import SyncConfig from './domain/SyncConfig';
 import SyncParams from './domain/SyncParams';
 import ExecutionContext from './domain/ExecutionContext';
+import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
 
 // General constants
 export const NS_PER_SEC = 1e9;
@@ -33,3 +34,10 @@ export const DEFAULT_SYNC_PARAMS: SyncParams = {
 };
 
 export const ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];
+
+export const SUPPORTED_TYPES: string[] = [
+  DatabaseObjectTypes.SCHEMA,
+  DatabaseObjectTypes.VIEW,
+  DatabaseObjectTypes.FUNCTION,
+  DatabaseObjectTypes.PROCEDURE
+];

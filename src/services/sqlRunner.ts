@@ -8,6 +8,7 @@ import Mapping from '../domain/Mapping';
 import SqlCode from '../domain/SqlCode';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
+import { SUPPORTED_TYPES } from '../constants';
 import DatabaseObjectTypes from '../enums/DatabaseObjectTypes';
 
 /**
@@ -70,7 +71,7 @@ export function getFQON(type: string, name: string, schema?: string): string {
  * @returns {SqlFileInfo}
  */
 export function extractSqlFileInfo(filePath: string): SqlFileInfo {
-  // filePath can have multiple sub directories e.g. views/dbo/abc/vw_example.sql
+  // filePath can have multiple sub directories e.g. views/dbo/vw_example.sql
   // The first directory is taken as the object type e.g. views
   // The first sub-directory is taken as the schema name (Optional)
   // The last part of the path is taken as the filename.
@@ -78,6 +79,14 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   const fileParts = filePath.split('/');
   const fileName = fileParts.pop() || '';
   const [type, schema] = fileParts.slice(-2);
+
+  // Type-checking - throw an error if not a supported type.
+  if (!SUPPORTED_TYPES.includes(type)) {
+    throw new Error(
+      `Unsupported object type "${type}". The only supported types are: ` + SUPPORTED_TYPES.join(', ') + '.'
+    );
+  }
+
   const name = fileName.replace('.sql', '');
   const fqon = getFQON(type, name, schema);
 
