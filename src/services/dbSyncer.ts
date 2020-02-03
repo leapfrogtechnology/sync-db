@@ -1,7 +1,7 @@
 import * as Knex from 'knex';
 
 import { dbLogger } from '../logger';
-import * as sqlRunner from '../sqlRunner';
+import * as sqlRunner from './sqlRunner';
 import SyncResult from '../domain/SyncResult';
 import SyncContext from '../domain/SyncContext';
 import * as configInjection from './configInjection';
