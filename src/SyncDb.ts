@@ -52,10 +52,8 @@ class SyncDb extends Command {
     const params = this.getSyncParams({ ...parsedFlags });
 
     try {
-      await handleFlags(parsedFlags, {
-        info: this.log,
-        error: this.error
-      });
+      await handleFlags(parsedFlags);
+
       const config = await loadConfig();
       const connections = await resolveConnections();
 
