@@ -4,9 +4,11 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
 import * as fs from './util/fs';
+import { isObject } from './util/types';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
+import { prepareInjectionConfigVars } from './services/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, ENV_KEYS } from './constants';
 
 /**
@@ -18,15 +20,38 @@ export async function loadConfig(): Promise<SyncConfig> {
   log('Resolving sync config file.');
 
   const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
-  const migrations = await yaml.load(filename) as SyncConfig;
+  const loadedConfig = (await yaml.load(filename)) as SyncConfig;
 
   log('Resolved sync config file.');
 
-  const loaded = mergeDeepRight(DEFAULT_CONFIG, migrations) as SyncConfig;
+  const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as SyncConfig;
 
-  // TODO: Validate the loaded config.
+  validate(loaded);
 
-  return loaded;
+  return {
+    ...loaded,
+    injectedConfig: {
+      ...loaded.injectedConfig,
+      vars: prepareInjectionConfigVars(loaded.injectedConfig.vars)
+    }
+  };
+}
+
+/**
+ * Validate the loaded configuration.
+ *
+ * @param {SyncConfig} config
+ */
+export function validate(config: SyncConfig) {
+  const { injectedConfig } = config;
+
+  // Shouldn't reach under here unless the user has mismatched the value.
+  if (!injectedConfig.vars || !isObject(injectedConfig.vars)) {
+    throw new Error('Invalid configuration value for `injectedConfig.vars`.');
+  }
+
+  // TODO: Validate the remaining loaded config.
+  // Throw error if validation fails.
 }
 
 /**
@@ -50,7 +75,10 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
     id: connection.id || `${connection.host}/${connection.database}`
   }));
 
-  log('Resolved connections: %O', result.map(({ id, host, database }) => ({ id, host, database })));
+  log(
+    'Resolved connections: %O',
+    result.map(({ id, host, database }) => ({ id, host, database }))
+  );
 
   return result;
 }

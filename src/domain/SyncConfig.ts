@@ -1,3 +1,5 @@
+import Mapping from './Mapping';
+
 /**
  * Interface for synchronization configuration sycn-db.yml.
  */
@@ -7,6 +9,9 @@ interface SyncConfig {
   hooks: {
     pre_sync: string[];
     post_sync: string[];
+  };
+  injectedConfig: {
+    vars: Mapping<string>;
   };
 }
 

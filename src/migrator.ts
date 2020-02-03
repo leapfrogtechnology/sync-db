@@ -7,6 +7,8 @@ import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 
+import * as configInjection from './services/configInjection';
+
 /**
  * Migrate SQL on a database.
  *
@@ -25,6 +27,10 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
     const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
     await connection.transaction(async t => {
+      // Config Injection: Setup
+      // This will setup a config table (temporary and accessible only to this transaction).
+      await configInjection.setup(t, config);
+
       if (preMigrationScripts.length > 0) {
         const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
 
@@ -45,6 +51,10 @@ export function setup(config: SyncConfig): (connection: Connection) => Promise<v
         await sqlRunner.runSequentially(postHookScripts, t);
         logDb('POST-SYNC: End');
       }
+
+      // Config Injection: Cleanup
+      // Cleans up the injected config and the table.
+      await configInjection.cleanup(t, config);
 
       logDb('Finished setup');
     });
@@ -89,8 +99,22 @@ export async function synchronize(
 ) {
   log('Starting to synchronize.');
   const connArr = Array.isArray(conn) ? conn : [conn];
+  const connections = mapToConnectionInstances(connArr);
+  const promises = connections.map(connection => syncDatabase(connection, config));
 
-  const connections = connArr.map(con => {
+  await Promise.all(promises);
+
+  log('All synchronized');
+}
+
+/**
+ * Map connection configuration list to the connection instances.
+ *
+ * @param {((ConnectionConfig | Knex)[])} connectionList
+ * @returns {Connection[]}
+ */
+function mapToConnectionInstances(connectionList: (ConnectionConfig | Knex)[]): Connection[] {
+  return connectionList.map(con => {
     if (Connection.isKnexInstance(con)) {
       log(`Received connection instance to database: ${con.client.config.connection.database}`);
 
@@ -101,12 +125,6 @@ export async function synchronize(
 
     return new Connection(con);
   });
-
-  const promises = connections.map(connection => syncDatabase(connection, config));
-
-  await Promise.all(promises);
-
-  log('All synchronized');
 }
 
 /**

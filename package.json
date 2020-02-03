@@ -36,6 +36,8 @@
     "build": "rm -rf lib && tsc -b",
     "codecov": "codecov",
     "prepack": "yarn build",
+    "lint": "tslint -c tslint.json 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
+    "lint:fix": "tslint --fix -c tslint.json 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "test:coverage": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
     "watch": "tsc --watch",
