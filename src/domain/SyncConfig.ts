@@ -11,7 +11,6 @@ interface SyncConfig {
     post_sync: string[];
   };
   injectedConfig: {
-    table: string;
     vars: Mapping<string>;
   };
 }

@@ -2,12 +2,12 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { dbLogger } from '../logger';
-import Mapping from '../domain/Mapping';
-import { expandEnvVarsInMap } from '../util/env';
-
 import Connection from '../Connection';
+import Mapping from '../domain/Mapping';
 import SyncConfig from '../domain/SyncConfig';
+import { expandEnvVarsInMap } from '../util/env';
 import KeyValuePair from '../domain/KeyValuePair';
+import { INJECTED_CONFIG_TABLE } from '../constants';
 
 /**
  * Reads and returns the package.json contents.
@@ -19,17 +19,15 @@ export function getPackageMetadata(): any {
 }
 
 /**
- * Gets all the default config / environment variables
- * that are always available in the injected config table.
+ * Gets all the default injected config vars that needs to be
+ * always available in the injected config table.
  *
  * @returns {Mapping<string>}
  */
 function getDefaultSystemVars(): Mapping<string> {
-  const { version } = getPackageMetadata();
-
-  return {
-    sync_db_version: version
-  };
+  // TODO: Add any default config vars here that should always
+  // be available in the __injected_config table.
+  return {};
 }
 
 /**
@@ -63,13 +61,13 @@ export async function setup(connection: Connection, config: SyncConfig): Promise
   const logDb = dbLogger(connection);
   const { injectedConfig } = config;
 
-  logDb(`Making sure table ${injectedConfig.table} doesn't already exists.`);
+  logDb(`Making sure table ${INJECTED_CONFIG_TABLE} doesn't already exists.`);
 
-  const exists = await connection.schema().hasTable(injectedConfig.table);
+  const exists = await connection.schema().hasTable(INJECTED_CONFIG_TABLE);
 
   // TODO: Think about a better solution; it shouldn't have existed in the first place.
   if (exists) {
-    logDb('Warning: Table "${injectedConfig.table}" already exists. It will be dropped.');
+    logDb('Warning: Table "${INJECTED_CONFIG_TABLE}" already exists. It will be dropped.');
 
     await cleanup(connection, config);
   }
@@ -77,18 +75,18 @@ export async function setup(connection: Connection, config: SyncConfig): Promise
   const values = convertToKeyValuePairs(injectedConfig.vars);
 
   // Create table
-  logDb(`Creating table ${injectedConfig.table}.`);
-  await connection.schema().createTable(injectedConfig.table, table => {
+  logDb(`Creating table ${INJECTED_CONFIG_TABLE}.`);
+  await connection.schema().createTable(INJECTED_CONFIG_TABLE, table => {
     table.string('key').primary();
     table.string('value');
   });
 
   // Inject the configurations into the created table.
-  logDb(`Injecting config into ${injectedConfig.table}.`);
+  logDb(`Injecting config into ${INJECTED_CONFIG_TABLE}.`);
   await connection
     .getInstance()
     .insert(values)
-    .into(injectedConfig.table);
+    .into(INJECTED_CONFIG_TABLE);
 
   logDb(`Inserted configurations: ${values.length}.`);
 }
@@ -103,7 +101,7 @@ export async function setup(connection: Connection, config: SyncConfig): Promise
 export async function cleanup(connection: Connection, config: SyncConfig): Promise<void> {
   const logDb = dbLogger(connection);
 
-  await connection.schema().dropTableIfExists(config.injectedConfig.table);
+  await connection.schema().dropTableIfExists(INJECTED_CONFIG_TABLE);
 
-  logDb(`Cleaned up table ${config.injectedConfig.table}.`);
+  logDb(`Cleaned up table ${INJECTED_CONFIG_TABLE}.`);
 }

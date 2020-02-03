@@ -46,11 +46,6 @@ export function validate(config: SyncConfig) {
   const { injectedConfig } = config;
 
   // Shouldn't reach under here unless the user has mismatched the value.
-  if (!injectedConfig.table || !injectedConfig.table.trim()) {
-    throw new Error('Invalid configuration value for `injectedConfig.table`.');
-  }
-
-  // Shouldn't reach under here unless the user has mismatched the value.
   if (!injectedConfig.vars || !isObject(injectedConfig.vars)) {
     throw new Error('Invalid configuration value for `injectedConfig.vars`.');
   }
