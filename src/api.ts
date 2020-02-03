@@ -4,7 +4,6 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
 import * as fs from './util/fs';
-import Connection from './Connection';
 import { getConnectionId } from './config';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
@@ -14,8 +13,10 @@ import { DEFAULT_SYNC_PARAMS } from './constants';
 import SyncDbOptions from './domain/SyncDbOptions';
 import { CONNECTIONS_FILENAME } from './constants';
 import { resolveConnectionsFromEnv } from './config';
+import { isKnexInstance, getConfig } from './util/db';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { synchronizeDatabase } from './services/dbSyncer';
+import ConnectionReference from './domain/ConnectionReference';
 
 /**
  * Generates connections.sync-db.json file.
@@ -66,16 +67,17 @@ export async function synchronize(
   options?: SyncParams
 ): Promise<SyncResult[]> {
   log('Starting to synchronize.');
+
   const connArr = Array.isArray(conn) ? conn : [conn];
-  const connections = mapToConnectionInstances(connArr);
+  const connections = mapToConnectionReferences(connArr);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options);
   const cliEnvironment = process.env.SYNC_DB_CLI === 'true';
-  const promises = connections.map(connection =>
-    synchronizeDatabase(connection.getInstance(), {
+  const promises = connections.map(({ connection, id }) =>
+    synchronizeDatabase(connection, {
       config,
       params,
       cliEnvironment,
-      connectionId: getConnectionId(connection.getConfig())
+      connectionId: id || getConnectionId(getConfig(connection))
     })
   );
 
@@ -90,20 +92,21 @@ export async function synchronize(
  * Map connection configuration list to the connection instances.
  *
  * @param {((ConnectionConfig | Knex)[])} connectionList
- * @returns {Connection[]}
+ * @returns {ConnectionReference[]}
  */
-function mapToConnectionInstances(connectionList: (ConnectionConfig | Knex)[]): Connection[] {
-  return connectionList.map(con => {
-    // TODO: Ask for id in for programmatic API too -
-    // when Knex instance is passed directly.
-    if (Connection.isKnexInstance(con)) {
-      log(`Received connection instance to database: ${con.client.config.connection.database}`);
+function mapToConnectionReferences(connectionList: (ConnectionConfig | Knex)[]): ConnectionReference[] {
+  return connectionList.map(connection => {
+    if (isKnexInstance(connection)) {
+      log(`Received connection instance to database: ${connection.client.config.connection.database}`);
 
-      return Connection.withKnex(con);
+      // TODO: Ask for `id` explicitly in for programmatic API,
+      // when Knex instance is passed directly.
+      // This implies a breaking change with the programmatic API.
+      return { connection, id: undefined };
     }
 
-    log(`Received connection config to database: ${con.database}`);
+    log(`Received connection config to database: ${connection.database}`);
 
-    return new Connection(con);
+    return { connection: Knex(connection), id: connection.id };
   });
 }
