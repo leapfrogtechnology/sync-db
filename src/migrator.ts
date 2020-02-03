@@ -16,9 +16,9 @@ import * as configInjection from './services/configInjection';
 async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
   const { connectionId } = context;
   const { basePath, hooks, sql } = context.config;
-  const logDb = dbLogger(connectionId);
+  const log = dbLogger(connectionId);
 
-  logDb(`Running setup.`);
+  log(`Running setup.`);
 
   const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
@@ -30,10 +30,10 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
   if (preMigrationScripts.length > 0) {
     const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
 
-    logDb('PRE-SYNC: Begin');
+    log('PRE-SYNC: Begin');
     // Run the pre hook scripts
     await sqlRunner.runSequentially(trx, preHookScripts, connectionId);
-    logDb('PRE-SYNC: End');
+    log('PRE-SYNC: End');
   }
 
   // Run the migration scripts.
@@ -42,17 +42,17 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
   if (postMigrationScripts.length > 0) {
     const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
 
-    logDb('POST-SYNC: Begin');
+    log('POST-SYNC: Begin');
     // Run the pre hook scripts
     await sqlRunner.runSequentially(trx, postHookScripts, connectionId);
-    logDb('POST-SYNC: End');
+    log('POST-SYNC: End');
   }
 
   // Config Injection: Cleanup
   // Cleans up the injected config and the table.
   await configInjection.cleanup(trx, context);
 
-  logDb('Finished setup');
+  log('Finished setup');
 }
 
 /**
@@ -66,15 +66,15 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
  */
 async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
   const { basePath, sql } = context.config;
-  const logDb = dbLogger(context.connectionId);
+  const log = dbLogger(context.connectionId);
 
-  logDb(`Running rollback on connection id: ${context.connectionId}`);
+  log(`Running rollback on connection id: ${context.connectionId}`);
 
   const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
 
   await sqlRunner.rollbackSequentially(trx, fileInfoList, context.connectionId);
 
-  logDb('Finished running rollback');
+  log('Finished running rollback');
 }
 
 /**
@@ -86,11 +86,11 @@ async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<vo
  */
 export async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<SyncResult> {
   const { connectionId } = context;
-  const logDb = dbLogger(connectionId);
+  const log = dbLogger(connectionId);
   const result: SyncResult = { connectionId, success: false };
 
   try {
-    logDb('Starting synchronization.');
+    log('Starting synchronization.');
 
     // Run the process in a single transaction for a database connection.
     await connection.transaction(async trx => {
@@ -98,10 +98,10 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
       await setup(trx, context);
     });
 
-    logDb(`Synchronization successful.`);
+    log(`Synchronization successful.`);
     result.success = true;
   } catch (e) {
-    logDb(`Error caught for connection ${connectionId}:`, e);
+    log(`Error caught for connection ${connectionId}:`, e);
     result.error = e;
   }
 
