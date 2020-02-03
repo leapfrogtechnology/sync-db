@@ -58,16 +58,16 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
  * @returns {Promise<void>}
  */
 export async function setup(connection: Connection, config: SyncConfig): Promise<void> {
-  const logDb = dbLogger(connection);
+  const log = dbLogger(connection);
   const { injectedConfig } = config;
 
-  logDb(`Making sure table ${INJECTED_CONFIG_TABLE} doesn't already exists.`);
+  log(`Making sure table ${INJECTED_CONFIG_TABLE} doesn't already exists.`);
 
   const exists = await connection.schema().hasTable(INJECTED_CONFIG_TABLE);
 
   // TODO: Think about a better solution; it shouldn't have existed in the first place.
   if (exists) {
-    logDb('Warning: Table "${INJECTED_CONFIG_TABLE}" already exists. It will be dropped.');
+    log('Warning: Table "${INJECTED_CONFIG_TABLE}" already exists. It will be dropped.');
 
     await cleanup(connection, config);
   }
@@ -75,20 +75,20 @@ export async function setup(connection: Connection, config: SyncConfig): Promise
   const values = convertToKeyValuePairs(injectedConfig.vars);
 
   // Create table
-  logDb(`Creating table ${INJECTED_CONFIG_TABLE}.`);
+  log(`Creating table ${INJECTED_CONFIG_TABLE}.`);
   await connection.schema().createTable(INJECTED_CONFIG_TABLE, table => {
     table.string('key').primary();
     table.string('value');
   });
 
   // Inject the configurations into the created table.
-  logDb(`Injecting config into ${INJECTED_CONFIG_TABLE}.`);
+  log(`Injecting config into ${INJECTED_CONFIG_TABLE}.`);
   await connection
     .getInstance()
     .insert(values)
     .into(INJECTED_CONFIG_TABLE);
 
-  logDb(`Inserted configurations: ${values.length}.`);
+  log(`Injected ${values.length} configurations.`);
 }
 
 /**
@@ -99,9 +99,9 @@ export async function setup(connection: Connection, config: SyncConfig): Promise
  * @returns {Promise<void>}
  */
 export async function cleanup(connection: Connection, config: SyncConfig): Promise<void> {
-  const logDb = dbLogger(connection);
+  const log = dbLogger(connection);
 
   await connection.schema().dropTableIfExists(INJECTED_CONFIG_TABLE);
 
-  logDb(`Cleaned up table ${INJECTED_CONFIG_TABLE}.`);
+  log(`Cleaned up table ${INJECTED_CONFIG_TABLE}.`);
 }
