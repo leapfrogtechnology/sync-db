@@ -112,9 +112,9 @@ export function getDropStatement(type: string, fqon: string): string {
  * @returns {Promise<void>}
  */
 export function runSequentially(trx: Knex, files: SqlCode[], connectionId: string): Promise<void> {
-  const logDb = dbLogger(connectionId);
+  const log = dbLogger(connectionId);
   const promises = files.map(file => {
-    logDb(`Running ${file.name}`);
+    log(`Running ${file.name}`);
 
     return trx.raw(file.sql);
   });
@@ -131,17 +131,17 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
  * @returns {Promise<void>}
  */
 export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], connectionId: string): Promise<void> {
-  const logDb = dbLogger(connectionId);
+  const log = dbLogger(connectionId);
   const sqlFiles = files.map(info => ({
     fqon: info.fqon,
     dropStatement: getDropStatement(info.type, info.fqon)
   }));
 
   for (const sql of reverse(sqlFiles)) {
-    logDb(`Rolling back: ${sql.fqon}`);
+    log(`Rolling back: ${sql.fqon}`);
 
     await trx.raw(sql.dropStatement);
 
-    logDb('Executed: ', sql.dropStatement);
+    log('Executed: ', sql.dropStatement);
   }
 }
