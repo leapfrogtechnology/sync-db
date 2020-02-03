@@ -679,10 +679,10 @@
   resolved "https://registry.yarnpkg.com/@istanbuljs/nyc-config-typescript/-/nyc-config-typescript-0.1.3.tgz#944d15b3ebdb71f963a628daffaa25ade981bb86"
   integrity sha512-EzRFg92bRSD1W/zeuNkeGwph0nkWf+pP2l/lYW4/5hav7RjKKBN5kV1Ix7Tvi0CMu3pC4Wi/U7rNisiJMR3ORg==
 
-"@leapfrogtechnology/sync-db@^1.0.0-experimental.8-5":
-  version "1.0.0-experimental.8-5"
-  resolved "https://registry.yarnpkg.com/@leapfrogtechnology/sync-db/-/sync-db-1.0.0-experimental.8-5.tgz#802449f8b6bbe711095e1eed5f2b8f9c4986d784"
-  integrity sha512-vbwUmPba27A9cv4H0feoYpuXZ/Rk4FONrBbleR16e9XH8XCXYsmDke5vm4RgVUyPNDcIVqT9btYXIEUfdmiICA==
+"@leapfrogtechnology/sync-db@^1.0.0-experimental.9":
+  version "1.0.0-experimental.8-6"
+  resolved "https://registry.yarnpkg.com/@leapfrogtechnology/sync-db/-/sync-db-1.0.0-experimental.8-6.tgz#31069a715bc9fe0b3b6d646c941b537ee24d7aae"
+  integrity sha512-dZCOnHc3q/a0eDXJc5lsI6tenFgHSXsINBYtlJj+z1v4P4ZOgltGIVOstl6QS2noqGgtEsrlfde5cZkf8k86wQ==
   dependencies:
     "@istanbuljs/nyc-config-typescript" "^0.1.3"
     "@oclif/command" "^1"
