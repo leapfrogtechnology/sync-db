@@ -49,6 +49,7 @@ async function generateConnection(logger: OclifLogger): Promise<void> {
 export async function handleFlags(flags: SyncDbOptions, logger: OclifLogger): Promise<void> {
   if (flags['generate-connections']) {
     await generateConnection(logger);
+
     process.exit(0);
   }
 }
