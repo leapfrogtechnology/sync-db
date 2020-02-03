@@ -1,10 +1,10 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as Knex from 'knex';
 
 import { dbLogger } from '../logger';
-import Connection from '../Connection';
 import Mapping from '../domain/Mapping';
-import SyncConfig from '../domain/SyncConfig';
+import SyncContext from '../domain/SyncContext';
 import { expandEnvVarsInMap } from '../util/env';
 import KeyValuePair from '../domain/KeyValuePair';
 import { INJECTED_CONFIG_TABLE } from '../constants';
@@ -53,40 +53,37 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
 /**
  * Setup the table in the database with the injected config.
  *
- * @param {Connection} connection
- * @param {SyncConfig} config
+ * @param {Knex.Transaction} trx
+ * @param {SyncContext} context
  * @returns {Promise<void>}
  */
-export async function setup(connection: Connection, config: SyncConfig): Promise<void> {
-  const log = dbLogger(connection);
-  const { injectedConfig } = config;
+export async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+  const log = dbLogger(context.connectionId);
+  const { injectedConfig } = context.config;
 
   log(`Making sure table ${INJECTED_CONFIG_TABLE} doesn't already exists.`);
 
-  const exists = await connection.schema().hasTable(INJECTED_CONFIG_TABLE);
+  const exists = await trx.schema.hasTable(INJECTED_CONFIG_TABLE);
 
   // TODO: Think about a better solution; it shouldn't have existed in the first place.
   if (exists) {
     log('Warning: Table "${INJECTED_CONFIG_TABLE}" already exists. It will be dropped.');
 
-    await cleanup(connection, config);
+    await cleanup(trx, context);
   }
 
   const values = convertToKeyValuePairs(injectedConfig.vars);
 
   // Create table
   log(`Creating table ${INJECTED_CONFIG_TABLE}.`);
-  await connection.schema().createTable(INJECTED_CONFIG_TABLE, table => {
+  await trx.schema.createTable(INJECTED_CONFIG_TABLE, table => {
     table.string('key').primary();
     table.string('value');
   });
 
   // Inject the configurations into the created table.
   log(`Injecting config into ${INJECTED_CONFIG_TABLE}.`);
-  await connection
-    .getInstance()
-    .insert(values)
-    .into(INJECTED_CONFIG_TABLE);
+  await trx.insert(values).into(INJECTED_CONFIG_TABLE);
 
   log(`Injected ${values.length} configurations.`);
 }
@@ -94,14 +91,14 @@ export async function setup(connection: Connection, config: SyncConfig): Promise
 /**
  * Drop the injected config table.
  *
- * @param {Connection} connection
- * @param {SyncConfig} config
+ * @param {Knex.Transaction} trx
+ * @param {SyncContext} context
  * @returns {Promise<void>}
  */
-export async function cleanup(connection: Connection, config: SyncConfig): Promise<void> {
-  const log = dbLogger(connection);
+export async function cleanup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+  const log = dbLogger(context.connectionId);
 
-  await connection.schema().dropTableIfExists(INJECTED_CONFIG_TABLE);
+  await trx.schema.dropTableIfExists(INJECTED_CONFIG_TABLE);
 
   log(`Cleaned up table ${INJECTED_CONFIG_TABLE}.`);
 }
