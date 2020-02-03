@@ -67,7 +67,7 @@ export async function setup(connection: Connection, config: SyncConfig): Promise
 
   const exists = await connection.schema().hasTable(injectedConfig.table);
 
-  // TODO: Think about a better solution; it shouldn't hav existed in the first place.
+  // TODO: Think about a better solution; it shouldn't have existed in the first place.
   if (exists) {
     logDb('Warning: Table "${injectedConfig.table}" already exists. It will be dropped.');
 
