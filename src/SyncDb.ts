@@ -1,9 +1,9 @@
 import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
+import { handleFlags } from './api';
 import SyncResult from './domain/SyncResult';
 import SyncParams from './domain/SyncParams';
-import { handleFlags } from './services/syncer';
 import { loadConfig, resolveConnections } from './config';
 
 /**
@@ -59,7 +59,7 @@ class SyncDb extends Command {
       const config = await loadConfig();
       const connections = await resolveConnections();
 
-      const { synchronize } = await import('./services/syncer');
+      const { synchronize } = await import('./api');
 
       const result = await synchronize(config, connections, params);
 
