@@ -33,7 +33,7 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
 
   // Config Injection: Setup
   // This will setup a config table (temporary and accessible only to this transaction).
-  await configInjection.setup(trx, config);
+  await configInjection.setup(trx, context);
 
   if (preMigrationScripts.length > 0) {
     const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
@@ -58,7 +58,7 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
 
   // Config Injection: Cleanup
   // Cleans up the injected config and the table.
-  await configInjection.cleanup(trx, config);
+  await configInjection.cleanup(trx, context);
 
   logDb('Finished setup');
 }
