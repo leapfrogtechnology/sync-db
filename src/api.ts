@@ -2,20 +2,20 @@ import * as Knex from 'knex';
 import * as path from 'path';
 import { mergeDeepRight } from 'ramda';
 
-import * as fs from '../util/fs';
-import { log } from '../logger';
-import Connection from '../Connection';
-import { getConnectionId } from '../config';
-import SyncParams from '../domain/SyncParams';
-import SyncConfig from '../domain/SyncConfig';
-import SyncResult from '../domain/SyncResult';
-import OclifLogger from '../domain/OclifLogger';
-import { synchronizeDatabase } from '../migrator';
-import { DEFAULT_SYNC_PARAMS } from '../constants';
-import { CONNECTIONS_FILENAME } from '../constants';
-import SyncDbOptions from '../domain/SyncDbOptions';
-import { resolveConnectionsFromEnv } from '../config';
-import ConnectionConfig from '../domain/ConnectionConfig';
+import { log } from './logger';
+import * as fs from './util/fs';
+import Connection from './Connection';
+import { getConnectionId } from './config';
+import SyncParams from './domain/SyncParams';
+import SyncConfig from './domain/SyncConfig';
+import SyncResult from './domain/SyncResult';
+import OclifLogger from './domain/OclifLogger';
+import { DEFAULT_SYNC_PARAMS } from './constants';
+import SyncDbOptions from './domain/SyncDbOptions';
+import { CONNECTIONS_FILENAME } from './constants';
+import { resolveConnectionsFromEnv } from './config';
+import ConnectionConfig from './domain/ConnectionConfig';
+import { synchronizeDatabase } from './services/dbSyncer';
 
 /**
  * Generates connections.sync-db.json file.
