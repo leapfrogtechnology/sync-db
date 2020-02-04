@@ -1,5 +1,43 @@
 # Change Log
 
+## [v1.0.0-experimental.8-6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-6) (2020-02-03)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-5...v1.0.0-experimental.8-6)
+
+**Changes**
+
+- Avoid vendor specific defaults in the config [\#41](https://github.com/leapfrogtechnology/sync-db/pull/41) ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Generate connection with port as number when using --generate-connections CLI arg [\#40](https://github.com/leapfrogtechnology/sync-db/pull/40) ([silwalanish](https://github.com/silwalanish))
+- Update dependencies - typescript & tslint [\#38](https://github.com/leapfrogtechnology/sync-db/pull/38) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Config Injection - ability to inject dynamic configurations such that the running SQL transactions could access them [\#36](https://github.com/leapfrogtechnology/sync-db/pull/36) [[experimental](https://github.com/leapfrogtechnology/sync-db/labels/experimental)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+
+## [v1.0.0-experimental.8-5](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-5) (2020-02-01)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-4...v1.0.0-experimental.8-5)
+
+## [v1.0.0-experimental.8-4](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-4) (2020-01-19)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-3...v1.0.0-experimental.8-4)
+
+## [v1.0.0-experimental.8-3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-3) (2020-01-19)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-2...v1.0.0-experimental.8-3)
+
+## [v1.0.0-experimental.8-2](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-2) (2020-01-19)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-1...v1.0.0-experimental.8-2)
+
+## [v1.0.0-experimental.8-1](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-1) (2020-01-19)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.8...v1.0.0-experimental.8-1)
+
+**Implemented enhancements:**
+
+- CLI arg to generate connections from the environment [\#33](https://github.com/leapfrogtechnology/sync-db/pull/33) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([p0k8h](https://github.com/p0k8h))
+
+**Closed Issues**
+
+- New CLI arg to generate connections file using the environment variables [\#31](https://github.com/leapfrogtechnology/sync-db/issues/31) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] [[good first issue](https://github.com/leapfrogtechnology/sync-db/labels/good%20first%20issue)]
+- Add new example project based on postgres [\#25](https://github.com/leapfrogtechnology/sync-db/issues/25) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[good first issue](https://github.com/leapfrogtechnology/sync-db/labels/good%20first%20issue)] [[postgres](https://github.com/leapfrogtechnology/sync-db/labels/postgres)]
+
+**Changes**
+
+- Add example project for postgres [\#35](https://github.com/leapfrogtechnology/sync-db/pull/35) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[postgres](https://github.com/leapfrogtechnology/sync-db/labels/postgres)] ([Prabeshpd](https://github.com/Prabeshpd))
+
 ## [v1.0.0-alpha.8](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.8) (2019-12-18)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.7...v1.0.0-alpha.8)
 
@@ -13,7 +51,6 @@
 **Implemented enhancements:**
 
 - Setup docker and docker-compose configuration for the node-app-mssql example [\#23](https://github.com/leapfrogtechnology/sync-db/pull/23) [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] ([silwalanish](https://github.com/silwalanish))
-- Enable passing connection instance as well as connection config for synchronization [\#10](https://github.com/leapfrogtechnology/sync-db/pull/10) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([SafalPandey](https://github.com/SafalPandey))
 
 **Bug Fixes**
 
@@ -60,6 +97,10 @@
 
 ## [v1.0.0-alpha.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.3) (2019-08-26)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.2...v1.0.0-alpha.3)
+
+**Implemented enhancements:**
+
+- Enable passing connection instance as well as connection config for synchronization [\#10](https://github.com/leapfrogtechnology/sync-db/pull/10) [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[enhancement](https://github.com/leapfrogtechnology/sync-db/labels/enhancement)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([SafalPandey](https://github.com/SafalPandey))
 
 **Changes**
 
