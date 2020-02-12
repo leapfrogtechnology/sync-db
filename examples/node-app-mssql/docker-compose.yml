@@ -9,7 +9,9 @@ services:
     environment: 
       ACCEPT_EULA: "Y"
       SA_PASSWORD: ${DB_PASSWORD}
-  
+
   app:
     container_name: "example-app"
+    environment:
+      DEBUG: 'sync-db*'
     build: .

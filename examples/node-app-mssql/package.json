@@ -4,14 +4,14 @@
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
-    "sync-db": "sync-db",
+    "synchronize": "yarn migrate && sync-db",
     "start": "yarn lint && babel-node src/index.js",
     "make": "knex --knexfile=knexfile.js migrate:make",
     "migrate": "knex --knexfile=knexfile.js migrate:latest",
     "rollback": "knex --knexfile=knexfile.js migrate:rollback"
   },
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "^1.0.0-alpha.4",
+    "@leapfrogtechnology/sync-db": "^1.0.0-experimental.9",
     "knex": "^0.20.2",
     "mssql": "^5.1.0"
   },

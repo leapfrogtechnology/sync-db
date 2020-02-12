@@ -6,4 +6,4 @@ COPY . .
 
 RUN yarn
 
-CMD yarn sync-db && yarn start
+CMD yarn synchronize && yarn start

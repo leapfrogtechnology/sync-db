@@ -8,5 +8,18 @@ sql:
   - schema/utils.sql
   - function/utils/product.sql
   - procedure/utils/get_date.sql
-  - view/utils/vw_table_names.sql
-  - view/utils/vw_user_names.sql
+  - view/utils/vw_users.sql
+  - view/utils/vw_tasks.sql
+
+  # Create objects in testdata schema
+  - schema/testdata.sql
+  - procedure/testdata/setup_data.sql
+
+hooks:
+  post_sync:
+    - scripts/setup.sql
+injectedConfig:
+  vars:
+    create_admin: ${CREATE_ADMIN}
+    admin_email: 'admin@example.com'
+    task_status: ${TASK_STATUS}
