@@ -1,51 +1,16 @@
 import * as Knex from 'knex';
-import * as path from 'path';
 import { mergeDeepRight } from 'ramda';
 
 import { log } from './logger';
-import * as fs from './util/fs';
 import { getConnectionId } from './config';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
 import { DEFAULT_SYNC_PARAMS } from './constants';
-import SyncDbOptions from './domain/SyncDbOptions';
-import { CONNECTIONS_FILENAME } from './constants';
-import { resolveConnectionsFromEnv } from './config';
 import { isKnexInstance, getConfig } from './util/db';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { synchronizeDatabase } from './services/dbSyncer';
 import ConnectionReference from './domain/ConnectionReference';
-
-/**
- * Generates connections.sync-db.json file.
- *
- * @returns {Promise<void>}
- */
-async function generateConnection(): Promise<void> {
-  const filePath = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
-
-  const connections = resolveConnectionsFromEnv();
-  const contents = JSON.stringify({ connections });
-
-  await fs.write(filePath, contents);
-
-  process.stdout.write(`Generated file: ${CONNECTIONS_FILENAME}\n`);
-}
-
-/**
- * Handle the provided CLI flags.
- *
- * @param {SyncDbOptions} flags
- * @returns {Promise<void>}
- */
-export async function handleFlags(flags: SyncDbOptions): Promise<void> {
-  if (flags['generate-connections']) {
-    await generateConnection();
-
-    process.exit(0);
-  }
-}
 
 /**
  * Synchronize all the configured database connections.
