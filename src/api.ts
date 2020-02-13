@@ -31,12 +31,12 @@ export async function synchronize(
   const connections = mapToConnectionReferences(connectionList);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options);
   const cliEnvironment = process.env.SYNC_DB_CLI === 'true';
-  const promises = connections.map(({ connection, id }) =>
+  const promises = connections.map(({ connection, id: connectionId }) =>
     synchronizeDatabase(connection, {
       config,
       params,
-      cliEnvironment,
-      connectionId: id
+      connectionId,
+      cliEnvironment
     })
   );
 
