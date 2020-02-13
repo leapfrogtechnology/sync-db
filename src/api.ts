@@ -62,8 +62,8 @@ export async function synchronize(
 ): Promise<SyncResult[]> {
   log('Starting to synchronize.');
 
-  const connArr = Array.isArray(conn) ? conn : [conn];
-  const connections = mapToConnectionReferences(connArr);
+  const connectionList = Array.isArray(conn) ? conn : [conn];
+  const connections = mapToConnectionReferences(connectionList);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options);
   const cliEnvironment = process.env.SYNC_DB_CLI === 'true';
   const promises = connections.map(({ connection, id }) =>
@@ -71,7 +71,7 @@ export async function synchronize(
       config,
       params,
       cliEnvironment,
-      connectionId: id || getConnectionId(getConfig(connection))
+      connectionId: id
     })
   );
 
@@ -89,18 +89,20 @@ export async function synchronize(
  * @returns {ConnectionReference[]}
  */
 function mapToConnectionReferences(connectionList: (ConnectionConfig | Knex)[]): ConnectionReference[] {
-  return connectionList.map(connection => {
-    if (isKnexInstance(connection)) {
-      log(`Received connection instance to database: ${connection.client.config.connection.database}`);
+  return connectionList
+    .map(connection => {
+      if (isKnexInstance(connection)) {
+        log(`Received connection instance to database: ${connection.client.config.connection.database}`);
 
-      // TODO: Ask for `id` explicitly in for programmatic API,
-      // when Knex instance is passed directly.
-      // This implies a breaking change with the programmatic API.
-      return { connection, id: undefined };
-    }
+        // TODO: Ask for `id` explicitly in for programmatic API,
+        // when Knex instance is passed directly.
+        // This implies a breaking change with the programmatic API.
+        return { connection, id: undefined };
+      }
 
-    log(`Received connection config to database: ${connection.database}`);
+      log(`Received connection config to database: ${connection.database}`);
 
-    return { connection: Knex(connection), id: connection.id };
-  });
+      return { connection: Knex(connection), id: connection.id };
+    })
+    .map(({ connection, id }) => ({ connection, id: id || getConnectionId(getConfig(connection)) }));
 }
