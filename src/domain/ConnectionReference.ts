@@ -5,7 +5,7 @@ import * as Knex from 'knex';
  */
 interface ConnectionReference {
   connection: Knex;
-  id?: string;
+  id: string;
 }
 
 export default ConnectionReference;
