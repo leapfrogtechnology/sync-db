@@ -1,7 +1,7 @@
 import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
-import { handleFlags } from './api';
+import { handleFlags } from './cli';
 import SyncResult from './domain/SyncResult';
 import SyncParams from './domain/SyncParams';
 import { loadConfig, resolveConnections } from './config';
