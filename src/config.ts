@@ -70,17 +70,13 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
   const { connections } = JSON.parse(loaded) as DbConfig;
 
   // TODO: Validate the connections received from file.
-  const result = connections.map(connection => ({
-    ...connection,
-    id: getConnectionId(connection)
-  }));
 
   log(
     'Resolved connections: %O',
-    result.map(({ id, host, database }) => ({ id, host, database }))
+    connections.map(({ id, host, database }) => ({ id, host, database }))
   );
 
-  return result;
+  return connections;
 }
 
 /**
