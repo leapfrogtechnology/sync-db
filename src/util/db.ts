@@ -28,3 +28,13 @@ export function getConfig(db: Knex): ConnectionConfig {
     id: getConnectionId(db.client.config.connection)
   };
 }
+
+/**
+ * Create a new connection instance (knex) using the connection config.
+ *
+ * @param {ConnectionConfig} config
+ * @returns {Knex}
+ */
+export function createInstance(config: ConnectionConfig): Knex {
+  return Knex({ connection: config, client: config.client });
+}
