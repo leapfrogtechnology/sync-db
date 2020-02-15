@@ -1,10 +1,12 @@
+import ExecutionContext from './ExecutionContext';
+
 /**
  * Synchronize parameters.
  */
 interface SyncParams {
   force: boolean;
-  onSuccess: (connectionId: string) => void;
-  onFailed: (connectionId: string) => void;
+  onSuccess: (context: ExecutionContext) => void;
+  onFailed: (context: ExecutionContext) => void;
 }
 
 export default SyncParams;
