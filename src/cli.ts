@@ -1,6 +1,7 @@
 import * as path from 'path';
 
 import * as fs from './util/fs';
+import { printLine } from './util/io';
 import SyncDbOptions from './domain/SyncDbOptions';
 import { CONNECTIONS_FILENAME } from './constants';
 import { resolveConnectionsFromEnv } from './config';
@@ -18,7 +19,7 @@ async function generateConnection(): Promise<void> {
 
   await fs.write(filePath, contents);
 
-  process.stdout.write(`Generated file: ${CONNECTIONS_FILENAME}\n`);
+  printLine(`Generated file: ${CONNECTIONS_FILENAME}\n`);
 }
 
 /**
