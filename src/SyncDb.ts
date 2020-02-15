@@ -35,11 +35,11 @@ class SyncDb extends Command {
       ...userParams,
       // Individual success handler
       onSuccess: (context: ExecutionContext) =>
-        printLine(` [✓] ${context.connectionId} - Successful (${context.timeElapsed.toFixed(2)}s)`),
+        printLine(`  [✓] ${context.connectionId} - Successful (${context.timeElapsed.toFixed(2)}s)`),
 
       // Individual error handler
       onFailed: (context: ExecutionContext) =>
-        printLine(` [✖] ${context.connectionId} - Failed (${context.timeElapsed.toFixed(2)}s)`)
+        printLine(`  [✖] ${context.connectionId} - Failed (${context.timeElapsed.toFixed(2)}s)`)
     };
   }
 
