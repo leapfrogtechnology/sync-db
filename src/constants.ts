@@ -4,6 +4,7 @@ import * as path from 'path';
 
 import SyncConfig from './domain/SyncConfig';
 import SyncParams from './domain/SyncParams';
+import ExecutionContext from './domain/ExecutionContext';
 
 // General constants
 export const NS_PER_SEC = 1e9;
@@ -27,8 +28,8 @@ export const DEFAULT_CONFIG: SyncConfig = {
 
 export const DEFAULT_SYNC_PARAMS: SyncParams = {
   force: false,
-  onSuccess: (connectionId: string) => null,
-  onFailed: (connectionId: string) => null
+  onSuccess: (context: ExecutionContext) => null,
+  onFailed: (context: ExecutionContext) => null
 };
 
 export const ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];
