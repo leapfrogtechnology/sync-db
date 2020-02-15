@@ -5,6 +5,7 @@ import { handleFlags } from './cli';
 import SyncResult from './domain/SyncResult';
 import SyncParams from './domain/SyncParams';
 import { printError, printLine } from './util/io';
+import ExecutionContext from './domain/ExecutionContext';
 import { loadConfig, resolveConnections } from './config';
 
 /**
@@ -33,10 +34,12 @@ class SyncDb extends Command {
     return {
       ...userParams,
       // Individual success handler
-      onSuccess: (connectionId: string) => printLine(` [✓] ${connectionId} - Successful`),
+      onSuccess: (context: ExecutionContext) =>
+        printLine(` [✓] ${context.connectionId} - Successful (${context.timeElapsed.toFixed(2)}s)`),
 
       // Individual error handler
-      onFailed: (connectionId: string) => printLine(` [✖] ${connectionId} - Failed`)
+      onFailed: (context: ExecutionContext) =>
+        printLine(` [✖] ${context.connectionId} - Failed (${context.timeElapsed.toFixed(2)}s)`)
     };
   }
 
