@@ -7,10 +7,10 @@ import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
 import { DEFAULT_SYNC_PARAMS } from './constants';
-import { isKnexInstance, getConfig } from './util/db';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { synchronizeDatabase } from './services/dbSyncer';
 import ConnectionReference from './domain/ConnectionReference';
+import { isKnexInstance, getConfig, createInstance } from './util/db';
 
 /**
  * Synchronize all the configured database connections.
@@ -65,9 +65,9 @@ function mapToConnectionReferences(connectionList: (ConnectionConfig | Knex)[]):
         return { connection, id: undefined };
       }
 
-      log(`Received connection config to database: ${connection.database}`);
+      log(`Creating a connection to database: ${connection.host}/${connection.database}`);
 
-      return { connection: Knex(connection), id: connection.id };
+      return { connection: createInstance(connection), id: connection.id };
     })
     .map(({ connection, id }) => ({ connection, id: id || getConnectionId(getConfig(connection)) }));
 }
