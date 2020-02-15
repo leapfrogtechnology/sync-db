@@ -4,6 +4,7 @@ import { log } from './logger';
 import { handleFlags } from './cli';
 import SyncResult from './domain/SyncResult';
 import SyncParams from './domain/SyncParams';
+import { printError, printLine } from './util/io';
 import { loadConfig, resolveConnections } from './config';
 
 /**
@@ -32,10 +33,10 @@ class SyncDb extends Command {
     return {
       ...userParams,
       // Individual success handler
-      onSuccess: (connectionId: string) => this.log(` [✓] ${connectionId} - Successful`),
+      onSuccess: (connectionId: string) => printLine(` [✓] ${connectionId} - Successful`),
 
       // Individual error handler
-      onFailed: (connectionId: string) => this.warn(` [✖] ${connectionId} - Failed`)
+      onFailed: (connectionId: string) => printLine(` [✖] ${connectionId} - Failed`)
     };
   }
 
@@ -59,12 +60,15 @@ class SyncDb extends Command {
 
       const { synchronize } = await import('./api');
 
+      printLine('Synchronizing...\n');
+
       const result = await synchronize(config, connections, params);
 
       this.displayResult(result);
     } catch (e) {
       log('Error caught: ', e, '\n');
-      this.error('An error occurred: ' + e);
+      printError(e.toString());
+
       process.exit(-1);
     }
   }
@@ -81,22 +85,27 @@ class SyncDb extends Command {
     const failedCount = failed.length;
     const successfulCount = totalCount - failedCount;
 
-    // Display output.
-    this.log(`${successfulCount} / ${totalCount} completed successfully.`);
+    printLine();
+
+    if (successfulCount > 0) {
+      // Display output.
+      printLine(`Synchronization successful for ${successfulCount} / ${totalCount} connection(s).`);
+    }
 
     if (failed.length === 0) {
       return process.exit(0);
     }
 
     // Display all errors.
-    this.warn(`${failedCount} error(s) found.`);
+    printLine(`Failed for following ${failedCount} connection(s):\n`);
 
-    failed.forEach(attempt => {
-      this.warn(`Synchronize failed for ${attempt.connectionId}`);
-      this.warn(attempt.error);
-      this.log('\n');
+    failed.forEach((attempt, index) => {
+      printLine(`${index + 1}) ${attempt.connectionId}`);
+      printError(attempt.error);
+      printLine();
     });
-    process.exit(-1);
+
+    throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
   }
 }
 
