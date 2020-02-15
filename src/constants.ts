@@ -5,6 +5,10 @@ import * as path from 'path';
 import SyncConfig from './domain/SyncConfig';
 import SyncParams from './domain/SyncParams';
 
+// General constants
+export const NS_PER_SEC = 1e9;
+
+// SyncDb specific constants
 export const CONFIG_FILENAME = 'sync-db.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
