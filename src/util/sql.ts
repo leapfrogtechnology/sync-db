@@ -7,6 +7,7 @@ import SqlCode from '../domain/SqlCode';
 import { SUPPORTED_TYPES } from '../constants';
 import SqlFileInfo from '../domain/SqlFileInfo';
 import DatabaseObjectTypes from '../enums/DatabaseObjectTypes';
+import SqlObjectSourceCode from '../domain/SqlObjectSourceCode';
 import UnsupportedObjectError from '../errors/UnsupportedObjectError';
 
 /**
@@ -34,14 +35,34 @@ export async function resolveFile(basePath: string, fileName: string): Promise<S
 }
 
 /**
+ * Reads a SQL source file which is a supported SQL object type.
+ * Note: throws UnsupportedObjectError if it is not a supported object type.
+ *
+ * @param {string} basePath
+ * @param {string} fileName
+ * @returns {Promise<SqlObjectSourceCode>}
+ */
+export async function resolveSourceFile(basePath: string, fileName: string): Promise<SqlObjectSourceCode> {
+  const { sql, name } = await resolveFile(basePath, fileName);
+  const info = extractSqlFileInfo(fileName);
+
+  return { sql, name, info };
+}
+
+/**
  * Resolves a list of source files.
  *
  * @param {string} basePath
  * @param {string[]} files
- * @returns {Promise<SqlCode[]>}
+ * @param {(basePath: string, fileName: string) => Promise<T>} resolver
+ * @returns {Promise<T[]>}
  */
-export async function resolveFiles(basePath: string, files: string[]): Promise<SqlCode[]> {
-  const promises = files.map(filename => resolveFile(basePath, filename));
+export async function resolveFiles<T>(
+  basePath: string,
+  files: string[],
+  resolver: (basePath: string, fileName: string) => Promise<T>
+): Promise<T[]> {
+  const promises = files.map(filename => resolver(basePath, filename));
 
   return Promise.all(promises);
 }

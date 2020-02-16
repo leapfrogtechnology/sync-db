@@ -1,7 +1,9 @@
 import { log } from '../logger';
-import { resolveFiles } from '../util/sql';
+import SqlCode from '../domain/SqlCode';
 import SyncConfig from '../domain/SyncConfig';
 import SourceTree from '../domain/SourceTree';
+import SqlObjectSourceCode from '../domain/SqlObjectSourceCode';
+import { resolveFiles, resolveSourceFile, resolveFile } from '../util/sql';
 
 /**
  * Resolve source code from the filesystem using the configuration.
@@ -10,12 +12,14 @@ import SourceTree from '../domain/SourceTree';
  * @returns {Promise<SourceTree>}
  */
 export async function resolveSourceCode(config: SyncConfig): Promise<SourceTree> {
-  log(`Resolving source files. (basePath = ${config.basePath})`);
+  const { basePath, hooks } = config;
+
+  log(`Resolving source files. (basePath = ${basePath})`);
 
   // Resolve all the source files from the file system.
-  const sql = await resolveFiles(config.basePath, config.sql);
-  const preSync = await resolveFiles(config.basePath, config.hooks.pre_sync);
-  const postSync = await resolveFiles(config.basePath, config.hooks.post_sync);
+  const sql = await resolveFiles<SqlObjectSourceCode>(basePath, config.sql, resolveSourceFile);
+  const preSync = await resolveFiles<SqlCode>(basePath, hooks.pre_sync, resolveFile);
+  const postSync = await resolveFiles<SqlCode>(basePath, hooks.post_sync, resolveFile);
 
   log('Finished loading source files.');
 
