@@ -1,5 +1,6 @@
 import SyncConfig from './SyncConfig';
 import SyncParams from './SyncParams';
+import SourceTree from './SourceTree';
 
 /**
  * Synchronize context parameters for the current database connection.
@@ -9,6 +10,7 @@ interface SyncContext {
   connectionId: string;
   isCLI: boolean;
   params: SyncParams;
+  source: SourceTree;
 }
 
 export default SyncContext;
