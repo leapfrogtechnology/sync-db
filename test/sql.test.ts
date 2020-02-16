@@ -2,6 +2,7 @@ import 'mocha';
 import { expect } from 'chai';
 
 import { extractSqlFileInfo, getDropStatement } from '../src/util/sql';
+import UnsupportedObjectError from '../src/errors/UnsupportedObjectError';
 
 describe('UTIL: sqlRunner', () => {
   describe('extractSqlFileInfo()', () => {
@@ -79,6 +80,8 @@ describe('UTIL: sqlRunner', () => {
       expect(() => extractSqlFileInfo('xyz/abc/test_data.sql')).to.throw(
         'Unsupported object type "xyz". The only supported types are: schema, view, function, procedure.'
       );
+      expect(() => extractSqlFileInfo('xyz/test_data.sql')).to.throw(UnsupportedObjectError);
+      expect(() => extractSqlFileInfo('xyz/abc/test_data.sql')).to.throw(UnsupportedObjectError);
     });
   });
 

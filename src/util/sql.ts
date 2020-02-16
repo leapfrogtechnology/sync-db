@@ -7,6 +7,7 @@ import SqlCode from '../domain/SqlCode';
 import { SUPPORTED_TYPES } from '../constants';
 import SqlFileInfo from '../domain/SqlFileInfo';
 import DatabaseObjectTypes from '../enums/DatabaseObjectTypes';
+import UnsupportedObjectError from '../errors/UnsupportedObjectError';
 
 /**
  * SQL DROP statements mapping for different object types.
@@ -85,7 +86,7 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 
   // Type-checking - throw an error if not a supported type.
   if (!SUPPORTED_TYPES.includes(type)) {
-    throw new Error(
+    throw new UnsupportedObjectError(
       `Unsupported object type "${type}". The only supported types are: ` + SUPPORTED_TYPES.join(', ') + '.'
     );
   }
