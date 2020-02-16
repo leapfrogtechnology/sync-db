@@ -1,6 +1,9 @@
 import * as Knex from 'knex';
+
+import { log } from '../logger';
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
+import ConnectionReference from '../domain/ConnectionReference';
 
 /**
  * Returns true if the provided object is a knex connection instance.
@@ -37,4 +40,29 @@ export function getConfig(db: Knex): ConnectionConfig {
  */
 export function createInstance(config: ConnectionConfig): Knex {
   return Knex({ connection: config, client: config.client });
+}
+
+/**
+ * Map connection configuration list to the connection instances.
+ *
+ * @param {((ConnectionConfig | Knex)[])} connectionList
+ * @returns {ConnectionReference[]}
+ */
+export function mapToConnectionReferences(connectionList: (ConnectionConfig | Knex)[]): ConnectionReference[] {
+  return connectionList
+    .map(connection => {
+      if (isKnexInstance(connection)) {
+        log(`Received connection instance to database: ${connection.client.config.connection.database}`);
+
+        // TODO: Ask for `id` explicitly in for programmatic API,
+        // when Knex instance is passed directly.
+        // This implies a breaking change with the programmatic API.
+        return { connection, id: undefined };
+      }
+
+      log(`Creating a connection to database: ${connection.host}/${connection.database}`);
+
+      return { connection: createInstance(connection), id: connection.id };
+    })
+    .map(({ connection, id }) => ({ connection, id: id || getConnectionId(getConfig(connection)) }));
 }
