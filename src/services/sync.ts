@@ -9,8 +9,6 @@ import * as configInjection from './configInjection';
 import ExecutionContext from '../domain/ExecutionContext';
 import { runSequentially, rollbackSequentially } from './sqlRunner';
 
-import { extractSqlFileInfo } from '../util/sql';
-
 /**
  * Migrate SQL on a database.
  *
@@ -66,14 +64,11 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
  * @returns {Promise<void>}
  */
 async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
-  const { basePath, sql } = context.config;
   const log = dbLogger(context.connectionId);
 
-  log(`Running rollback on connection id: ${context.connectionId}`);
+  log(`Running rollback on connection: ${context.connectionId}`);
 
-  const fileInfoList = sql.map(filePath => extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
-
-  await rollbackSequentially(trx, fileInfoList, context.connectionId);
+  await rollbackSequentially(trx, context.source.sql, context.connectionId);
 
   log('Finished running rollback');
 }
