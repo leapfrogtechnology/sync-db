@@ -63,14 +63,15 @@ class SyncDb extends Command {
 
       const { synchronize } = await import('./api');
 
-      printLine('Synchronizing...\n');
+      await printLine('Synchronizing...\n');
 
       const result = await synchronize(config, connections, params);
 
-      this.displayResult(result);
+      await this.displayResult(result);
     } catch (e) {
       log('Error caught: ', e, '\n');
-      printError(e.toString());
+
+      await printError(e.toString());
 
       process.exit(-1);
     }
@@ -81,18 +82,18 @@ class SyncDb extends Command {
    *
    * @param {SyncResult[]} result
    */
-  displayResult(result: SyncResult[]) {
+  async displayResult(result: SyncResult[]) {
     const failed = result.filter(attempt => !attempt.success);
 
     const totalCount = result.length;
     const failedCount = failed.length;
     const successfulCount = totalCount - failedCount;
 
-    printLine();
+    await printLine();
 
     if (successfulCount > 0) {
       // Display output.
-      printLine(`Synchronization successful for ${successfulCount} / ${totalCount} connection(s).`);
+      await printLine(`Synchronization successful for ${successfulCount} / ${totalCount} connection(s).`);
     }
 
     if (failed.length === 0) {
@@ -100,12 +101,12 @@ class SyncDb extends Command {
     }
 
     // Display all errors.
-    printLine(`Failed for following ${failedCount} connection(s):\n`);
+    await printLine(`Failed for following ${failedCount} connection(s):\n`);
 
-    failed.forEach((attempt, index) => {
-      printLine(`${index + 1}) ${attempt.connectionId}`);
-      printError(attempt.error);
-      printLine();
+    failed.forEach(async (attempt, index) => {
+      await printLine(`${index + 1}) ${attempt.connectionId}`);
+      await printError(attempt.error);
+      await printLine();
     });
 
     throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);

@@ -123,7 +123,7 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
       success: result.success
     };
 
-    handler(execContext);
+    await handler(execContext);
   }
 
   return result;

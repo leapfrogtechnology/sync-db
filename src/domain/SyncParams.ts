@@ -5,8 +5,8 @@ import ExecutionContext from './ExecutionContext';
  */
 interface SyncParams {
   force: boolean;
-  onSuccess: (context: ExecutionContext) => void;
-  onFailed: (context: ExecutionContext) => void;
+  onSuccess: (context: ExecutionContext) => Promise<any>;
+  onFailed: (context: ExecutionContext) => Promise<any>;
 }
 
 export default SyncParams;

@@ -28,8 +28,8 @@ export const DEFAULT_CONFIG: SyncConfig = {
 
 export const DEFAULT_SYNC_PARAMS: SyncParams = {
   force: false,
-  onSuccess: (context: ExecutionContext) => null,
-  onFailed: (context: ExecutionContext) => null
+  onSuccess: (context: ExecutionContext) => Promise.resolve(),
+  onFailed: (context: ExecutionContext) => Promise.resolve()
 };
 
 export const ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];

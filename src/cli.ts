@@ -19,7 +19,7 @@ async function generateConnection(): Promise<void> {
 
   await fs.write(filePath, contents);
 
-  printLine(`Generated file: ${CONNECTIONS_FILENAME}\n`);
+  await printLine(`Generated file: ${CONNECTIONS_FILENAME}\n`);
 }
 
 /**
