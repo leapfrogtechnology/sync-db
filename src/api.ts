@@ -30,21 +30,21 @@ export async function synchronize(
   const connectionList = Array.isArray(conn) ? conn : [conn];
   const connections = mapToConnectionReferences(connectionList);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options);
-  const cliEnvironment = process.env.SYNC_DB_CLI === 'true';
+  const isCLI = process.env.SYNC_DB_CLI === 'true';
   const promises = connections.map(({ connection, id: connectionId }) =>
     synchronizeDatabase(connection, {
       config,
       params,
       connectionId,
-      cliEnvironment
+      isCLI
     })
   );
 
-  const result = await Promise.all(promises);
+  const results = await Promise.all(promises);
 
-  log('Finished all');
+  log('Synchronization completed.');
 
-  return result;
+  return results;
 }
 
 /**

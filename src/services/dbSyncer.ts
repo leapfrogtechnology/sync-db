@@ -115,7 +115,7 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
   log(`Execution completed in ${timeDiff[0]} s, ${timeDiff[1]} ns`);
 
   // If it's a CLI environment, invoke the handler.
-  if (context.cliEnvironment) {
+  if (context.isCLI) {
     const handler = result.success ? context.params.onSuccess : context.params.onFailed;
     const execContext: ExecutionContext = {
       connectionId,

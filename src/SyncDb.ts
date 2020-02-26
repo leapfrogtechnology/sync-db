@@ -78,16 +78,15 @@ class SyncDb extends Command {
   }
 
   /**
-   * Display the result.
+   * Display the results.
    *
-   * @param {SyncResult[]} result
+   * @param {SyncResult[]} results
    */
-  async displayResult(result: SyncResult[]) {
-    const failed = result.filter(attempt => !attempt.success);
-
-    const totalCount = result.length;
-    const failedCount = failed.length;
-    const successfulCount = totalCount - failedCount;
+  async displayResult(results: SyncResult[]) {
+    const totalCount = results.length;
+    const failedAttempts = results.filter(attempt => !attempt.success);
+    const successfulCount = totalCount - failedAttempts.length;
+    const failedCount = totalCount - successfulCount;
 
     await printLine();
 
@@ -96,14 +95,15 @@ class SyncDb extends Command {
       await printLine(`Synchronization successful for ${successfulCount} / ${totalCount} connection(s).`);
     }
 
-    if (failed.length === 0) {
+    // If there are no failed attempts, exit gracefully.
+    if (failedCount === 0) {
       return process.exit(0);
     }
 
-    // Display all errors.
-    await printLine(`Failed for following ${failedCount} connection(s):\n`);
+    // If there are errors, display all of them.
+    await printLine(`Synchronization failed for ${failedCount} connection(s):\n`);
 
-    failed.forEach(async (attempt, index) => {
+    failedAttempts.forEach(async (attempt, index) => {
       await printLine(`${index + 1}) ${attempt.connectionId}`);
       await printError(attempt.error);
       await printLine();
