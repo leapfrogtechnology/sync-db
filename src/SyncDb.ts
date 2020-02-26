@@ -65,9 +65,9 @@ class SyncDb extends Command {
 
       await printLine('Synchronizing...\n');
 
-      const result = await synchronize(config, connections, params);
+      const results = await synchronize(config, connections, params);
 
-      await this.displayResult(result);
+      await this.displayResult(results);
     } catch (e) {
       // Send verbose error with stack trace to debug logs.
       log(e);
@@ -98,7 +98,7 @@ class SyncDb extends Command {
 
     // If there are no failed attempts, exit gracefully.
     if (failedCount === 0) {
-      return process.exit(0);
+      return;
     }
 
     // If there are errors, display all of them.
