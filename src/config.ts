@@ -70,17 +70,23 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
   const { connections } = JSON.parse(loaded) as DbConfig;
 
   // TODO: Validate the connections received from file.
-  const result = connections.map(connection => ({
-    ...connection,
-    id: connection.id || `${connection.host}/${connection.database}`
-  }));
 
   log(
     'Resolved connections: %O',
-    result.map(({ id, host, database }) => ({ id, host, database }))
+    connections.map(({ id, host, database }) => ({ id, host, database }))
   );
 
-  return result;
+  return connections;
+}
+
+/**
+ * Get the connection id from the config.
+ *
+ * @param {ConnectionConfig} connectionConfig
+ * @returns {string}
+ */
+export function getConnectionId(connectionConfig: ConnectionConfig): string {
+  return connectionConfig.id || `${connectionConfig.host}/${connectionConfig.database}`;
 }
 
 /**
@@ -108,7 +114,7 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
   const connection = {
     client: process.env.DB_CLIENT,
     host: process.env.DB_HOST,
-    port: process.env.DB_PORT ? +(process.env.DB_PORT) : null,
+    port: process.env.DB_PORT ? +process.env.DB_PORT : null,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,

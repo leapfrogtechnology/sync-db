@@ -1,14 +1,14 @@
+import * as Knex from 'knex';
 import * as path from 'path';
 import { reverse, keys } from 'ramda';
 
-import * as fs from './util/fs';
-import { dbLogger } from './logger';
-import Connection from './Connection';
-import Mapping from './domain/Mapping';
-import SqlCode from './domain/SqlCode';
-import * as promise from './util/promise';
-import SqlFileInfo from './domain/SqlFileInfo';
-import DatabaseObjectTypes from './enums/DatabaseObjectTypes';
+import * as fs from '../util/fs';
+import { dbLogger } from '../logger';
+import Mapping from '../domain/Mapping';
+import SqlCode from '../domain/SqlCode';
+import * as promise from '../util/promise';
+import SqlFileInfo from '../domain/SqlFileInfo';
+import DatabaseObjectTypes from '../enums/DatabaseObjectTypes';
 
 /**
  * SQL DROP statements mapping for different object types.
@@ -106,19 +106,17 @@ export function getDropStatement(type: string, fqon: string): string {
 /**
  * Run raw queries in the transaction sequentially.
  *
+ * @param {Knex} trx
  * @param {SqlCode[]} files
- * @param {Connection} connection
+ * @param {string} connectionId
  * @returns {Promise<void>}
  */
-export function runSequentially(
-  files: SqlCode[],
-  connection: Connection
-): Promise<void> {
-  const logDb = dbLogger(connection);
+export function runSequentially(trx: Knex, files: SqlCode[], connectionId: string): Promise<void> {
+  const log = dbLogger(connectionId);
   const promises = files.map(file => {
-    logDb(`Running ${file.name}`);
+    log(`Running ${file.name}`);
 
-    return connection.query(file.sql);
+    return trx.raw(file.sql);
   });
 
   return promise.runSequentially(promises);
@@ -127,25 +125,23 @@ export function runSequentially(
 /**
  * Rollback SQL files sequentially in reverse order of the file list.
  *
+ * @param {Knex} trx
  * @param {SqlFileInfo[]} files
- * @param {Connection} connection
+ * @param {string} connectionId
  * @returns {Promise<void>}
  */
-export async function rollbackSequentially(
-  files: SqlFileInfo[],
-  connection: Connection
-): Promise<void> {
-  const logDb = dbLogger(connection);
+export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], connectionId: string): Promise<void> {
+  const log = dbLogger(connectionId);
   const sqlFiles = files.map(info => ({
     fqon: info.fqon,
     dropStatement: getDropStatement(info.type, info.fqon)
   }));
 
   for (const sql of reverse(sqlFiles)) {
-    logDb(`Rolling back: ${sql.fqon}`);
+    log(`Rolling back: ${sql.fqon}`);
 
-    await connection.query(sql.dropStatement);
+    await trx.raw(sql.dropStatement);
 
-    logDb('Executed: ', sql.dropStatement);
+    log('Executed: ', sql.dropStatement);
   }
 }
