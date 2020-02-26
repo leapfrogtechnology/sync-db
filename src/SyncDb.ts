@@ -69,7 +69,8 @@ class SyncDb extends Command {
 
       await this.displayResult(result);
     } catch (e) {
-      log('Error caught: ', e, '\n');
+      // Send verbose error with stack trace to debug logs.
+      log(e);
 
       await printError(e.toString());
 
@@ -105,7 +106,11 @@ class SyncDb extends Command {
 
     failedAttempts.forEach(async (attempt, index) => {
       await printLine(`${index + 1}) ${attempt.connectionId}`);
-      await printError(attempt.error);
+      await printError(attempt.error.toString());
+
+      // Send verbose error with stack trace to debug logs.
+      log(attempt.error);
+
       await printLine();
     });
 
