@@ -1,12 +1,13 @@
 import * as Knex from 'knex';
 
 import { dbLogger } from '../logger';
-import * as sqlRunner from './sqlRunner';
+
 import { NS_PER_SEC } from '../constants';
 import SyncResult from '../domain/SyncResult';
 import SyncContext from '../domain/SyncContext';
 import * as configInjection from './configInjection';
 import ExecutionContext from '../domain/ExecutionContext';
+import { runSequentially, rollbackSequentially } from './sqlRunner';
 
 /**
  * Migrate SQL on a database.
@@ -17,36 +18,32 @@ import ExecutionContext from '../domain/ExecutionContext';
  */
 async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
   const { connectionId } = context;
-  const { basePath, hooks, sql } = context.config;
   const log = dbLogger(connectionId);
 
   log(`Running setup.`);
 
-  const sqlScripts = await sqlRunner.resolveFiles(basePath, sql);
-  const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
+  // Resolve loaded source code.
+  const sqlScripts = context.source.sql;
+  const { preSync: preHookScripts, postSync: postHookScripts } = context.source.hooks;
 
   // Config Injection: Setup
   // This will setup a config table (temporary and accessible only to this transaction).
   await configInjection.setup(trx, context);
 
-  if (preMigrationScripts.length > 0) {
-    const preHookScripts = await sqlRunner.resolveFiles(basePath, preMigrationScripts);
-
+  if (preHookScripts.length > 0) {
     log('PRE-SYNC: Begin');
     // Run the pre hook scripts
-    await sqlRunner.runSequentially(trx, preHookScripts, connectionId);
+    await runSequentially(trx, preHookScripts, connectionId);
     log('PRE-SYNC: End');
   }
 
   // Run the migration scripts.
-  await sqlRunner.runSequentially(trx, sqlScripts, connectionId);
+  await runSequentially(trx, sqlScripts, connectionId);
 
-  if (postMigrationScripts.length > 0) {
-    const postHookScripts = await sqlRunner.resolveFiles(basePath, postMigrationScripts);
-
+  if (postHookScripts.length > 0) {
     log('POST-SYNC: Begin');
     // Run the pre hook scripts
-    await sqlRunner.runSequentially(trx, postHookScripts, connectionId);
+    await runSequentially(trx, postHookScripts, connectionId);
     log('POST-SYNC: End');
   }
 
@@ -67,14 +64,11 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
  * @returns {Promise<void>}
  */
 async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
-  const { basePath, sql } = context.config;
   const log = dbLogger(context.connectionId);
 
-  log(`Running rollback on connection id: ${context.connectionId}`);
+  log(`Running rollback on connection: ${context.connectionId}`);
 
-  const fileInfoList = sql.map(filePath => sqlRunner.extractSqlFileInfo(filePath.replace(`${basePath}/`, '')));
-
-  await sqlRunner.rollbackSequentially(trx, fileInfoList, context.connectionId);
+  await rollbackSequentially(trx, context.source.sql, context.connectionId);
 
   log('Finished running rollback');
 }
