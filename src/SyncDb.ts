@@ -60,7 +60,6 @@ class SyncDb extends Command {
 
       const config = await loadConfig();
       const connections = await resolveConnections();
-
       const { synchronize } = await import('./api');
 
       await printLine('Synchronizing...\n');
@@ -68,9 +67,12 @@ class SyncDb extends Command {
       const results = await synchronize(config, connections, params);
       const { totalCount, failedCount } = await this.processResults(results);
 
-      if (failedCount > 0) {
-        throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
+      // If all completed successfully, exit gracefully.
+      if (failedCount === 0) {
+        return process.exit(0);
       }
+
+      throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
     } catch (e) {
       // Send verbose error with stack trace to debug logs.
       log(e);
@@ -82,8 +84,8 @@ class SyncDb extends Command {
   }
 
   /**
-   * Check the results for each connection display them.
-   * All the successful / failed attempts are displayed.
+   * Check the results for each connection and display them.
+   * All the successful / failed attempts are displayed and errors are logged.
    *
    * @param {SyncResult[]} results
    * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>}
@@ -104,7 +106,6 @@ class SyncDb extends Command {
       await printLine(`Synchronization successful for ${successfulCount} / ${totalCount} connection(s).`);
     }
 
-    // If all completed successfully, exit gracefully.
     // If there are errors, display all of them.
     if (!allComplete) {
       await printLine(`Synchronization failed for ${failedCount} connection(s):\n`);
