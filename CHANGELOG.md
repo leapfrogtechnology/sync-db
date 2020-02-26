@@ -1,5 +1,27 @@
 # Change Log
 
+## [v1.0.0-beta.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.1) (2020-02-26)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.9-2...v1.0.0-beta.1)
+
+**Changes**
+
+- Add new io utility for standard I/O operations [\#44](https://github.com/leapfrogtechnology/sync-db/pull/44) [[util](https://github.com/leapfrogtechnology/sync-db/labels/util)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Bump codecov from 3.6.1 to 3.6.5 [\#43](https://github.com/leapfrogtechnology/sync-db/pull/43) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([dependabot[bot]](https://github.com/apps/dependabot))
+- Run synchronize in a single transaction per connection [\#39](https://github.com/leapfrogtechnology/sync-db/pull/39) [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] [[internals](https://github.com/leapfrogtechnology/sync-db/labels/internals)] [[ux](https://github.com/leapfrogtechnology/sync-db/labels/ux)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+
+## [v1.0.0-experimental.9-2](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.9-2) (2020-02-15)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.9-1...v1.0.0-experimental.9-2)
+
+## [v1.0.0-experimental.9-1](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.9-1) (2020-02-15)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.9...v1.0.0-experimental.9-1)
+
+**Changes**
+
+- Update example to demonstrate config injection [\#37](https://github.com/leapfrogtechnology/sync-db/pull/37) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+
+## [v1.0.0-alpha.9](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.9) (2020-02-04)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-6...v1.0.0-alpha.9)
+
 ## [v1.0.0-experimental.8-6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-6) (2020-02-03)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-5...v1.0.0-experimental.8-6)
 
