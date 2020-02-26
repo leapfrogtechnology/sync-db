@@ -7,8 +7,8 @@ import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
 import { DEFAULT_SYNC_PARAMS } from './constants';
+import { synchronizeDatabase } from './services/sync';
 import ConnectionConfig from './domain/ConnectionConfig';
-import { synchronizeDatabase } from './services/dbSyncer';
 import ConnectionReference from './domain/ConnectionReference';
 import { isKnexInstance, getConfig, createInstance } from './util/db';
 
