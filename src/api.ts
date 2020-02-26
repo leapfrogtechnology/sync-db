@@ -33,10 +33,10 @@ export async function synchronize(
   const isCLI = process.env.SYNC_DB_CLI === 'true';
   const promises = connections.map(({ connection, id: connectionId }) =>
     synchronizeDatabase(connection, {
+      isCLI,
       config,
       params,
-      connectionId,
-      isCLI
+      connectionId
     })
   );
 

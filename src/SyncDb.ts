@@ -66,8 +66,11 @@ class SyncDb extends Command {
       await printLine('Synchronizing...\n');
 
       const results = await synchronize(config, connections, params);
+      const { totalCount, failedCount } = await this.processResults(results);
 
-      await this.displayResult(results);
+      if (failedCount > 0) {
+        throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
+      }
     } catch (e) {
       // Send verbose error with stack trace to debug logs.
       log(e);
@@ -79,15 +82,20 @@ class SyncDb extends Command {
   }
 
   /**
-   * Display the results.
+   * Check the results for each connection display them.
+   * All the successful / failed attempts are displayed.
    *
    * @param {SyncResult[]} results
+   * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>}
    */
-  async displayResult(results: SyncResult[]) {
+  async processResults(
+    results: SyncResult[]
+  ): Promise<{ totalCount: number; failedCount: number; successfulCount: number }> {
     const totalCount = results.length;
-    const failedAttempts = results.filter(attempt => !attempt.success);
+    const failedAttempts = results.filter(result => !result.success);
     const successfulCount = totalCount - failedAttempts.length;
     const failedCount = totalCount - successfulCount;
+    const allComplete = failedCount === 0;
 
     await printLine();
 
@@ -96,25 +104,23 @@ class SyncDb extends Command {
       await printLine(`Synchronization successful for ${successfulCount} / ${totalCount} connection(s).`);
     }
 
-    // If there are no failed attempts, exit gracefully.
-    if (failedCount === 0) {
-      return;
+    // If all completed successfully, exit gracefully.
+    // If there are errors, display all of them.
+    if (!allComplete) {
+      await printLine(`Synchronization failed for ${failedCount} connection(s):\n`);
+
+      failedAttempts.forEach(async (attempt, index) => {
+        await printLine(`${index + 1}) ${attempt.connectionId}`);
+        await printError(attempt.error.toString());
+
+        // Send verbose error with stack trace to debug logs.
+        log(attempt.error);
+
+        await printLine();
+      });
     }
 
-    // If there are errors, display all of them.
-    await printLine(`Synchronization failed for ${failedCount} connection(s):\n`);
-
-    failedAttempts.forEach(async (attempt, index) => {
-      await printLine(`${index + 1}) ${attempt.connectionId}`);
-      await printError(attempt.error.toString());
-
-      // Send verbose error with stack trace to debug logs.
-      log(attempt.error);
-
-      await printLine();
-    });
-
-    throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
+    return { totalCount, failedCount, successfulCount };
   }
 }
 
