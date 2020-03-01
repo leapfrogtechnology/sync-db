@@ -63,13 +63,20 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
+  const connectionsFileExists = await fs.exists(filename);
+  let connections;
 
-  log('Resolving file: %s', filename);
+  // If connections file exists, resolve connections from that.
+  // otherwise fallback to getting the connection from the env vars.
+  if (connectionsFileExists) {
+    log('Resolving file: %s', filename);
 
-  const loaded = await fs.read(filename);
-  const { connections } = JSON.parse(loaded) as DbConfig;
+    connections = await resolveConnectionsFromFile(filename);
+  } else {
+    log('Connections file does not exist. Falling back to environment variables.');
 
-  // TODO: Validate the connections received from file.
+    connections = resolveConnectionsFromEnv();
+  }
 
   log(
     'Resolved connections: %O',
@@ -124,4 +131,18 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
   } as ConnectionConfig;
 
   return [connection];
+}
+
+/**
+ * Resolve connections from the file.
+ *
+ * @param {string} filename
+ * @returns {Promise<ConnectionConfig[]>}
+ */
+async function resolveConnectionsFromFile(filename: string): Promise<ConnectionConfig[]> {
+  const loaded = await fs.read(filename);
+  const { connections } = JSON.parse(loaded) as DbConfig;
+  // TODO: Validate the connections received from file.
+
+  return connections;
 }
