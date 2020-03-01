@@ -115,7 +115,7 @@ function validateConnections(keys: string[]): void {
  * @returns {ConnectionConfig[]}
  */
 export function resolveConnectionsFromEnv(): ConnectionConfig[] {
-  log('Getting connections from the environment.');
+  log('Resolving connections from the environment variables.');
 
   validateConnections(ENV_KEYS);
 
@@ -146,6 +146,7 @@ async function resolveConnectionsFromFile(filename: string): Promise<ConnectionC
 
   const loaded = await fs.read(filename);
   const { connections } = JSON.parse(loaded) as DbConfig;
+
   // TODO: Validate the connections received from file.
 
   return connections;
