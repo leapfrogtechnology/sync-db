@@ -39,6 +39,12 @@ describe('config:', () => {
       process.env.DB_PASSWORD = '';
       process.env.DB_NAME = '';
     });
+
+    it('should throw an error if the required env vars are not provided.', () => {
+      expect(() => resolveConnectionsFromEnv()).to.throw(
+        'Following environment variables were not set: DB_HOST, DB_PASSWORD, DB_NAME, DB_USERNAME, DB_PORT, DB_CLIENT'
+      );
+    });
   });
 
   describe('validate', () => {
