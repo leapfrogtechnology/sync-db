@@ -121,6 +121,7 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
 
   const connection = {
     client: process.env.DB_CLIENT,
+    id: process.env.DB_ID,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT ? +process.env.DB_PORT : null,
     user: process.env.DB_USERNAME,
