@@ -9,7 +9,7 @@ import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { prepareInjectionConfigVars } from './services/configInjection';
-import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, ENV_KEYS } from './constants';
+import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
 /**
  * Load config yaml file.
@@ -117,7 +117,7 @@ function validateConnections(keys: string[]): void {
 export function resolveConnectionsFromEnv(): ConnectionConfig[] {
   log('Resolving connections from the environment variables.');
 
-  validateConnections(ENV_KEYS);
+  validateConnections(REQUIRED_ENV_KEYS);
 
   const connection = {
     client: process.env.DB_CLIENT,
