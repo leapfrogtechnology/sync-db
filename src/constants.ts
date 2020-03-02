@@ -32,4 +32,4 @@ export const DEFAULT_SYNC_PARAMS: SyncParams = {
   onFailed: (context: ExecutionContext) => Promise.resolve()
 };
 
-export const ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT', 'DB_ENCRYPTION'];
+export const REQUIRED_ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT'];

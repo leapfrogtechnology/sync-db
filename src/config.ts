@@ -9,7 +9,7 @@ import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { prepareInjectionConfigVars } from './services/configInjection';
-import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, ENV_KEYS } from './constants';
+import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
 /**
  * Load config yaml file.
@@ -63,13 +63,19 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
+  const connectionsFileExists = await fs.exists(filename);
 
-  log('Resolving file: %s', filename);
+  let connections;
 
-  const loaded = await fs.read(filename);
-  const { connections } = JSON.parse(loaded) as DbConfig;
+  // If connections file exists, resolve connections from that.
+  // otherwise fallback to getting the connection from the env vars.
+  if (connectionsFileExists) {
+    connections = await resolveConnectionsFromFile(filename);
+  } else {
+    log('Connections file not provided.');
 
-  // TODO: Validate the connections received from file.
+    connections = resolveConnectionsFromEnv();
+  }
 
   log(
     'Resolved connections: %O',
@@ -109,10 +115,13 @@ function validateConnections(keys: string[]): void {
  * @returns {ConnectionConfig[]}
  */
 export function resolveConnectionsFromEnv(): ConnectionConfig[] {
-  validateConnections(ENV_KEYS);
+  log('Resolving connections from the environment variables.');
+
+  validateConnections(REQUIRED_ENV_KEYS);
 
   const connection = {
     client: process.env.DB_CLIENT,
+    id: process.env.DB_ID,
     host: process.env.DB_HOST,
     port: process.env.DB_PORT ? +process.env.DB_PORT : null,
     user: process.env.DB_USERNAME,
@@ -124,4 +133,21 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
   } as ConnectionConfig;
 
   return [connection];
+}
+
+/**
+ * Resolve connections from the file.
+ *
+ * @param {string} filename
+ * @returns {Promise<ConnectionConfig[]>}
+ */
+async function resolveConnectionsFromFile(filename: string): Promise<ConnectionConfig[]> {
+  log('Resolving file: %s', filename);
+
+  const loaded = await fs.read(filename);
+  const { connections } = JSON.parse(loaded) as DbConfig;
+
+  // TODO: Validate the connections received from file.
+
+  return connections;
 }
