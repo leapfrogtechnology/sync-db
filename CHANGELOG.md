@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.0.0-beta.2](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.2) (2020-03-02)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.1...v1.0.0-beta.2)
+
+**Changes**
+
+- Support resolving connections from the environment directly as a fallback option [\#45](https://github.com/leapfrogtechnology/sync-db/pull/45) [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+
 ## [v1.0.0-beta.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.1) (2020-02-26)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.9-2...v1.0.0-beta.1)
 
