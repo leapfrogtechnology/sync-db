@@ -5,7 +5,7 @@ import * as chai from 'chai';
 import * as path from 'path';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { write, read, remove } from '../src/util/fs';
+import { write, read, remove, exists } from '../src/util/fs';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -45,6 +45,18 @@ describe('UTIL: fs', () => {
     const res = await read(filePath);
 
     expect(res).to.equal(fileContent);
+  });
+
+  it('should return true if file exits in given file path', async () => {
+    const res = await exists(filePath);
+
+    expect(res).to.equal(true);
+  });
+
+  it('should return false if file does not exits in given file path', async () => {
+    const res = await exists('foo/bar');
+
+    expect(res).to.equal(false);
   });
 
   it('should remove the file', async () => {
