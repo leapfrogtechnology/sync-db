@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.0.0-beta.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.3) (2020-03-03)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.2...v1.0.0-beta.3)
+
+**Bug Fixes**
+
+- Fix fs.exists\(\) util ¯\\_\(ツ\)\_/¯ [\#46](https://github.com/leapfrogtechnology/sync-db/pull/46) [[bug](https://github.com/leapfrogtechnology/sync-db/labels/bug)] [[test](https://github.com/leapfrogtechnology/sync-db/labels/test)] [[util](https://github.com/leapfrogtechnology/sync-db/labels/util)] ([cham11ng](https://github.com/cham11ng))
+
 ## [v1.0.0-beta.2](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.2) (2020-03-02)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.1...v1.0.0-beta.2)
 
