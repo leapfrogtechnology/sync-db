@@ -26,7 +26,7 @@ export function read(filename: string): Promise<string> {
  */
 export function exists(filename: string): Promise<boolean> {
   return new Promise(resolve => {
-    fs.access(filename, fs.constants.F_OK, err => resolve(!!err));
+    fs.access(filename, fs.constants.F_OK, err => resolve(!err));
   });
 }
 
