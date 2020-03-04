@@ -29,7 +29,7 @@ export async function synchronize(
 
   const connectionList = Array.isArray(conn) ? conn : [conn];
   const connections = mapToConnectionReferences(connectionList);
-  const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options);
+  const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
   const isCLI = process.env.SYNC_DB_CLI === 'true';
   const promises = connections.map(({ connection, id: connectionId }) =>
     synchronizeDatabase(connection, {
