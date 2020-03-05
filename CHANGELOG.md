@@ -1,5 +1,12 @@
 # Change Log
 
+## [v1.0.0-beta.4](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.4) (2020-03-05)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.3...v1.0.0-beta.4)
+
+**Bug Fixes**
+
+- Fix ramda merge convert issue ¯\\(ツ\)/¯ [\#47](https://github.com/leapfrogtechnology/sync-db/pull/47) [[bug](https://github.com/leapfrogtechnology/sync-db/labels/bug)] [[bugfix](https://github.com/leapfrogtechnology/sync-db/labels/bugfix)] ([cham11ng](https://github.com/cham11ng))
+
 ## [v1.0.0-beta.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.3) (2020-03-03)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.2...v1.0.0-beta.3)
 
@@ -19,7 +26,6 @@
 
 **Changes**
 
-- Add new io utility for standard I/O operations [\#44](https://github.com/leapfrogtechnology/sync-db/pull/44) [[util](https://github.com/leapfrogtechnology/sync-db/labels/util)] ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Bump codecov from 3.6.1 to 3.6.5 [\#43](https://github.com/leapfrogtechnology/sync-db/pull/43) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([dependabot[bot]](https://github.com/apps/dependabot))
 - Run synchronize in a single transaction per connection [\#39](https://github.com/leapfrogtechnology/sync-db/pull/39) [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] [[internals](https://github.com/leapfrogtechnology/sync-db/labels/internals)] [[ux](https://github.com/leapfrogtechnology/sync-db/labels/ux)] ([kabirbaidhya](https://github.com/kabirbaidhya))
 
@@ -101,6 +107,7 @@
 
 **Changes**
 
+- Add new io utility for standard I/O operations [\#44](https://github.com/leapfrogtechnology/sync-db/pull/44) [[util](https://github.com/leapfrogtechnology/sync-db/labels/util)] ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Fix file name mistake [\#30](https://github.com/leapfrogtechnology/sync-db/pull/30) ([p0k8h](https://github.com/p0k8h))
 - Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[programmatic-api](https://github.com/leapfrogtechnology/sync-db/labels/programmatic-api)] ([p0k8h](https://github.com/p0k8h))
 - Throw an error if object type names doesn't match directory convention [\#28](https://github.com/leapfrogtechnology/sync-db/pull/28) [[bugfix](https://github.com/leapfrogtechnology/sync-db/labels/bugfix)] ([p0k8h](https://github.com/p0k8h))
