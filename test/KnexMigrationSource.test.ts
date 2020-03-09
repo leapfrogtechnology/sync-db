@@ -84,16 +84,70 @@ describe('UTIL: KnexMigrationSource', () => {
   describe('getMigrationName', async () => {
     it('should return the name of the migration.', async () => {
       const { instance } = await getInstance();
+      const entry = {
+        name: '0005_mgr',
+        queries: {
+          up: { name: '0005_mgr.up.sql', sql: 'CREATE TABLE test_mgr5' },
+          down: { name: '0005_mgr.down.sql', sql: 'DROP TABLE test_mgr5' }
+        }
+      };
 
-      expect(
-        instance.getMigrationName({
-          name: '0005_mgr',
-          queries: {
-            up: { name: '0005_mgr.up.sql', sql: 'CREATE TABLE test_mgr5' },
-            down: { name: '0005_mgr.down.sql', sql: 'DROP TABLE test_mgr5' }
-          }
-        })
-      ).to.equal('0005_mgr');
+      expect(instance.getMigrationName(entry)).to.equal('0005_mgr');
+    });
+  });
+
+  describe('getMigration', async () => {
+    const dbStub = {
+      raw: (sql: string) => Promise.resolve(`Result of "${sql}"`)
+    };
+
+    it('should return the migration functions.', async () => {
+      const { instance } = await getInstance();
+      const entry = {
+        name: '0005_mgr',
+        queries: {
+          up: { name: '0005_mgr.up.sql', sql: 'CREATE TABLE test_mgr5' },
+          down: { name: '0005_mgr.down.sql', sql: 'DROP TABLE test_mgr5' }
+        }
+      };
+
+      const migration = instance.getMigration(entry);
+
+      const upResult = await migration.up(dbStub as any);
+      const downResult = await migration.down(dbStub as any);
+
+      expect(upResult).to.equal('Result of "CREATE TABLE test_mgr5"');
+      expect(downResult).to.equal('Result of "DROP TABLE test_mgr5"');
+    });
+
+    it('could return empty promises for the migration functions if the files have been unresolved.', async () => {
+      const { instance } = await getInstance();
+      const entry1 = {
+        name: '0004_mgr',
+        queries: {
+          up: { name: '0004_mgr.up.sql', sql: 'UPDATE test_mgr4 SET is_active = 0' }
+        }
+      };
+      const migration1 = instance.getMigration(entry1);
+      const upResult1 = await migration1.up(dbStub as any);
+      const downResult1 = await migration1.down(dbStub as any);
+
+      expect(upResult1).to.equal('Result of "UPDATE test_mgr4 SET is_active = 0"');
+      expect(downResult1).to.equal(undefined);
+
+      const entry2 = {
+        name: '0005_mgr',
+        queries: {
+          down: { name: '0005_mgr.down.sql', sql: 'UPDATE test_mgr5 SET is_disabled = 1' }
+        }
+      };
+
+      const migration2 = instance.getMigration(entry2);
+      const upResult2 = await migration2.up(dbStub as any);
+      const downResult2 = await migration2.down(dbStub as any);
+
+      expect(upResult2).to.equal(undefined);
+      expect(downResult2).to.equal('Result of "UPDATE test_mgr5 SET is_disabled = 1"');
     });
   });
 });
