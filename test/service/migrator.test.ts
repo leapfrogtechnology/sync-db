@@ -29,13 +29,6 @@ describe('SERVICE: migrator', () => {
       // Test the migrations entries retrieved from the directory.
       expect(result).to.deep.equal(['0001_mgr', '0002_mgr', '0003_mgr', '0004_mgr', '0005_mgr']);
     });
-
-    it('should return empty array if the migration directory is empty.', async () => {
-      const migrationPath = await mkdtemp();
-      const result = await migratorService.getSqlMigrationNames(migrationPath);
-
-      expect(result).to.deep.equal([]);
-    });
   });
 
   describe('resolveSqlMigrations', () => {
@@ -96,6 +89,13 @@ describe('SERVICE: migrator', () => {
           }
         }
       ]);
+    });
+
+    it('should return empty array if the migration directory is empty.', async () => {
+      const migrationPath = await mkdtemp();
+      const result = await migratorService.resolveSqlMigrations(migrationPath);
+
+      expect(result).to.deep.equal([]);
     });
   });
 });
