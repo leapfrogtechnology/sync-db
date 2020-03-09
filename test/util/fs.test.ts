@@ -1,8 +1,9 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import { write, read, remove, exists, mkdtemp } from '../../src/util/fs';
+import { write, read, remove, exists, mkdtemp, glob } from '../../src/util/fs';
 
 describe('UTIL: fs', () => {
   let filePath: string;
@@ -70,6 +71,31 @@ describe('UTIL: fs', () => {
 
     it('should throw an error if no such file or directory to remove', () => {
       return expect(remove(invalidFilePath)).to.eventually.rejected;
+    });
+  });
+
+  describe('glob', async () => {
+    it('should return the list of all the files under the directory.', async () => {
+      const tmp1 = await mkdtemp();
+
+      await Promise.all([
+        write(path.join(tmp1, 'file1.txt'), 'Hello World!'),
+        write(path.join(tmp1, 'file2.txt'), 'Hello World!'),
+        write(path.join(tmp1, 'file3.txt'), 'Hello World!'),
+        write(path.join(tmp1, 'file4.txt'), 'Hello World!'),
+        write(path.join(tmp1, 'file5.txt'), 'Hello World!')
+      ]);
+
+      const result = await glob(tmp1);
+
+      expect(result).to.deep.equal(['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt', 'file5.txt']);
+    });
+
+    it('should return empty array if the directory being globbed is empty.', async () => {
+      const tmp2 = await mkdtemp();
+      const result = await glob(tmp2);
+
+      expect(result).to.deep.equal([]);
     });
   });
 });
