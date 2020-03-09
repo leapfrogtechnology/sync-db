@@ -8,6 +8,7 @@ Command line utility to synchronize and version control relational database obje
 [![Codecov](https://img.shields.io/codecov/c/github/leapfrogtechnology/sync-db?style=flat-square)](https://codecov.io/gh/leapfrogtechnology/sync-db)
 [![LICENSE](https://img.shields.io/github/license/leapfrogtechnology/sync-db.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db/blob/master/LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db#contributing)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db?ref=badge_shield)
 
 ## Installation
 
@@ -186,3 +187,6 @@ Feel free to send pull requests.
 ## License
 
 Licensed under [The MIT License](LICENSE).
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db?ref=badge_large)
