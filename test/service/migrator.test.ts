@@ -12,16 +12,16 @@ describe('SERVICE: migrator', () => {
 
       // Populate migration files to a directory.
       await Promise.all([
-        write(path.join(migrationPath, '0001_mgr.up.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0001_mgr.down.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0002_mgr.up.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0002_mgr.down.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0003_mgr.up.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0003_mgr.down.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0004_mgr.up.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0004_mgr.down.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0005_mgr.up.sql'), 'SELECT 1;'),
-        write(path.join(migrationPath, '0005_mgr.down.sql'), 'SELECT 1;')
+        write(path.join(migrationPath, '0001_mgr.up.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0001_mgr.down.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0002_mgr.up.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0002_mgr.down.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0003_mgr.up.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0003_mgr.down.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0004_mgr.up.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0004_mgr.down.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0005_mgr.up.sql'), 'SELECT 1'),
+        write(path.join(migrationPath, '0005_mgr.down.sql'), 'SELECT 1')
       ]);
 
       const result = await migratorService.getSqlMigrationNames(migrationPath);
@@ -35,6 +35,67 @@ describe('SERVICE: migrator', () => {
       const result = await migratorService.getSqlMigrationNames(migrationPath);
 
       expect(result).to.deep.equal([]);
+    });
+  });
+
+  describe('resolveSqlMigrations', () => {
+    it('should resolve all the information related to the migration entries.', async () => {
+      const migrationPath = await mkdtemp();
+
+      // Populate migration files to a directory.
+      await Promise.all([
+        write(path.join(migrationPath, '0001_mgr.up.sql'), 'CREATE TABLE test_mgr1'),
+        write(path.join(migrationPath, '0001_mgr.down.sql'), 'DROP TABLE test_mgr1'),
+        write(path.join(migrationPath, '0002_mgr.up.sql'), 'CREATE TABLE test_mgr2'),
+        write(path.join(migrationPath, '0002_mgr.down.sql'), 'DROP TABLE test_mgr2'),
+        write(path.join(migrationPath, '0003_mgr.up.sql'), 'CREATE TABLE test_mgr3'),
+        write(path.join(migrationPath, '0003_mgr.down.sql'), 'DROP TABLE test_mgr3'),
+        write(path.join(migrationPath, '0004_mgr.up.sql'), 'CREATE TABLE test_mgr4'),
+        write(path.join(migrationPath, '0004_mgr.down.sql'), 'DROP TABLE test_mgr4'),
+        write(path.join(migrationPath, '0005_mgr.up.sql'), 'CREATE TABLE test_mgr5'),
+        write(path.join(migrationPath, '0005_mgr.down.sql'), 'DROP TABLE test_mgr5')
+      ]);
+
+      const result = await migratorService.resolveSqlMigrations(migrationPath);
+
+      // Test the migrations entries retrieved from the directory.
+      expect(result).to.deep.equal([
+        {
+          name: '0001_mgr',
+          queries: {
+            up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr1' },
+            down: { name: '0001_mgr.down.sql', sql: 'DROP TABLE test_mgr1' }
+          }
+        },
+        {
+          name: '0002_mgr',
+          queries: {
+            up: { name: '0002_mgr.up.sql', sql: 'CREATE TABLE test_mgr2' },
+            down: { name: '0002_mgr.down.sql', sql: 'DROP TABLE test_mgr2' }
+          }
+        },
+        {
+          name: '0003_mgr',
+          queries: {
+            up: { name: '0003_mgr.up.sql', sql: 'CREATE TABLE test_mgr3' },
+            down: { name: '0003_mgr.down.sql', sql: 'DROP TABLE test_mgr3' }
+          }
+        },
+        {
+          name: '0004_mgr',
+          queries: {
+            up: { name: '0004_mgr.up.sql', sql: 'CREATE TABLE test_mgr4' },
+            down: { name: '0004_mgr.down.sql', sql: 'DROP TABLE test_mgr4' }
+          }
+        },
+        {
+          name: '0005_mgr',
+          queries: {
+            up: { name: '0005_mgr.up.sql', sql: 'CREATE TABLE test_mgr5' },
+            down: { name: '0005_mgr.down.sql', sql: 'DROP TABLE test_mgr5' }
+          }
+        }
+      ]);
     });
   });
 });
