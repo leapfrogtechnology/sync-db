@@ -24,7 +24,7 @@ describe('SERVICE: migrator', () => {
         write(path.join(migrationPath, '0005_mgr.down.sql'), 'SELECT 1;')
       ]);
 
-      const result = await migratorService.getSqlMigrationEntries(migrationPath);
+      const result = await migratorService.getSqlMigrationNames(migrationPath);
 
       // Test the migrations entries retrieved from the directory.
       expect(result).to.deep.equal(['0001_mgr', '0002_mgr', '0003_mgr', '0004_mgr', '0005_mgr']);
@@ -32,7 +32,7 @@ describe('SERVICE: migrator', () => {
 
     it('should return empty array if the migration directory is empty.', async () => {
       const migrationPath = await mkdtemp();
-      const result = await migratorService.getSqlMigrationEntries(migrationPath);
+      const result = await migratorService.getSqlMigrationNames(migrationPath);
 
       expect(result).to.deep.equal([]);
     });

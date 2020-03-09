@@ -1,9 +1,13 @@
-import { glob } from '../util/fs';
+import * as path from 'path';
 
-const FILE_PATTERN = /(.+)\.(up|down)\.sql$/i;
+import { glob, exists } from '../util/fs';
+import { resolveFile } from './sqlRunner';
+import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+
+const FILE_PATTERN = /(.+)\.(up|down)\.sql$/;
 
 /**
- * Glob the migration directory and retrieve all the migration entries
+ * Glob the migration directory and retrieve all the migration entries (names)
  * that needs to be run.
  *
  * Note: The ".up.sql" and ".down.sql" part of the migration files are
@@ -12,7 +16,7 @@ const FILE_PATTERN = /(.+)\.(up|down)\.sql$/i;
  * @param {string} migrationPath
  * @returns {Promise<string[]>}
  */
-export async function getSqlMigrationEntries(migrationPath: string): Promise<string[]> {
+export async function getSqlMigrationNames(migrationPath: string): Promise<string[]> {
   const files = await glob(migrationPath);
   const migrationSet = new Set<string>();
 
@@ -25,4 +29,31 @@ export async function getSqlMigrationEntries(migrationPath: string): Promise<str
   });
 
   return Array.from(migrationSet);
+}
+
+/**
+ * Resolve all the migration source for each of the migration entries.
+ *
+ * @param {string} migrationPath
+ * @returns {Promise<SqlMigrationEntry[]>}
+ */
+export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMigrationEntry[]> {
+  const migrationNames = await getSqlMigrationNames(migrationPath);
+  const migrationPromises = migrationNames.map(async name => {
+    const upFilename = `${name}.up.sql`;
+    const downFilename = `${name}.down.sql`;
+
+    const upFileExists = await exists(path.join(migrationPath, upFilename));
+    const downFileExists = await exists(path.join(migrationPath, downFilename));
+
+    const up = upFileExists ? await resolveFile(migrationPath, upFilename) : undefined;
+    const down = downFileExists ? await resolveFile(migrationPath, downFilename) : undefined;
+
+    return {
+      name,
+      queries: { up, down }
+    };
+  });
+
+  return Promise.all(migrationPromises);
 }
