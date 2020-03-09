@@ -80,4 +80,20 @@ describe('UTIL: KnexMigrationSource', () => {
       ]);
     });
   });
+
+  describe('getMigrationName', async () => {
+    it('should return the name of the migration.', async () => {
+      const { instance } = await getInstance();
+
+      expect(
+        instance.getMigrationName({
+          name: '0005_mgr',
+          queries: {
+            up: { name: '0005_mgr.up.sql', sql: 'CREATE TABLE test_mgr5' },
+            down: { name: '0005_mgr.down.sql', sql: 'DROP TABLE test_mgr5' }
+          }
+        })
+      ).to.equal('0005_mgr');
+    });
+  });
 });
