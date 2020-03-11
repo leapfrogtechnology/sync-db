@@ -6,7 +6,8 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
-    "/bin",
+    "/bin/run",
+    "/bin/run.cmd",
     "/lib"
   ],
   "bin": {
