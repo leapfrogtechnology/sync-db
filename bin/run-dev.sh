@@ -14,11 +14,9 @@ BASEDIR=$(dirname "$0")
 # the local project's node_modules (from the current working directory).
 #
 # Use-case:
-# The main reason for this is to allow the CLI's node process
-# to be able to resolve local project dependencies;
-# this is important when the CLI is installed globally and
-# the local project installation has some of the packages that the CLI needs.
-# For eg: if the local project has mssql package installed and the CLI is invoked globally.
+# Allow the CLI's node process to be able to resolve local project dependencies (development mode);
+# This is important as in the DEV mode the CLI is referenced usually from outside the local project directory.
+# And, the local project installation has some of the packages that the CLI needs eg: DB connectors like mssql, pg.
 #
-# This allows the CLI's require calls to fallback to the local dependencies if needed.
+# This allows the CLI's require calls to fallback to the local packages from the PWD, if needed to be resolved.
 NODE_PATH="${UPDATED_PATH}" node $BASEDIR/run
