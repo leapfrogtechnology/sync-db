@@ -21,4 +21,4 @@ BASEDIR=$(dirname "$0")
 # For eg: if the local project has mssql package installed and the CLI is invoked globally.
 #
 # This allows the CLI's require calls to fallback to the local dependencies if needed.
-NODE_PATH="${UPDATED_PATH}" node $BASEDIR/run.js
+NODE_PATH="${UPDATED_PATH}" node $BASEDIR/run
