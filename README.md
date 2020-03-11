@@ -187,47 +187,34 @@ Feel free to send pull requests.
 
 #### Setting up
 
-Clone the repository.
-
 ```bash
+# Clone the repository.
 $ git clone https://github.com/leapfrogtechnology/sync-db.git
-```
 
-Change to the project directory.
-
-```bash
+# Go to the project directory.
 $ cd sync-db
-```
 
-Install dependencies. (Notice that we use `yarn` for dependencies.)
-
-```bash
+# Install dependencies. (Notice that we use yarn for this.)
 $ yarn
 ```
 
 #### Building / Testing
 
-Generating build.
-
 ```bash
+# Generate build.
 $ yarn build
-```
 
-Running tests
-
-```bash
+# Run tests
 $ yarn test
-```
 
-Invoke the CLI locally (development mode).
-
-```bash
+# Invoke the CLI locally (development mode).
 $ bin/run-dev.sh
 ```
 
 #### Release
 
 Publish a new version.
+
 ```bash
 $ NEXT=v1.0.0-beta.6 yarn release
 ```
