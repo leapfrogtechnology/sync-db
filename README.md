@@ -183,9 +183,44 @@ Check the [CHANGELOG](CHANGELOG.md) for release history.
 
 Feel free to send pull requests.
 
+## Development
+
+#### Setting up
+
+```bash
+# Clone the repository.
+$ git clone https://github.com/leapfrogtechnology/sync-db.git
+
+# Go to the project directory.
+$ cd sync-db
+
+# Install dependencies. (Notice that we use yarn for this.)
+$ yarn
+```
+
+#### Building / Testing
+
+```bash
+# Generate build.
+$ yarn build
+
+# Run tests
+$ yarn test
+
+# Invoke the CLI locally (development mode).
+$ bin/run-dev.sh
+```
+
+#### Release
+
+Publish a new version.
+
+```bash
+$ NEXT=v1.0.0-beta.6 yarn release
+```
+
 ## License
 
 Licensed under [The MIT License](LICENSE).
-
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db?ref=badge_large)
