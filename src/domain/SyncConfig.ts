@@ -14,6 +14,10 @@ interface SyncConfig {
   injectedConfig: {
     vars: Mapping<string>;
   };
+  migration: {
+    directory: string;
+    tableName: string;
+  };
 }
 
 export default SyncConfig;
