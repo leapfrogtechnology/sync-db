@@ -30,8 +30,7 @@ export async function synchronize(
   options?: SyncParams
 ): Promise<SyncResult[]> {
   log('Starting to synchronize.');
-  const connectionList = Array.isArray(conn) ? conn : [conn];
-  const connections = mapToConnectionReferences(connectionList);
+  const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
   const processes = connections.map(({ connection, id: connectionId }) => () =>
     synchronizeDatabase(connection, {
@@ -51,12 +50,14 @@ export async function synchronize(
 }
 
 /**
- * Map connection configuration list to the connection instances.
+ * Map user provided connection(s) to the connection instances.
  *
- * @param {((ConnectionConfig | Knex)[])} connectionList
+ * @param {(ConnectionConfig[] | ConnectionConfig | Knex[] | Knex)} conn
  * @returns {ConnectionReference[]}
  */
-function mapToConnectionReferences(connectionList: (ConnectionConfig | Knex)[]): ConnectionReference[] {
+function mapToConnectionReferences(conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex): ConnectionReference[] {
+  const connectionList = Array.isArray(conn) ? conn : [conn];
+
   return connectionList.map(connection => {
     if (isKnexInstance(connection)) {
       log(`Received connection instance to database: ${connection.client.config.connection.database}`);
