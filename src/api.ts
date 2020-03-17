@@ -29,14 +29,11 @@ export async function synchronize(
   options?: SyncParams
 ): Promise<SyncResult[]> {
   log('Starting to synchronize.');
-
   const connectionList = Array.isArray(conn) ? conn : [conn];
   const connections = mapToConnectionReferences(connectionList);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
-  const isCLI = process.env.SYNC_DB_CLI === 'true';
   const processes = connections.map(({ connection, id: connectionId }) => () =>
     synchronizeDatabase(connection, {
-      isCLI,
       config,
       params,
       connectionId

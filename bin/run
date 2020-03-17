@@ -5,6 +5,9 @@ const path = require('path');
 const project = path.join(__dirname, '../tsconfig.json');
 const dev = fs.existsSync(project);
 
+// Set CLI environment as true.
+process.env.SYNC_DB_CLI = 'true';
+
 if (dev) {
   require('ts-node').register({ project });
 }

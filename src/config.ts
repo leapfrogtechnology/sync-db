@@ -12,6 +12,15 @@ import { prepareInjectionConfigVars } from './services/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
 /**
+ * Check if this is being run via the sync-db cli or not.
+ *
+ * @returns {boolean}
+ */
+export function isCLI(): boolean {
+  return process.env.SYNC_DB_CLI === 'true';
+}
+
+/**
  * Load config yaml file.
  *
  * @returns {Promise<SyncConfig>}
