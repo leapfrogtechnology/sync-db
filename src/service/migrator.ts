@@ -1,7 +1,10 @@
+import Knex from 'knex';
 import * as path from 'path';
 
 import { glob, exists } from '../util/fs';
 import { resolveFile } from './sqlRunner';
+import SyncConfig from '../domain/SyncConfig';
+import KnexMigrationSource from '../KnexMigrationSource';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 
 const FILE_PATTERN = /(.+)\.(up|down)\.sql$/;
@@ -56,4 +59,54 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
   });
 
   return Promise.all(migrationPromises);
+}
+
+/**
+ * Get a new instance of KnexMigrationSource.
+ *
+ * @param {SyncConfig} config
+ * @returns {KnexMigrationSource}
+ */
+function getMigrationConfig(config: SyncConfig): Knex.MigratorConfig {
+  const { basePath, migration } = config;
+  const migrationPath = path.join(basePath, migration.directory);
+
+  return {
+    directory: migrationPath,
+    tableName: migration.tableName,
+    migrationSource: new KnexMigrationSource(migrationPath)
+  };
+}
+
+/**
+ * Run migrations on a target database connection (transaction).
+ *
+ * @param {(Knex | Knex.Transaction)} trx
+ * @param {SyncConfig} config
+ * @returns {Promise<any>}
+ */
+export function migrateLatest(trx: Knex | Knex.Transaction, config: SyncConfig): Promise<any> {
+  return trx.migrate.latest(getMigrationConfig(config));
+}
+
+/**
+ * Rollback migrations on a target database connection (transaction).
+ *
+ * @param {(Knex | Knex.Transaction)} trx
+ * @param {SyncConfig} config
+ * @returns {Promise<any>}
+ */
+export function rollback(trx: Knex | Knex.Transaction, config: SyncConfig): Promise<any> {
+  return trx.migrate.rollback(getMigrationConfig(config));
+}
+
+/**
+ * List migrations on a target database connection (transaction).
+ *
+ * @param {(Knex | Knex.Transaction)} trx
+ * @param {SyncConfig} config
+ * @returns {Promise<any>}
+ */
+export function list(trx: Knex | Knex.Transaction, config: SyncConfig): Promise<any> {
+  return trx.migrate.list(getMigrationConfig(config));
 }
