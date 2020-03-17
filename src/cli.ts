@@ -22,6 +22,18 @@ async function generateConnection(): Promise<void> {
   await printLine(`Generated file: ${CONNECTIONS_FILENAME}\n`);
 }
 
+async function migrate(): Promise<void> {
+  printLine('Migrate.');
+}
+
+async function rollback(): Promise<void> {
+  printLine('Rollback.');
+}
+
+async function list(): Promise<void> {
+  printLine('List');
+}
+
 /**
  * Handle the provided CLI flags.
  *
@@ -31,7 +43,15 @@ async function generateConnection(): Promise<void> {
 export async function handleFlags(flags: SyncDbOptions): Promise<void> {
   if (flags['generate-connections']) {
     await generateConnection();
-
+    process.exit(0);
+  } else if (flags['migrate']) {
+    await migrate();
+    process.exit(0);
+  } else if (flags['rollback']) {
+    await rollback();
+    process.exit(0);
+  } else if (flags['list']) {
+    await list();
     process.exit(0);
   }
 }

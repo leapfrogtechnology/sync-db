@@ -72,3 +72,5 @@ function mapToConnectionReferences(connectionList: (ConnectionConfig | Knex)[]):
     return { connection: createInstance(connection), id: getConnectionId(connection) };
   });
 }
+
+function migrate
