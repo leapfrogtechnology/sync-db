@@ -19,4 +19,4 @@ BASEDIR=$(dirname "$0")
 # And, the local project installation has some of the packages that the CLI needs eg: DB connectors like mssql, pg.
 #
 # This allows the CLI's require calls to fallback to the local packages from the PWD, if needed to be resolved.
-NODE_PATH="${UPDATED_PATH}" node $BASEDIR/run
+NODE_PATH="${UPDATED_PATH}" node $BASEDIR/run "$@"
