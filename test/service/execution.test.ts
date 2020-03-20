@@ -49,5 +49,13 @@ describe('Services: execution', () => {
       expect(result).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
       expect(tracker).to.deep.equal(['Task C', 'Task D', 'Task A', 'Task B']);
     });
+
+    it('should throw an error if unknown strategy is provided.', () => {
+      const processes = getProcesses([]);
+
+      expect(() => executionService.executeProcesses(processes, { executionStrategy: 'future' } as any)).to.throw(
+        'Invalid executionStrategy found in the configuration "future".'
+      );
+    });
   });
 });
