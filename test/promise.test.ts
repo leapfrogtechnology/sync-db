@@ -1,10 +1,7 @@
 import { expect } from 'chai';
-import { promisify } from 'util';
 import { it, describe } from 'mocha';
 
-import * as promise from '../src/util/promise';
-
-const timeout = promisify(setTimeout);
+import { timeout, runSequentially } from '../src/util/promise';
 
 describe('UTIL: promise', () => {
   describe('runSequentially', () => {
@@ -38,7 +35,7 @@ describe('UTIL: promise', () => {
             .then(() => 'F')
       ];
 
-      const result = await promise.runSequentially(promisers);
+      const result = await runSequentially(promisers);
 
       expect(tracker).to.deep.equal(['A', 'B', 'C', 'D', 'E', 'F']);
       expect(result).to.deep.equal(['A', 'B', 'C', 'D', 'E', 'F']);
@@ -48,7 +45,7 @@ describe('UTIL: promise', () => {
       const source = [{ value: 'one' }, { value: 'two' }, { value: 'three' }, { value: 'four' }, { value: 'five' }];
       const promisers = source.map(({ value }) => () => Promise.resolve(value));
 
-      const result = await promise.runSequentially(promisers);
+      const result = await runSequentially(promisers);
 
       expect(result).to.deep.equal(['one', 'two', 'three', 'four', 'five']);
     });
