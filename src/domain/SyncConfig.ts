@@ -5,6 +5,7 @@ import Mapping from './Mapping';
  */
 interface SyncConfig {
   basePath: string;
+  runSequentially: boolean;
   sql: string[];
   hooks: {
     pre_sync: string[];
