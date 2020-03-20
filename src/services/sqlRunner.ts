@@ -116,7 +116,7 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
   const promises = files.map(file => {
     log(`Running ${file.name}`);
 
-    return trx.raw(file.sql);
+    return () => trx.raw(file.sql);
   });
 
   return promise.runSequentially(promises);
