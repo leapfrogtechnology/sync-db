@@ -2,8 +2,8 @@ import * as Knex from 'knex';
 
 import { dbLogger } from '../logger';
 import * as sqlRunner from './sqlRunner';
-import { NS_PER_SEC } from '../constants';
 import SyncResult from '../domain/SyncResult';
+import { getElapsedTime } from '../util/misc';
 import SyncContext from '../domain/SyncContext';
 import * as configInjection from './configInjection';
 import ExecutionContext from '../domain/ExecutionContext';
@@ -109,10 +109,9 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
     result.error = e;
   }
 
-  const timeDiff = process.hrtime(timeStart);
-  const timeElapsed = Number(timeDiff[0]) + Number(timeDiff[1] / NS_PER_SEC);
+  const timeElapsed = getElapsedTime(timeStart);
 
-  log(`Execution completed in ${timeDiff[0]} s, ${timeDiff[1]} ns`);
+  log(`Execution completed in ${timeElapsed} s`);
 
   // If it's a CLI environment, invoke the handler.
   if (context.isCLI) {
