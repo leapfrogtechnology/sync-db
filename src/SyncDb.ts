@@ -59,10 +59,10 @@ class SyncDb extends Command {
     try {
       await handleFlags(parsedFlags);
 
-      const timeStart = process.hrtime();
       const config = await loadConfig();
       const connections = await resolveConnections();
       const { synchronize } = await import('./api');
+      const timeStart = process.hrtime();
 
       await printLine('Synchronizing...\n');
 
