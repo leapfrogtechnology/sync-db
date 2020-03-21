@@ -1,8 +1,8 @@
 import * as Knex from 'knex';
 
 import { isCLI } from '../config';
-import { dbLogger } from '../logger';
 import * as sqlRunner from './sqlRunner';
+import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
 import SyncContext from '../domain/SyncContext';

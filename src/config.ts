@@ -2,8 +2,8 @@ import * as path from 'path';
 import * as yaml from 'yamljs';
 import { mergeDeepRight } from 'ramda';
 
-import { log } from './logger';
 import * as fs from './util/fs';
+import { log } from './util/logger';
 import { isObject } from './util/types';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';

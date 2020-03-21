@@ -1,7 +1,7 @@
 import * as Knex from 'knex';
 import { mergeDeepRight } from 'ramda';
 
-import { log } from './logger';
+import { log } from './util/logger';
 import { getConnectionId } from './config';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';

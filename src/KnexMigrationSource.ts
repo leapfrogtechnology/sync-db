@@ -1,6 +1,6 @@
 import * as Knex from 'knex';
 
-import { log } from '../src/logger';
+import { log } from './util/logger';
 import * as migratorService from '../src/service/migrator';
 import SqlMigrationEntry from './domain/SqlMigrationEntry';
 

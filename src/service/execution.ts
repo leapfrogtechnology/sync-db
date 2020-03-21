@@ -1,4 +1,4 @@
-import { log } from '../logger';
+import { log } from '../util/logger';
 import SyncConfig from '../domain/SyncConfig';
 import { Promiser, runSequentially } from '../util/promise';
 

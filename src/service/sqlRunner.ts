@@ -3,9 +3,9 @@ import * as path from 'path';
 import { reverse, keys } from 'ramda';
 
 import * as fs from '../util/fs';
-import { dbLogger } from '../logger';
 import Mapping from '../domain/Mapping';
 import SqlCode from '../domain/SqlCode';
+import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';

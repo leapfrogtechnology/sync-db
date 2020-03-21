@@ -2,8 +2,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as Knex from 'knex';
 
-import { dbLogger } from '../logger';
 import Mapping from '../domain/Mapping';
+import { dbLogger } from '../util/logger';
 import SyncContext from '../domain/SyncContext';
 import { expandEnvVarsInMap } from '../util/env';
 import KeyValuePair from '../domain/KeyValuePair';

@@ -1,6 +1,6 @@
 import { Command, flags } from '@oclif/command';
 
-import { log } from '../logger';
+import { log } from '../util/logger';
 import { handleFlags } from '../cli';
 import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
