@@ -7,7 +7,6 @@ const { connections } = require('../connections.sync-db.json');
 
 (async () => {
   try {
-
     // Getting knex instance of mssql database with id db1.
     const db = knex({
       client: 'mssql',
@@ -21,8 +20,14 @@ const { connections } = require('../connections.sync-db.json');
     const [{ result: square }] = await db.raw('SELECT dbo.square(6) AS result;');
     const [{ result: date }] = await db.raw('EXEC utils.get_date;');
 
-    console.log('\nList of table names in the database:\n', tables.map(({ name }) => name));
-    console.log('\nList of user names in the database:\n', users.map(({ name }) => name));
+    console.log(
+      '\nList of table names in the database:\n',
+      tables.map(({ name }) => name)
+    );
+    console.log(
+      '\nList of user names in the database:\n',
+      users.map(({ name }) => name)
+    );
     console.log('\nCalculations:\n', {
       'Sum of 6 and 7': sum,
       'Product of 6 and 7': product,

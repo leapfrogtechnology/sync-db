@@ -1,7 +1,5 @@
 {
-  "extends": [
-    "tslint-config-leapfrog"
-  ],
+  "extends": ["tslint-config-leapfrog"],
   "rules": {
     "no-var-requires": false,
     "object-literal-key-quotes": false
