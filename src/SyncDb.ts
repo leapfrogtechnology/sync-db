@@ -4,6 +4,7 @@ import { log } from './logger';
 import { handleFlags } from './cli';
 import SyncResult from './domain/SyncResult';
 import SyncParams from './domain/SyncParams';
+import { getElapsedTime } from './util/misc';
 import { printError, printLine } from './util/io';
 import ExecutionContext from './domain/ExecutionContext';
 import { loadConfig, resolveConnections } from './config';
@@ -58,6 +59,7 @@ class SyncDb extends Command {
     try {
       await handleFlags(parsedFlags);
 
+      const timeStart = process.hrtime();
       const config = await loadConfig();
       const connections = await resolveConnections();
       const { synchronize } = await import('./api');
@@ -65,7 +67,15 @@ class SyncDb extends Command {
       await printLine('Synchronizing...\n');
 
       const results = await synchronize(config, connections, params);
-      const { totalCount, failedCount } = await this.processResults(results);
+      const { totalCount, failedCount, successfulCount } = await this.processResults(results);
+
+      if (successfulCount > 0) {
+        // Display output.
+        await printLine(
+          `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
+            `(${getElapsedTime(timeStart)}s)`
+        );
+      }
 
       // If all completed successfully, exit gracefully.
       if (failedCount === 0) {
@@ -100,11 +110,6 @@ class SyncDb extends Command {
     const allComplete = failedCount === 0;
 
     await printLine();
-
-    if (successfulCount > 0) {
-      // Display output.
-      await printLine(`Synchronization successful for ${successfulCount} / ${totalCount} connection(s).`);
-    }
 
     // If there are errors, display all of them.
     if (!allComplete) {
