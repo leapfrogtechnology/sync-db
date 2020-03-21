@@ -13,13 +13,9 @@ const { connections } = require('../connections.sync-db.json');
 
     const tables = await db.raw('SELECT * FROM utils.vw_table_names');
     const users = await db.raw('SELECT * FROM utils.vw_user_names');
-    const [{ result: product }] = await db.raw(
-      'SELECT utils.product(6, 7) AS result;'
-    );
+    const [{ result: product }] = await db.raw('SELECT utils.product(6, 7) AS result;');
     const [{ result: sum }] = await db.raw('SELECT dbo.sum(6, 7) AS result;');
-    const [{ result: square }] = await db.raw(
-      'SELECT dbo.square(6) AS result;'
-    );
+    const [{ result: square }] = await db.raw('SELECT dbo.square(6) AS result;');
     const [{ result: date }] = await db.raw('EXEC utils.get_date;');
 
     console.log(

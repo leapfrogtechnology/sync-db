@@ -13,7 +13,8 @@ type RawBindingParams = (
   | string[]
   | number[]
   | boolean[]
-  | Knex.QueryBuilder)[];
+  | Knex.QueryBuilder
+)[];
 
 export interface ValueMap {
   [key: string]: Value | Knex.QueryBuilder;
