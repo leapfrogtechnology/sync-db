@@ -43,7 +43,9 @@
     "test:coverage": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
     "watch": "tsc --watch",
     "changelog": "./release.sh changelog",
-    "release": "./release.sh bump"
+    "release": "./release.sh bump",
+    "format": "prettier --write . '**/*.{ts,js,json}'",
+    "format:check": "prettier --check . '**/*.{ts,js,json}'"
   },
   "dependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
