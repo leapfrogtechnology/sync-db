@@ -44,8 +44,8 @@
     "watch": "tsc --watch",
     "changelog": "./release.sh changelog",
     "release": "./release.sh bump",
-    "format": "prettier --write . '**/*.{ts,js,json}'",
-    "format:check": "prettier --check . '**/*.{ts,js,json}'"
+    "format": "prettier --write . '**/*.{ts,js,md,yaml,json}'",
+    "format:check": "prettier --check . '**/*.{ts,js,md,yaml,json}'"
   },
   "dependencies": {
     "@istanbuljs/nyc-config-typescript": "^0.1.3",
