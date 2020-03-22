@@ -43,7 +43,9 @@ export async function synchronize(
     })
   );
 
-  const results = await executeProcesses(processes, config);
+  // Explicitly suppressing the `| Error` type since
+  // all errors are already caught inside synchronizeDatabase().
+  const results = (await executeProcesses(processes, config)) as SyncResult[];
 
   log('Synchronization completed.');
 
