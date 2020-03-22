@@ -6,7 +6,7 @@ import { write, mkdtemp } from '../../src/util/fs';
 import * as migratorService from '../../src/service/migrator';
 
 describe('SERVICE: migrator', () => {
-  describe('getSqlMigrationEntries', async () => {
+  describe('getSqlMigrationNames', async () => {
     it('should return the list of valid migrations under the directory.', async () => {
       const migrationPath = await mkdtemp();
 
@@ -39,13 +39,14 @@ describe('SERVICE: migrator', () => {
         write(path.join(migrationPath, '0002_mgr.down.sql'), 'SELECT 1'),
         write(path.join(migrationPath, 'test.sql'), 'SELECT 2'),
         write(path.join(migrationPath, 'migrate.sql'), 'SELECT 3'),
-        write(path.join(migrationPath, '.gitignore'), '')
+        write(path.join(migrationPath, '.gitignore'), ''),
+        write(path.join(migrationPath, '0003_mgr.down.sql'), 'SELECT 1')
       ]);
 
       const result = await migratorService.getSqlMigrationNames(migrationPath);
 
       // Test the migrations entries retrieved from the directory.
-      expect(result).to.deep.equal(['0001_mgr', '0002_mgr']);
+      expect(result).to.deep.equal(['0001_mgr', '0002_mgr', '0003_mgr']);
     });
   });
 
@@ -58,7 +59,8 @@ describe('SERVICE: migrator', () => {
         write(path.join(migrationPath, '0001_mgr.up.sql'), 'CREATE TABLE test_mgr1'),
         write(path.join(migrationPath, '0002_mgr.down.sql'), 'DROP TABLE test_mgr2'),
         write(path.join(migrationPath, '0003_mgr.up.sql'), 'CREATE TABLE test_mgr3'),
-        write(path.join(migrationPath, '0003_mgr.down.sql'), 'DROP TABLE test_mgr3')
+        write(path.join(migrationPath, '0003_mgr.down.sql'), 'DROP TABLE test_mgr3'),
+        write(path.join(migrationPath, '.gitignore'), '')
       ]);
 
       const result = await migratorService.resolveSqlMigrations(migrationPath);
