@@ -26,7 +26,7 @@ class KnexMigrationSource {
   getMigrations(): Promise<string[]> {
     const migrations = this.migrationContext.keys();
 
-    this.log('getMigrations - resolve: %o', migrations);
+    this.log('getMigrations - resolve:\n%O', migrations);
 
     return Promise.resolve(migrations);
   }
