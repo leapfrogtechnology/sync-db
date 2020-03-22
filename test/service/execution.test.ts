@@ -54,7 +54,7 @@ describe('Services: execution', () => {
       const processes = getProcesses([]);
 
       expect(() => executionService.executeProcesses(processes, { execution: 'future' } as any)).to.throw(
-        'Invalid execution strategy found in the configuration "future".'
+        'Execution strategy should be "sequential" or "parallel" found: "future".'
       );
     });
   });
