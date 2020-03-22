@@ -49,5 +49,15 @@ describe('UTIL: promise', () => {
 
       expect(result).to.deep.equal(['one', 'two', 'three', 'four', 'five']);
     });
+
+    it('should throw an error (reject) if any promise fails, when failCascade = true (default)', async () => {
+      const promisers = [
+        () => Promise.resolve('one'),
+        () => Promise.reject('An error occurred.'),
+        () => Promise.resolve('three')
+      ];
+
+      expect(runSequentially(promisers)).to.be.eventually.rejectedWith('An error occurred.');
+    });
   });
 });
