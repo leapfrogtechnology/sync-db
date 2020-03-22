@@ -57,5 +57,37 @@ describe('Services: execution', () => {
         'Execution strategy should be "sequential" or "parallel" found: "future".'
       );
     });
+
+    it('should throw an error if caught with [strategy = sequential].', async () => {
+      const processes = [
+        () => Promise.resolve('one'),
+        () => Promise.reject(new Error('An error occurred.')),
+        () => Promise.resolve('three'),
+        () => Promise.reject(new Error('A second error occurred.')),
+        async () => {
+          throw new Error('Another error occurred.');
+        }
+      ];
+
+      expect(
+        executionService.executeProcesses(processes, { execution: 'sequential' } as any)
+      ).to.be.eventually.rejectedWith('An error occurred.');
+    });
+
+    it('should throw an error if caught with [strategy = parallel].', async () => {
+      const processes = [
+        () => Promise.resolve('one'),
+        () => Promise.reject(new Error('An error occurred.')),
+        () => Promise.resolve('three'),
+        () => Promise.reject(new Error('A second error occurred.')),
+        async () => {
+          throw new Error('Another error occurred.');
+        }
+      ];
+
+      expect(
+        executionService.executeProcesses(processes, { execution: 'parallel' } as any)
+      ).to.be.eventually.rejectedWith('An error occurred.');
+    });
   });
 });
