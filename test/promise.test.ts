@@ -50,14 +50,42 @@ describe('UTIL: promise', () => {
       expect(result).to.deep.equal(['one', 'two', 'three', 'four', 'five']);
     });
 
-    it('should throw an error (reject) if any promise fails, when failCascade = true (default)', async () => {
+    it('should throw an error (reject) if any promise fails, when failCascade = true. (default)', async () => {
       const promisers = [
         () => Promise.resolve('one'),
         () => Promise.reject('An error occurred.'),
-        () => Promise.resolve('three')
+        () => Promise.resolve('three'),
+        () => Promise.reject(new Error('A second error occurred.')),
+        async () => {
+          throw new Error('Another error occurred.');
+        }
       ];
 
-      expect(runSequentially(promisers)).to.be.eventually.rejectedWith('An error occurred.');
+      expect(runSequentially(promisers, true)).to.be.eventually.rejectedWith('An error occurred.');
+    });
+
+    it('should run and resolve all the promises when failCascade = false.', async () => {
+      const promisers = [
+        () => Promise.resolve('one'),
+        () => Promise.reject('An error occurred.'),
+        () => Promise.resolve('three'),
+        () => Promise.reject(new Error('A second error occurred.')),
+        async () => {
+          throw new Error('Another error occurred.');
+        }
+      ];
+
+      const result = await runSequentially(promisers, false);
+
+      expect(result).to.have.lengthOf(5);
+      expect(result[0]).to.equal('one');
+      expect(result[1]).to.instanceOf(Error);
+      expect(result[1].toString()).to.equal('Error: An error occurred.');
+      expect(result[2]).to.equal('three');
+      expect(result[3]).to.instanceOf(Error);
+      expect(result[3].toString()).to.equal('Error: A second error occurred.');
+      expect(result[4]).to.instanceOf(Error);
+      expect(result[4].toString()).to.equal('Error: Another error occurred.');
     });
   });
 });
