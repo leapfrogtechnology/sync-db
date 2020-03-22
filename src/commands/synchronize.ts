@@ -62,7 +62,7 @@ class Synchronize extends Command {
     console.log({ parsedFlags }); // tslint:disable-line
 
     try {
-      await handleFlags(parsedFlags);
+      await handleFlags(parsedFlags, params);
 
       const config = await loadConfig();
       const connections = await resolveConnections();

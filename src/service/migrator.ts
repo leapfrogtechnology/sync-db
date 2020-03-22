@@ -3,9 +3,17 @@ import * as path from 'path';
 
 import { glob, exists } from '../util/fs';
 import { resolveFile } from './sqlRunner';
-import SyncConfig from '../domain/SyncConfig';
-import KnexMigrationSource from '../KnexMigrationSource';
+// import SqlMigrationContext, { MigrationContext } from '../migration/SqlMigrationContext';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import SyncResult from '../domain/SyncResult';
+// import SyncContext from '../domain/SyncContext';
+import { dbLogger } from '../util/logger';
+import { getElapsedTime } from '../util/misc';
+import { isCLI } from '../config';
+import ExecutionContext from '../domain/ExecutionContext';
+// import KnexMigrationSource from '../migration/KnexMigrationSource';
+import SyncConfig from '../domain/SyncConfig';
+import SyncParams from '../domain/SyncParams';
 
 const FILE_PATTERN = /(.+)\.(up|down)\.sql$/;
 
@@ -61,52 +69,163 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
   return Promise.all(migrationPromises);
 }
 
-/**
- * Get a new instance of KnexMigrationSource.
- *
- * @param {SyncConfig} config
- * @returns {KnexMigrationSource}
- */
-function getMigrationConfig(config: SyncConfig): Knex.MigratorConfig {
-  const { basePath, migration } = config;
-  const migrationPath = path.join(basePath, migration.directory);
+// /**
+//  * Get a new instance of KnexMigrationSource.
+//  *
+//  * @param {SyncConfig} context
+//  * @returns {SqlMigrationContext}
+//  */
+// async function getMigrationConfig(context: SyncContext): Promise<Knex.MigratorConfig> {
+//   const log = dbLogger(context.connectionId);
+//   log('Getting migration config');
 
-  return {
-    directory: migrationPath,
-    tableName: migration.tableName,
-    migrationSource: new KnexMigrationSource(migrationPath)
-  };
+//   const { basePath, migration } = context.config;
+//   const migrationPath = path.join(basePath, migration.directory);
+
+//   const migrations = await resolveSqlMigrations(migrationPath);
+
+//   // TODO: Multiple migration context based on type of migration (sql, js, etc)
+//   const migrationContext = new SqlMigrationContext(context.connectionId, migrations);
+
+//   log('Available Migrations:', migrations);
+//   log('Table Name:', migration.tableName);
+
+//   return {
+//     tableName: migration.tableName,
+//     migrationSource: new KnexMigrationSource(migrationContext)
+//   };
+// }
+
+/**
+ * Synchronize context parameters for the current database connection.
+ */
+interface MigrationCommandContext {
+  config: SyncConfig;
+  connectionId: string;
+  params: SyncParams;
+  knexMigrationConfig: Knex.MigratorConfig;
 }
 
 /**
- * Run migrations on a target database connection (transaction).
+ * Run migrations on a target database connection / transaction.
  *
  * @param {(Knex | Knex.Transaction)} trx
- * @param {SyncConfig} config
+ * @param {SyncConfig} context
  * @returns {Promise<any>}
  */
-export function migrateLatest(trx: Knex | Knex.Transaction, config: SyncConfig): Promise<any> {
-  return trx.migrate.latest(getMigrationConfig(config));
+export async function migrateLatest(trx: Knex | Knex.Transaction, context: MigrationCommandContext): Promise<any> {
+  const { connectionId, knexMigrationConfig } = context;
+  const log = dbLogger(context.connectionId);
+  const result: SyncResult = { connectionId, success: false };
+
+  const timeStart = process.hrtime();
+
+  try {
+    log('BEGIN: migrate.latest');
+    const migrationResult = await trx.migrate.latest(knexMigrationConfig);
+
+    log('END: migrate.latest');
+    log('Migration Result:\n%O', migrationResult);
+
+    result.success = true;
+  } catch (e) {
+    log(`Error caught for connection ${connectionId}:`, e);
+    result.error = e;
+  }
+
+  const timeElapsed = getElapsedTime(timeStart);
+
+  log(`Execution completed in ${timeElapsed} s`);
+
+  // If it's a CLI environment, invoke the handler.
+  if (isCLI()) {
+    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
+    const execContext: ExecutionContext = {
+      connectionId,
+      timeElapsed,
+      success: result.success
+    };
+
+    await handler(execContext);
+  }
+
+  return result;
 }
 
-/**
- * Rollback migrations on a target database connection (transaction).
- *
- * @param {(Knex | Knex.Transaction)} trx
- * @param {SyncConfig} config
- * @returns {Promise<any>}
- */
-export function rollback(trx: Knex | Knex.Transaction, config: SyncConfig): Promise<any> {
-  return trx.migrate.rollback(getMigrationConfig(config));
+export async function migrateRollback(trx: Knex | Knex.Transaction, context: MigrationCommandContext): Promise<any> {
+  const { connectionId, knexMigrationConfig } = context;
+  const log = dbLogger(context.connectionId);
+  const result: SyncResult = { connectionId, success: false };
+
+  const timeStart = process.hrtime();
+
+  try {
+    log('BEGIN: migrate.rollback');
+    const migrationResult = await trx.migrate.rollback(knexMigrationConfig);
+
+    log('END: migrate.rollback');
+    log('Migration Result:\n%O', migrationResult);
+
+    result.success = true;
+  } catch (e) {
+    log(`Error caught for connection ${connectionId}:`, e);
+    result.error = e;
+  }
+
+  const timeElapsed = getElapsedTime(timeStart);
+
+  log(`Execution completed in ${timeElapsed} s`);
+
+  // If it's a CLI environment, invoke the handler.
+  if (isCLI()) {
+    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
+    const execContext: ExecutionContext = {
+      connectionId,
+      timeElapsed,
+      success: result.success
+    };
+
+    await handler(execContext);
+  }
+
+  return result;
 }
 
-/**
- * List migrations on a target database connection (transaction).
- *
- * @param {(Knex | Knex.Transaction)} trx
- * @param {SyncConfig} config
- * @returns {Promise<any>}
- */
-export function list(trx: Knex | Knex.Transaction, config: SyncConfig): Promise<any> {
-  return trx.migrate.list(getMigrationConfig(config));
+export async function migrateList(trx: Knex | Knex.Transaction, context: MigrationCommandContext): Promise<any> {
+  const { connectionId, knexMigrationConfig } = context;
+  const log = dbLogger(context.connectionId);
+  const result: SyncResult = { connectionId, success: false };
+
+  const timeStart = process.hrtime();
+
+  try {
+    log('BEGIN: migrate.list');
+    const migrationResult = await trx.migrate.list(knexMigrationConfig);
+
+    log('END: migrate.list');
+    log('Migration Result:\n%O', migrationResult);
+
+    result.success = true;
+  } catch (e) {
+    log(`Error caught for connection ${connectionId}:`, e);
+    result.error = e;
+  }
+
+  const timeElapsed = getElapsedTime(timeStart);
+
+  log(`Execution completed in ${timeElapsed} s`);
+
+  // If it's a CLI environment, invoke the handler.
+  if (isCLI()) {
+    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
+    const execContext: ExecutionContext = {
+      connectionId,
+      timeElapsed,
+      success: result.success
+    };
+
+    await handler(execContext);
+  }
+
+  return result;
 }
