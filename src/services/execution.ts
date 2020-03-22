@@ -20,6 +20,6 @@ export function executeProcesses<T>(processes: Promiser<T>[], config: SyncConfig
       return Promise.all(processes.map(fn => fn()));
 
     default:
-      throw new Error(`Invalid execution strategy found in the configuration "${config.execution}".`);
+      throw new Error(`Execution strategy should be "sequential" or "parallel" found: "${config.execution}".`);
   }
 }
