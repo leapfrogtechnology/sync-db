@@ -38,7 +38,7 @@ describe('Services: execution', () => {
       expect(tracker).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
     });
 
-    it('should be able to run things in-parallel [strategy = parallel].', async () => {
+    it('should run in-parallel with [strategy = parallel].', async () => {
       const tracker: string[] = [];
       const processes = getProcesses(tracker);
 
