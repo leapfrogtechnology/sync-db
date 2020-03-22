@@ -10,9 +10,9 @@ import { Promiser, runSequentially } from '../util/promise';
  * @returns {Promise<T[]>}
  */
 export function executeProcesses<T>(processes: Promiser<T>[], config: SyncConfig): Promise<T[]> {
-  log(`Execution Strategy: ${config.executionStrategy}`);
+  log(`Execution Strategy: ${config.execution}`);
 
-  switch (config.executionStrategy) {
+  switch (config.execution) {
     case 'sequential':
       return runSequentially(processes);
 
@@ -20,6 +20,6 @@ export function executeProcesses<T>(processes: Promiser<T>[], config: SyncConfig
       return Promise.all(processes.map(fn => fn()));
 
     default:
-      throw new Error(`Invalid executionStrategy found in the configuration "${config.executionStrategy}".`);
+      throw new Error(`Invalid execution strategy found in the configuration "${config.execution}".`);
   }
 }

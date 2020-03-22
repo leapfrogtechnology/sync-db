@@ -31,7 +31,7 @@ describe('Services: execution', () => {
       const processes = getProcesses(tracker);
 
       const result = await executionService.executeProcesses(processes, {
-        executionStrategy: 'sequential'
+        execution: 'sequential'
       } as SyncConfig);
 
       expect(result).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
@@ -43,7 +43,7 @@ describe('Services: execution', () => {
       const processes = getProcesses(tracker);
 
       const result = await executionService.executeProcesses(processes, {
-        executionStrategy: 'parallel'
+        execution: 'parallel'
       } as SyncConfig);
 
       expect(result).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
@@ -53,8 +53,8 @@ describe('Services: execution', () => {
     it('should throw an error if unknown strategy is provided.', () => {
       const processes = getProcesses([]);
 
-      expect(() => executionService.executeProcesses(processes, { executionStrategy: 'future' } as any)).to.throw(
-        'Invalid executionStrategy found in the configuration "future".'
+      expect(() => executionService.executeProcesses(processes, { execution: 'future' } as any)).to.throw(
+        'Invalid execution strategy found in the configuration "future".'
       );
     });
   });

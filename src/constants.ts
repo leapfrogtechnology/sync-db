@@ -16,7 +16,7 @@ export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 export const INJECTED_CONFIG_TABLE = '__sync_db_injected_config';
 export const DEFAULT_CONFIG: SyncConfig = {
   basePath: path.resolve(process.cwd(), 'src/sql'),
-  executionStrategy: 'parallel',
+  execution: 'parallel',
   sql: [],
   hooks: {
     pre_sync: [],
