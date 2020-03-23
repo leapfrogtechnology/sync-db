@@ -7,10 +7,13 @@ import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
 import { DEFAULT_SYNC_PARAMS } from './constants';
-import { synchronizeDatabase } from './services/sync';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionReference from './domain/ConnectionReference';
 import { isKnexInstance, getConfig, createInstance } from './util/db';
+
+// Services
+import { synchronizeDatabase } from './services/sync';
+import { executeProcesses } from './services/execution';
 
 /**
  * Synchronize all the configured database connections.
@@ -31,7 +34,7 @@ export async function synchronize(
   const connections = mapToConnectionReferences(connectionList);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
   const isCLI = process.env.SYNC_DB_CLI === 'true';
-  const promises = connections.map(({ connection, id: connectionId }) =>
+  const processes = connections.map(({ connection, id: connectionId }) => () =>
     synchronizeDatabase(connection, {
       isCLI,
       config,
@@ -40,7 +43,9 @@ export async function synchronize(
     })
   );
 
-  const results = await Promise.all(promises);
+  // Explicitly suppressing the `| Error` type since
+  // all errors are already caught inside synchronizeDatabase().
+  const results = (await executeProcesses(processes, config)) as SyncResult[];
 
   log('Synchronization completed.');
 

@@ -1,4 +1,5 @@
 basePath: src/sql
+execution: sequential
 sql:
   # Create objects in dbo schema
   - function/dbo/sum.sql
