@@ -3,7 +3,7 @@ import { expect } from 'chai';
 
 import * as sqlRunner from '../../src/service/sqlRunner';
 
-describe('UTIL: sqlRunner', () => {
+describe('SERVICE: sqlRunner', () => {
   describe('extractSqlFileInfo()', () => {
     it('should return the parsed sql file info from the path (type = function)', () => {
       expect(sqlRunner.extractSqlFileInfo('function/test_data/test_function_name.sql')).to.deep.equal({

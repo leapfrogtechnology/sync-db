@@ -3,7 +3,7 @@ import { expect } from 'chai';
 
 import { prepareInjectionConfigVars, convertToKeyValuePairs } from '../../src/service/configInjection';
 
-describe('Services: configInjection', () => {
+describe('SERVICE: configInjection', () => {
   describe('prepareInjectionConfigVars', () => {
     it('should return the default vars for injection even if empty object is given', async () => {
       const result = prepareInjectionConfigVars({});

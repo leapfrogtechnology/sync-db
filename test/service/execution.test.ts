@@ -24,7 +24,7 @@ const getProcesses = (tracker: string[]) => [
       .then(() => 'Task D')
 ];
 
-describe('Services: execution', () => {
+describe('SERVICE: execution', () => {
   describe('executeProcesses', () => {
     it('should run sequentially with [strategy = sequential].', async () => {
       const tracker: string[] = [];

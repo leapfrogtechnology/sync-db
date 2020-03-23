@@ -4,7 +4,7 @@ import { it, describe } from 'mocha';
 import ConnectionConfig from '../../src/domain/ConnectionConfig';
 import { validate, getConnectionId, resolveConnectionsFromEnv } from '../../src/config';
 
-describe('config:', () => {
+describe('CONFIG:', () => {
   describe('resolveConnectionsFromEnv', () => {
     it('should return the connection using the env vars.', () => {
       process.env.DB_CLIENT = 'mssql';
