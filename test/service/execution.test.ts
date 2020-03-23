@@ -3,7 +3,7 @@ import { it, describe } from 'mocha';
 
 import { timeout } from '../../src/util/promise';
 import SyncConfig from '../../src/domain/SyncConfig';
-import * as executionService from '../../src/services/execution';
+import * as executionService from '../../src/service/execution';
 
 const getProcesses = (tracker: string[]) => [
   () =>

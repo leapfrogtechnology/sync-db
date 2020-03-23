@@ -8,7 +8,7 @@ import { isObject } from './util/types';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
-import { prepareInjectionConfigVars } from './services/configInjection';
+import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
 /**

@@ -12,8 +12,8 @@ import ConnectionReference from './domain/ConnectionReference';
 import { isKnexInstance, getConfig, createInstance } from './util/db';
 
 // Services
-import { synchronizeDatabase } from './services/sync';
-import { executeProcesses } from './services/execution';
+import { synchronizeDatabase } from './service/sync';
+import { executeProcesses } from './service/execution';
 
 /**
  * Synchronize all the configured database connections.
