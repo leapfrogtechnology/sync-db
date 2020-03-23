@@ -2,9 +2,9 @@ import { Command, flags } from '@oclif/command';
 
 import { log } from './logger';
 import { handleFlags } from './cli';
+import { getElapsedTime } from './util/ts';
 import SyncResult from './domain/SyncResult';
 import SyncParams from './domain/SyncParams';
-import { getElapsedTime } from './util/misc';
 import { printError, printLine } from './util/io';
 import ExecutionContext from './domain/ExecutionContext';
 import { loadConfig, resolveConnections } from './config';

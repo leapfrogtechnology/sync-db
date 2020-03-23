@@ -2,8 +2,8 @@ import * as Knex from 'knex';
 
 import { dbLogger } from '../logger';
 import * as sqlRunner from './sqlRunner';
+import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
-import { getElapsedTime } from '../util/misc';
 import SyncContext from '../domain/SyncContext';
 import * as configInjection from './configInjection';
 import ExecutionContext from '../domain/ExecutionContext';
