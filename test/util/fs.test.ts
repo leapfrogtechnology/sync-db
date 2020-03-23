@@ -5,7 +5,7 @@ import * as chai from 'chai';
 import * as path from 'path';
 import * as chaiAsPromised from 'chai-as-promised';
 
-import { write, read, remove, exists } from '../src/util/fs';
+import { write, read, remove, exists } from '../../src/util/fs';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;

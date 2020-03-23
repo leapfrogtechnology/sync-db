@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import { isObject } from '../src/util/types';
+import { isObject } from '../../src/util/types';
 
 describe('UTIL: types', () => {
   describe('isObject', () => {

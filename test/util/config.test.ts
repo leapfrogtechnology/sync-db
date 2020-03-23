@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import ConnectionConfig from '../src/domain/ConnectionConfig';
-import { validate, getConnectionId, resolveConnectionsFromEnv } from '../src/config';
+import ConnectionConfig from '../../src/domain/ConnectionConfig';
+import { validate, getConnectionId, resolveConnectionsFromEnv } from '../../src/config';
 
 describe('config:', () => {
   describe('resolveConnectionsFromEnv', () => {
