@@ -3,12 +3,12 @@ import * as path from 'path';
 
 import { glob, exists } from '../util/fs';
 import { resolveFile } from './sqlRunner';
+import { getElapsedTime } from '../util/ts';
 // import SqlMigrationContext, { MigrationContext } from '../migration/SqlMigrationContext';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 import SyncResult from '../domain/SyncResult';
 // import SyncContext from '../domain/SyncContext';
 import { dbLogger } from '../util/logger';
-import { getElapsedTime } from '../util/misc';
 import { isCLI } from '../config';
 import ExecutionContext from '../domain/ExecutionContext';
 // import KnexMigrationSource from '../migration/KnexMigrationSource';

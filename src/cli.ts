@@ -2,10 +2,10 @@ import * as path from 'path';
 
 import * as fs from './util/fs';
 import { printLine } from './util/io';
+import { getElapsedTime } from './util/ts';
 import SyncDbOptions from './domain/SyncDbOptions';
 import { CONNECTIONS_FILENAME } from './constants';
 import { resolveConnectionsFromEnv, loadConfig, resolveConnections } from './config';
-import { getElapsedTime } from './util/misc';
 import SyncParams from './domain/SyncParams';
 import { log } from './util/logger';
 
