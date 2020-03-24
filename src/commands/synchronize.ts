@@ -10,9 +10,9 @@ import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';
 
 /**
- * SyncDB CLI handler.
+ * Synchronize command handler.
  */
-class SyncDb extends Command {
+class Synchronize extends Command {
   static description = 'Synchronize database';
 
   /**
@@ -50,7 +50,7 @@ class SyncDb extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(SyncDb);
+    const { flags: parsedFlags } = this.parse(Synchronize);
     const params = this.getSyncParams({ ...parsedFlags });
 
     try {
@@ -127,4 +127,4 @@ class SyncDb extends Command {
   }
 }
 
-export default SyncDb;
+export default Synchronize;
