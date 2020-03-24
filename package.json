@@ -14,7 +14,8 @@
     "sync-db": "./bin/run"
   },
   "oclif": {
-    "bin": "sync-db"
+    "bin": "sync-db",
+    "commands": "./lib/commands"
   },
   "repository": "https://github.com/leapfrogtechnology/sync-db",
   "homepage": "https://github.com/leapfrogtechnology/sync-db",
