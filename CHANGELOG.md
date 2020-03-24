@@ -1,5 +1,18 @@
 # Change Log
 
+## [v1.0.0-beta.6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.6) (2020-03-24)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.5...v1.0.0-beta.6)
+
+**Changes**
+
+- Setup prettier and integrate format checking in the CI [\#56](https://github.com/leapfrogtechnology/sync-db/pull/56) [[aesthetics](https://github.com/leapfrogtechnology/sync-db/labels/aesthetics)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Support both sequential and parallel execution strategies for running synchronization [\#55](https://github.com/leapfrogtechnology/sync-db/pull/55) [[config](https://github.com/leapfrogtechnology/sync-db/labels/config)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)] [[internals](https://github.com/leapfrogtechnology/sync-db/labels/internals)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Bump acorn from 7.1.0 to 7.1.1 in /examples/node-mssql-programmatic-use [\#54](https://github.com/leapfrogtechnology/sync-db/pull/54) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump acorn from 7.1.0 to 7.1.1 in /examples/node-app-pg [\#53](https://github.com/leapfrogtechnology/sync-db/pull/53) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump acorn from 7.0.0 to 7.1.1 in /examples/node-app-mssql [\#52](https://github.com/leapfrogtechnology/sync-db/pull/52) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([dependabot[bot]](https://github.com/apps/dependabot))
+- Support resolution of local project dependencies when CLI is invoked in development mode [\#50](https://github.com/leapfrogtechnology/sync-db/pull/50) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[dev efficiency](https://github.com/leapfrogtechnology/sync-db/labels/dev%20efficiency)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Add license scan report and status [\#49](https://github.com/leapfrogtechnology/sync-db/pull/49) [[ci](https://github.com/leapfrogtechnology/sync-db/labels/ci)] [[license](https://github.com/leapfrogtechnology/sync-db/labels/license)] ([fossabot](https://github.com/fossabot))
+
 ## [v1.0.0-beta.5](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.5) (2020-03-08)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.4...v1.0.0-beta.5)
 
