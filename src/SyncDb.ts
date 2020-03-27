@@ -50,9 +50,6 @@ class SyncDb extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    // Set CLI environment as true.
-    process.env.SYNC_DB_CLI = 'true';
-
     const { flags: parsedFlags } = this.parse(SyncDb);
     const params = this.getSyncParams({ ...parsedFlags });
 

@@ -8,7 +8,7 @@ import Mapping from '../domain/Mapping';
 import SqlCode from '../domain/SqlCode';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
-import DatabaseObjectTypes from '../enums/DatabaseObjectTypes';
+import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
 
 /**
  * SQL DROP statements mapping for different object types.

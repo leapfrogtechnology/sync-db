@@ -8,8 +8,17 @@ import { isObject } from './util/types';
 import DbConfig from './domain/DbConfig';
 import SyncConfig from './domain/SyncConfig';
 import ConnectionConfig from './domain/ConnectionConfig';
-import { prepareInjectionConfigVars } from './services/configInjection';
+import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
+
+/**
+ * Check if this is being run via the sync-db cli or not.
+ *
+ * @returns {boolean}
+ */
+export function isCLI(): boolean {
+  return process.env.SYNC_DB_CLI === 'true';
+}
 
 /**
  * Load config yaml file.
@@ -17,24 +26,28 @@ import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEY
  * @returns {Promise<SyncConfig>}
  */
 export async function loadConfig(): Promise<SyncConfig> {
-  log('Resolving sync config file.');
+  log('Resolving config file.');
 
   const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
   const loadedConfig = (await yaml.load(filename)) as SyncConfig;
 
-  log('Resolved sync config file.');
+  log('Resolved config file.');
 
   const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as SyncConfig;
 
   validate(loaded);
 
-  return {
+  const result = {
     ...loaded,
     injectedConfig: {
       ...loaded.injectedConfig,
       vars: prepareInjectionConfigVars(loaded.injectedConfig.vars)
     }
   };
+
+  log('Resolved configuration:\n%O', result);
+
+  return result;
 }
 
 /**
@@ -45,6 +58,8 @@ export async function loadConfig(): Promise<SyncConfig> {
 export function validate(config: SyncConfig) {
   const { injectedConfig } = config;
 
+  log('Validating config.');
+
   // Shouldn't reach under here unless the user has mismatched the value.
   if (!injectedConfig.vars || !isObject(injectedConfig.vars)) {
     throw new Error('Invalid configuration value for `injectedConfig.vars`.');
@@ -52,6 +67,8 @@ export function validate(config: SyncConfig) {
 
   // TODO: Validate the remaining loaded config.
   // Throw error if validation fails.
+
+  log('Validation passed.');
 }
 
 /**

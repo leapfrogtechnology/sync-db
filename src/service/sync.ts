@@ -1,5 +1,6 @@
 import * as Knex from 'knex';
 
+import { isCLI } from '../config';
 import { dbLogger } from '../logger';
 import * as sqlRunner from './sqlRunner';
 import { getElapsedTime } from '../util/ts';
@@ -114,7 +115,7 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
   log(`Execution completed in ${timeElapsed} s`);
 
   // If it's a CLI environment, invoke the handler.
-  if (context.isCLI) {
+  if (isCLI()) {
     const handler = result.success ? context.params.onSuccess : context.params.onFailed;
     const execContext: ExecutionContext = {
       connectionId,

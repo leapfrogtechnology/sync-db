@@ -1,10 +1,26 @@
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import ConnectionConfig from '../src/domain/ConnectionConfig';
-import { validate, getConnectionId, resolveConnectionsFromEnv } from '../src/config';
+import ConnectionConfig from '../../src/domain/ConnectionConfig';
+import { validate, getConnectionId, resolveConnectionsFromEnv, isCLI } from '../../src/config';
 
-describe('config:', () => {
+describe('CONFIG:', () => {
+  describe('isCLI', () => {
+    afterEach(() => {
+      process.env.SYNC_DB_CLI = '';
+    });
+
+    it('should return true if it is run in the CLI environment.', () => {
+      process.env.SYNC_DB_CLI = 'true';
+
+      expect(isCLI()).to.equal(true);
+    });
+
+    it('should return false if it is not run in the CLI environment.', () => {
+      expect(isCLI()).to.equal(false);
+    });
+  });
+
   describe('resolveConnectionsFromEnv', () => {
     it('should return the connection using the env vars.', () => {
       process.env.DB_CLIENT = 'mssql';

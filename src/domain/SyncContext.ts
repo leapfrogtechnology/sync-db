@@ -7,7 +7,6 @@ import SyncParams from './SyncParams';
 interface SyncContext {
   config: SyncConfig;
   connectionId: string;
-  isCLI: boolean;
   params: SyncParams;
 }
 
