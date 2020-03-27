@@ -14,6 +14,7 @@ describe('config:', () => {
       process.env.DB_USERNAME = 'user';
       process.env.DB_PASSWORD = 'password';
       process.env.DB_NAME = 'database';
+      process.env.ENABLE_ARITH_ABORT = 'true';
 
       const connections = resolveConnectionsFromEnv();
 
@@ -26,7 +27,8 @@ describe('config:', () => {
         password: 'password',
         database: 'database',
         options: {
-          encrypt: false
+          encrypt: false,
+          enableArithAbort: true
         }
       });
 

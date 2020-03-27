@@ -128,7 +128,8 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
     options: {
-      encrypt: process.env.DB_ENCRYPTION === 'true'
+      encrypt: process.env.DB_ENCRYPTION === 'true',
+      enableArithAbort: process.env.ENABLE_ARITH_ABORT === 'true'
     }
   } as ConnectionConfig;
 
