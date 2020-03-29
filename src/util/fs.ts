@@ -13,6 +13,15 @@ export function mkdtemp() {
 }
 
 /**
+ * Create a temporary directory and return it's path. (synchronous)
+ *
+ * @returns {string}
+ */
+export function mkdtempSync(): string {
+  return fs.mkdtempSync(`${os.tmpdir()}${path.sep}`);
+}
+
+/**
  * Read file contents.
  *
  * @param {string} filename
