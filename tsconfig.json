@@ -4,12 +4,14 @@
     "importHelpers": true,
     "module": "commonjs",
     "outDir": "lib",
-    "rootDir": "src",
     "noImplicitAny": true,
     "noUnusedLocals": true,
     "strict": true,
     "target": "es2017",
-    "allowSyntheticDefaultImports": true
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "typeRoots": ["src/@types"]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules/**/*"]
 }
