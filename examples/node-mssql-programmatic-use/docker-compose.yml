@@ -1,15 +1,15 @@
-version: "3.3"
+version: '3.3'
 
-services: 
+services:
   mssql:
-    container_name: "example-mssql"
-    image: "mcr.microsoft.com/mssql/server:2017-GA-ubuntu"
-    ports: 
-      - "1433:1433"
-    environment: 
-      ACCEPT_EULA: "Y"
+    container_name: 'example-mssql'
+    image: 'mcr.microsoft.com/mssql/server:2017-GA-ubuntu'
+    ports:
+      - '1433:1433'
+    environment:
+      ACCEPT_EULA: 'Y'
       SA_PASSWORD: ${DB_PASSWORD}
-  
+
   app:
-    container_name: "example-app"
+    container_name: 'example-app'
     build: .
