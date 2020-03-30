@@ -1,36 +1,21 @@
-import 'mocha';
 import * as fs from 'fs';
-import * as os from 'os';
-import * as chai from 'chai';
-import * as path from 'path';
-import * as chaiAsPromised from 'chai-as-promised';
+import { expect } from 'chai';
+import { it, describe } from 'mocha';
 
-import { write, read, remove, exists } from '../../src/util/fs';
-
-chai.use(chaiAsPromised);
-const { expect } = chai;
+import { write, read, remove, exists, mkdtemp } from '../../src/util/fs';
 
 describe('UTIL: fs', () => {
   let filePath: string;
   let invalidFilePath: string;
   const fileContent = 'this is random text content';
 
-  beforeEach(done => {
-    try {
-      fs.mkdtemp(`${os.tmpdir()}${path.sep}`, async (err, dirPath) => {
-        if (err) {
-          done(err);
-        }
+  beforeEach(async () => {
+    const dirPath = await mkdtemp();
 
-        filePath = `${dirPath}/hello.txt`;
-        invalidFilePath = `${dirPath}/file.txt/random`;
+    filePath = `${dirPath}/hello.txt`;
+    invalidFilePath = `${dirPath}/file.txt/random`;
 
-        await write(filePath, fileContent);
-        done();
-      });
-    } catch (error) {
-      done(error);
-    }
+    await write(filePath, fileContent);
   });
 
   it('should write content to the filepath', async () => {
