@@ -1,18 +1,18 @@
 import { Command, flags } from '@oclif/command';
 
-import { log } from './logger';
-import { handleFlags } from './cli';
-import { getElapsedTime } from './util/ts';
-import SyncResult from './domain/SyncResult';
-import SyncParams from './domain/SyncParams';
-import { printError, printLine } from './util/io';
-import ExecutionContext from './domain/ExecutionContext';
-import { loadConfig, resolveConnections } from './config';
+import { log } from '../logger';
+import { handleFlags } from '../cli';
+import { getElapsedTime } from '../util/ts';
+import SyncResult from '../domain/SyncResult';
+import SyncParams from '../domain/SyncParams';
+import { printError, printLine } from '../util/io';
+import ExecutionContext from '../domain/ExecutionContext';
+import { loadConfig, resolveConnections } from '../config';
 
 /**
- * SyncDB CLI handler.
+ * Synchronize command handler.
  */
-class SyncDb extends Command {
+class Synchronize extends Command {
   static description = 'Synchronize database';
 
   /**
@@ -50,7 +50,7 @@ class SyncDb extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(SyncDb);
+    const { flags: parsedFlags } = this.parse(Synchronize);
     const params = this.getSyncParams({ ...parsedFlags });
 
     try {
@@ -58,7 +58,7 @@ class SyncDb extends Command {
 
       const config = await loadConfig();
       const connections = await resolveConnections();
-      const { synchronize } = await import('./api');
+      const { synchronize } = await import('../api');
       const timeStart = process.hrtime();
 
       await printLine('Synchronizing...\n');
@@ -127,4 +127,4 @@ class SyncDb extends Command {
   }
 }
 
-export default SyncDb;
+export default Synchronize;
