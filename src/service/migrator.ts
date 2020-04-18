@@ -191,40 +191,69 @@ export async function migrateRollback(trx: Knex | Knex.Transaction, context: Mig
   return result;
 }
 
-export async function migrateList(trx: Knex | Knex.Transaction, context: MigrationCommandContext): Promise<any> {
+export interface MigrationListResult {
+  connectionId: string;
+  success: boolean;
+  timeElapsed: number;
+  data: any;
+  error?: any;
+}
+
+/**
+ * Synchronize parameters.
+ */
+export interface MigrationListParams {
+  onSuccess: (context: MigrationListResult) => Promise<any>;
+  onFailed: (context: MigrationListResult) => Promise<any>;
+}
+
+export interface MCommandContext<T> {
+  config: SyncConfig;
+  connectionId: string;
+  params: T;
+  knexMigrationConfig: Knex.MigratorConfig;
+}
+
+export async function migrateList(
+  trx: Knex | Knex.Transaction,
+  context: MCommandContext<MigrationListParams>
+): Promise<MigrationListResult> {
   const { connectionId, knexMigrationConfig } = context;
   const log = dbLogger(context.connectionId);
-  const result: SyncResult = { connectionId, success: false };
+
+  let error;
+  let data;
 
   const timeStart = process.hrtime();
 
   try {
     log('BEGIN: migrate.list');
-    const migrationResult = await trx.migrate.list(knexMigrationConfig);
+    data = await trx.migrate.list(knexMigrationConfig);
 
     log('END: migrate.list');
-    log('Migration Result:\n%O', migrationResult);
-
-    result.success = true;
+    log('Migration Result:\n%O', data);
   } catch (e) {
     log(`Error caught for connection ${connectionId}:`, e);
-    result.error = e;
+    error = e;
   }
 
   const timeElapsed = getElapsedTime(timeStart);
 
   log(`Execution completed in ${timeElapsed} s`);
 
+  const result: MigrationListResult = {
+    connectionId,
+    error,
+    data,
+    timeElapsed,
+    success: !error
+  };
+
   // If it's a CLI environment, invoke the handler.
   if (isCLI()) {
     const handler = result.success ? context.params.onSuccess : context.params.onFailed;
-    const execContext: ExecutionContext = {
-      connectionId,
-      timeElapsed,
-      success: result.success
-    };
 
-    await handler(execContext);
+    await handler(result);
   }
 
   return result;

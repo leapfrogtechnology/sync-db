@@ -19,6 +19,7 @@ import { executeProcesses } from './service/execution';
 import * as migratorService from './service/migrator';
 import SqlMigrationContext from './migration/SqlMigrationContext';
 import KnexMigrationSource from './migration/KnexMigrationSource';
+import { MigrationListResult, MigrationListParams } from './service/migrator';
 
 /**
  * Synchronize all the configured database connections.
@@ -136,8 +137,8 @@ export async function migrateRollback(
 export async function migrateList(
   config: SyncConfig,
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
-  options?: SyncParams
-): Promise<SyncResult[]> {
+  options?: MigrationListParams
+): Promise<MigrationListResult[]> {
   log('Starting to migrate.');
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
