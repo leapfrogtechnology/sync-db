@@ -1,13 +1,16 @@
 import { green, red } from 'chalk';
 
+export type ModifierFunc = (message: string) => string;
+
 /**
  * Prints a line into the console (stdout).
  *
  * @param {string} [message='']
+ * @param {ModifierFunc} [modifier=(str: string) => str]
  * @returns {Promise<any>}
  */
-export function printLine(message: string = ''): Promise<any> {
-  return print(message.toString() + '\n');
+export function printLine(message: string = '', modifier: ModifierFunc = (str: string) => str): Promise<any> {
+  return print(modifier(message.toString()) + '\n');
 }
 
 /**
@@ -17,7 +20,7 @@ export function printLine(message: string = ''): Promise<any> {
  * @returns {Promise<any>}
  */
 export function printInfo(message: string = ''): Promise<any> {
-  return printLine(green(message));
+  return printLine(message, green);
 }
 
 /**
@@ -34,9 +37,12 @@ export function print(message: string): Promise<any> {
  * Prints an error message with stack trace available
  * into the stderr.
  *
- * @param {Error} error
+ * @param {any} error
+ * @param {boolean} [stacktrace=true]
  * @returns {Promise<any>}
  */
-export function printError(error: Error): Promise<any> {
-  return new Promise(resolve => process.stderr.write(red((error.stack || error).toString()) + '\n', resolve));
+export function printError(error: any, stacktrace: boolean = true): Promise<any> {
+  const errorStr = stacktrace ? (error.stack || error).toString() : error.toString();
+
+  return new Promise(resolve => process.stderr.write(red(errorStr) + '\n', resolve));
 }
