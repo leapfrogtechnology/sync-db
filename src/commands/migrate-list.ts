@@ -3,7 +3,7 @@ import { bold, grey, red, cyan, yellow } from 'chalk';
 
 import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { MigrationListParams, MigrationListResult } from '../service/migrator';
+import { MigrationListResult, MigrationCommandParams } from '../service/migrator';
 
 /**
  * Migration command handler.
@@ -11,7 +11,7 @@ import { MigrationListParams, MigrationListResult } from '../service/migrator';
 class MigrateList extends Command {
   static description = 'List migrations.';
 
-  getParams(): MigrationListParams {
+  getParams(): MigrationCommandParams<MigrationListResult> {
     return {
       onSuccess: async (result: MigrationListResult) => {
         await printLine(bold(` ▸ ${result.connectionId}`));
@@ -34,6 +34,8 @@ class MigrateList extends Command {
           await printLine(yellow('   No migrations.'));
         } else if (remainingCount > 0) {
           await printLine(yellow(`\n   ${list2.length} migrations yet to be run.`));
+        } else if (remainingCount === 0) {
+          await printLine('\n   All up to date.');
         }
 
         await printLine();
