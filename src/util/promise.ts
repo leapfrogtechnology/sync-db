@@ -14,14 +14,10 @@ export const timeout = promisify(setTimeout);
  * Run each of the promise sequentially and return their results in the same order.
  *
  * @param {Promiser<T>[]} promisers
- * @param {boolean} [failCascade=true]
- * @returns {(Promise<(T | Error)[]>)}
+ * @returns {Promise<T[]>}
  */
-export async function runSequentially<T>(
-  promisers: Promiser<T>[],
-  failCascade: boolean = true
-): Promise<(T | Error)[]> {
-  const result: (T | Error)[] = [];
+export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]> {
+  const result: T[] = [];
 
   for (const promiser of promisers) {
     try {
@@ -29,15 +25,7 @@ export async function runSequentially<T>(
 
       result.push(value);
     } catch (err) {
-      // If failCascade = true,
-      // any error (promise rejection) will be cascaded thus halting the process.
-      if (failCascade) {
-        throw err;
-      }
-
-      // If failCascade = false,
-      // the failed promise will be resolved with the rejected error as a value.
-      result.push(err instanceof Error ? err : new Error(err));
+      throw err;
     }
   }
 
