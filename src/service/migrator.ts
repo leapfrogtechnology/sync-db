@@ -69,32 +69,33 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
   return Promise.all(migrationPromises);
 }
 
-// /**
-//  * Get a new instance of KnexMigrationSource.
-//  *
-//  * @param {SyncConfig} context
-//  * @returns {SqlMigrationContext}
-//  */
-// async function getMigrationConfig(context: SyncContext): Promise<Knex.MigratorConfig> {
-//   const log = dbLogger(context.connectionId);
-//   log('Getting migration config');
+export interface MigrationListResult {
+  connectionId: string;
+  success: boolean;
+  timeElapsed: number;
+  data: any;
+  error?: any;
+}
 
-//   const { basePath, migration } = context.config;
-//   const migrationPath = path.join(basePath, migration.directory);
+export interface MigrationLatestResult {
+  connectionId: string;
+  success: boolean;
+  timeElapsed: number;
+  data: any;
+  error?: any;
+}
 
-//   const migrations = await resolveSqlMigrations(migrationPath);
+export interface MigrationCommandParams<T> {
+  onSuccess: (context: T) => Promise<any>;
+  onFailed: (context: T) => Promise<any>;
+}
 
-//   // TODO: Multiple migration context based on type of migration (sql, js, etc)
-//   const migrationContext = new SqlMigrationContext(context.connectionId, migrations);
-
-//   log('Available Migrations:', migrations);
-//   log('Table Name:', migration.tableName);
-
-//   return {
-//     tableName: migration.tableName,
-//     migrationSource: new KnexMigrationSource(migrationContext)
-//   };
-// }
+export interface MCommandContext<T> {
+  config: SyncConfig;
+  connectionId: string;
+  params: T;
+  knexMigrationConfig: Knex.MigratorConfig;
+}
 
 /**
  * Synchronize context parameters for the current database connection.
@@ -110,43 +111,49 @@ interface MigrationCommandContext {
  * Run migrations on a target database connection / transaction.
  *
  * @param {(Knex | Knex.Transaction)} trx
- * @param {SyncConfig} context
+ * @param {MCommandContext<MigrationCommandParams<MigrationLatestResult>>} context
  * @returns {Promise<any>}
  */
-export async function migrateLatest(trx: Knex | Knex.Transaction, context: MigrationCommandContext): Promise<any> {
+export async function migrateLatest(
+  trx: Knex | Knex.Transaction,
+  context: MCommandContext<MigrationCommandParams<MigrationLatestResult>>
+): Promise<any> {
   const { connectionId, knexMigrationConfig } = context;
   const log = dbLogger(context.connectionId);
-  const result: SyncResult = { connectionId, success: false };
+
+  let error;
+  let data;
 
   const timeStart = process.hrtime();
 
   try {
     log('BEGIN: migrate.latest');
-    const migrationResult = await trx.migrate.latest(knexMigrationConfig);
+    data = await trx.migrate.latest(knexMigrationConfig);
 
     log('END: migrate.latest');
-    log('Migration Result:\n%O', migrationResult);
-
-    result.success = true;
+    log('Result:\n%O', data);
   } catch (e) {
     log(`Error caught for connection ${connectionId}:`, e);
-    result.error = e;
+    error = e;
   }
 
   const timeElapsed = getElapsedTime(timeStart);
 
   log(`Execution completed in ${timeElapsed} s`);
 
+  const result: MigrationListResult = {
+    connectionId,
+    error,
+    data,
+    timeElapsed,
+    success: !error
+  };
+
   // If it's a CLI environment, invoke the handler.
   if (isCLI()) {
     const handler = result.success ? context.params.onSuccess : context.params.onFailed;
-    const execContext: ExecutionContext = {
-      connectionId,
-      timeElapsed,
-      success: result.success
-    };
 
-    await handler(execContext);
+    await handler(result);
   }
 
   return result;
@@ -191,32 +198,9 @@ export async function migrateRollback(trx: Knex | Knex.Transaction, context: Mig
   return result;
 }
 
-export interface MigrationListResult {
-  connectionId: string;
-  success: boolean;
-  timeElapsed: number;
-  data: any;
-  error?: any;
-}
-
-/**
- * Synchronize parameters.
- */
-export interface MigrationListParams {
-  onSuccess: (context: MigrationListResult) => Promise<any>;
-  onFailed: (context: MigrationListResult) => Promise<any>;
-}
-
-export interface MCommandContext<T> {
-  config: SyncConfig;
-  connectionId: string;
-  params: T;
-  knexMigrationConfig: Knex.MigratorConfig;
-}
-
 export async function migrateList(
   trx: Knex | Knex.Transaction,
-  context: MCommandContext<MigrationListParams>
+  context: MCommandContext<MigrationCommandParams<MigrationListResult>>
 ): Promise<MigrationListResult> {
   const { connectionId, knexMigrationConfig } = context;
   const log = dbLogger(context.connectionId);

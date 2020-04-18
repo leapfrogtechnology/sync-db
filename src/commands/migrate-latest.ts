@@ -1,11 +1,10 @@
 import { Command } from '@oclif/command';
+import { bold, red, cyan } from 'chalk';
 
-import { printLine } from '../util/io';
+import { printLine, printError, printInfo } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { log } from '../util/logger';
-import { getElapsedTime } from '../util/ts';
-import SyncParams from '../domain/SyncParams';
-import ExecutionContext from '../domain/ExecutionContext';
+import { MigrationCommandParams, MigrationLatestResult } from '../service/migrator';
+import { dbLogger } from '../util/logger';
 
 /**
  * Migration command handler.
@@ -13,22 +12,35 @@ import ExecutionContext from '../domain/ExecutionContext';
 class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
-  /**
-   * Default CLI options for running synchronize.
-   *
-   * @param {*} userParams
-   * @returns {SyncParams}
-   */
-  getSyncParams(userParams: any): SyncParams {
+  getParams(): MigrationCommandParams<MigrationLatestResult> {
     return {
-      ...userParams,
-      // Individual success handler
-      onSuccess: (context: ExecutionContext) =>
-        printLine(`  [✓] ${context.connectionId} - Successful (${context.timeElapsed}s)`),
+      onSuccess: async (result: MigrationLatestResult) => {
+        const log = dbLogger(result.connectionId);
+        const [num, list] = result.data;
+        const alreadyUpToDate = num && list.length === 0;
 
-      // Individual error handler
-      onFailed: (context: ExecutionContext) =>
-        printLine(`  [✖] ${context.connectionId} - Failed (${context.timeElapsed}s)`)
+        log('Up to date: ', alreadyUpToDate);
+
+        await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
+
+        if (alreadyUpToDate) {
+          await printInfo('   Already up to date.\n');
+
+          return;
+        }
+
+        // Completed migrations.
+        for (const item of list) {
+          await printLine(cyan(`   - ${item}`));
+        }
+
+        await printInfo(`\n   Ran ${list.length} migrations.\n`);
+      },
+      onFailed: async (result: MigrationLatestResult) => {
+        printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
+
+        await printError(`   ${result.error}\n`);
+      }
     };
   }
 
@@ -38,37 +50,22 @@ class MigrateLatest extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(MigrateLatest);
-    const params = this.getSyncParams({ ...parsedFlags });
+    const params = this.getParams();
 
     const config = await loadConfig();
     const connections = await resolveConnections();
     const { migrateLatest } = await import('../api');
-    const timeStart = process.hrtime();
-
-    await printLine('Running Migrations\n');
 
     const results = await migrateLatest(config, connections, params);
 
-    log('Results:', results);
-    console.log('Results', results); // tslint:disable-line
+    const failedCount = results.filter(({ success }) => !success).length;
 
-    const successfulCount = results.filter(item => item.success).length;
-
-    if (successfulCount > 0) {
-      // Display output.
-      await printLine(
-        `Migration complete for ${successfulCount} / ${results.length} connection(s). ` +
-          `(${getElapsedTime(timeStart)}s)`
-      );
-    }
-
-    // If all completed successfully, exit gracefully.
-    if (results.length === successfulCount) {
+    if (failedCount === 0) {
       return process.exit(0);
     }
 
-    throw new Error(`Migration failed for some connections.`);
+    printError(`Error: Migration failed for ${failedCount} connection(s).`);
+    process.exit(-1);
   }
 }
 
