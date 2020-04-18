@@ -3,7 +3,6 @@ import { bold, grey, red, cyan, yellow } from 'chalk';
 
 import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { log } from '../util/logger';
 import { MigrationListParams, MigrationListResult } from '../service/migrator';
 
 /**
@@ -62,9 +61,13 @@ class MigrateList extends Command {
     const results = await migrateList(config, connections, params);
 
     const failedCount = results.filter(({ success }) => !success).length;
-    const exitCode = failedCount === 0 ? 0 : -1;
 
-    process.exit(exitCode);
+    if (failedCount === 0) {
+      return process.exit(0);
+    }
+
+    printError(`Error: Failed retrieving list for ${failedCount} connection(s).`);
+    process.exit(-1);
   }
 }
 
