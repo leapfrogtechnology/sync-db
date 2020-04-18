@@ -231,7 +231,7 @@ export async function migrateList(
     data = await trx.migrate.list(knexMigrationConfig);
 
     log('END: migrate.list');
-    log('Migration Result:\n%O', data);
+    log('Result:\n%O', data);
   } catch (e) {
     log(`Error caught for connection ${connectionId}:`, e);
     error = e;

@@ -139,7 +139,6 @@ export async function migrateList(
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: MigrationListParams
 ): Promise<MigrationListResult[]> {
-  log('Starting to migrate.');
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
 
@@ -148,7 +147,7 @@ export async function migrateList(
   const migrations = await migratorService.resolveSqlMigrations(migrationPath);
 
   log('Migration Path:', migrationPath);
-  log('Available migrations:');
+  log('Available migration sources:');
   log('%O', migrations);
 
   // TODO: We'll need to support different types of migrations eg both sql & js
@@ -169,7 +168,7 @@ export async function migrateList(
 
   const results = await executeProcesses(processes, config);
 
-  log('Migrations completed.');
+  log('Finished retrieving lists.');
 
   return results;
 }

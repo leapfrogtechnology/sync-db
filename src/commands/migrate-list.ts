@@ -17,8 +17,6 @@ class MigrateList extends Command {
       onSuccess: async (result: MigrationListResult) => {
         await printLine(bold(` ▸ ${result.connectionId}`));
 
-        log(result.data);
-
         const [list1, list2] = result.data;
         const ranCount = list1.length;
         const remainingCount = list2.length;
@@ -63,11 +61,7 @@ class MigrateList extends Command {
 
     const results = await migrateList(config, connections, params);
 
-    log('Results:', results);
-
     const failedCount = results.filter(({ success }) => !success).length;
-
-    // If all completed successfully, exit gracefully.
     const exitCode = failedCount === 0 ? 0 : -1;
 
     process.exit(exitCode);
