@@ -52,6 +52,7 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
+    "chalk": "^4.0.0",
     "debug": "^4.1.1",
     "globby": "^10.0.2",
     "knex": "^0.20.11",
