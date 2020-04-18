@@ -1,6 +1,7 @@
 import { Command } from '@oclif/command';
+import { bold, grey, red, cyan, yellow } from 'chalk';
 
-import { printLine } from '../util/io';
+import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
 import { log } from '../util/logger';
 import { MigrationListParams, MigrationListResult } from '../service/migrator';
@@ -14,8 +15,7 @@ class MigrateList extends Command {
   getParams(): MigrationListParams {
     return {
       onSuccess: async (result: MigrationListResult) => {
-        // ➜
-        await printLine(` ▸ ${result.connectionId}`);
+        await printLine(bold(` ▸ ${result.connectionId}`));
 
         log(result.data);
 
@@ -25,28 +25,26 @@ class MigrateList extends Command {
 
         // Completed migrations.
         for (const item of list1) {
-          await printLine(`   • ${item}`);
+          await printLine(cyan(`   • ${item}`));
         }
 
         // Remaining Migrations
         for (const item of list2) {
-          await printLine(`   - ${item}`);
+          await printLine(grey(`   - ${item}`));
         }
 
         if (ranCount === 0 && remainingCount === 0) {
-          await printLine('   No migrations.');
-        } else if (remainingCount === 0) {
-          await printLine(`\n   All up to date.`);
-        } else {
-          await printLine(`\n   ${list2.length} migrations yet to be run.`);
+          await printLine(yellow('   No migrations.'));
+        } else if (remainingCount > 0) {
+          await printLine(yellow(`\n   ${list2.length} migrations yet to be run.`));
         }
 
         await printLine();
       },
       onFailed: async (result: MigrationListResult) => {
-        printLine(` ▸ ${result.connectionId} - Failed (${result.timeElapsed}s)`);
+        printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
-        await printLine(`   ${result.error}\n`);
+        await printError(`   ${result.error}\n`);
       }
     };
   }
