@@ -22,13 +22,7 @@ class Synchronize extends Command {
     version: flags.version({ char: 'v', description: 'Print version', name: 'sync-db' }),
     help: flags.help({ char: 'h', description: 'Print help information' }),
     force: flags.boolean({ char: 'f', description: 'Force synchronization' }),
-    'generate-connections': flags.boolean({ char: 'c', description: 'Generate connections' }),
-
-    // Note: These are temporary workaround using args.
-    // TODO: Move these into separate commands (multi-commands)
-    migrate: flags.boolean({ description: 'Run Migrations' }),
-    rollback: flags.boolean({ description: 'Run Rollback' }),
-    list: flags.boolean({ description: 'List migrations' })
+    'generate-connections': flags.boolean({ char: 'c', description: 'Generate connections' })
   };
 
   /**
