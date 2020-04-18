@@ -3,7 +3,7 @@ import { bold, grey, red, cyan, yellow } from 'chalk';
 
 import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { MigrationListResult, MigrationCommandParams } from '../service/migrator';
+import { MigrationResult, MigrationCommandParams } from '../service/migrator';
 
 /**
  * Migration command handler.
@@ -11,9 +11,9 @@ import { MigrationListResult, MigrationCommandParams } from '../service/migrator
 class MigrateList extends Command {
   static description = 'List migrations.';
 
-  getParams(): MigrationCommandParams<MigrationListResult> {
+  getParams(): MigrationCommandParams {
     return {
-      onSuccess: async (result: MigrationListResult) => {
+      onSuccess: async (result: MigrationResult) => {
         await printLine(bold(` ▸ ${result.connectionId}`));
 
         const [list1, list2] = result.data;
@@ -40,7 +40,7 @@ class MigrateList extends Command {
 
         await printLine();
       },
-      onFailed: async (result: MigrationListResult) => {
+      onFailed: async (result: MigrationResult) => {
         printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
         await printError(`   ${result.error}\n`);

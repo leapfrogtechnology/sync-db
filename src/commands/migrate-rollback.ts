@@ -12,7 +12,7 @@ import { dbLogger } from '../util/logger';
 class MigrateRollback extends Command {
   static description = 'Rollback migrations up to the last run batch.';
 
-  getParams(): MigrationCommandParams<MigrationResult> {
+  getParams(): MigrationCommandParams {
     return {
       onSuccess: async (result: MigrationResult) => {
         const log = dbLogger(result.connectionId);

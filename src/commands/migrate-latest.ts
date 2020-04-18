@@ -3,7 +3,7 @@ import { bold, red, cyan } from 'chalk';
 
 import { printLine, printError, printInfo } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { MigrationCommandParams, MigrationLatestResult } from '../service/migrator';
+import { MigrationCommandParams, MigrationResult } from '../service/migrator';
 import { dbLogger } from '../util/logger';
 
 /**
@@ -12,9 +12,9 @@ import { dbLogger } from '../util/logger';
 class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
-  getParams(): MigrationCommandParams<MigrationLatestResult> {
+  getParams(): MigrationCommandParams {
     return {
-      onSuccess: async (result: MigrationLatestResult) => {
+      onSuccess: async (result: MigrationResult) => {
         const log = dbLogger(result.connectionId);
         const [num, list] = result.data;
         const alreadyUpToDate = num && list.length === 0;
@@ -36,7 +36,7 @@ class MigrateLatest extends Command {
 
         await printInfo(`\n   Ran ${list.length} migrations.\n`);
       },
-      onFailed: async (result: MigrationLatestResult) => {
+      onFailed: async (result: MigrationResult) => {
         printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
         await printError(`   ${result.error}\n`);

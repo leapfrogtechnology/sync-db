@@ -4,18 +4,38 @@ import * as path from 'path';
 import { glob, exists } from '../util/fs';
 import { resolveFile } from './sqlRunner';
 import { getElapsedTime } from '../util/ts';
-// import SqlMigrationContext, { MigrationContext } from '../migration/SqlMigrationContext';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
-// import SyncResult from '../domain/SyncResult'
-// import SyncContext from '../domain/SyncContext';
 import { dbLogger } from '../util/logger';
 import { isCLI } from '../config';
-// import ExecutionContext from '../domain/ExecutionContext';
-// import KnexMigrationSource from '../migration/KnexMigrationSource';
 import SyncConfig from '../domain/SyncConfig';
-// import SyncParams from '../domain/SyncParams';
 
 const FILE_PATTERN = /(.+)\.(up|down)\.sql$/;
+
+export interface MigrationResult {
+  connectionId: string;
+  success: boolean;
+  timeElapsed: number;
+  data: any;
+  error?: any;
+}
+
+export interface MigrationCommandParams {
+  onSuccess: (result: MigrationResult) => Promise<any>;
+  onFailed: (context: MigrationResult) => Promise<any>;
+}
+
+export interface MigrationCommandContext {
+  config: SyncConfig;
+  connectionId: string;
+  params: MigrationCommandParams;
+  knexMigrationConfig: Knex.MigratorConfig;
+}
+
+const knexMigrationRunnersMap = {
+  'migrate.latest': (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => trx.migrate.latest(config),
+  'migrate.rollback': (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => trx.migrate.rollback(config),
+  'migrate.list': (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => trx.migrate.list(config)
+};
 
 /**
  * Glob the migration directory and retrieve all the migration entries (names)
@@ -69,55 +89,14 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
   return Promise.all(migrationPromises);
 }
 
-export interface MigrationListResult {
-  connectionId: string;
-  success: boolean;
-  timeElapsed: number;
-  data: any;
-  error?: any;
-}
-
-export interface MigrationLatestResult {
-  connectionId: string;
-  success: boolean;
-  timeElapsed: number;
-  data: any;
-  error?: any;
-}
-
-export interface MigrationResult {
-  connectionId: string;
-  success: boolean;
-  timeElapsed: number;
-  data: any;
-  error?: any;
-}
-
-export interface MigrationCommandParams<T> {
-  onSuccess: (context: T) => Promise<any>;
-  onFailed: (context: T) => Promise<any>;
-}
-
-export interface MigrationCommandContext<T> {
-  config: SyncConfig;
-  connectionId: string;
-  params: T;
-  knexMigrationConfig: Knex.MigratorConfig;
-}
-
-/**
- * Run migrations on a target database connection / transaction.
- *
- * @param {(Knex | Knex.Transaction)} trx
- * @param {MigrationCommandContext<MigrationCommandParams<MigrationLatestResult>>} context
- * @returns {Promise<any>}
- */
-export async function migrateLatest(
+export async function migrateRun(
   trx: Knex | Knex.Transaction,
-  context: MigrationCommandContext<MigrationCommandParams<MigrationLatestResult>>
-): Promise<any> {
-  const { connectionId, knexMigrationConfig } = context;
+  context: MigrationCommandContext,
+  func: (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>
+): Promise<MigrationResult> {
   const log = dbLogger(context.connectionId);
+  const { connectionId, knexMigrationConfig } = context;
+  const funcName = func.name || 'func';
 
   let error;
   let data;
@@ -125,56 +104,11 @@ export async function migrateLatest(
   const timeStart = process.hrtime();
 
   try {
-    log('BEGIN: migrate.latest');
-    data = await trx.migrate.latest(knexMigrationConfig);
+    log(`BEGIN: ${funcName}`);
+    data = await func(trx, knexMigrationConfig);
 
-    log('END: migrate.latest');
+    log(`END: ${funcName}`);
     log('Result:\n%O', data);
-  } catch (e) {
-    log(`Error caught for connection ${connectionId}:`, e);
-    error = e;
-  }
-
-  const timeElapsed = getElapsedTime(timeStart);
-
-  log(`Execution completed in ${timeElapsed} s`);
-
-  const result: MigrationListResult = {
-    connectionId,
-    error,
-    data,
-    timeElapsed,
-    success: !error
-  };
-
-  // If it's a CLI environment, invoke the handler.
-  if (isCLI()) {
-    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
-
-    await handler(result);
-  }
-
-  return result;
-}
-
-export async function migrateRollback(
-  trx: Knex | Knex.Transaction,
-  context: MigrationCommandContext<MigrationCommandParams<MigrationResult>>
-): Promise<any> {
-  const { connectionId, knexMigrationConfig } = context;
-  const log = dbLogger(context.connectionId);
-
-  let error;
-  let data;
-
-  const timeStart = process.hrtime();
-
-  try {
-    log('BEGIN: migrate.rollback');
-    data = await trx.migrate.rollback(knexMigrationConfig);
-
-    log('END: migrate.rollback');
-    log('Migration Result:\n%O', data);
   } catch (e) {
     log(`Error caught for connection ${connectionId}:`, e);
     error = e;
@@ -202,47 +136,23 @@ export async function migrateRollback(
   return result;
 }
 
+export async function migrateLatest(
+  trx: Knex | Knex.Transaction,
+  context: MigrationCommandContext
+): Promise<MigrationResult> {
+  return migrateRun(trx, context, knexMigrationRunnersMap['migrate.latest']);
+}
+
+export async function migrateRollback(
+  trx: Knex | Knex.Transaction,
+  context: MigrationCommandContext
+): Promise<MigrationResult> {
+  return migrateRun(trx, context, knexMigrationRunnersMap['migrate.rollback']);
+}
+
 export async function migrateList(
   trx: Knex | Knex.Transaction,
-  context: MigrationCommandContext<MigrationCommandParams<MigrationListResult>>
-): Promise<MigrationListResult> {
-  const { connectionId, knexMigrationConfig } = context;
-  const log = dbLogger(context.connectionId);
-
-  let error;
-  let data;
-
-  const timeStart = process.hrtime();
-
-  try {
-    log('BEGIN: migrate.list');
-    data = await trx.migrate.list(knexMigrationConfig);
-
-    log('END: migrate.list');
-    log('Result:\n%O', data);
-  } catch (e) {
-    log(`Error caught for connection ${connectionId}:`, e);
-    error = e;
-  }
-
-  const timeElapsed = getElapsedTime(timeStart);
-
-  log(`Execution completed in ${timeElapsed} s`);
-
-  const result: MigrationListResult = {
-    connectionId,
-    error,
-    data,
-    timeElapsed,
-    success: !error
-  };
-
-  // If it's a CLI environment, invoke the handler.
-  if (isCLI()) {
-    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
-
-    await handler(result);
-  }
-
-  return result;
+  context: MigrationCommandContext
+): Promise<MigrationResult> {
+  return migrateRun(trx, context, knexMigrationRunnersMap['migrate.list']);
 }
