@@ -9,7 +9,7 @@ import { Promiser, runSequentially } from '../util/promise';
  * @param {SyncConfig} config
  * @returns {Promise<T[]>}
  */
-export function executeProcesses<T>(processes: Promiser<T>[], config: SyncConfig): Promise<(T | Error)[]> {
+export function executeProcesses<T>(processes: Promiser<T>[], config: SyncConfig): Promise<T[]> {
   log(`Execution Strategy: ${config.execution}`);
 
   switch (config.execution) {
