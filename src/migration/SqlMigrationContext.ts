@@ -1,7 +1,7 @@
 import * as Knex from 'knex';
 
-import { dbLogger } from '../util/logger';
 import MigrationRunner from '../domain/MigrationRunner';
+import { dbLogger, log as logger } from '../util/logger';
 import MigrationContext from '../domain/MigrationContext';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 
@@ -16,13 +16,25 @@ class SqlMigrationContext implements MigrationContext {
   /**
    * SqlMigrationContext constructor.
    *
-   * @param {string} connectionId
    * @param {SqlMigrationEntry[]} list
    */
-  constructor(connectionId: string, list: SqlMigrationEntry[]) {
+  constructor(list: SqlMigrationEntry[]) {
     this.list = list;
+    this.log = logger;
+    this.connectionId = '';
+  }
+
+  /**
+   * Bind connectionId to the context.
+   *
+   * @param {string} connectionId
+   * @returns {MigrationContext} this
+   */
+  bind(connectionId: string): MigrationContext {
     this.connectionId = connectionId;
     this.log = dbLogger(connectionId);
+
+    return this;
   }
 
   /**

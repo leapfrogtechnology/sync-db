@@ -7,6 +7,7 @@ interface MigrationContext {
   connectionId: string;
   keys(): string[];
   get(name: string): MigrationRunner;
+  bind(connectionId: string): MigrationContext;
 }
 
 export default MigrationContext;
