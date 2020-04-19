@@ -22,6 +22,8 @@ class SqlMigrationContext implements MigrationContext {
     this.list = list;
     this.log = logger;
     this.connectionId = '';
+
+    this.log('Instantiated SqlMigrationContext.');
   }
 
   /**

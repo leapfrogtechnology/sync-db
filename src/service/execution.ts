@@ -10,7 +10,7 @@ import { Promiser, runSequentially } from '../util/promise';
  * @returns {Promise<T[]>}
  */
 export function executeProcesses<T>(processes: Promiser<T>[], config: SyncConfig): Promise<T[]> {
-  log(`Execution Strategy: ${config.execution}`);
+  log(`Executing ${processes.length} processes [strategy=${config.execution}]`);
 
   switch (config.execution) {
     case 'sequential':
