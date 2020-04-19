@@ -6,7 +6,7 @@ import * as fs from './util/fs';
 import { log } from './util/logger';
 import { isObject } from './util/types';
 import DbConfig from './domain/DbConfig';
-import SyncConfig from './domain/SyncConfig';
+import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
 import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
@@ -23,17 +23,17 @@ export function isCLI(): boolean {
 /**
  * Load config yaml file.
  *
- * @returns {Promise<SyncConfig>}
+ * @returns {Promise<Configuration>}
  */
-export async function loadConfig(): Promise<SyncConfig> {
+export async function loadConfig(): Promise<Configuration> {
   log('Resolving config file.');
 
   const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
-  const loadedConfig = (await yaml.load(filename)) as SyncConfig;
+  const loadedConfig = (await yaml.load(filename)) as Configuration;
 
   log('Resolved config file.');
 
-  const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as SyncConfig;
+  const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as Configuration;
 
   validate(loaded);
 
@@ -53,9 +53,9 @@ export async function loadConfig(): Promise<SyncConfig> {
 /**
  * Validate the loaded configuration.
  *
- * @param {SyncConfig} config
+ * @param {Configuration} config
  */
-export function validate(config: SyncConfig) {
+export function validate(config: Configuration) {
   const { injectedConfig } = config;
 
   log('Validating config.');

@@ -1,11 +1,11 @@
-import SyncConfig from './SyncConfig';
+import Configuration from './Configuration';
 import SyncParams from './SyncParams';
 
 /**
  * Synchronize context parameters for the current database connection.
  */
 interface SyncContext {
-  config: SyncConfig;
+  config: Configuration;
   connectionId: string;
   params: SyncParams;
 }

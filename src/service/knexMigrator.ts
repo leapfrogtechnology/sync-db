@@ -3,7 +3,7 @@ import Knex from 'knex';
 import { isCLI } from '../config';
 import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
-import SyncConfig from '../domain/SyncConfig';
+import Configuration from '../domain/Configuration';
 
 export interface MigrationResult {
   connectionId: string;
@@ -19,7 +19,7 @@ export interface MigrationCommandParams {
 }
 
 export interface MigrationCommandContext {
-  config: SyncConfig;
+  config: Configuration;
   connectionId: string;
   params: MigrationCommandParams;
   knexMigrationConfig: Knex.MigratorConfig;

@@ -2,7 +2,7 @@
 
 import * as path from 'path';
 
-import SyncConfig from './domain/SyncConfig';
+import Configuration from './domain/Configuration';
 import SyncParams from './domain/SyncParams';
 import ExecutionContext from './domain/ExecutionContext';
 
@@ -14,7 +14,7 @@ export const CONFIG_FILENAME = 'sync-db.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
 export const INJECTED_CONFIG_TABLE = '__sync_db_injected_config';
-export const DEFAULT_CONFIG: SyncConfig = {
+export const DEFAULT_CONFIG: Configuration = {
   basePath: path.resolve(process.cwd(), 'src/sql'),
   execution: 'parallel',
   sql: [],

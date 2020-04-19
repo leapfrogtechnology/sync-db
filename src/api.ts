@@ -8,7 +8,7 @@ import { isKnexInstance, getConfig, createInstance } from './util/db';
 
 import * as init from './init';
 import SyncParams from './domain/SyncParams';
-import SyncConfig from './domain/SyncConfig';
+import Configuration from './domain/Configuration';
 import SyncResult from './domain/SyncResult';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionReference from './domain/ConnectionReference';
@@ -22,13 +22,13 @@ import { MigrationCommandParams, MigrationResult } from './service/knexMigrator'
 /**
  * Synchronize all the configured database connections.
  *
- * @param {SyncConfig} config
+ * @param {Configuration} config
  * @param {(ConnectionConfig[] | ConnectionConfig | Knex[] | Knex)} conn
  * @param {SyncParams} [options]
  * @returns {Promise<SyncResult[]>}
  */
 export async function synchronize(
-  config: SyncConfig,
+  config: Configuration,
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: SyncParams
 ): Promise<SyncResult[]> {
@@ -51,8 +51,16 @@ export async function synchronize(
   return executeProcesses(processes, config);
 }
 
+/**
+ * Migrate Latest
+ *
+ * @param {Configuration} config
+ * @param {(ConnectionConfig[] | ConnectionConfig | Knex[] | Knex)} conn
+ * @param {MigrationCommandParams} [options]
+ * @returns {Promise<MigrationResult[]>}
+ */
 export async function migrateLatest(
-  config: SyncConfig,
+  config: Configuration,
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: MigrationCommandParams
 ): Promise<MigrationResult[]> {
@@ -78,8 +86,16 @@ export async function migrateLatest(
   return executeProcesses(processes, config);
 }
 
+/**
+ * Migrate Rollback.
+ *
+ * @param {Configuration} config
+ * @param {(ConnectionConfig[] | ConnectionConfig | Knex[] | Knex)} conn
+ * @param {MigrationCommandParams} [options]
+ * @returns {Promise<MigrationResult[]>}
+ */
 export async function migrateRollback(
-  config: SyncConfig,
+  config: Configuration,
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: MigrationCommandParams
 ): Promise<MigrationResult[]> {
@@ -105,8 +121,16 @@ export async function migrateRollback(
   return executeProcesses(processes, config);
 }
 
+/**
+ * List Migrations.
+ *
+ * @param {Configuration} config
+ * @param {(ConnectionConfig[] | ConnectionConfig | Knex[] | Knex)} conn
+ * @param {MigrationCommandParams} [options]
+ * @returns {Promise<MigrationResult[]>}
+ */
 export async function migrateList(
-  config: SyncConfig,
+  config: Configuration,
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: MigrationCommandParams
 ): Promise<MigrationResult[]> {

@@ -1,9 +1,9 @@
 import Mapping from './Mapping';
 
 /**
- * Interface for synchronization configuration sycn-db.yml.
+ * Configuration schema interface.
  */
-interface SyncConfig {
+interface Configuration {
   basePath: string;
   execution: 'parallel' | 'sequential';
   sql: string[];
@@ -22,4 +22,4 @@ interface SyncConfig {
   };
 }
 
-export default SyncConfig;
+export default Configuration;

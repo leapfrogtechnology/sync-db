@@ -2,7 +2,7 @@ import Knex from 'knex';
 
 import { log } from './util/logger';
 import { validate, isCLI } from './config';
-import SyncConfig from './domain/SyncConfig';
+import Configuration from './domain/Configuration';
 import * as migratorService from './service/migrator';
 import MigrationContext from './domain/MigrationContext';
 import KnexMigrationSource from './migration/KnexMigrationSource';
@@ -20,11 +20,11 @@ export interface PreparedRequirements {
 /**
  * Prepare configurations, preload requirements and validate before proceeding further.
  *
- * @param {SyncConfig} config
+ * @param {Configuration} config
  * @param {PrepareOptions} options
  * @returns {Promise<PreparedRequirements>}
  */
-export async function prepare(config: SyncConfig, options: PrepareOptions): Promise<PreparedRequirements> {
+export async function prepare(config: Configuration, options: PrepareOptions): Promise<PreparedRequirements> {
   log('Prepare: ', options);
 
   // Validate the config for programmatic API access.
@@ -46,11 +46,14 @@ export async function prepare(config: SyncConfig, options: PrepareOptions): Prom
 /**
  * Resolve migration context based on the migration configuration.
  *
- * @param {SyncConfig} config
+ * @param {Configuration} config
  * @param {PrepareOptions} options
  * @returns {(Promise<MigrationContext | null>)}
  */
-async function resolveMigrationContext(config: SyncConfig, options: PrepareOptions): Promise<MigrationContext | null> {
+async function resolveMigrationContext(
+  config: Configuration,
+  options: PrepareOptions
+): Promise<MigrationContext | null> {
   if (options.loadMigrations !== true) {
     return null;
   }
