@@ -1,5 +1,4 @@
 import * as Knex from 'knex';
-import * as path from 'path';
 import { mergeDeepRight } from 'ramda';
 
 import { log } from './util/logger';
@@ -12,15 +11,12 @@ import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionReference from './domain/ConnectionReference';
-import SqlMigrationContext from './migration/SqlMigrationContext';
-import KnexMigrationSource from './migration/KnexMigrationSource';
 
 // Services
 import { synchronizeDatabase } from './service/sync';
 import { executeProcesses } from './service/execution';
-import * as migratorService from './service/migrator';
-import * as knexMigratorService from './service/knexMigrator';
 import { MigrationCommandParams, MigrationResult } from './service/knexMigrator';
+import { runMigrateFunc, resolveKnexMigrationConfig, migrationApiMap } from './service/knexMigrator';
 
 /**
  * Synchronize all the configured database connections.
@@ -46,13 +42,7 @@ export async function synchronize(
     })
   );
 
-  // Explicitly suppressing the `| Error` type since
-  // all errors are already caught inside synchronizeDatabase().
-  const results = (await executeProcesses(processes, config)) as SyncResult[];
-
-  log('Synchronization completed.');
-
-  return results;
+  return executeProcesses(processes, config);
 }
 
 export async function migrateLatest(
@@ -63,40 +53,22 @@ export async function migrateLatest(
   log('Starting to migrate.');
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
-
-  const { basePath, migration } = config;
-  const migrationPath = path.join(basePath, migration.directory);
-  const migrations = await migratorService.resolveSqlMigrations(migrationPath);
-
-  log('Migration Path:', migrationPath);
-  log('Available migrations:');
-  log('%O', migrations);
-
-  // TODO: We'll need to support different types of migrations eg both sql & js
-  // For instance migrations in JS would have different context like JavaScriptMigrationContext.
-  const getMigrationContext = (connectionId: string) => new SqlMigrationContext(connectionId, migrations);
+  const knexMigrationConfig = await resolveKnexMigrationConfig(config);
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
-    knexMigratorService.runMigrateFunc(
+    runMigrateFunc(
       connection,
       {
         config,
         params,
         connectionId,
-        knexMigrationConfig: {
-          tableName: config.migration.tableName,
-          migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
-        }
+        knexMigrationConfig: knexMigrationConfig(connectionId)
       },
-      knexMigratorService.migrationApiMap['migrate.latest']
+      migrationApiMap['migrate.latest']
     )
   );
 
-  const results = await executeProcesses(processes, config);
-
-  log('Migrations completed.');
-
-  return results;
+  return executeProcesses(processes, config);
 }
 
 export async function migrateRollback(
@@ -107,40 +79,22 @@ export async function migrateRollback(
   log('Starting to migrate.');
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
-
-  const { basePath, migration } = config;
-  const migrationPath = path.join(basePath, migration.directory);
-  const migrations = await migratorService.resolveSqlMigrations(migrationPath);
-
-  log('Migration Path:', migrationPath);
-  log('Available migrations:');
-  log('%O', migrations);
-
-  // TODO: We'll need to support different types of migrations eg both sql & js
-  // For instance migrations in JS would have different context like JavaScriptMigrationContext.
-  const getMigrationContext = (connectionId: string) => new SqlMigrationContext(connectionId, migrations);
+  const knexMigrationConfig = await resolveKnexMigrationConfig(config);
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
-    knexMigratorService.runMigrateFunc(
+    runMigrateFunc(
       connection,
       {
         config,
         params,
         connectionId,
-        knexMigrationConfig: {
-          tableName: config.migration.tableName,
-          migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
-        }
+        knexMigrationConfig: knexMigrationConfig(connectionId)
       },
-      knexMigratorService.migrationApiMap['migrate.rollback']
+      migrationApiMap['migrate.rollback']
     )
   );
 
-  const results = await executeProcesses(processes, config);
-
-  log('Migrations completed.');
-
-  return results;
+  return executeProcesses(processes, config);
 }
 
 export async function migrateList(
@@ -150,40 +104,22 @@ export async function migrateList(
 ): Promise<MigrationResult[]> {
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
-
-  const { basePath, migration } = config;
-  const migrationPath = path.join(basePath, migration.directory);
-  const migrations = await migratorService.resolveSqlMigrations(migrationPath);
-
-  log('Migration Path:', migrationPath);
-  log('Available migration sources:');
-  log('%O', migrations);
-
-  // TODO: We'll need to support different types of migrations eg both sql & js
-  // For instance migrations in JS would have different context like JavaScriptMigrationContext.
-  const getMigrationContext = (connectionId: string) => new SqlMigrationContext(connectionId, migrations);
+  const knexMigrationConfig = await resolveKnexMigrationConfig(config);
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
-    knexMigratorService.runMigrateFunc(
+    runMigrateFunc(
       connection,
       {
         config,
         params,
         connectionId,
-        knexMigrationConfig: {
-          tableName: config.migration.tableName,
-          migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
-        }
+        knexMigrationConfig: knexMigrationConfig(connectionId)
       },
-      knexMigratorService.migrationApiMap['migrate.list']
+      migrationApiMap['migrate.list']
     )
   );
 
-  const results = await executeProcesses(processes, config);
-
-  log('Finished retrieving lists.');
-
-  return results;
+  return executeProcesses(processes, config);
 }
 
 /**

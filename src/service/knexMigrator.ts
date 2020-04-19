@@ -1,9 +1,12 @@
 import Knex from 'knex';
 
 import { isCLI } from '../config';
-import { dbLogger } from '../util/logger';
+import { dbLogger, log } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
 import SyncConfig from '../domain/SyncConfig';
+import * as migratorService from './migrator';
+import KnexMigrationSource from '../migration/KnexMigrationSource';
+import SqlMigrationContext from '../migration/SqlMigrationContext';
 
 export interface MigrationResult {
   connectionId: string;
@@ -34,6 +37,21 @@ export const migrationApiMap = {
   'migrate.list': (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => trx.migrate.list(config)
 };
 
+// TODO: Naming
+export async function resolveKnexMigrationConfig(config: SyncConfig) {
+  const migrations = await migratorService.resolveSqlMigrations(config);
+  log('Available migrations:\n%O', migrations);
+
+  return (connectionId: string) => ({
+    tableName: config.migration.tableName,
+    migrationSource: new KnexMigrationSource(
+      // TODO: We'll need to support different types of migrations eg both sql & js
+      // For instance migrations in JS would have different context like JavaScriptMigrationContext.
+      new SqlMigrationContext(connectionId, migrations)
+    )
+  });
+}
+
 /**
  * Invoke Knex's migration API.
  *
@@ -47,7 +65,7 @@ export async function runMigrateFunc(
   context: MigrationCommandContext,
   func: (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>
 ): Promise<MigrationResult> {
-  const log = dbLogger(context.connectionId);
+  const dbLog = dbLogger(context.connectionId);
   const { connectionId, knexMigrationConfig } = context;
   const funcName = func.name || 'func';
 
@@ -57,19 +75,19 @@ export async function runMigrateFunc(
   const timeStart = process.hrtime();
 
   try {
-    log(`BEGIN: ${funcName}`);
+    dbLog(`BEGIN: ${funcName}`);
     data = await func(trx, knexMigrationConfig);
 
-    log(`END: ${funcName}`);
-    log('Result:\n%O', data);
+    dbLog(`END: ${funcName}`);
+    dbLog('Result:\n%O', data);
   } catch (e) {
-    log(`Error caught for connection ${connectionId}:`, e);
+    dbLog(`Error caught for connection ${connectionId}:`, e);
     error = e;
   }
 
   const timeElapsed = getElapsedTime(timeStart);
 
-  log(`Execution completed in ${timeElapsed} s`);
+  dbLog(`Execution completed in ${timeElapsed} s`);
 
   const result: MigrationResult = {
     connectionId,
