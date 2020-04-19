@@ -6,17 +6,18 @@ import { getConnectionId } from './config';
 import { DEFAULT_SYNC_PARAMS } from './constants';
 import { isKnexInstance, getConfig, createInstance } from './util/db';
 
+import * as init from './init';
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionReference from './domain/ConnectionReference';
 
-// Services
+// Service
 import { synchronizeDatabase } from './service/sync';
 import { executeProcesses } from './service/execution';
+import { runMigrateFunc, migrationApiMap } from './service/knexMigrator';
 import { MigrationCommandParams, MigrationResult } from './service/knexMigrator';
-import { runMigrateFunc, resolveKnexMigrationConfig, migrationApiMap } from './service/knexMigrator';
 
 /**
  * Synchronize all the configured database connections.
@@ -31,7 +32,12 @@ export async function synchronize(
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: SyncParams
 ): Promise<SyncResult[]> {
-  log('Starting to synchronize.');
+  log('Synchronize');
+
+  // Note: This does nothing right now.
+  // TODO: Need to preload the SQL source code under this step.
+  await init.prepare(config, { loadSqlSources: true });
+
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
   const processes = connections.map(({ connection, id: connectionId }) => () =>
@@ -50,10 +56,11 @@ export async function migrateLatest(
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: MigrationCommandParams
 ): Promise<MigrationResult[]> {
-  log('Starting to migrate.');
+  log('Migrate Latest');
+
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
-  const knexMigrationConfig = await resolveKnexMigrationConfig(config);
+  const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
     runMigrateFunc(
@@ -76,10 +83,11 @@ export async function migrateRollback(
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: MigrationCommandParams
 ): Promise<MigrationResult[]> {
-  log('Starting to migrate.');
+  log('Migrate Rollback');
+
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
-  const knexMigrationConfig = await resolveKnexMigrationConfig(config);
+  const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
     runMigrateFunc(
@@ -102,9 +110,11 @@ export async function migrateList(
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
   options?: MigrationCommandParams
 ): Promise<MigrationResult[]> {
+  log('Migrate List');
+
   const connections = mapToConnectionReferences(conn);
   const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
-  const knexMigrationConfig = await resolveKnexMigrationConfig(config);
+  const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
     runMigrateFunc(
