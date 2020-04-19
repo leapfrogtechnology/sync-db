@@ -1,4 +1,5 @@
 import Knex from 'knex';
+import * as path from 'path';
 
 import { log } from './util/logger';
 import { validate, isCLI } from './config';
@@ -60,9 +61,12 @@ async function resolveMigrationContext(
 
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
+  const { basePath, migration } = config;
+  const migrationPath = path.join(basePath, migration.directory);
+
   switch (config.migration.sourceType) {
     case 'sql':
-      const src = await migratorService.resolveSqlMigrations(config);
+      const src = await migratorService.resolveSqlMigrations(migrationPath);
 
       log('Available migration sources:\n%O', src);
 

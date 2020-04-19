@@ -4,7 +4,7 @@ import { log } from '../util/logger';
 import { handleFlags } from '../cli';
 import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
-import SynchronizeParams from '../domain/SyncParams';
+import SynchronizeParams from '../domain/SynchronizeParams';
 import { printError, printLine } from '../util/io';
 import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';

@@ -7,7 +7,7 @@ import { DEFAULT_SYNC_PARAMS } from './constants';
 import { isKnexInstance, getConfig, createInstance } from './util/db';
 
 import * as init from './init';
-import SynchronizeParams from './domain/SyncParams';
+import SynchronizeParams from './domain/SynchronizeParams';
 import Configuration from './domain/Configuration';
 import SyncResult from './domain/SyncResult';
 import ConnectionConfig from './domain/ConnectionConfig';

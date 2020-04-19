@@ -9,6 +9,12 @@ describe('UTIL: KnexMigrationSource', () => {
     const migrationContext: MigrationContext = new (class {
       connectionId = 'testdb1';
 
+      bind(connectionId: string) {
+        this.connectionId = connectionId;
+
+        return this;
+      }
+
       keys(): string[] {
         return ['mgr_001', 'mgr_002', 'mgr_003', 'mgr_004'];
       }

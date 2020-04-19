@@ -3,7 +3,6 @@ import * as path from 'path';
 import { glob, exists } from '../util/fs';
 import { resolveFile } from './sqlRunner';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
-import Configuration from '../domain/Configuration';
 
 const FILE_PATTERN = /(.+)\.(up|down)\.sql$/;
 
@@ -35,12 +34,10 @@ export async function getSqlMigrationNames(migrationPath: string): Promise<strin
 /**
  * Resolve all the migration source for each of the migration entries using the configurations.
  *
- * @param {Configuration} config
+ * @param {string} migrationPath
  * @returns {Promise<SqlMigrationEntry[]>}
  */
-export async function resolveSqlMigrations(config: Configuration): Promise<SqlMigrationEntry[]> {
-  const { basePath, migration } = config;
-  const migrationPath = path.join(basePath, migration.directory);
+export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMigrationEntry[]> {
   const migrationNames = await getSqlMigrationNames(migrationPath);
   const migrationPromises = migrationNames.map(async name => {
     const upFilename = `${name}.up.sql`;

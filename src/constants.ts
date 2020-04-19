@@ -3,7 +3,7 @@
 import * as path from 'path';
 
 import Configuration from './domain/Configuration';
-import SynchronizeParams from './domain/SyncParams';
+import SynchronizeParams from './domain/SynchronizeParams';
 import ExecutionContext from './domain/ExecutionContext';
 
 // General constants

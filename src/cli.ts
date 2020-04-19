@@ -5,7 +5,7 @@ import { printLine } from './util/io';
 import SyncDbOptions from './domain/SyncDbOptions';
 import { CONNECTIONS_FILENAME } from './constants';
 import { resolveConnectionsFromEnv } from './config';
-import SynchronizeParams from './domain/SyncParams';
+import SynchronizeParams from './domain/SynchronizeParams';
 
 /**
  * Generates connections.sync-db.json file.

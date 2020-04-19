@@ -5,7 +5,7 @@ import SqlMigrationEntry from '../../src/domain/SqlMigrationEntry';
 import SqlMigrationContext from '../../src/migration/SqlMigrationContext';
 
 describe('UTIL: SqlMigrationContext', () => {
-  const getInstance = (list: SqlMigrationEntry[]) => new SqlMigrationContext('testdb1', list);
+  const getInstance = (list: SqlMigrationEntry[]) => new SqlMigrationContext(list);
 
   describe('keys', () => {
     it('should return an empty list if migrations are empty.', () => {

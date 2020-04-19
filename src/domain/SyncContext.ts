@@ -1,5 +1,5 @@
 import Configuration from './Configuration';
-import SynchronizeParams from './SyncParams';
+import SynchronizeParams from './SynchronizeParams';
 
 /**
  * Synchronize context parameters for the current database connection.
