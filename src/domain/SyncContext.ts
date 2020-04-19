@@ -1,5 +1,5 @@
 import Configuration from './Configuration';
-import SyncParams from './SyncParams';
+import SynchronizeParams from './SyncParams';
 
 /**
  * Synchronize context parameters for the current database connection.
@@ -7,7 +7,7 @@ import SyncParams from './SyncParams';
 interface SyncContext {
   config: Configuration;
   connectionId: string;
-  params: SyncParams;
+  params: SynchronizeParams;
 }
 
 export default SyncContext;

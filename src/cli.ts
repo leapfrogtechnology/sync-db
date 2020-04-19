@@ -5,7 +5,7 @@ import { printLine } from './util/io';
 import SyncDbOptions from './domain/SyncDbOptions';
 import { CONNECTIONS_FILENAME } from './constants';
 import { resolveConnectionsFromEnv } from './config';
-import SyncParams from './domain/SyncParams';
+import SynchronizeParams from './domain/SyncParams';
 
 /**
  * Generates connections.sync-db.json file.
@@ -29,7 +29,7 @@ async function generateConnection(): Promise<void> {
  * @param {SyncDbOptions} flags
  * @returns {Promise<void>}
  */
-export async function handleFlags(flags: SyncDbOptions, params: SyncParams): Promise<void> {
+export async function handleFlags(flags: SyncDbOptions, params: SynchronizeParams): Promise<void> {
   if (flags['generate-connections']) {
     await generateConnection();
     process.exit(0);

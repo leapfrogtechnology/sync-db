@@ -4,7 +4,7 @@ import { log } from '../util/logger';
 import { handleFlags } from '../cli';
 import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
-import SyncParams from '../domain/SyncParams';
+import SynchronizeParams from '../domain/SyncParams';
 import { printError, printLine } from '../util/io';
 import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';
@@ -29,9 +29,9 @@ class Synchronize extends Command {
    * Default CLI options for running synchronize.
    *
    * @param {*} userParams
-   * @returns {SyncParams}
+   * @returns {SynchronizeParams}
    */
-  getSyncParams(userParams: any): SyncParams {
+  getSyncParams(userParams: any): SynchronizeParams {
     return {
       ...userParams,
       // Individual success handler

@@ -3,7 +3,7 @@
 import * as path from 'path';
 
 import Configuration from './domain/Configuration';
-import SyncParams from './domain/SyncParams';
+import SynchronizeParams from './domain/SyncParams';
 import ExecutionContext from './domain/ExecutionContext';
 
 // General constants
@@ -32,7 +32,7 @@ export const DEFAULT_CONFIG: Configuration = {
   }
 };
 
-export const DEFAULT_SYNC_PARAMS: SyncParams = {
+export const DEFAULT_SYNC_PARAMS: SynchronizeParams = {
   force: false,
   onSuccess: (context: ExecutionContext) => Promise.resolve(),
   onFailed: (context: ExecutionContext) => Promise.resolve()

@@ -7,7 +7,7 @@ import { DEFAULT_SYNC_PARAMS } from './constants';
 import { isKnexInstance, getConfig, createInstance } from './util/db';
 
 import * as init from './init';
-import SyncParams from './domain/SyncParams';
+import SynchronizeParams from './domain/SyncParams';
 import Configuration from './domain/Configuration';
 import SyncResult from './domain/SyncResult';
 import ConnectionConfig from './domain/ConnectionConfig';
@@ -24,13 +24,13 @@ import { MigrationCommandParams, MigrationResult } from './service/knexMigrator'
  *
  * @param {Configuration} config
  * @param {(ConnectionConfig[] | ConnectionConfig | Knex[] | Knex)} conn
- * @param {SyncParams} [options]
+ * @param {SynchronizeParams} [options]
  * @returns {Promise<SyncResult[]>}
  */
 export async function synchronize(
   config: Configuration,
   conn: ConnectionConfig[] | ConnectionConfig | Knex[] | Knex,
-  options?: SyncParams
+  options?: SynchronizeParams
 ): Promise<SyncResult[]> {
   log('Synchronize');
 
