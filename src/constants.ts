@@ -27,7 +27,8 @@ export const DEFAULT_CONFIG: SyncConfig = {
   },
   migration: {
     directory: 'migration',
-    tableName: 'knex_migrations' // Note: This is Knex's default value. Just keeping it same.
+    tableName: 'knex_migrations', // Note: This is Knex's default value. Just keeping it same.
+    sourceType: 'sql'
   }
 };
 
