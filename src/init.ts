@@ -1,12 +1,12 @@
 import Knex from 'knex';
 
 import { log } from './util/logger';
+import { validate, isCLI } from './config';
 import SyncConfig from './domain/SyncConfig';
 import * as migratorService from './service/migrator';
 import MigrationContext from './domain/MigrationContext';
 import KnexMigrationSource from './migration/KnexMigrationSource';
 import SqlMigrationContext from './migration/SqlMigrationContext';
-import { validate } from './config';
 
 export interface PrepareOptions {
   loadMigrations?: boolean;
@@ -27,9 +27,11 @@ export interface PreparedRequirements {
 export async function prepare(config: SyncConfig, options: PrepareOptions): Promise<PreparedRequirements> {
   log('Prepare: ', options);
 
-  // Validate the config.
-  // This might be the first step for the provided configuration for the programmatic API.
-  validate(config);
+  // Validate the config for programmatic API access.
+  // CLI access validates the config while loading, for programmatic access it should be done here.
+  if (!isCLI()) {
+    validate(config);
+  }
 
   const migrationContext = await resolveMigrationContext(config, options);
 
@@ -53,7 +55,7 @@ async function resolveMigrationContext(config: SyncConfig, options: PrepareOptio
     return null;
   }
 
-  log(`Initialize migration context for sourceType: ${config.migration.sourceType}`);
+  log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
   switch (config.migration.sourceType) {
     case 'sql':
