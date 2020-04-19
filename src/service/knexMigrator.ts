@@ -1,12 +1,9 @@
 import Knex from 'knex';
 
 import { isCLI } from '../config';
-import { dbLogger, log } from '../util/logger';
+import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
 import SyncConfig from '../domain/SyncConfig';
-import * as migratorService from './migrator';
-import KnexMigrationSource from '../migration/KnexMigrationSource';
-import SqlMigrationContext from '../migration/SqlMigrationContext';
 
 export interface MigrationResult {
   connectionId: string;
@@ -36,21 +33,6 @@ export const migrationApiMap = {
   'migrate.rollback': (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => trx.migrate.rollback(config),
   'migrate.list': (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => trx.migrate.list(config)
 };
-
-// TODO: Naming
-export async function resolveKnexMigrationConfig(config: SyncConfig) {
-  const migrations = await migratorService.resolveSqlMigrations(config);
-  log('Available migrations:\n%O', migrations);
-
-  return (connectionId: string) => ({
-    tableName: config.migration.tableName,
-    migrationSource: new KnexMigrationSource(
-      // TODO: We'll need to support different types of migrations eg both sql & js
-      // For instance migrations in JS would have different context like JavaScriptMigrationContext.
-      new SqlMigrationContext(connectionId, migrations)
-    )
-  });
-}
 
 /**
  * Invoke Knex's migration API.
