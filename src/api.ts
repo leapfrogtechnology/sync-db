@@ -4,22 +4,23 @@ import { mergeDeepRight } from 'ramda';
 
 import { log } from './util/logger';
 import { getConnectionId } from './config';
+import { DEFAULT_SYNC_PARAMS } from './constants';
+import { isKnexInstance, getConfig, createInstance } from './util/db';
+
 import SyncParams from './domain/SyncParams';
 import SyncConfig from './domain/SyncConfig';
 import SyncResult from './domain/SyncResult';
-import { DEFAULT_SYNC_PARAMS } from './constants';
-
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionReference from './domain/ConnectionReference';
-import { isKnexInstance, getConfig, createInstance } from './util/db';
+import SqlMigrationContext from './migration/SqlMigrationContext';
+import KnexMigrationSource from './migration/KnexMigrationSource';
 
 // Services
 import { synchronizeDatabase } from './service/sync';
 import { executeProcesses } from './service/execution';
 import * as migratorService from './service/migrator';
-import SqlMigrationContext from './migration/SqlMigrationContext';
-import KnexMigrationSource from './migration/KnexMigrationSource';
-import { MigrationCommandParams, MigrationResult } from './service/migrator';
+import * as knexMigratorService from './service/knexMigrator';
+import { MigrationCommandParams, MigrationResult } from './service/knexMigrator';
 
 /**
  * Synchronize all the configured database connections.
@@ -76,15 +77,19 @@ export async function migrateLatest(
   const getMigrationContext = (connectionId: string) => new SqlMigrationContext(connectionId, migrations);
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
-    migratorService.migrateLatest(connection, {
-      config,
-      params,
-      connectionId,
-      knexMigrationConfig: {
-        tableName: config.migration.tableName,
-        migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
-      }
-    })
+    knexMigratorService.runMigrateFunc(
+      connection,
+      {
+        config,
+        params,
+        connectionId,
+        knexMigrationConfig: {
+          tableName: config.migration.tableName,
+          migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
+        }
+      },
+      knexMigratorService.migrationApiMap['migrate.latest']
+    )
   );
 
   const results = await executeProcesses(processes, config);
@@ -116,15 +121,19 @@ export async function migrateRollback(
   const getMigrationContext = (connectionId: string) => new SqlMigrationContext(connectionId, migrations);
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
-    migratorService.migrateRollback(connection, {
-      config,
-      params,
-      connectionId,
-      knexMigrationConfig: {
-        tableName: config.migration.tableName,
-        migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
-      }
-    })
+    knexMigratorService.runMigrateFunc(
+      connection,
+      {
+        config,
+        params,
+        connectionId,
+        knexMigrationConfig: {
+          tableName: config.migration.tableName,
+          migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
+        }
+      },
+      knexMigratorService.migrationApiMap['migrate.rollback']
+    )
   );
 
   const results = await executeProcesses(processes, config);
@@ -155,15 +164,19 @@ export async function migrateList(
   const getMigrationContext = (connectionId: string) => new SqlMigrationContext(connectionId, migrations);
 
   const processes = connections.map(({ connection, id: connectionId }) => () =>
-    migratorService.migrateList(connection, {
-      config,
-      params,
-      connectionId,
-      knexMigrationConfig: {
-        tableName: config.migration.tableName,
-        migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
-      }
-    })
+    knexMigratorService.runMigrateFunc(
+      connection,
+      {
+        config,
+        params,
+        connectionId,
+        knexMigrationConfig: {
+          tableName: config.migration.tableName,
+          migrationSource: new KnexMigrationSource(getMigrationContext(connectionId))
+        }
+      },
+      knexMigratorService.migrationApiMap['migrate.list']
+    )
   );
 
   const results = await executeProcesses(processes, config);

@@ -42,6 +42,7 @@ class KnexMigrationSource {
 
     return migration;
   }
+
   /**
    * Get the migration runner.
    *

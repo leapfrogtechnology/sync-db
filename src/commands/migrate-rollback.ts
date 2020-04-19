@@ -3,7 +3,7 @@ import { bold, red, cyan } from 'chalk';
 
 import { printLine, printError, printInfo } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { MigrationCommandParams, MigrationResult } from '../service/migrator';
+import { MigrationCommandParams, MigrationResult } from '../service/knexMigrator';
 import { dbLogger } from '../util/logger';
 
 /**
