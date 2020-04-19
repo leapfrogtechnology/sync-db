@@ -88,7 +88,7 @@ async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<vo
  * @returns {Promise<SyncResult>}
  */
 export async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<SyncResult> {
-  const { connectionId } = context;
+  const { connectionId, migrateFunc } = context;
   const log = dbLogger(connectionId);
   const result: SyncResult = { connectionId, success: false };
 
@@ -100,6 +100,14 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
     // Run the process in a single transaction for a database connection.
     await connection.transaction(async trx => {
       await teardown(trx, context);
+
+      if (context.params['skip-migration']) {
+        log('Skipped migrations.');
+      } else {
+        log('Running migrations.');
+        await migrateFunc(trx);
+      }
+
       await setup(trx, context);
     });
 

@@ -34,6 +34,7 @@ export const DEFAULT_CONFIG: Configuration = {
 
 export const DEFAULT_SYNC_PARAMS: SynchronizeParams = {
   force: false,
+  'skip-migration': false,
   onSuccess: (context: ExecutionContext) => Promise.resolve(),
   onFailed: (context: ExecutionContext) => Promise.resolve()
 };

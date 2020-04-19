@@ -34,17 +34,31 @@ export async function synchronize(
 ): Promise<SyncResult[]> {
   log('Synchronize');
 
-  // Note: This does nothing right now.
+  const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
+
   // TODO: Need to preload the SQL source code under this step.
-  await init.prepare(config, { loadSqlSources: true });
+  const { knexMigrationConfig } = await init.prepare(config, {
+    loadSqlSources: true,
+    loadMigrations: !params['skip-migration']
+  });
 
   const connections = mapToConnectionReferences(conn);
-  const params = mergeDeepRight(DEFAULT_SYNC_PARAMS, options || {});
   const processes = connections.map(({ connection, id: connectionId }) => () =>
     synchronizeDatabase(connection, {
       config,
       params,
-      connectionId
+      connectionId,
+      migrateFunc: (trx: Knex.Transaction) =>
+        runMigrateFunc(
+          trx,
+          {
+            config,
+            params,
+            connectionId,
+            knexMigrationConfig: knexMigrationConfig(connectionId)
+          },
+          migrationApiMap['migrate.latest']
+        )
     })
   );
 
