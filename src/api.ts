@@ -53,8 +53,8 @@ export async function synchronize(
           trx,
           {
             config,
-            params,
             connectionId,
+            params: { ...params, onSuccess: params.onMigrationSuccess, onFailed: params.onMigrationFailed },
             knexMigrationConfig: knexMigrationConfig(connectionId)
           },
           migrationApiMap['migrate.latest']

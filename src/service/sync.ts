@@ -1,6 +1,5 @@
 import * as Knex from 'knex';
 
-import { isCLI } from '../config';
 import * as sqlRunner from './sqlRunner';
 import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
@@ -97,9 +96,27 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
   try {
     log('Starting synchronization.');
 
+    // Trigger onStarted handler if bound.
+    if (context.params.onStarted) {
+      await context.params.onStarted({
+        connectionId,
+        success: false,
+        timeElapsed: getElapsedTime(timeStart)
+      });
+    }
+
     // Run the process in a single transaction for a database connection.
     await connection.transaction(async trx => {
       await teardown(trx, context);
+
+      // Trigger onTeardownSuccess if bound.
+      if (context.params.onTeardownSuccess) {
+        await context.params.onTeardownSuccess({
+          connectionId,
+          success: true,
+          timeElapsed: getElapsedTime(timeStart)
+        });
+      }
 
       if (context.params['skip-migration']) {
         log('Skipped migrations.');
@@ -122,16 +139,18 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
 
   log(`Execution completed in ${timeElapsed} s`);
 
-  // If it's a CLI environment, invoke the handler.
-  if (isCLI()) {
-    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
-    const execContext: ExecutionContext = {
-      connectionId,
-      timeElapsed,
-      success: result.success
-    };
+  const execContext: ExecutionContext = {
+    connectionId,
+    timeElapsed,
+    success: result.success,
+    error: result.error
+  };
 
-    await handler(execContext);
+  // Invoke corresponding handlers if they're sent.
+  if (result.success && context.params.onSuccess) {
+    await context.params.onSuccess(execContext);
+  } else if (!result.success && context.params.onFailed) {
+    await context.params.onFailed(execContext);
   }
 
   return result;
