@@ -1,12 +1,14 @@
 import { Command, flags } from '@oclif/command';
 
-import { log } from '../util/logger';
+import { log, dbLogger } from '../util/logger';
 import { handleFlags } from '../cli';
 import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
-import { printError, printLine } from '../util/io';
+import { printError, printLine, printInfo } from '../util/io';
 import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';
+import { MigrationResult } from '../service/knexMigrator';
+import { bold, cyan, red, green } from 'chalk';
 
 /**
  * Synchronize command handler.
@@ -25,17 +27,60 @@ class Synchronize extends Command {
     'generate-connections': flags.boolean({ char: 'c', description: 'Generate connections' })
   };
 
+  onStarted = async (context: ExecutionContext) => {
+    await printLine(bold(` ▸ ${context.connectionId}`));
+    await printInfo('   [✓] Synchronization - started');
+  };
+
+  onTeardownSuccess = (context: ExecutionContext) =>
+    printLine(green('   [✓] Synchronization - teardown') + ` (${context.timeElapsed}s)`);
+
   /**
    * Success handler for each connection.
    */
   onSuccess = (context: ExecutionContext) =>
-    printLine(`  [✓] ${context.connectionId} - Successful (${context.timeElapsed}s)`);
+    printLine(green('   [✓] Synchronization - completed') + ` (${context.timeElapsed}s)`);
+
+  /**
+   * Success handler for migration run during sync process.
+   */
+  onMigrationSuccess = async (result: MigrationResult) => {
+    const logDb = dbLogger(result.connectionId);
+    const [num, list] = result.data;
+    const alreadyUpToDate = num && list.length === 0;
+
+    logDb('Up to date: ', alreadyUpToDate);
+
+    if (alreadyUpToDate) {
+      await printLine(green('   [✓] Migrations - up to date') + ` (${result.timeElapsed}s)`);
+
+      return;
+    }
+
+    await printLine(green(`   [✓] Migrations - ${list.length} run`) + ` (${result.timeElapsed}s)`);
+
+    // Completed migrations.
+    for (const item of list) {
+      await printLine(cyan(`       - ${item}`));
+    }
+  };
+
+  /**
+   * Failure handler for migration during sync process.
+   */
+  onMigrationFailed = async (result: MigrationResult) => {
+    await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)\n`));
+
+    // await printError(`   ${result.error}\n`);
+  };
 
   /**
    * Failure handler for each connection.
    */
-  onFailed = (context: ExecutionContext) =>
-    printLine(`  [✖] ${context.connectionId} - Failed (${context.timeElapsed}s)`);
+  onFailed = async (result: ExecutionContext) => {
+    await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));
+    // await printError(`   ${result.error}\n`);
+  };
 
   /**
    * Check the results for each connection and display them.
@@ -59,15 +104,15 @@ class Synchronize extends Command {
     if (!allComplete) {
       await printLine(`Synchronization failed for ${failedCount} connection(s):\n`);
 
-      failedAttempts.forEach(async (attempt, index) => {
-        await printLine(`${index + 1}) ${attempt.connectionId}`);
+      for (const attempt of failedAttempts) {
+        await printLine(bold(` ▸ ${attempt.connectionId}\n`));
         await printError(attempt.error.toString());
 
         // Send verbose error with stack trace to debug logs.
         log(attempt.error);
 
         await printLine();
-      });
+      }
     }
 
     return { totalCount, failedCount, successfulCount };
@@ -82,8 +127,12 @@ class Synchronize extends Command {
     const { flags: parsedFlags } = this.parse(Synchronize);
     const params = {
       ...parsedFlags,
+      onStarted: this.onStarted,
+      onTeardownSuccess: this.onTeardownSuccess,
       onSuccess: this.onSuccess,
-      onFailed: this.onFailed
+      onFailed: this.onFailed,
+      onMigrationSuccess: this.onMigrationSuccess,
+      onMigrationFailed: this.onMigrationFailed
     };
 
     try {
