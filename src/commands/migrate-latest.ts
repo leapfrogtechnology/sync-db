@@ -3,7 +3,7 @@ import { bold, red, cyan } from 'chalk';
 
 import { printLine, printError, printInfo } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { MigrationCommandParams, MigrationResult } from '../service/knexMigrator';
+import { MigrationResult } from '../service/knexMigrator';
 import { dbLogger } from '../util/logger';
 
 /**
@@ -12,37 +12,40 @@ import { dbLogger } from '../util/logger';
 class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
-  getParams(): MigrationCommandParams {
-    return {
-      onSuccess: async (result: MigrationResult) => {
-        const log = dbLogger(result.connectionId);
-        const [num, list] = result.data;
-        const alreadyUpToDate = num && list.length === 0;
+  /**
+   * Success handler for each connection.
+   */
+  onSuccess = async (result: MigrationResult) => {
+    const log = dbLogger(result.connectionId);
+    const [num, list] = result.data;
+    const alreadyUpToDate = num && list.length === 0;
 
-        log('Up to date: ', alreadyUpToDate);
+    log('Up to date: ', alreadyUpToDate);
 
-        await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
+    await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
 
-        if (alreadyUpToDate) {
-          await printInfo('   Already up to date.\n');
+    if (alreadyUpToDate) {
+      await printInfo('   Already up to date.\n');
 
-          return;
-        }
+      return;
+    }
 
-        // Completed migrations.
-        for (const item of list) {
-          await printLine(cyan(`   - ${item}`));
-        }
+    // Completed migrations.
+    for (const item of list) {
+      await printLine(cyan(`   - ${item}`));
+    }
 
-        await printInfo(`\n   Ran ${list.length} migrations.\n`);
-      },
-      onFailed: async (result: MigrationResult) => {
-        printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
+    await printInfo(`\n   Ran ${list.length} migrations.\n`);
+  };
 
-        await printError(`   ${result.error}\n`);
-      }
-    };
-  }
+  /**
+   * Failure handler for each connection.
+   */
+  onFailed = async (result: MigrationResult) => {
+    printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
+
+    await printError(`   ${result.error}\n`);
+  };
 
   /**
    * CLI command execution handler.
@@ -50,13 +53,14 @@ class MigrateLatest extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const params = this.getParams();
-
     const config = await loadConfig();
     const connections = await resolveConnections();
     const { migrateLatest } = await import('../api');
 
-    const results = await migrateLatest(config, connections, params);
+    const results = await migrateLatest(config, connections, {
+      onSuccess: this.onSuccess,
+      onFailed: this.onFailed
+    });
 
     const failedCount = results.filter(({ success }) => !success).length;
 

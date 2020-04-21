@@ -4,7 +4,6 @@ import { log } from '../util/logger';
 import { handleFlags } from '../cli';
 import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
-import SynchronizeParams from '../domain/SynchronizeParams';
 import { printError, printLine } from '../util/io';
 import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';
@@ -27,71 +26,16 @@ class Synchronize extends Command {
   };
 
   /**
-   * Default CLI options for running synchronize.
-   *
-   * @param {*} userParams
-   * @returns {SynchronizeParams}
+   * Success handler for each connection.
    */
-  getSyncParams(userParams: any): SynchronizeParams {
-    return {
-      ...userParams,
-      // Individual success handler
-      onSuccess: (context: ExecutionContext) =>
-        printLine(`  [✓] ${context.connectionId} - Successful (${context.timeElapsed}s)`),
-
-      // Individual error handler
-      onFailed: (context: ExecutionContext) =>
-        printLine(`  [✖] ${context.connectionId} - Failed (${context.timeElapsed}s)`)
-    };
-  }
+  onSuccess = (context: ExecutionContext) =>
+    printLine(`  [✓] ${context.connectionId} - Successful (${context.timeElapsed}s)`);
 
   /**
-   * CLI command execution handler.
-   *
-   * @returns {Promise<void>}
+   * Failure handler for each connection.
    */
-  async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(Synchronize);
-    const params = this.getSyncParams({ ...parsedFlags });
-
-    console.log({ parsedFlags }); // tslint:disable-line
-
-    try {
-      await handleFlags(parsedFlags, params);
-
-      const config = await loadConfig();
-      const connections = await resolveConnections();
-      const { synchronize } = await import('../api');
-      const timeStart = process.hrtime();
-
-      await printLine('Synchronizing...\n');
-
-      const results = await synchronize(config, connections, params);
-      const { totalCount, failedCount, successfulCount } = await this.processResults(results);
-
-      if (successfulCount > 0) {
-        // Display output.
-        await printLine(
-          `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
-            `(${getElapsedTime(timeStart)}s)`
-        );
-      }
-
-      // If all completed successfully, exit gracefully.
-      if (failedCount === 0) {
-        return process.exit(0);
-      }
-
-      throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
-    } catch (e) {
-      // Send verbose error with stack trace to debug logs.
-      log(e);
-
-      await printError(e.toString());
-
-      process.exit(-1);
-    }
-  }
+  onFailed = (context: ExecutionContext) =>
+    printLine(`  [✖] ${context.connectionId} - Failed (${context.timeElapsed}s)`);
 
   /**
    * Check the results for each connection and display them.
@@ -127,6 +71,57 @@ class Synchronize extends Command {
     }
 
     return { totalCount, failedCount, successfulCount };
+  }
+
+  /**
+   * CLI command execution handler.
+   *
+   * @returns {Promise<void>}
+   */
+  async run(): Promise<void> {
+    const { flags: parsedFlags } = this.parse(Synchronize);
+    const params = {
+      ...parsedFlags,
+      onSuccess: this.onSuccess,
+      onFailed: this.onFailed
+    };
+
+    try {
+      await handleFlags(parsedFlags, params);
+
+      const config = await loadConfig();
+      const connections = await resolveConnections();
+      const { synchronize } = await import('../api');
+      const timeStart = process.hrtime();
+
+      await printLine('Synchronizing...\n');
+
+      const results = await synchronize(config, connections, params);
+
+      const { totalCount, failedCount, successfulCount } = await this.processResults(results);
+
+      if (successfulCount > 0) {
+        // Display output.
+        await printLine(
+          `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
+            `(${getElapsedTime(timeStart)}s)`
+        );
+      }
+
+      // If all completed successfully, exit gracefully.
+      if (failedCount === 0) {
+        return process.exit(0);
+      }
+
+      throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
+    } catch (e) {
+      // Send verbose error with stack trace to debug logs.
+      log(e);
+
+      await printError(e.toString());
+
+      process.exit(-1);
+    }
   }
 }
 
