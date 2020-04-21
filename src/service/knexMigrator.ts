@@ -1,6 +1,5 @@
 import Knex from 'knex';
 
-import { isCLI } from '../config';
 import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
 import Configuration from '../domain/Configuration';
@@ -14,8 +13,8 @@ export interface MigrationResult {
 }
 
 export interface MigrationCommandParams {
-  onSuccess: (result: MigrationResult) => Promise<any>;
-  onFailed: (context: MigrationResult) => Promise<any>;
+  onSuccess?: (result: MigrationResult) => Promise<any>;
+  onFailed?: (context: MigrationResult) => Promise<any>;
 }
 
 export interface MigrationCommandContext {
@@ -79,11 +78,11 @@ export async function runMigrateFunc(
     success: !error
   };
 
-  // If it's a CLI environment, invoke the handler.
-  if (isCLI()) {
-    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
-
-    await handler(result);
+  // Invoke corresponding handlers if they're sent.
+  if (result.success && context.params.onSuccess) {
+    await context.params.onSuccess(result);
+  } else if (!result.success && context.params.onFailed) {
+    await context.params.onFailed(result);
   }
 
   return result;
