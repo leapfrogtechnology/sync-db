@@ -1,14 +1,13 @@
+import { bold, cyan, red, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
-import { log, dbLogger } from '../util/logger';
-import { handleFlags } from '../cli';
 import { getElapsedTime } from '../util/ts';
 import SyncResult from '../domain/SyncResult';
-import { printError, printLine, printInfo } from '../util/io';
+import { log, dbLogger } from '../util/logger';
+import { MigrationResult } from '../service/knexMigrator';
 import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';
-import { MigrationResult } from '../service/knexMigrator';
-import { bold, cyan, red, green } from 'chalk';
+import { printError, printLine, printInfo } from '../util/io';
 
 /**
  * Synchronize command handler.
@@ -23,8 +22,7 @@ class Synchronize extends Command {
     version: flags.version({ char: 'v', description: 'Print version', name: 'sync-db' }),
     help: flags.help({ char: 'h', description: 'Print help information' }),
     force: flags.boolean({ char: 'f', description: 'Force synchronization' }),
-    'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
-    'generate-connections': flags.boolean({ char: 'c', description: 'Generate connections' })
+    'skip-migration': flags.boolean({ description: 'Skip running migrations' })
   };
 
   onStarted = async (context: ExecutionContext) => {
@@ -122,19 +120,8 @@ class Synchronize extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(Synchronize);
-    const params = {
-      ...parsedFlags,
-      onStarted: this.onStarted,
-      onTeardownSuccess: this.onTeardownSuccess,
-      onSuccess: this.onSuccess,
-      onFailed: this.onFailed,
-      onMigrationSuccess: this.onMigrationSuccess,
-      onMigrationFailed: this.onMigrationFailed
-    };
 
     try {
-      await handleFlags(parsedFlags, params);
-
       const config = await loadConfig();
       const connections = await resolveConnections();
       const { synchronize } = await import('../api');
@@ -142,7 +129,15 @@ class Synchronize extends Command {
 
       await printLine('Synchronizing...\n');
 
-      const results = await synchronize(config, connections, params);
+      const results = await synchronize(config, connections, {
+        ...parsedFlags,
+        onStarted: this.onStarted,
+        onTeardownSuccess: this.onTeardownSuccess,
+        onSuccess: this.onSuccess,
+        onFailed: this.onFailed,
+        onMigrationSuccess: this.onMigrationSuccess,
+        onMigrationFailed: this.onMigrationFailed
+      });
 
       const { totalCount, failedCount, successfulCount } = await this.processResults(results);
 
