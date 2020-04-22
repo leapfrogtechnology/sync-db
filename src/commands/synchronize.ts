@@ -36,12 +36,6 @@ class Synchronize extends Command {
     printLine(green('   [✓] Synchronization - teardown') + ` (${context.timeElapsed}s)`);
 
   /**
-   * Success handler for each connection.
-   */
-  onSuccess = (context: ExecutionContext) =>
-    printLine(green('   [✓] Synchronization - completed') + ` (${context.timeElapsed}s)`);
-
-  /**
    * Success handler for migration run during sync process.
    */
   onMigrationSuccess = async (result: MigrationResult) => {
@@ -75,11 +69,16 @@ class Synchronize extends Command {
   };
 
   /**
+   * Success handler for each connection.
+   */
+  onSuccess = (context: ExecutionContext) =>
+    printLine(green('   [✓] Synchronization - completed') + ` (${context.timeElapsed}s)\n`);
+
+  /**
    * Failure handler for each connection.
    */
   onFailed = async (result: ExecutionContext) => {
     await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));
-    // await printError(`   ${result.error}\n`);
   };
 
   /**
@@ -97,8 +96,6 @@ class Synchronize extends Command {
     const successfulCount = totalCount - failedAttempts.length;
     const failedCount = totalCount - successfulCount;
     const allComplete = failedCount === 0;
-
-    await printLine();
 
     // If there are errors, display all of them.
     if (!allComplete) {
