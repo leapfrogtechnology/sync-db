@@ -8,6 +8,7 @@ import { MigrationResult } from '../service/knexMigrator';
 import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';
 import { printError, printLine, printInfo } from '../util/io';
+import { synchronize } from '../api';
 
 /**
  * Synchronize command handler.
@@ -124,7 +125,6 @@ class Synchronize extends Command {
     try {
       const config = await loadConfig();
       const connections = await resolveConnections();
-      const { synchronize } = await import('../api');
       const timeStart = process.hrtime();
 
       await printLine('Synchronizing...\n');

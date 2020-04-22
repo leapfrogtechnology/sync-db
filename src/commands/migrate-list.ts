@@ -1,6 +1,7 @@
 import { Command } from '@oclif/command';
 import { bold, grey, red, cyan, yellow } from 'chalk';
 
+import { migrateList } from '../api';
 import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
 import { MigrationResult } from '../service/knexMigrator';
@@ -59,7 +60,6 @@ class MigrateList extends Command {
   async run(): Promise<void> {
     const config = await loadConfig();
     const connections = await resolveConnections();
-    const { migrateList } = await import('../api');
 
     const results = await migrateList(config, connections, {
       onSuccess: this.onSuccess,

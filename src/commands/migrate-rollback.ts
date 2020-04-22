@@ -1,6 +1,7 @@
 import { Command } from '@oclif/command';
 import { bold, red, cyan } from 'chalk';
 
+import { migrateRollback } from '../api';
 import { printLine, printError, printInfo } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
 import { MigrationResult } from '../service/knexMigrator';
@@ -55,7 +56,6 @@ class MigrateRollback extends Command {
   async run(): Promise<void> {
     const config = await loadConfig();
     const connections = await resolveConnections();
-    const { migrateRollback } = await import('../api');
 
     const results = await migrateRollback(config, connections, {
       onSuccess: this.onSuccess,
