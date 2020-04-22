@@ -30,8 +30,8 @@ class Synchronize extends Command {
     await printInfo('   [✓] Synchronization - started');
   };
 
-  onTeardownSuccess = (context: ExecutionContext) =>
-    printLine(green('   [✓] Synchronization - teardown') + ` (${context.timeElapsed}s)`);
+  onPruneSuccess = (context: ExecutionContext) =>
+    printLine(green('   [✓] Synchronization - pruned') + ` (${context.timeElapsed}s)`);
 
   /**
    * Success handler for migration run during sync process.
@@ -132,7 +132,7 @@ class Synchronize extends Command {
       const results = await synchronize(config, connections, {
         ...parsedFlags,
         onStarted: this.onStarted,
-        onTeardownSuccess: this.onTeardownSuccess,
+        onTeardownSuccess: this.onPruneSuccess,
         onSuccess: this.onSuccess,
         onFailed: this.onFailed,
         onMigrationSuccess: this.onMigrationSuccess,
