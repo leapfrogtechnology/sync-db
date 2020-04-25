@@ -1,16 +1,13 @@
 import { green, red } from 'chalk';
 
-export type ModifierFunc = (message: string) => string;
-
 /**
  * Prints a line into the console (stdout).
  *
  * @param {string} [message='']
- * @param {ModifierFunc} [modifier=(str: string) => str]
  * @returns {Promise<any>}
  */
-export function printLine(message: string = '', modifier: ModifierFunc = (str: string) => str): Promise<any> {
-  return print(modifier(message.toString()) + '\n');
+export function printLine(message: string = ''): Promise<any> {
+  return print(message.toString() + '\n');
 }
 
 /**
@@ -20,7 +17,7 @@ export function printLine(message: string = '', modifier: ModifierFunc = (str: s
  * @returns {Promise<any>}
  */
 export function printInfo(message: string = ''): Promise<any> {
-  return printLine(message, green);
+  return printLine(green(message));
 }
 
 /**
