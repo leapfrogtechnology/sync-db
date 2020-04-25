@@ -1,17 +1,13 @@
+import { bold, cyan, red, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
-import { log } from '../logger';
-import { handleFlags } from '../cli';
+import { synchronize } from '../api';
 import { getElapsedTime } from '../util/ts';
-import SyncResult from '../domain/SyncResult';
-import SyncParams from '../domain/SyncParams';
-import { printError, printLine } from '../util/io';
-import ExecutionContext from '../domain/ExecutionContext';
+import { log, dbLogger } from '../util/logger';
 import { loadConfig, resolveConnections } from '../config';
+import { printError, printLine, printInfo } from '../util/io';
+import OperationResult from '../domain/operation/OperationResult';
 
-/**
- * Synchronize command handler.
- */
 class Synchronize extends Command {
   static description = 'Synchronize database';
 
@@ -22,26 +18,101 @@ class Synchronize extends Command {
     version: flags.version({ char: 'v', description: 'Print version', name: 'sync-db' }),
     help: flags.help({ char: 'h', description: 'Print help information' }),
     force: flags.boolean({ char: 'f', description: 'Force synchronization' }),
-    'generate-connections': flags.boolean({ char: 'c', description: 'Generate connections' })
+    'skip-migration': flags.boolean({ description: 'Skip running migrations' })
   };
 
   /**
-   * Default CLI options for running synchronize.
-   *
-   * @param {*} userParams
-   * @returns {SyncParams}
+   * Started event handler.
    */
-  getSyncParams(userParams: any): SyncParams {
-    return {
-      ...userParams,
-      // Individual success handler
-      onSuccess: (context: ExecutionContext) =>
-        printLine(`  [✓] ${context.connectionId} - Successful (${context.timeElapsed}s)`),
+  onStarted = async (result: OperationResult) => {
+    await printLine(bold(` ▸ ${result.connectionId}`));
+    await printInfo('   [✓] Synchronization - started');
+  };
 
-      // Individual error handler
-      onFailed: (context: ExecutionContext) =>
-        printLine(`  [✖] ${context.connectionId} - Failed (${context.timeElapsed}s)`)
-    };
+  /**
+   * Prune success handler.
+   */
+  onPruneSuccess = (result: OperationResult) =>
+    printLine(green('   [✓] Synchronization - pruned') + ` (${result.timeElapsed}s)`);
+
+  /**
+   * Migration success handler.
+   */
+  onMigrationSuccess = async (result: OperationResult) => {
+    const logDb = dbLogger(result.connectionId);
+    const [num, list] = result.data;
+    const alreadyUpToDate = num && list.length === 0;
+
+    logDb('Up to date: ', alreadyUpToDate);
+
+    if (alreadyUpToDate) {
+      await printLine(green('   [✓] Migrations - up to date') + ` (${result.timeElapsed}s)`);
+
+      return;
+    }
+
+    await printLine(green(`   [✓] Migrations - ${list.length} run`) + ` (${result.timeElapsed}s)`);
+
+    // Completed migrations.
+    for (const item of list) {
+      await printLine(cyan(`       - ${item}`));
+    }
+  };
+
+  /**
+   * Migration failure handler.
+   */
+  onMigrationFailed = async (result: OperationResult) => {
+    await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)\n`));
+
+    // await printError(`   ${result.error}\n`);
+  };
+
+  /**
+   * Success handler for the whole process - after all completed.
+   */
+  onSuccess = (result: OperationResult) =>
+    printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
+
+  /**
+   * Failure handler for the whole process - if the process failed.
+   */
+  onFailed = async (result: OperationResult) => {
+    await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));
+  };
+
+  /**
+   * Check the results for each connection and display them.
+   * All the successful / failed attempts are displayed and errors are logged.
+   *
+   * @param {SyncResult[]} results
+   * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>}
+   */
+  async processResults(
+    results: OperationResult[]
+  ): Promise<{ totalCount: number; failedCount: number; successfulCount: number }> {
+    const totalCount = results.length;
+    const failedAttempts = results.filter(result => !result.success);
+    const successfulCount = totalCount - failedAttempts.length;
+    const failedCount = totalCount - successfulCount;
+    const allComplete = failedCount === 0;
+
+    // If there are errors, display all of them.
+    if (!allComplete) {
+      await printLine(`Synchronization failed for ${failedCount} connection(s):\n`);
+
+      for (const attempt of failedAttempts) {
+        await printLine(bold(` ▸ ${attempt.connectionId}\n`));
+        await printError(attempt.error.toString());
+
+        // Send verbose error with stack trace to debug logs.
+        log(attempt.error);
+
+        await printLine();
+      }
+    }
+
+    return { totalCount, failedCount, successfulCount };
   }
 
   /**
@@ -51,19 +122,24 @@ class Synchronize extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(Synchronize);
-    const params = this.getSyncParams({ ...parsedFlags });
 
     try {
-      await handleFlags(parsedFlags);
-
       const config = await loadConfig();
       const connections = await resolveConnections();
-      const { synchronize } = await import('../api');
       const timeStart = process.hrtime();
 
       await printLine('Synchronizing...\n');
 
-      const results = await synchronize(config, connections, params);
+      const results = await synchronize(config, connections, {
+        ...parsedFlags,
+        onStarted: this.onStarted,
+        onTeardownSuccess: this.onPruneSuccess,
+        onSuccess: this.onSuccess,
+        onFailed: this.onFailed,
+        onMigrationSuccess: this.onMigrationSuccess,
+        onMigrationFailed: this.onMigrationFailed
+      });
+
       const { totalCount, failedCount, successfulCount } = await this.processResults(results);
 
       if (successfulCount > 0) {
@@ -88,42 +164,6 @@ class Synchronize extends Command {
 
       process.exit(-1);
     }
-  }
-
-  /**
-   * Check the results for each connection and display them.
-   * All the successful / failed attempts are displayed and errors are logged.
-   *
-   * @param {SyncResult[]} results
-   * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>}
-   */
-  async processResults(
-    results: SyncResult[]
-  ): Promise<{ totalCount: number; failedCount: number; successfulCount: number }> {
-    const totalCount = results.length;
-    const failedAttempts = results.filter(result => !result.success);
-    const successfulCount = totalCount - failedAttempts.length;
-    const failedCount = totalCount - successfulCount;
-    const allComplete = failedCount === 0;
-
-    await printLine();
-
-    // If there are errors, display all of them.
-    if (!allComplete) {
-      await printLine(`Synchronization failed for ${failedCount} connection(s):\n`);
-
-      failedAttempts.forEach(async (attempt, index) => {
-        await printLine(`${index + 1}) ${attempt.connectionId}`);
-        await printError(attempt.error.toString());
-
-        // Send verbose error with stack trace to debug logs.
-        log(attempt.error);
-
-        await printLine();
-      });
-    }
-
-    return { totalCount, failedCount, successfulCount };
   }
 }
 

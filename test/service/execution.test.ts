@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
 import { timeout } from '../../src/util/promise';
-import SyncConfig from '../../src/domain/SyncConfig';
+import Configuration from '../../src/domain/Configuration';
 import * as executionService from '../../src/service/execution';
 
 const getProcesses = (tracker: string[]) => [
@@ -32,7 +32,7 @@ describe('SERVICE: execution', () => {
 
       const result = await executionService.executeProcesses(processes, {
         execution: 'sequential'
-      } as SyncConfig);
+      } as Configuration);
 
       expect(result).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
       expect(tracker).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
@@ -44,7 +44,7 @@ describe('SERVICE: execution', () => {
 
       const result = await executionService.executeProcesses(processes, {
         execution: 'parallel'
-      } as SyncConfig);
+      } as Configuration);
 
       expect(result).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
       expect(tracker).to.deep.equal(['Task C', 'Task D', 'Task A', 'Task B']);

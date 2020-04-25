@@ -1,22 +1,22 @@
 import * as Knex from 'knex';
 
-import { isCLI } from '../config';
-import { dbLogger } from '../logger';
 import * as sqlRunner from './sqlRunner';
+import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
-import SyncResult from '../domain/SyncResult';
-import SyncContext from '../domain/SyncContext';
+import SynchronizeContext from '../domain/SynchronizeContext';
 import * as configInjection from './configInjection';
-import ExecutionContext from '../domain/ExecutionContext';
+import OperationResult from '../domain/operation/OperationResult';
+import OperationContext from '../domain/operation/OperationContext';
+import { executeOperation } from './execution';
 
 /**
  * Migrate SQL on a database.
  *
  * @param {Knex.Transaction} trx
- * @param {SyncContext} context
+ * @param {SynchronizeContext} context
  * @returns {Promise<void>}
  */
-async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const { connectionId } = context;
   const { basePath, hooks, sql } = context.config;
   const log = dbLogger(connectionId);
@@ -64,10 +64,10 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
  * They're executed in the reverse order of their creation.
  *
  * @param {Knex.Transaction} trx
- * @param {SyncContext} context
+ * @param {OperationContext} context
  * @returns {Promise<void>}
  */
-async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+async function teardown(trx: Knex.Transaction, context: OperationContext): Promise<void> {
   const { basePath, sql } = context.config;
   const log = dbLogger(context.connectionId);
 
@@ -81,50 +81,58 @@ async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<vo
 }
 
 /**
- * Synchronize on a single database connection.
+ * Run synchronize on the given database connection (transaction).
  *
- * @param {Knex} connection
- * @param {SyncContext} context
- * @returns {Promise<SyncResult>}
+ * @param {Knex.Transaction} trx
+ * @param {SynchronizeContext} context
+ * @returns {Promise<OperationResult>}
  */
-export async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<SyncResult> {
-  const { connectionId } = context;
-  const log = dbLogger(connectionId);
-  const result: SyncResult = { connectionId, success: false };
+export async function runSynchronize(trx: Knex.Transaction, context: SynchronizeContext): Promise<OperationResult> {
+  return executeOperation(context, async options => {
+    const { connectionId, migrateFunc } = context;
+    const { timeStart } = options;
+    const log = dbLogger(connectionId);
 
-  const timeStart = process.hrtime();
+    // Trigger onStarted handler if bound.
+    if (context.params.onStarted) {
+      await context.params.onStarted({
+        connectionId,
+        success: false,
+        data: null,
+        timeElapsed: getElapsedTime(timeStart)
+      });
+    }
 
-  try {
-    log('Starting synchronization.');
+    await teardown(trx, context);
 
-    // Run the process in a single transaction for a database connection.
-    await connection.transaction(async trx => {
-      await teardown(trx, context);
-      await setup(trx, context);
-    });
+    // Trigger onTeardownSuccess if bound.
+    if (context.params.onTeardownSuccess) {
+      await context.params.onTeardownSuccess({
+        connectionId,
+        data: null,
+        success: true,
+        timeElapsed: getElapsedTime(timeStart)
+      });
+    }
 
-    log(`Synchronization successful.`);
-    result.success = true;
-  } catch (e) {
-    log(`Error caught for connection ${connectionId}:`, e);
-    result.error = e;
-  }
+    if (context.params['skip-migration']) {
+      log('Skipped migrations.');
+    } else {
+      log('Running migrations.');
+      await migrateFunc(trx);
+    }
 
-  const timeElapsed = getElapsedTime(timeStart);
+    await setup(trx, context);
+  });
+}
 
-  log(`Execution completed in ${timeElapsed} s`);
-
-  // If it's a CLI environment, invoke the handler.
-  if (isCLI()) {
-    const handler = result.success ? context.params.onSuccess : context.params.onFailed;
-    const execContext: ExecutionContext = {
-      connectionId,
-      timeElapsed,
-      success: result.success
-    };
-
-    await handler(execContext);
-  }
-
-  return result;
+/**
+ * Rune prune operation (drop all synchronized objects) on the given database connection (transaction).
+ *
+ * @param {Knex.Transaction} trx
+ * @param {OperationContext} context
+ * @returns {Promise<OperationResult>}
+ */
+export async function runPrune(trx: Knex.Transaction, context: OperationContext): Promise<OperationResult> {
+  return executeOperation(context, () => teardown(trx, context));
 }
