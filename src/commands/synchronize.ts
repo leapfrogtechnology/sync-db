@@ -18,7 +18,11 @@ class Synchronize extends Command {
     version: flags.version({ char: 'v', description: 'Print version', name: 'sync-db' }),
     help: flags.help({ char: 'h', description: 'Print help information' }),
     force: flags.boolean({ char: 'f', description: 'Force synchronization' }),
-    'skip-migration': flags.boolean({ description: 'Skip running migrations' })
+    'skip-migration': flags.boolean({ description: 'Skip running migrations' }),
+    only: flags.string({
+      helpValue: 'CONNECTION_ID',
+      description: 'Run synchronize only on a single connection.'
+    })
   };
 
   /**

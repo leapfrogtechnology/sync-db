@@ -19,6 +19,8 @@ import OperationResult from './domain/operation/OperationResult';
 import { executeProcesses } from './service/execution';
 import { runSynchronize, runPrune } from './service/sync';
 import { invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
+import ConnectionReference from './domain/ConnectionReference';
+import { fmap } from './util/list';
 
 /**
  * Synchronize all the configured database connections.
@@ -48,7 +50,7 @@ export async function synchronize(
   });
 
   const connections = mapToConnectionReferences(conn);
-  const processes = connections.map(connection => () =>
+  const processes = fmap(connections, filterConnectionBy(params.only), connection => () =>
     withTransaction(connection, trx =>
       runSynchronize(trx, {
         config,
@@ -64,6 +66,8 @@ export async function synchronize(
       })
     )
   );
+
+  ensureFilterApplied(processes, params.only);
 
   return executeProcesses(processes, config);
 }
@@ -201,4 +205,39 @@ export async function migrateList(
   );
 
   return executeProcesses(processes, config);
+}
+
+/**
+ * Checks if the connection filter
+ *
+ * @param {string} [connectionId]
+ * @returns {(item: any) => boolean}
+ */
+function filterConnectionBy(connectionId?: string): (item: any) => boolean {
+  // Apply filter for the specific connection id that matches.
+  if (connectionId) {
+    return (connection: ConnectionReference) => connection.id === connectionId;
+  }
+
+  // If connectionId is not provided - apply no filter.
+  return () => true;
+}
+
+/**
+ * Ensure the --only filter is applied correctly.
+ *
+ * @param {any[]} processes
+ * @param {string} [only]
+ */
+function ensureFilterApplied(processes: any[], only?: string) {
+  // Validate list when filter applied with --only=CONNECTION_ID.
+  if (only && processes.length === 0) {
+    throw new Error(`No connections found for givenid "${only}.`);
+  }
+
+  if (only) {
+    log(`Running for a single connection (id = ${only}).`);
+  } else {
+    log('Running for all connections.');
+  }
 }
