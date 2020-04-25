@@ -1,4 +1,4 @@
-interface CommandResult<T = any> {
+interface OperationResult<T = any> {
   connectionId: string;
   success: boolean;
   timeElapsed: number;
@@ -6,4 +6,4 @@ interface CommandResult<T = any> {
   error?: any;
 }
 
-export default CommandResult;
+export default OperationResult;

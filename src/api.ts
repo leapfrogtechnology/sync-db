@@ -11,8 +11,8 @@ import { log } from './util/logger';
 import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
 
 import Configuration from './domain/Configuration';
-import CommandResult from './domain/CommandResult';
-import CommandParams from './domain/CommandParams';
+import OperationResult from './domain/operation/OperationResult';
+import OperationParams from './domain/operation/OperationParams';
 import SynchronizeParams from './domain/SynchronizeParams';
 
 // Service
@@ -26,13 +26,13 @@ import { invokeMigrationApi, migrationApiMap } from './service/knexMigrator';
  * @param {Configuration} config
  * @param {DatabaseConnections} conn
  * @param {SynchronizeParams} [options]
- * @returns {Promise<CommandResult[]>}
+ * @returns {Promise<OperationResult[]>}
  */
 export async function synchronize(
   config: Configuration,
   conn: DatabaseConnections,
   options?: SynchronizeParams
-): Promise<CommandResult[]> {
+): Promise<OperationResult[]> {
   log('Synchronize');
 
   const params: SynchronizeParams = {
@@ -79,17 +79,17 @@ export async function synchronize(
  *
  * @param {Configuration} config
  * @param {(DatabaseConnections)} conn
- * @param {CommandParams} [options]
- * @returns {Promise<CommandResult[]>}
+ * @param {OperationParams} [options]
+ * @returns {Promise<OperationResult[]>}
  */
 export async function prune(
   config: Configuration,
   conn: DatabaseConnections,
-  options?: CommandParams
-): Promise<CommandResult[]> {
+  options?: OperationParams
+): Promise<OperationResult[]> {
   log('Prune');
 
-  const params: CommandParams = { ...options };
+  const params: OperationParams = { ...options };
   const connections = mapToConnectionReferences(conn);
 
   // TODO: Need to preload the SQL source code under this step.
@@ -113,17 +113,17 @@ export async function prune(
  *
  * @param {Configuration} config
  * @param {(DatabaseConnections)} conn
- * @param {CommandParams} [options]
- * @returns {Promise<CommandResult[]>}
+ * @param {OperationParams} [options]
+ * @returns {Promise<OperationResult[]>}
  */
 export async function migrateLatest(
   config: Configuration,
   conn: DatabaseConnections,
-  options?: CommandParams
-): Promise<CommandResult[]> {
+  options?: OperationParams
+): Promise<OperationResult[]> {
   log('Migrate Latest');
 
-  const params: CommandParams = { ...options };
+  const params: OperationParams = { ...options };
   const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
@@ -150,17 +150,17 @@ export async function migrateLatest(
  *
  * @param {Configuration} config
  * @param {(DatabaseConnections)} conn
- * @param {CommandParams} [options]
- * @returns {Promise<CommandResult[]>}
+ * @param {OperationParams} [options]
+ * @returns {Promise<OperationResult[]>}
  */
 export async function migrateRollback(
   config: Configuration,
   conn: DatabaseConnections,
-  options?: CommandParams
-): Promise<CommandResult[]> {
+  options?: OperationParams
+): Promise<OperationResult[]> {
   log('Migrate Rollback');
 
-  const params: CommandParams = { ...options };
+  const params: OperationParams = { ...options };
   const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
@@ -187,17 +187,17 @@ export async function migrateRollback(
  *
  * @param {Configuration} config
  * @param {(DatabaseConnections)} conn
- * @param {CommandParams} [options]
- * @returns {Promise<CommandResult[]>}
+ * @param {OperationParams} [options]
+ * @returns {Promise<OperationResult[]>}
  */
 export async function migrateList(
   config: Configuration,
   conn: DatabaseConnections,
-  options?: CommandParams
-): Promise<CommandResult[]> {
+  options?: OperationParams
+): Promise<OperationResult[]> {
   log('Migrate List');
 
-  const params: CommandParams = { ...options };
+  const params: OperationParams = { ...options };
   const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 

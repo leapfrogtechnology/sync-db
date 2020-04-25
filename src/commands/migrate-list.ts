@@ -4,7 +4,7 @@ import { bold, grey, red, cyan, yellow } from 'chalk';
 import { migrateList } from '../api';
 import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import CommandResult from '../domain/CommandResult';
+import OperationResult from '../domain/operation/OperationResult';
 
 /**
  * Migration command handler.
@@ -15,7 +15,7 @@ class MigrateList extends Command {
   /**
    * Success handler for a connection.
    */
-  onSuccess = async (result: CommandResult) => {
+  onSuccess = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
 
     const [list1, list2] = result.data;
@@ -46,7 +46,7 @@ class MigrateList extends Command {
   /**
    * Failure handler for a connection.
    */
-  onFailed = async (result: CommandResult) => {
+  onFailed = async (result: OperationResult) => {
     printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);

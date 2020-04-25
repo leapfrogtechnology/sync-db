@@ -3,7 +3,7 @@ import { bold, red } from 'chalk';
 
 import { printLine, printError } from '../util/io';
 
-import CommandResult from '../domain/CommandResult';
+import OperationResult from '../domain/operation/OperationResult';
 import { prune } from '../api';
 import { loadConfig, resolveConnections } from '..';
 
@@ -12,14 +12,14 @@ class Prune extends Command {
   /**
    * Success handler for each connection.
    */
-  onSuccess = async (result: CommandResult) => {
+  onSuccess = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
   };
 
   /**
    * Failure handler for each connection.
    */
-  onFailed = async (result: CommandResult) => {
+  onFailed = async (result: OperationResult) => {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);

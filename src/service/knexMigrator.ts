@@ -2,7 +2,7 @@ import Knex from 'knex';
 
 import { dbLogger } from '../util/logger';
 import MigrationCommandContext from '../domain/MigrationCommandContext';
-import CommandResult from '../domain/CommandResult';
+import OperationResult from '../domain/operation/OperationResult';
 import { executeOperation } from './execution';
 
 /**
@@ -20,13 +20,13 @@ export const migrationApiMap = {
  * @param {Knex.Transaction} trx
  * @param {MigrationCommandContext} context
  * @param {((trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>)} func
- * @returns {Promise<CommandResult>}
+ * @returns {Promise<OperationResult>}
  */
 export async function invokeMigrationApi(
   trx: Knex.Transaction,
   context: MigrationCommandContext,
   func: (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>
-): Promise<CommandResult> {
+): Promise<OperationResult> {
   return executeOperation(context, async () => {
     const { knexMigrationConfig } = context;
     const funcName = func.name || 'func';

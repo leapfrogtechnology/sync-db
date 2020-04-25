@@ -1,5 +1,5 @@
 import { dbLogger } from '../util/logger';
-import MigrationContext from '../domain/MigrationContext';
+import MigrationContext from '../domain/migration/MigrationContext';
 
 /**
  * MigrationSource class for the Knex Migration API.

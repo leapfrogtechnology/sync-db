@@ -1,8 +1,8 @@
 import { log, dbLogger } from '../util/logger';
 import Configuration from '../domain/Configuration';
 import { Promiser, runSequentially } from '../util/promise';
-import CommandContext from '../domain/CommandContext';
-import CommandResult from '../domain/CommandResult';
+import OperationContext from '../domain/operation/OperationContext';
+import OperationResult from '../domain/operation/OperationResult';
 import { getElapsedTime } from '../util/ts';
 
 /**
@@ -32,15 +32,15 @@ export function executeProcesses<T>(processes: Promiser<T>[], config: Configurat
  *
  * @param {T} context
  * @param {(options: any) => Promise<any>} func
- * @returns {Promise<CommandResult>}
+ * @returns {Promise<OperationResult>}
  */
-export async function executeOperation<T extends CommandContext>(
+export async function executeOperation<T extends OperationContext>(
   context: T,
   func: (options: any) => Promise<any>
-): Promise<CommandResult> {
+): Promise<OperationResult> {
   const { connectionId } = context;
   const logDb = dbLogger(connectionId);
-  const result: CommandResult = { connectionId, success: false, data: null, timeElapsed: 0 };
+  const result: OperationResult = { connectionId, success: false, data: null, timeElapsed: 0 };
 
   const timeStart = process.hrtime();
 

@@ -1,4 +1,4 @@
-import SqlCode from './SqlCode';
+import SqlCode from '../SqlCode';
 
 interface SqlMigrationEntry {
   name: string;

@@ -5,7 +5,7 @@ import { migrateRollback } from '../api';
 import { printLine, printError, printInfo } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
 import { dbLogger } from '../util/logger';
-import CommandResult from '../domain/CommandResult';
+import OperationResult from '../domain/operation/OperationResult';
 
 /**
  * Migration command handler.
@@ -16,7 +16,7 @@ class MigrateRollback extends Command {
   /**
    * Success handler for each connection.
    */
-  onSuccess = async (result: CommandResult) => {
+  onSuccess = async (result: OperationResult) => {
     const log = dbLogger(result.connectionId);
     const [num, list] = result.data;
     const allRolledBack = num === 0;
@@ -42,7 +42,7 @@ class MigrateRollback extends Command {
   /**
    * Failure handler for each connection.
    */
-  onFailed = async (result: CommandResult) => {
+  onFailed = async (result: OperationResult) => {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);

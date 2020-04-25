@@ -2,7 +2,7 @@ import * as path from 'path';
 
 import { glob, exists } from '../util/fs';
 import { resolveFile } from './sqlRunner';
-import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import SqlMigrationEntry from '../domain/migration/SqlMigrationEntry';
 
 const FILE_PATTERN = /(.+)\.(up|down)\.sql$/;
 

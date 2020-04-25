@@ -1,12 +1,12 @@
 import * as Knex from 'knex';
 
 import SynchronizeParams from './SynchronizeParams';
-import CommandContext from './CommandContext';
+import OperationContext from './operation/OperationContext';
 
 /**
  * Synchronize context for a database connection.
  */
-interface SyncContext extends CommandContext {
+interface SyncContext extends OperationContext {
   params: SynchronizeParams;
   migrateFunc: (trx: Knex.Transaction) => Promise<any>;
 }

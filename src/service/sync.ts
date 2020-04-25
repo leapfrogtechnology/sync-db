@@ -5,8 +5,8 @@ import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
 import SyncContext from '../domain/SyncContext';
 import * as configInjection from './configInjection';
-import CommandResult from '../domain/CommandResult';
-import CommandContext from '../domain/CommandContext';
+import OperationResult from '../domain/operation/OperationResult';
+import OperationContext from '../domain/operation/OperationContext';
 import { executeOperation } from './execution';
 
 /**
@@ -64,10 +64,10 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
  * They're executed in the reverse order of their creation.
  *
  * @param {Knex.Transaction} trx
- * @param {CommandContext} context
+ * @param {OperationContext} context
  * @returns {Promise<void>}
  */
-async function teardown(trx: Knex.Transaction, context: CommandContext): Promise<void> {
+async function teardown(trx: Knex.Transaction, context: OperationContext): Promise<void> {
   const { basePath, sql } = context.config;
   const log = dbLogger(context.connectionId);
 
@@ -85,9 +85,9 @@ async function teardown(trx: Knex.Transaction, context: CommandContext): Promise
  *
  * @param {Knex.Transaction} trx
  * @param {SyncContext} context
- * @returns {Promise<CommandResult>}
+ * @returns {Promise<OperationResult>}
  */
-export async function synchronizeDatabase(trx: Knex.Transaction, context: SyncContext): Promise<CommandResult> {
+export async function synchronizeDatabase(trx: Knex.Transaction, context: SyncContext): Promise<OperationResult> {
   return executeOperation(context, async options => {
     const { connectionId, migrateFunc } = context;
     const { timeStart } = options;
@@ -130,9 +130,9 @@ export async function synchronizeDatabase(trx: Knex.Transaction, context: SyncCo
  * Prune on a single database connection.
  *
  * @param {Knex.Transaction} trx
- * @param {CommandContext} context
- * @returns {Promise<CommandResult>}
+ * @param {OperationContext} context
+ * @returns {Promise<OperationResult>}
  */
-export async function pruneDatabase(trx: Knex.Transaction, context: CommandContext): Promise<CommandResult> {
+export async function pruneDatabase(trx: Knex.Transaction, context: OperationContext): Promise<OperationResult> {
   return executeOperation(context, () => teardown(trx, context));
 }

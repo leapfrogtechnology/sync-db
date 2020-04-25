@@ -1,9 +1,9 @@
 import * as Knex from 'knex';
 
-import MigrationRunner from '../domain/MigrationRunner';
+import MigrationRunner from '../domain/migration/MigrationRunner';
 import { dbLogger, log as logger } from '../util/logger';
-import MigrationContext from '../domain/MigrationContext';
-import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import MigrationContext from '../domain/migration/MigrationContext';
+import SqlMigrationEntry from '../domain/migration/SqlMigrationEntry';
 
 /**
  * SQL source migration context for KnexMigrationSource.

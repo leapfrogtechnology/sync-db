@@ -5,7 +5,7 @@ import { log } from './util/logger';
 import { validate, isCLI } from './config';
 import Configuration from './domain/Configuration';
 import * as migratorService from './service/migrator';
-import MigrationContext from './domain/MigrationContext';
+import MigrationContext from './domain/migration/MigrationContext';
 import KnexMigrationSource from './migration/KnexMigrationSource';
 import SqlMigrationContext from './migration/SqlMigrationContext';
 

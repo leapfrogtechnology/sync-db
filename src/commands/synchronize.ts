@@ -6,7 +6,7 @@ import { log, dbLogger } from '../util/logger';
 import { loadConfig, resolveConnections } from '../config';
 import { printError, printLine, printInfo } from '../util/io';
 import { synchronize } from '../api';
-import CommandResult from '../domain/CommandResult';
+import OperationResult from '../domain/operation/OperationResult';
 
 /**
  * Synchronize command handler.
@@ -24,18 +24,18 @@ class Synchronize extends Command {
     'skip-migration': flags.boolean({ description: 'Skip running migrations' })
   };
 
-  onStarted = async (result: CommandResult) => {
+  onStarted = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
     await printInfo('   [✓] Synchronization - started');
   };
 
-  onPruneSuccess = (result: CommandResult) =>
+  onPruneSuccess = (result: OperationResult) =>
     printLine(green('   [✓] Synchronization - pruned') + ` (${result.timeElapsed}s)`);
 
   /**
    * Success handler for migration run during sync process.
    */
-  onMigrationSuccess = async (result: CommandResult) => {
+  onMigrationSuccess = async (result: OperationResult) => {
     const logDb = dbLogger(result.connectionId);
     const [num, list] = result.data;
     const alreadyUpToDate = num && list.length === 0;
@@ -59,7 +59,7 @@ class Synchronize extends Command {
   /**
    * Failure handler for migration during sync process.
    */
-  onMigrationFailed = async (result: CommandResult) => {
+  onMigrationFailed = async (result: OperationResult) => {
     await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)\n`));
 
     // await printError(`   ${result.error}\n`);
@@ -68,13 +68,13 @@ class Synchronize extends Command {
   /**
    * Success handler for each connection.
    */
-  onSuccess = (result: CommandResult) =>
+  onSuccess = (result: OperationResult) =>
     printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
 
   /**
    * Failure handler for each connection.
    */
-  onFailed = async (result: CommandResult) => {
+  onFailed = async (result: OperationResult) => {
     await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));
   };
 
@@ -86,7 +86,7 @@ class Synchronize extends Command {
    * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>}
    */
   async processResults(
-    results: CommandResult[]
+    results: OperationResult[]
   ): Promise<{ totalCount: number; failedCount: number; successfulCount: number }> {
     const totalCount = results.length;
     const failedAttempts = results.filter(result => !result.success);
