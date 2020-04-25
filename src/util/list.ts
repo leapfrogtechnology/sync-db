@@ -6,12 +6,13 @@
  * @param {any[]} list
  * @param {(element: any, index: number) => boolean} filter
  * @param {(element: any, index: number) => T} [map]
+ * @returns {T[]}
  */
 export function fmap<T>(
   list: any[],
   filter: (element: any, index: number) => boolean,
   map?: (element: any, index: number) => T
-) {
+): T[] {
   if (!Array.isArray(list)) {
     throw new Error('The first argument must be an array.');
   }
