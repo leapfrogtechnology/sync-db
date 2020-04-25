@@ -25,6 +25,7 @@ Run `synchronize` to run migrations and synchronize all database objects (views,
 ```
 $ yarn synchronize
 ```
+
 ```
 Synchronizing...
 
@@ -54,7 +55,6 @@ Run the sample node app.
 ```
 $ yarn start
 ```
-
 
 **Output**
 
