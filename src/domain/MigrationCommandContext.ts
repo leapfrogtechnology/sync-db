@@ -1,13 +1,10 @@
 import * as Knex from 'knex';
 
-import Configuration from './Configuration';
 import CommandParams from './CommandParams';
-import CommandResult from './CommandResult';
+import CommandContext from './CommandContext';
 
-interface MigrationCommandContext {
-  config: Configuration;
-  connectionId: string;
-  params: CommandParams<CommandResult>;
+interface MigrationCommandContext extends CommandContext {
+  params: CommandParams;
   knexMigrationConfig: Knex.MigratorConfig;
 }
 
