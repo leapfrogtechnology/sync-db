@@ -1,3 +1,11 @@
+/**
+ * Programmatic API
+ * ----------------
+ * This module defines the Programmatic API of sync-db.
+ * The functions exposed here are used by the CLI frontend and
+ * are also meant to be the public interface for the developers using it as a package.
+ */
+
 import * as init from './init';
 import { log } from './util/logger';
 import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
@@ -83,7 +91,9 @@ export async function prune(
 
   const params: CommandParams = { ...options };
   const connections = mapToConnectionReferences(conn);
-  await init.prepare(config, {});
+
+  // TODO: Need to preload the SQL source code under this step.
+  await init.prepare(config, { loadSqlSources: true });
 
   const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
