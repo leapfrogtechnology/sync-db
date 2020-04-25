@@ -1,22 +1,21 @@
 import * as Knex from 'knex';
 
+import * as init from './init';
 import { log } from './util/logger';
 import { getConnectionId } from './config';
-import { isKnexInstance, getConfig, createInstance } from './util/db';
+import { isKnexInstance, getConfig, createInstance, withTransaction } from './util/db';
 
-import * as init from './init';
 import Configuration from './domain/Configuration';
-import SynchronizeParams from './domain/SynchronizeParams';
-
+import CommandResult from './domain/CommandResult';
+import CommandParams from './domain/CommandParams';
 import ConnectionConfig from './domain/ConnectionConfig';
+import SynchronizeParams from './domain/SynchronizeParams';
 import ConnectionReference from './domain/ConnectionReference';
 
 // Service
-import { synchronizeDatabase, pruneDatabase } from './service/sync';
 import { executeProcesses } from './service/execution';
-import { runMigrateFunc, migrationApiMap } from './service/knexMigrator';
-import CommandResult from './domain/CommandResult';
-import CommandParams from './domain/CommandParams';
+import { synchronizeDatabase, pruneDatabase } from './service/sync';
+import { invokeMigrationApi, migrationApiMap } from './service/knexMigrator';
 
 /**
  * Database connections given by the user or the CLI frontend.
@@ -51,23 +50,25 @@ export async function synchronize(
   });
 
   const connections = mapToConnectionReferences(conn);
-  const processes = connections.map(({ connection, id: connectionId }) => () =>
-    synchronizeDatabase(connection, {
-      config,
-      params,
-      connectionId,
-      migrateFunc: (trx: Knex.Transaction) =>
-        runMigrateFunc(
-          trx,
-          {
-            config,
-            connectionId,
-            params: { ...params, onSuccess: params.onMigrationSuccess, onFailed: params.onMigrationFailed },
-            knexMigrationConfig: knexMigrationConfig(connectionId)
-          },
-          migrationApiMap['migrate.latest']
-        )
-    })
+  const processes = connections.map(connection => () =>
+    withTransaction(connection, trx =>
+      synchronizeDatabase(trx, {
+        config,
+        params,
+        connectionId: connection.id,
+        migrateFunc: t =>
+          invokeMigrationApi(
+            t,
+            {
+              config,
+              connectionId: connection.id,
+              knexMigrationConfig: knexMigrationConfig(connection.id),
+              params: { ...params, onSuccess: params.onMigrationSuccess, onFailed: params.onMigrationFailed }
+            },
+            migrationApiMap['migrate.latest']
+          )
+      })
+    )
   );
 
   return executeProcesses(processes, config);
@@ -94,12 +95,14 @@ export async function prune(
   const connections = mapToConnectionReferences(conn);
   await init.prepare(config, {});
 
-  const processes = connections.map(({ connection, id: connectionId }) => () =>
-    pruneDatabase(connection, {
-      config,
-      params,
-      connectionId
-    })
+  const processes = connections.map(connection => () =>
+    withTransaction(connection, trx =>
+      pruneDatabase(trx, {
+        config,
+        params,
+        connectionId: connection.id
+      })
+    )
   );
 
   return executeProcesses(processes, config);
@@ -124,16 +127,18 @@ export async function migrateLatest(
   const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
-  const processes = connections.map(({ connection, id: connectionId }) => () =>
-    runMigrateFunc(
-      connection,
-      {
-        config,
-        params,
-        connectionId,
-        knexMigrationConfig: knexMigrationConfig(connectionId)
-      },
-      migrationApiMap['migrate.latest']
+  const processes = connections.map(connection => () =>
+    withTransaction(connection, trx =>
+      invokeMigrationApi(
+        trx,
+        {
+          config,
+          params,
+          connectionId: connection.id,
+          knexMigrationConfig: knexMigrationConfig(connection.id)
+        },
+        migrationApiMap['migrate.latest']
+      )
     )
   );
 
@@ -159,16 +164,18 @@ export async function migrateRollback(
   const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
-  const processes = connections.map(({ connection, id: connectionId }) => () =>
-    runMigrateFunc(
-      connection,
-      {
-        config,
-        params,
-        connectionId,
-        knexMigrationConfig: knexMigrationConfig(connectionId)
-      },
-      migrationApiMap['migrate.rollback']
+  const processes = connections.map(connection => () =>
+    withTransaction(connection, trx =>
+      invokeMigrationApi(
+        trx,
+        {
+          config,
+          params,
+          connectionId: connection.id,
+          knexMigrationConfig: knexMigrationConfig(connection.id)
+        },
+        migrationApiMap['migrate.rollback']
+      )
     )
   );
 
@@ -194,16 +201,18 @@ export async function migrateList(
   const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
-  const processes = connections.map(({ connection, id: connectionId }) => () =>
-    runMigrateFunc(
-      connection,
-      {
-        config,
-        params,
-        connectionId,
-        knexMigrationConfig: knexMigrationConfig(connectionId)
-      },
-      migrationApiMap['migrate.list']
+  const processes = connections.map(connection => () =>
+    withTransaction(connection, trx =>
+      invokeMigrationApi(
+        trx,
+        {
+          config,
+          params,
+          connectionId: connection.id,
+          knexMigrationConfig: knexMigrationConfig(connection.id)
+        },
+        migrationApiMap['migrate.list']
+      )
     )
   );
 

@@ -15,15 +15,15 @@ export const migrationApiMap = {
 };
 
 /**
- * Invoke Knex's migration API.
+ * Invoke Knex's migration API for given function.
  *
- * @param {(Knex | Knex.Transaction)} trx
+ * @param {Knex.Transaction} trx
  * @param {MigrationCommandContext} context
  * @param {((trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>)} func
  * @returns {Promise<CommandResult>}
  */
-export async function runMigrateFunc(
-  trx: Knex | Knex.Transaction,
+export async function invokeMigrationApi(
+  trx: Knex.Transaction,
   context: MigrationCommandContext,
   func: (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>
 ): Promise<CommandResult> {

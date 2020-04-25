@@ -45,14 +45,10 @@ export async function executeOperation<T extends CommandContext>(
   const timeStart = process.hrtime();
 
   try {
-    logDb('BEGIN: operation');
-
     result.data = await func({ timeStart });
 
-    logDb(`END: operation`);
     result.success = true;
   } catch (e) {
-    logDb('FAILED: operation');
     logDb(`Error caught for connection ${connectionId}:`, e);
     result.error = e;
   }

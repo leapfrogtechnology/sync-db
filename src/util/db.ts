@@ -1,6 +1,8 @@
 import * as Knex from 'knex';
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
+import { dbLogger } from './logger';
+import ConnectionReference from '../domain/ConnectionReference';
 
 /**
  * Returns true if the provided object is a knex connection instance.
@@ -37,4 +39,28 @@ export function getConfig(db: Knex): ConnectionConfig {
  */
 export function createInstance(config: ConnectionConfig): Knex {
   return Knex({ connection: config, client: config.client });
+}
+
+/**
+ * Run a callback function with in a transaction.
+ *
+ * @param {ConnectionReference} db
+ * @param {(trx: Knex.Transaction) => Promise<T>} callback
+ * @returns {Promise<T>}
+ */
+export function withTransaction<T>(
+  db: ConnectionReference,
+  callback: (trx: Knex.Transaction) => Promise<T>
+): Promise<T> {
+  const log = dbLogger(db.id);
+
+  return db.connection.transaction(async trx => {
+    log('BEGIN: transaction');
+
+    const result = await callback(trx);
+
+    log('END: transaction');
+
+    return result;
+  });
 }

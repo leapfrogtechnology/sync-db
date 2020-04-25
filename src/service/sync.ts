@@ -83,58 +83,56 @@ async function teardown(trx: Knex.Transaction, context: CommandContext): Promise
 /**
  * Synchronize on a single database connection.
  *
- * @param {Knex} connection
+ * @param {Knex.Transaction} trx
  * @param {SyncContext} context
- * @returns {Promise<CommandResult<null>>}
+ * @returns {Promise<CommandResult>}
  */
-export async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<CommandResult<null>> {
-  return connection.transaction(trx =>
-    executeOperation(context, async options => {
-      const { connectionId, migrateFunc } = context;
-      const { timeStart } = options;
-      const log = dbLogger(connectionId);
+export async function synchronizeDatabase(trx: Knex.Transaction, context: SyncContext): Promise<CommandResult> {
+  return executeOperation(context, async options => {
+    const { connectionId, migrateFunc } = context;
+    const { timeStart } = options;
+    const log = dbLogger(connectionId);
 
-      // Trigger onStarted handler if bound.
-      if (context.params.onStarted) {
-        await context.params.onStarted({
-          connectionId,
-          success: false,
-          data: null,
-          timeElapsed: getElapsedTime(timeStart)
-        });
-      }
+    // Trigger onStarted handler if bound.
+    if (context.params.onStarted) {
+      await context.params.onStarted({
+        connectionId,
+        success: false,
+        data: null,
+        timeElapsed: getElapsedTime(timeStart)
+      });
+    }
 
-      await teardown(trx, context);
+    await teardown(trx, context);
 
-      // Trigger onTeardownSuccess if bound.
-      if (context.params.onTeardownSuccess) {
-        await context.params.onTeardownSuccess({
-          connectionId,
-          data: null,
-          success: true,
-          timeElapsed: getElapsedTime(timeStart)
-        });
-      }
+    // Trigger onTeardownSuccess if bound.
+    if (context.params.onTeardownSuccess) {
+      await context.params.onTeardownSuccess({
+        connectionId,
+        data: null,
+        success: true,
+        timeElapsed: getElapsedTime(timeStart)
+      });
+    }
 
-      if (context.params['skip-migration']) {
-        log('Skipped migrations.');
-      } else {
-        log('Running migrations.');
-        await migrateFunc(trx);
-      }
+    if (context.params['skip-migration']) {
+      log('Skipped migrations.');
+    } else {
+      log('Running migrations.');
+      await migrateFunc(trx);
+    }
 
-      await setup(trx, context);
-    })
-  );
+    await setup(trx, context);
+  });
 }
 
 /**
  * Prune on a single database connection.
  *
- * @param {Knex} connection
+ * @param {Knex.Transaction} trx
  * @param {CommandContext} context
- * @returns {Promise<CommandResult<null>>}
+ * @returns {Promise<CommandResult>}
  */
-export async function pruneDatabase(connection: Knex, context: CommandContext): Promise<CommandResult<null>> {
-  return connection.transaction(trx => executeOperation(context, () => teardown(trx, context)));
+export async function pruneDatabase(trx: Knex.Transaction, context: CommandContext): Promise<CommandResult> {
+  return executeOperation(context, () => teardown(trx, context));
 }
