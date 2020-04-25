@@ -1,4 +1,4 @@
-import Knex from 'knex';
+import * as Knex from 'knex';
 import * as path from 'path';
 
 import { log } from './util/logger';

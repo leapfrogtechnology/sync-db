@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import SqlMigrationEntry from '../../src/domain/SqlMigrationEntry';
+import SqlMigrationEntry from '../../src/domain/migration/SqlMigrationEntry';
 import SqlMigrationContext from '../../src/migration/SqlMigrationContext';
 
 describe('UTIL: SqlMigrationContext', () => {
