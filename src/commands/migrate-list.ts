@@ -4,7 +4,7 @@ import { bold, grey, red, cyan, yellow } from 'chalk';
 import { migrateList } from '../api';
 import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { MigrationResult } from '../service/knexMigrator';
+import CommandResult from '../domain/CommandResult';
 
 /**
  * Migration command handler.
@@ -15,7 +15,7 @@ class MigrateList extends Command {
   /**
    * Success handler for a connection.
    */
-  onSuccess = async (result: MigrationResult) => {
+  onSuccess = async (result: CommandResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
 
     const [list1, list2] = result.data;
@@ -46,7 +46,7 @@ class MigrateList extends Command {
   /**
    * Failure handler for a connection.
    */
-  onFailed = async (result: MigrationResult) => {
+  onFailed = async (result: CommandResult) => {
     printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);

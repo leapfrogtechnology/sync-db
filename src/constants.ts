@@ -3,8 +3,6 @@
 import * as path from 'path';
 
 import Configuration from './domain/Configuration';
-import SynchronizeParams from './domain/SynchronizeParams';
-import ExecutionContext from './domain/ExecutionContext';
 
 // General constants
 export const NS_PER_SEC = 1e9;
@@ -30,13 +28,6 @@ export const DEFAULT_CONFIG: Configuration = {
     tableName: 'knex_migrations', // Note: This is Knex's default value. Just keeping it same.
     sourceType: 'sql'
   }
-};
-
-export const DEFAULT_SYNC_PARAMS: SynchronizeParams = {
-  force: false,
-  'skip-migration': false,
-  onSuccess: (context: ExecutionContext) => Promise.resolve(),
-  onFailed: (context: ExecutionContext) => Promise.resolve()
 };
 
 export const REQUIRED_ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT'];

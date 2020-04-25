@@ -2,27 +2,8 @@ import Knex from 'knex';
 
 import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
-import Configuration from '../domain/Configuration';
-
-export interface MigrationResult {
-  connectionId: string;
-  success: boolean;
-  timeElapsed: number;
-  data: any;
-  error?: any;
-}
-
-export interface MigrationCommandParams {
-  onSuccess?: (result: MigrationResult) => Promise<any>;
-  onFailed?: (context: MigrationResult) => Promise<any>;
-}
-
-export interface MigrationCommandContext {
-  config: Configuration;
-  connectionId: string;
-  params: MigrationCommandParams;
-  knexMigrationConfig: Knex.MigratorConfig;
-}
+import MigrationCommandContext from '../domain/MigrationCommandContext';
+import CommandResult from '../domain/CommandResult';
 
 /**
  * A map of Knex's migration API functions.
@@ -39,13 +20,13 @@ export const migrationApiMap = {
  * @param {(Knex | Knex.Transaction)} trx
  * @param {MigrationCommandContext} context
  * @param {((trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>)} func
- * @returns {Promise<MigrationResult>}
+ * @returns {Promise<CommandResult>}
  */
 export async function runMigrateFunc(
   trx: Knex | Knex.Transaction,
   context: MigrationCommandContext,
   func: (trx: Knex | Knex.Transaction, config: Knex.MigratorConfig) => Promise<any>
-): Promise<MigrationResult> {
+): Promise<CommandResult> {
   const dbLog = dbLogger(context.connectionId);
   const { connectionId, knexMigrationConfig } = context;
   const funcName = func.name || 'func';
@@ -70,7 +51,7 @@ export async function runMigrateFunc(
 
   dbLog(`Execution completed in ${timeElapsed} s`);
 
-  const result: MigrationResult = {
+  const result: CommandResult = {
     connectionId,
     error,
     data,

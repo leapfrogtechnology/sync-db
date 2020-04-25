@@ -4,8 +4,8 @@ import { bold, red, cyan } from 'chalk';
 import { migrateLatest } from '../api';
 import { printLine, printError, printInfo } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
-import { MigrationResult } from '../service/knexMigrator';
 import { dbLogger } from '../util/logger';
+import CommandResult from '../domain/CommandResult';
 
 /**
  * Migration command handler.
@@ -16,7 +16,7 @@ class MigrateLatest extends Command {
   /**
    * Success handler for each connection.
    */
-  onSuccess = async (result: MigrationResult) => {
+  onSuccess = async (result: CommandResult) => {
     const log = dbLogger(result.connectionId);
     const [num, list] = result.data;
     const alreadyUpToDate = num && list.length === 0;
@@ -42,7 +42,7 @@ class MigrateLatest extends Command {
   /**
    * Failure handler for each connection.
    */
-  onFailed = async (result: MigrationResult) => {
+  onFailed = async (result: CommandResult) => {
     printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);

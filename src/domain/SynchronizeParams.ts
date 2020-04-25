@@ -1,18 +1,16 @@
-import ExecutionContext from './ExecutionContext';
-import { MigrationResult } from '../service/knexMigrator';
+import CommandParams from './CommandParams';
+import CommandResult from './CommandResult';
 
 /**
  * Synchronize parameters.
  */
-interface SynchronizeParams {
+interface SynchronizeParams extends CommandParams {
   force: boolean;
   'skip-migration': boolean;
-  onStarted?: (context: ExecutionContext) => Promise<any>;
-  onSuccess?: (context: ExecutionContext) => Promise<any>;
-  onTeardownSuccess?: (context: ExecutionContext) => Promise<any>;
-  onFailed?: (context: ExecutionContext) => Promise<any>;
-  onMigrationSuccess?: (result: MigrationResult) => Promise<any>;
-  onMigrationFailed?: (result: MigrationResult) => Promise<any>;
+  onStarted?: (result: CommandResult) => Promise<any>;
+  onTeardownSuccess?: (result: CommandResult) => Promise<any>;
+  onMigrationSuccess?: (result: CommandResult) => Promise<any>;
+  onMigrationFailed?: (result: CommandResult) => Promise<any>;
 }
 
 export default SynchronizeParams;

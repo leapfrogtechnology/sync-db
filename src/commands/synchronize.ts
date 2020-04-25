@@ -2,13 +2,11 @@ import { bold, cyan, red, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { getElapsedTime } from '../util/ts';
-import SyncResult from '../domain/SyncResult';
 import { log, dbLogger } from '../util/logger';
-import { MigrationResult } from '../service/knexMigrator';
-import ExecutionContext from '../domain/ExecutionContext';
 import { loadConfig, resolveConnections } from '../config';
 import { printError, printLine, printInfo } from '../util/io';
 import { synchronize } from '../api';
+import CommandResult from '../domain/CommandResult';
 
 /**
  * Synchronize command handler.
@@ -26,18 +24,18 @@ class Synchronize extends Command {
     'skip-migration': flags.boolean({ description: 'Skip running migrations' })
   };
 
-  onStarted = async (context: ExecutionContext) => {
-    await printLine(bold(` ▸ ${context.connectionId}`));
+  onStarted = async (result: CommandResult) => {
+    await printLine(bold(` ▸ ${result.connectionId}`));
     await printInfo('   [✓] Synchronization - started');
   };
 
-  onPruneSuccess = (context: ExecutionContext) =>
-    printLine(green('   [✓] Synchronization - pruned') + ` (${context.timeElapsed}s)`);
+  onPruneSuccess = (result: CommandResult) =>
+    printLine(green('   [✓] Synchronization - pruned') + ` (${result.timeElapsed}s)`);
 
   /**
    * Success handler for migration run during sync process.
    */
-  onMigrationSuccess = async (result: MigrationResult) => {
+  onMigrationSuccess = async (result: CommandResult) => {
     const logDb = dbLogger(result.connectionId);
     const [num, list] = result.data;
     const alreadyUpToDate = num && list.length === 0;
@@ -61,7 +59,7 @@ class Synchronize extends Command {
   /**
    * Failure handler for migration during sync process.
    */
-  onMigrationFailed = async (result: MigrationResult) => {
+  onMigrationFailed = async (result: CommandResult) => {
     await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)\n`));
 
     // await printError(`   ${result.error}\n`);
@@ -70,13 +68,13 @@ class Synchronize extends Command {
   /**
    * Success handler for each connection.
    */
-  onSuccess = (context: ExecutionContext) =>
-    printLine(green('   [✓] Synchronization - completed') + ` (${context.timeElapsed}s)\n`);
+  onSuccess = (result: CommandResult) =>
+    printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
 
   /**
    * Failure handler for each connection.
    */
-  onFailed = async (result: ExecutionContext) => {
+  onFailed = async (result: CommandResult) => {
     await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));
   };
 
@@ -88,7 +86,7 @@ class Synchronize extends Command {
    * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>}
    */
   async processResults(
-    results: SyncResult[]
+    results: CommandResult[]
   ): Promise<{ totalCount: number; failedCount: number; successfulCount: number }> {
     const totalCount = results.length;
     const failedAttempts = results.filter(result => !result.success);

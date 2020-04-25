@@ -3,10 +3,9 @@ import * as Knex from 'knex';
 import * as sqlRunner from './sqlRunner';
 import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
-import SyncResult from '../domain/SyncResult';
 import SyncContext from '../domain/SyncContext';
 import * as configInjection from './configInjection';
-import ExecutionContext from '../domain/ExecutionContext';
+import CommandResult from '../domain/CommandResult';
 
 /**
  * Migrate SQL on a database.
@@ -84,12 +83,12 @@ async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<vo
  *
  * @param {Knex} connection
  * @param {SyncContext} context
- * @returns {Promise<SyncResult>}
+ * @returns {Promise<CommandResult<null>>}
  */
-export async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<SyncResult> {
+export async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<CommandResult<null>> {
   const { connectionId, migrateFunc } = context;
   const log = dbLogger(connectionId);
-  const result: SyncResult = { connectionId, success: false };
+  const result: CommandResult = { connectionId, success: false, data: null, timeElapsed: 0 };
 
   const timeStart = process.hrtime();
 
@@ -99,8 +98,7 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
     // Trigger onStarted handler if bound.
     if (context.params.onStarted) {
       await context.params.onStarted({
-        connectionId,
-        success: false,
+        ...result,
         timeElapsed: getElapsedTime(timeStart)
       });
     }
@@ -112,7 +110,7 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
       // Trigger onTeardownSuccess if bound.
       if (context.params.onTeardownSuccess) {
         await context.params.onTeardownSuccess({
-          connectionId,
+          ...result,
           success: true,
           timeElapsed: getElapsedTime(timeStart)
         });
@@ -135,22 +133,15 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
     result.error = e;
   }
 
-  const timeElapsed = getElapsedTime(timeStart);
+  result.timeElapsed = getElapsedTime(timeStart);
 
-  log(`Execution completed in ${timeElapsed} s`);
-
-  const execContext: ExecutionContext = {
-    connectionId,
-    timeElapsed,
-    success: result.success,
-    error: result.error
-  };
+  log(`Execution completed in ${result.timeElapsed} s`);
 
   // Invoke corresponding handlers if they're sent.
   if (result.success && context.params.onSuccess) {
-    await context.params.onSuccess(execContext);
+    await context.params.onSuccess(result);
   } else if (!result.success && context.params.onFailed) {
-    await context.params.onFailed(execContext);
+    await context.params.onFailed(result);
   }
 
   return result;
