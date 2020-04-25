@@ -1,23 +1,23 @@
-import { Command } from '@oclif/command';
 import { bold, red } from 'chalk';
+import { Command } from '@oclif/command';
 
-import { printLine, printError } from '../util/io';
-
-import OperationResult from '../domain/operation/OperationResult';
 import { prune } from '../api';
+import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
+import OperationResult from '../domain/operation/OperationResult';
 
 class Prune extends Command {
   static description = 'Drop all the synchronized db objects except the ones created via migrations.';
+
   /**
-   * Success handler for each connection.
+   * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
   };
 
   /**
-   * Failure handler for each connection.
+   * Failure handler.
    */
   onFailed = async (result: OperationResult) => {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));

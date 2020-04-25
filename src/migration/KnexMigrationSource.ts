@@ -1,11 +1,14 @@
 import { dbLogger } from '../util/logger';
-import MigrationContext from '../domain/migration/MigrationContext';
+import MigrationSourceContext from './domain/MigrationSourceContext';
 
 /**
- * MigrationSource class for the Knex Migration API.
+ * Migration source class for the Knex Migration API.
+ * An instance of this class is passed to the knex's migration config as `migrationSource`.
+ *
+ * Reference: http://knexjs.org/#Migrations-API
  */
 class KnexMigrationSource {
-  private migrationContext: MigrationContext;
+  private migrationContext: MigrationSourceContext;
   private log: debug.Debugger;
 
   /**
@@ -13,7 +16,7 @@ class KnexMigrationSource {
    *
    * @param {MigrationEntry[]} migrationLists
    */
-  constructor(migrationContext: MigrationContext) {
+  constructor(migrationContext: MigrationSourceContext) {
     this.log = dbLogger(migrationContext.connectionId);
     this.migrationContext = migrationContext;
   }

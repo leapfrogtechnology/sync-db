@@ -1,11 +1,11 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import SqlMigrationEntry from '../../src/domain/migration/SqlMigrationEntry';
-import SqlMigrationContext from '../../src/migration/SqlMigrationContext';
+import SqlMigrationEntry from '../../src/migration/domain/SqlMigrationEntry';
+import SqlMigrationSourceContext from '../../src/migration/source-types/SqlMigrationSourceContext';
 
-describe('UTIL: SqlMigrationContext', () => {
-  const getInstance = (list: SqlMigrationEntry[]) => new SqlMigrationContext(list);
+describe('MIGRATION: SqlMigrationSourceContext', () => {
+  const getInstance = (list: SqlMigrationEntry[]) => new SqlMigrationSourceContext(list);
 
   describe('keys', () => {
     it('should return an empty list if migrations are empty.', () => {

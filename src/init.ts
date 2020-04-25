@@ -4,10 +4,10 @@ import * as path from 'path';
 import { log } from './util/logger';
 import { validate, isCLI } from './config';
 import Configuration from './domain/Configuration';
-import * as migratorService from './service/migrator';
-import MigrationContext from './domain/migration/MigrationContext';
+import * as migratorService from './migration/service/migrator';
 import KnexMigrationSource from './migration/KnexMigrationSource';
-import SqlMigrationContext from './migration/SqlMigrationContext';
+import MigrationSourceContext from './migration/domain/MigrationSourceContext';
+import SqlMigrationSourceContext from './migration/source-types/SqlMigrationSourceContext';
 
 export interface PrepareOptions {
   loadMigrations?: boolean;
@@ -49,12 +49,12 @@ export async function prepare(config: Configuration, options: PrepareOptions): P
  *
  * @param {Configuration} config
  * @param {PrepareOptions} options
- * @returns {(Promise<MigrationContext | null>)}
+ * @returns {(Promise<MigrationSourceContext | null>)}
  */
 async function resolveMigrationContext(
   config: Configuration,
   options: PrepareOptions
-): Promise<MigrationContext | null> {
+): Promise<MigrationSourceContext | null> {
   if (options.loadMigrations !== true) {
     return null;
   }
@@ -70,7 +70,7 @@ async function resolveMigrationContext(
 
       log('Available migration sources:\n%O', src);
 
-      return new SqlMigrationContext(src);
+      return new SqlMigrationSourceContext(src);
 
     default:
       // TODO: We'll need to support different types of migrations eg both sql & js

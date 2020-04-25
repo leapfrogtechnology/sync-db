@@ -2,19 +2,16 @@ import { Command } from '@oclif/command';
 import { bold, red, cyan } from 'chalk';
 
 import { migrateLatest } from '../api';
-import { printLine, printError, printInfo } from '../util/io';
-import { loadConfig, resolveConnections } from '..';
 import { dbLogger } from '../util/logger';
+import { loadConfig, resolveConnections } from '..';
+import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
 
-/**
- * Migration command handler.
- */
 class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
   /**
-   * Success handler for each connection.
+   * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
     const log = dbLogger(result.connectionId);
@@ -40,7 +37,7 @@ class MigrateLatest extends Command {
   };
 
   /**
-   * Failure handler for each connection.
+   * Failure handler.
    */
   onFailed = async (result: OperationResult) => {
     printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));

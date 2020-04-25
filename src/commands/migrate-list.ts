@@ -6,36 +6,33 @@ import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
 import OperationResult from '../domain/operation/OperationResult';
 
-/**
- * Migration command handler.
- */
 class MigrateList extends Command {
-  static description = 'List migrations.';
+  static description = 'List all the migrations.';
 
   /**
-   * Success handler for a connection.
+   * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
 
-    const [list1, list2] = result.data;
-    const ranCount = list1.length;
-    const remainingCount = list2.length;
+    const [completedList, remainingList] = result.data;
+    const ranCount = completedList.length;
+    const remainingCount = remainingList.length;
 
     // Completed migrations.
-    for (const item of list1) {
+    for (const item of completedList) {
       await printLine(cyan(`   • ${item}`));
     }
 
     // Remaining Migrations
-    for (const item of list2) {
+    for (const item of remainingList) {
       await printLine(grey(`   - ${item}`));
     }
 
     if (ranCount === 0 && remainingCount === 0) {
       await printLine(yellow('   No migrations.'));
     } else if (remainingCount > 0) {
-      await printLine(yellow(`\n   ${list2.length} migrations yet to be run.`));
+      await printLine(yellow(`\n   ${remainingList.length} migrations yet to be run.`));
     } else if (remainingCount === 0) {
       await printLine('\n   All up to date.');
     }
@@ -44,7 +41,7 @@ class MigrateList extends Command {
   };
 
   /**
-   * Failure handler for a connection.
+   * Failure handler.
    */
   onFailed = async (result: OperationResult) => {
     printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));

@@ -4,7 +4,7 @@ import * as Knex from 'knex';
 
 import Mapping from '../domain/Mapping';
 import { dbLogger } from '../util/logger';
-import SyncContext from '../domain/SyncContext';
+import SynchronizeContext from '../domain/SynchronizeContext';
 import { expandEnvVarsInMap } from '../util/env';
 import KeyValuePair from '../domain/KeyValuePair';
 import { INJECTED_CONFIG_TABLE } from '../constants';
@@ -54,10 +54,10 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
  * Setup the table in the database with the injected config.
  *
  * @param {Knex.Transaction} trx
- * @param {SyncContext} context
+ * @param {SynchronizeContext} context
  * @returns {Promise<void>}
  */
-export async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+export async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const log = dbLogger(context.connectionId);
   const { injectedConfig } = context.config;
 
@@ -92,10 +92,10 @@ export async function setup(trx: Knex.Transaction, context: SyncContext): Promis
  * Drop the injected config table.
  *
  * @param {Knex.Transaction} trx
- * @param {SyncContext} context
+ * @param {SynchronizeContext} context
  * @returns {Promise<void>}
  */
-export async function cleanup(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+export async function cleanup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const log = dbLogger(context.connectionId);
 
   await trx.schema.dropTableIfExists(INJECTED_CONFIG_TABLE);

@@ -3,9 +3,9 @@ import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
 import { write, mkdtemp } from '../../src/util/fs';
-import * as migratorService from '../../src/service/migrator';
+import * as migratorService from '../../src/migration/service/migrator';
 
-describe('SERVICE: migrator', () => {
+describe('MIGRATION: migrator', () => {
   describe('getSqlMigrationNames', async () => {
     it('should return the list of valid migrations under the directory.', async () => {
       const migrationPath = await mkdtemp();

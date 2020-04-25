@@ -1,12 +1,12 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import MigrationContext from '../../src/domain/migration/MigrationContext';
 import KnexMigrationSource from '../../src/migration/KnexMigrationSource';
+import MigrationSourceContext from '../../src/migration/domain/MigrationSourceContext';
 
-describe('UTIL: KnexMigrationSource', () => {
+describe('MIGRATION: KnexMigrationSource', () => {
   const getInstance = () => {
-    const migrationContext: MigrationContext = new (class {
+    const migrationContext: MigrationSourceContext = new (class {
       connectionId = 'testdb1';
 
       bind(connectionId: string) {

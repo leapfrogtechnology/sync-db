@@ -1,14 +1,14 @@
 import * as Knex from 'knex';
 
-import MigrationRunner from '../domain/migration/MigrationRunner';
-import { dbLogger, log as logger } from '../util/logger';
-import MigrationContext from '../domain/migration/MigrationContext';
-import SqlMigrationEntry from '../domain/migration/SqlMigrationEntry';
+import MigrationRunner from '../domain/MigrationRunner';
+import { dbLogger, log as logger } from '../../util/logger';
+import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import MigrationSourceContext from '../domain/MigrationSourceContext';
 
 /**
  * SQL source migration context for KnexMigrationSource.
  */
-class SqlMigrationContext implements MigrationContext {
+class SqlMigrationSourceContext implements MigrationSourceContext {
   private list: SqlMigrationEntry[];
   private log: debug.Debugger;
   public connectionId: string;
@@ -30,9 +30,9 @@ class SqlMigrationContext implements MigrationContext {
    * Bind connectionId to the context.
    *
    * @param {string} connectionId
-   * @returns {MigrationContext} this
+   * @returns {MigrationSourceContext} this
    */
-  bind(connectionId: string): MigrationContext {
+  bind(connectionId: string): MigrationSourceContext {
     this.connectionId = connectionId;
     this.log = dbLogger(connectionId);
 
@@ -90,4 +90,4 @@ class SqlMigrationContext implements MigrationContext {
   }
 }
 
-export default SqlMigrationContext;
+export default SqlMigrationSourceContext;

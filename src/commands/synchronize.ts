@@ -1,16 +1,13 @@
 import { bold, cyan, red, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
+import { synchronize } from '../api';
 import { getElapsedTime } from '../util/ts';
 import { log, dbLogger } from '../util/logger';
 import { loadConfig, resolveConnections } from '../config';
 import { printError, printLine, printInfo } from '../util/io';
-import { synchronize } from '../api';
 import OperationResult from '../domain/operation/OperationResult';
 
-/**
- * Synchronize command handler.
- */
 class Synchronize extends Command {
   static description = 'Synchronize database';
 
@@ -24,16 +21,22 @@ class Synchronize extends Command {
     'skip-migration': flags.boolean({ description: 'Skip running migrations' })
   };
 
+  /**
+   * Started event handler.
+   */
   onStarted = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
     await printInfo('   [✓] Synchronization - started');
   };
 
+  /**
+   * Prune success handler.
+   */
   onPruneSuccess = (result: OperationResult) =>
     printLine(green('   [✓] Synchronization - pruned') + ` (${result.timeElapsed}s)`);
 
   /**
-   * Success handler for migration run during sync process.
+   * Migration success handler.
    */
   onMigrationSuccess = async (result: OperationResult) => {
     const logDb = dbLogger(result.connectionId);
@@ -57,7 +60,7 @@ class Synchronize extends Command {
   };
 
   /**
-   * Failure handler for migration during sync process.
+   * Migration failure handler.
    */
   onMigrationFailed = async (result: OperationResult) => {
     await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)\n`));
@@ -66,13 +69,13 @@ class Synchronize extends Command {
   };
 
   /**
-   * Success handler for each connection.
+   * Success handler for the whole process - after all completed.
    */
   onSuccess = (result: OperationResult) =>
     printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
 
   /**
-   * Failure handler for each connection.
+   * Failure handler for the whole process - if the process failed.
    */
   onFailed = async (result: OperationResult) => {
     await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));

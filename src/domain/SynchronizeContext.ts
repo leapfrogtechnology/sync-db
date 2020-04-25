@@ -6,9 +6,9 @@ import OperationContext from './operation/OperationContext';
 /**
  * Synchronize context for a database connection.
  */
-interface SyncContext extends OperationContext {
+interface SynchronizeContext extends OperationContext {
   params: SynchronizeParams;
   migrateFunc: (trx: Knex.Transaction) => Promise<any>;
 }
 
-export default SyncContext;
+export default SynchronizeContext;

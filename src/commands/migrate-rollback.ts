@@ -2,19 +2,16 @@ import { Command } from '@oclif/command';
 import { bold, red, cyan } from 'chalk';
 
 import { migrateRollback } from '../api';
-import { printLine, printError, printInfo } from '../util/io';
-import { loadConfig, resolveConnections } from '..';
 import { dbLogger } from '../util/logger';
+import { loadConfig, resolveConnections } from '..';
+import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
 
-/**
- * Migration command handler.
- */
 class MigrateRollback extends Command {
   static description = 'Rollback migrations up to the last run batch.';
 
   /**
-   * Success handler for each connection.
+   * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
     const log = dbLogger(result.connectionId);
@@ -31,7 +28,7 @@ class MigrateRollback extends Command {
       return;
     }
 
-    // Completed migrations.
+    // List of migrations rolled back.
     for (const item of list) {
       await printLine(cyan(`   - ${item}`));
     }
@@ -40,7 +37,7 @@ class MigrateRollback extends Command {
   };
 
   /**
-   * Failure handler for each connection.
+   * Failure handler.
    */
   onFailed = async (result: OperationResult) => {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));

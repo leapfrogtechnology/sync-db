@@ -1,9 +1,9 @@
+import { getElapsedTime } from '../util/ts';
 import { log, dbLogger } from '../util/logger';
 import Configuration from '../domain/Configuration';
 import { Promiser, runSequentially } from '../util/promise';
-import OperationContext from '../domain/operation/OperationContext';
 import OperationResult from '../domain/operation/OperationResult';
-import { getElapsedTime } from '../util/ts';
+import OperationContext from '../domain/operation/OperationContext';
 
 /**
  * Execute a list of processes according to the configuration.
