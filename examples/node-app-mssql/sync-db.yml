@@ -19,6 +19,10 @@ sql:
 hooks:
   post_sync:
     - scripts/setup.sql
+
+migration:
+  directory: migration
+
 injectedConfig:
   vars:
     create_admin: ${CREATE_ADMIN}

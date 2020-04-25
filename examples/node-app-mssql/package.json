@@ -4,11 +4,10 @@
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
-    "synchronize": "yarn migrate && sync-db",
+    "synchronize": "../../bin/run-dev.sh synchronize",
     "start": "yarn lint && babel-node src/index.js",
-    "make": "knex --knexfile=knexfile.js migrate:make",
-    "migrate": "knex --knexfile=knexfile.js migrate:latest",
-    "rollback": "knex --knexfile=knexfile.js migrate:rollback"
+    "migrate": "../../bin/run-dev.sh migrate-latest",
+    "rollback": "../../bin/run-dev.sh migrate-rollback"
   },
   "dependencies": {
     "@leapfrogtechnology/sync-db": "^1.0.0-experimental.9",
