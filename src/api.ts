@@ -1,26 +1,16 @@
-import * as Knex from 'knex';
-
 import * as init from './init';
 import { log } from './util/logger';
-import { getConnectionId } from './config';
-import { isKnexInstance, getConfig, createInstance, withTransaction } from './util/db';
+import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
 
 import Configuration from './domain/Configuration';
 import CommandResult from './domain/CommandResult';
 import CommandParams from './domain/CommandParams';
-import ConnectionConfig from './domain/ConnectionConfig';
 import SynchronizeParams from './domain/SynchronizeParams';
-import ConnectionReference from './domain/ConnectionReference';
 
 // Service
 import { executeProcesses } from './service/execution';
 import { synchronizeDatabase, pruneDatabase } from './service/sync';
 import { invokeMigrationApi, migrationApiMap } from './service/knexMigrator';
-
-/**
- * Database connections given by the user or the CLI frontend.
- */
-export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig | Knex[] | Knex;
 
 /**
  * Synchronize all the configured database connections.
@@ -217,29 +207,4 @@ export async function migrateList(
   );
 
   return executeProcesses(processes, config);
-}
-
-/**
- * Map user provided connection(s) to the connection instances.
- *
- * @param {(DatabaseConnections)} conn
- * @returns {ConnectionReference[]}
- */
-function mapToConnectionReferences(conn: DatabaseConnections): ConnectionReference[] {
-  const connectionList = Array.isArray(conn) ? conn : [conn];
-
-  return connectionList.map(connection => {
-    if (isKnexInstance(connection)) {
-      log(`Received connection instance to database: ${connection.client.config.connection.database}`);
-
-      // TODO: Ask for `id` explicitly in for programmatic API,
-      // when Knex instance is passed directly.
-      // This implies a breaking change with the programmatic API.
-      return { connection, id: getConnectionId(getConfig(connection)) };
-    }
-
-    log(`Creating a connection to database: ${connection.host}/${connection.database}`);
-
-    return { connection: createInstance(connection), id: getConnectionId(connection) };
-  });
 }

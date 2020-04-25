@@ -1,8 +1,13 @@
 import * as Knex from 'knex';
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
-import { dbLogger } from './logger';
+import { dbLogger, log } from './logger';
 import ConnectionReference from '../domain/ConnectionReference';
+
+/**
+ * Database connections given by the user or the CLI frontend.
+ */
+export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig | Knex[] | Knex;
 
 /**
  * Returns true if the provided object is a knex connection instance.
@@ -52,15 +57,40 @@ export function withTransaction<T>(
   db: ConnectionReference,
   callback: (trx: Knex.Transaction) => Promise<T>
 ): Promise<T> {
-  const log = dbLogger(db.id);
+  const dbLog = dbLogger(db.id);
 
   return db.connection.transaction(async trx => {
-    log('BEGIN: transaction');
+    dbLog('BEGIN: transaction');
 
     const result = await callback(trx);
 
-    log('END: transaction');
+    dbLog('END: transaction');
 
     return result;
+  });
+}
+
+/**
+ * Map user provided connection(s) to the connection instances.
+ *
+ * @param {(DatabaseConnections)} conn
+ * @returns {ConnectionReference[]}
+ */
+export function mapToConnectionReferences(conn: DatabaseConnections): ConnectionReference[] {
+  const connectionList = Array.isArray(conn) ? conn : [conn];
+
+  return connectionList.map(connection => {
+    if (isKnexInstance(connection)) {
+      log(`Received connection instance to database: ${connection.client.config.connection.database}`);
+
+      // TODO: Ask for `id` explicitly in for programmatic API,
+      // when Knex instance is passed directly.
+      // This implies a breaking change with the programmatic API.
+      return { connection, id: getConnectionId(getConfig(connection)) };
+    }
+
+    log(`Creating a connection to database: ${connection.host}/${connection.database}`);
+
+    return { connection: createInstance(connection), id: getConnectionId(connection) };
   });
 }
