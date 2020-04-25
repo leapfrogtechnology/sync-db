@@ -1,11 +1,11 @@
 {
   "connections": [
     {
-      "id": "db1",
+      "id": "testdb1",
       "host": "localhost",
       "port": 1433,
       "user": "db1user",
-      "database": "db1",
+      "database": "testdb1",
       "password": "password",
       "client": "mssql"
     }
