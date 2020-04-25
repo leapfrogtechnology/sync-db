@@ -6,6 +6,8 @@ import { getElapsedTime } from '../util/ts';
 import SyncContext from '../domain/SyncContext';
 import * as configInjection from './configInjection';
 import CommandResult from '../domain/CommandResult';
+import CommandContext from '../domain/CommandContext';
+import { executeOperation } from './execution';
 
 /**
  * Migrate SQL on a database.
@@ -62,10 +64,10 @@ async function setup(trx: Knex.Transaction, context: SyncContext): Promise<void>
  * They're executed in the reverse order of their creation.
  *
  * @param {Knex.Transaction} trx
- * @param {SyncContext} context
+ * @param {CommandContext} context
  * @returns {Promise<void>}
  */
-async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<void> {
+async function teardown(trx: Knex.Transaction, context: CommandContext): Promise<void> {
   const { basePath, sql } = context.config;
   const log = dbLogger(context.connectionId);
 
@@ -86,31 +88,29 @@ async function teardown(trx: Knex.Transaction, context: SyncContext): Promise<vo
  * @returns {Promise<CommandResult<null>>}
  */
 export async function synchronizeDatabase(connection: Knex, context: SyncContext): Promise<CommandResult<null>> {
-  const { connectionId, migrateFunc } = context;
-  const log = dbLogger(connectionId);
-  const result: CommandResult = { connectionId, success: false, data: null, timeElapsed: 0 };
+  return connection.transaction(trx =>
+    executeOperation(context, async options => {
+      const { connectionId, migrateFunc } = context;
+      const { timeStart } = options;
+      const log = dbLogger(connectionId);
 
-  const timeStart = process.hrtime();
+      // Trigger onStarted handler if bound.
+      if (context.params.onStarted) {
+        await context.params.onStarted({
+          connectionId,
+          success: false,
+          data: null,
+          timeElapsed: getElapsedTime(timeStart)
+        });
+      }
 
-  try {
-    log('Starting synchronization.');
-
-    // Trigger onStarted handler if bound.
-    if (context.params.onStarted) {
-      await context.params.onStarted({
-        ...result,
-        timeElapsed: getElapsedTime(timeStart)
-      });
-    }
-
-    // Run the process in a single transaction for a database connection.
-    await connection.transaction(async trx => {
       await teardown(trx, context);
 
       // Trigger onTeardownSuccess if bound.
       if (context.params.onTeardownSuccess) {
         await context.params.onTeardownSuccess({
-          ...result,
+          connectionId,
+          data: null,
           success: true,
           timeElapsed: getElapsedTime(timeStart)
         });
@@ -124,25 +124,17 @@ export async function synchronizeDatabase(connection: Knex, context: SyncContext
       }
 
       await setup(trx, context);
-    });
+    })
+  );
+}
 
-    log(`Synchronization successful.`);
-    result.success = true;
-  } catch (e) {
-    log(`Error caught for connection ${connectionId}:`, e);
-    result.error = e;
-  }
-
-  result.timeElapsed = getElapsedTime(timeStart);
-
-  log(`Execution completed in ${result.timeElapsed} s`);
-
-  // Invoke corresponding handlers if they're sent.
-  if (result.success && context.params.onSuccess) {
-    await context.params.onSuccess(result);
-  } else if (!result.success && context.params.onFailed) {
-    await context.params.onFailed(result);
-  }
-
-  return result;
+/**
+ * Prune on a single database connection.
+ *
+ * @param {Knex} connection
+ * @param {CommandContext} context
+ * @returns {Promise<CommandResult<null>>}
+ */
+export async function pruneDatabase(connection: Knex, context: CommandContext): Promise<CommandResult<null>> {
+  return connection.transaction(trx => executeOperation(context, () => teardown(trx, context)));
 }

@@ -12,7 +12,7 @@ import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionReference from './domain/ConnectionReference';
 
 // Service
-import { synchronizeDatabase } from './service/sync';
+import { synchronizeDatabase, pruneDatabase } from './service/sync';
 import { executeProcesses } from './service/execution';
 import { runMigrateFunc, migrationApiMap } from './service/knexMigrator';
 import CommandResult from './domain/CommandResult';
@@ -67,6 +67,38 @@ export async function synchronize(
           },
           migrationApiMap['migrate.latest']
         )
+    })
+  );
+
+  return executeProcesses(processes, config);
+}
+
+/**
+ * Prune all synchronized objects from the databases (except the ones like tables made via migrations).
+ *
+ * TODO: An ability to prune only a handful of objects from the last.
+ *
+ * @param {Configuration} config
+ * @param {(DatabaseConnections)} conn
+ * @param {CommandParams} [options]
+ * @returns {Promise<CommandResult[]>}
+ */
+export async function prune(
+  config: Configuration,
+  conn: DatabaseConnections,
+  options?: CommandParams
+): Promise<CommandResult[]> {
+  log('Prune');
+
+  const params: CommandParams = { ...options };
+  const connections = mapToConnectionReferences(conn);
+  await init.prepare(config, {});
+
+  const processes = connections.map(({ connection, id: connectionId }) => () =>
+    pruneDatabase(connection, {
+      config,
+      params,
+      connectionId
     })
   );
 

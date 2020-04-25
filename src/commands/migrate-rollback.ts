@@ -43,7 +43,7 @@ class MigrateRollback extends Command {
    * Failure handler for each connection.
    */
   onFailed = async (result: CommandResult) => {
-    printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
+    await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);
   };
