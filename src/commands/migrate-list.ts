@@ -1,4 +1,4 @@
-import { Command } from '@oclif/command';
+import { Command, flags } from '@oclif/command';
 import { bold, grey, red, cyan, yellow } from 'chalk';
 
 import { migrateList } from '../api';
@@ -8,6 +8,13 @@ import OperationResult from '../domain/operation/OperationResult';
 
 class MigrateList extends Command {
   static description = 'List all the migrations.';
+
+  static flags = {
+    only: flags.string({
+      helpValue: 'CONNECTION_ID',
+      description: 'Filter only a single connection.'
+    })
+  };
 
   /**
    * Success handler.
@@ -55,10 +62,12 @@ class MigrateList extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
+    const { flags: parsedFlags } = this.parse(MigrateList);
     const config = await loadConfig();
     const connections = await resolveConnections();
 
     const results = await migrateList(config, connections, {
+      ...parsedFlags,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });

@@ -1,5 +1,5 @@
 import { bold, red } from 'chalk';
-import { Command } from '@oclif/command';
+import { Command, flags } from '@oclif/command';
 
 import { prune } from '../api';
 import { printLine, printError } from '../util/io';
@@ -8,6 +8,13 @@ import OperationResult from '../domain/operation/OperationResult';
 
 class Prune extends Command {
   static description = 'Drop all the synchronized db objects except the ones created via migrations.';
+
+  static flags = {
+    only: flags.string({
+      helpValue: 'CONNECTION_ID',
+      description: 'Filter only a single connection.'
+    })
+  };
 
   /**
    * Success handler.
@@ -31,10 +38,12 @@ class Prune extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
+    const { flags: parsedFlags } = this.parse(Prune);
     const config = await loadConfig();
     const connections = await resolveConnections();
 
     const results = await prune(config, connections, {
+      ...parsedFlags,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });

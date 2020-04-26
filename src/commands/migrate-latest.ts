@@ -1,5 +1,5 @@
-import { Command } from '@oclif/command';
 import { bold, red, cyan } from 'chalk';
+import { Command, flags } from '@oclif/command';
 
 import { migrateLatest } from '../api';
 import { dbLogger } from '../util/logger';
@@ -9,6 +9,13 @@ import OperationResult from '../domain/operation/OperationResult';
 
 class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
+
+  static flags = {
+    only: flags.string({
+      helpValue: 'CONNECTION_ID',
+      description: 'Filter only a single connection.'
+    })
+  };
 
   /**
    * Success handler.
@@ -51,10 +58,12 @@ class MigrateLatest extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
+    const { flags: parsedFlags } = this.parse(MigrateLatest);
     const config = await loadConfig();
     const connections = await resolveConnections();
 
     const results = await migrateLatest(config, connections, {
+      ...parsedFlags,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });
