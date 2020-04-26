@@ -96,7 +96,14 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
 
   log(
     'Resolved connections: %O',
-    connections.map(({ id, host, database }) => ({ id, host, database }))
+    connections.map(({ id, client, connection }) => ({
+      id,
+      client,
+      connection: {
+        host: (connection as any).host,
+        database: (connection as any).database
+      }
+    }))
   );
 
   return connections;
@@ -109,7 +116,13 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
  * @returns {string}
  */
 export function getConnectionId(connectionConfig: ConnectionConfig): string {
-  return connectionConfig.id || `${connectionConfig.host}/${connectionConfig.database}`;
+  if (connectionConfig.id) {
+    return connectionConfig.id;
+  }
+
+  const { host, database } = connectionConfig.connection as any;
+
+  return host && database ? `${host}/${database}` : '';
 }
 
 /**
@@ -136,20 +149,22 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
 
   validateConnections(REQUIRED_ENV_KEYS);
 
-  const connection = {
-    client: process.env.DB_CLIENT,
+  const connectionConfig = {
     id: process.env.DB_ID,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT ? +process.env.DB_PORT : null,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    options: {
-      encrypt: process.env.DB_ENCRYPTION === 'true'
+    client: process.env.DB_CLIENT,
+    connection: {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT ? +process.env.DB_PORT : null,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      options: {
+        encrypt: process.env.DB_ENCRYPTION === 'true'
+      }
     }
   } as ConnectionConfig;
 
-  return [connection];
+  return [connectionConfig];
 }
 
 /**
