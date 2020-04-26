@@ -1,7 +1,7 @@
 {
   "connections": [
     {
-      "id": "db1",
+      "id": "testdb1",
       "host": "mssql",
       "port": 1433,
       "user": "sa",
