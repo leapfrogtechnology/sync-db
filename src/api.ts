@@ -12,6 +12,7 @@ import { withTransaction, mapToConnectionReferences, DatabaseConnections } from 
 
 import Configuration from './domain/Configuration';
 import SynchronizeParams from './domain/SynchronizeParams';
+import ConnectionReference from './domain/ConnectionReference';
 import OperationParams from './domain/operation/OperationParams';
 import OperationResult from './domain/operation/OperationResult';
 
@@ -19,8 +20,6 @@ import OperationResult from './domain/operation/OperationResult';
 import { executeProcesses } from './service/execution';
 import { runSynchronize, runPrune } from './service/sync';
 import { invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
-import ConnectionReference from './domain/ConnectionReference';
-import { fmap } from './util/list';
 
 /**
  * Synchronize all the configured database connections.
@@ -49,8 +48,8 @@ export async function synchronize(
     loadMigrations: !params['skip-migration']
   });
 
-  const connections = mapToConnectionReferences(conn);
-  const processes = fmap(connections, filterConnectionBy(params.only), connection => () =>
+  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
       runSynchronize(trx, {
         config,
@@ -66,8 +65,6 @@ export async function synchronize(
       })
     )
   );
-
-  ensureFilterApplied(processes, params.only);
 
   return executeProcesses(processes, config);
 }
@@ -90,11 +87,11 @@ export async function prune(
   log('Prune');
 
   const params: OperationParams = { ...options };
-  const connections = mapToConnectionReferences(conn);
 
   // TODO: Need to preload the SQL source code under this step.
   await init.prepare(config, { loadSqlSources: true });
 
+  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
       runPrune(trx, {
@@ -124,9 +121,9 @@ export async function migrateLatest(
   log('Migrate Latest');
 
   const params: OperationParams = { ...options };
-  const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
+  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
       invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LATEST, {
@@ -157,9 +154,9 @@ export async function migrateRollback(
   log('Migrate Rollback');
 
   const params: OperationParams = { ...options };
-  const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
+  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
       invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_ROLLBACK, {
@@ -190,9 +187,9 @@ export async function migrateList(
   log('Migrate List');
 
   const params: OperationParams = { ...options };
-  const connections = mapToConnectionReferences(conn);
   const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
 
+  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
       invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
@@ -208,36 +205,34 @@ export async function migrateList(
 }
 
 /**
- * Checks if the connection filter
+ * Check the filter condition and apply filter if required.
  *
- * @param {string} [connectionId]
- * @returns {(item: any) => boolean}
+ * @param {ConnectionReference[]} connections
+ * @param {string} [filterConnectionId]
+ * @returns {ConnectionReference[]}
  */
-function filterConnectionBy(connectionId?: string): (item: any) => boolean {
-  // Apply filter for the specific connection id that matches.
-  if (connectionId) {
-    return (connection: ConnectionReference) => connection.id === connectionId;
-  }
+function filterConnectionsAsRequired(
+  connections: ConnectionReference[],
+  filterConnectionId?: string
+): ConnectionReference[] {
+  log(`Filter (--only=) ${filterConnectionId}`);
 
-  // If connectionId is not provided - apply no filter.
-  return () => true;
-}
-
-/**
- * Ensure the --only filter is applied correctly.
- *
- * @param {any[]} processes
- * @param {string} [only]
- */
-function ensureFilterApplied(processes: any[], only?: string) {
-  // Validate list when filter applied with --only=CONNECTION_ID.
-  if (only && processes.length === 0) {
-    throw new Error(`No connections found for givenid "${only}.`);
-  }
-
-  if (only) {
-    log(`Running for a single connection (id = ${only}).`);
-  } else {
+  // Apply no filter if the connection id is not provided.
+  if (!filterConnectionId) {
     log('Running for all connections.');
+
+    return connections;
   }
+
+  const filteredList = connections.filter(connection => connection.id === filterConnectionId);
+
+  if (filteredList.length === 0) {
+    const available = connections.map(({ id }) => id);
+
+    throw new Error(`No connections found for given id "${filterConnectionId}. Available ids are: ${available}`);
+  }
+
+  log(`Running for a single connection (id = ${filterConnectionId}).`);
+
+  return filteredList;
 }
