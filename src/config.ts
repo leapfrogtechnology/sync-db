@@ -5,9 +5,9 @@ import { mergeDeepRight } from 'ramda';
 import * as fs from './util/fs';
 import { log } from './util/logger';
 import { isObject } from './util/types';
-import DbConfig from './domain/DbConfig';
 import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
+import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
@@ -177,7 +177,7 @@ async function resolveConnectionsFromFile(filename: string): Promise<ConnectionC
   log('Resolving file: %s', filename);
 
   const loaded = await fs.read(filename);
-  const { connections } = JSON.parse(loaded) as DbConfig;
+  const { connections } = JSON.parse(loaded) as ConnectionsFileSchema;
 
   // TODO: Validate the connections received from file.
 
