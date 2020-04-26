@@ -23,6 +23,12 @@ describe('UTIL: list', () => {
       expect(fmap(list, (x: string) => x.startsWith('Hello'))).to.deep.equal(['Hello World', 'Hello Test']);
     });
 
+    it('should just apply the map function and return the list if filter argument is false.', () => {
+      const list = ['hello', 'foo', 'bar'];
+
+      expect(fmap(list, false, (x: string) => x.toUpperCase())).to.deep.equal(['HELLO', 'FOO', 'BAR']);
+    });
+
     it('should throw error if arguments are invalid.', () => {
       expect(() => fmap('test' as any, a => a)).to.throw('The first argument must be an array.');
       expect(() => fmap(['a', 'b'], 'abc' as any, b => b)).to.throw('Second argument must be a filter function.');
