@@ -3,8 +3,8 @@ import ConnectionConfig from './ConnectionConfig';
 /**
  * Interface for sync-db connection file (connections.sync-db.json).
  */
-interface DbConfig {
+interface ConnectionsFileSchema {
   connections: ConnectionConfig[];
 }
 
-export default DbConfig;
+export default ConnectionsFileSchema;

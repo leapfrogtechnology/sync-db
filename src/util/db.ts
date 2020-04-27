@@ -1,13 +1,13 @@
 import * as Knex from 'knex';
+import { dbLogger, log } from './logger';
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
-import { dbLogger, log } from './logger';
 import ConnectionReference from '../domain/ConnectionReference';
 
 /**
  * Database connections given by the user or the CLI frontend.
  */
-export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig | Knex[] | Knex;
+export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig;
 
 /**
  * Returns true if the provided object is a knex connection instance.
@@ -38,12 +38,24 @@ export function getConfig(db: Knex): ConnectionConfig {
 
 /**
  * Create a new connection instance (knex) using the connection config.
+ * Throws error if the config already holds a Knex's instance.
  *
  * @param {ConnectionConfig} config
  * @returns {Knex}
  */
 export function createInstance(config: ConnectionConfig): Knex {
-  return Knex({ connection: config, client: config.client });
+  if (isKnexInstance(config.connection)) {
+    throw new Error('The provided connection already contains a connection instance.');
+  }
+
+  const { host, database } = config.connection as any;
+
+  log(`Connecting to database: ${host}/${database}`);
+
+  return Knex({
+    client: config.client,
+    connection: config.connection
+  });
 }
 
 /**
@@ -73,24 +85,19 @@ export function withTransaction<T>(
 /**
  * Map user provided connection(s) to the connection instances.
  *
- * @param {(DatabaseConnections)} conn
+ * @param {(DatabaseConnections)} connectionConfig
  * @returns {ConnectionReference[]}
  */
-export function mapToConnectionReferences(conn: DatabaseConnections): ConnectionReference[] {
-  const connectionList = Array.isArray(conn) ? conn : [conn];
+export function mapToConnectionReferences(connectionConfig: DatabaseConnections): ConnectionReference[] {
+  const list = Array.isArray(connectionConfig) ? connectionConfig : [connectionConfig];
 
-  return connectionList.map(connection => {
-    if (isKnexInstance(connection)) {
-      log(`Received connection instance to database: ${connection.client.config.connection.database}`);
+  return list.map(config => {
+    if (isKnexInstance(config.connection)) {
+      log(`Received connection instance to database: ${config.connection.client.config.connection.database}`);
 
-      // TODO: Ask for `id` explicitly in for programmatic API,
-      // when Knex instance is passed directly.
-      // This implies a breaking change with the programmatic API.
-      return { connection, id: getConnectionId(getConfig(connection)) };
+      return { connection: config.connection, id: getConnectionId(config) };
     }
 
-    log(`Creating a connection to database: ${connection.host}/${connection.database}`);
-
-    return { connection: createInstance(connection), id: getConnectionId(connection) };
+    return { connection: createInstance(config), id: getConnectionId(config) };
   });
 }

@@ -5,9 +5,9 @@ import { mergeDeepRight } from 'ramda';
 import * as fs from './util/fs';
 import { log } from './util/logger';
 import { isObject } from './util/types';
-import DbConfig from './domain/DbConfig';
 import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
+import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
@@ -96,7 +96,14 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
 
   log(
     'Resolved connections: %O',
-    connections.map(({ id, host, database }) => ({ id, host, database }))
+    connections.map(({ id, client, connection }) => ({
+      id,
+      client,
+      connection: {
+        host: (connection as any).host,
+        database: (connection as any).database
+      }
+    }))
   );
 
   return connections;
@@ -109,7 +116,13 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
  * @returns {string}
  */
 export function getConnectionId(connectionConfig: ConnectionConfig): string {
-  return connectionConfig.id || `${connectionConfig.host}/${connectionConfig.database}`;
+  if (connectionConfig.id) {
+    return connectionConfig.id;
+  }
+
+  const { host, database } = connectionConfig.connection as any;
+
+  return host && database ? `${host}/${database}` : '';
 }
 
 /**
@@ -136,20 +149,22 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
 
   validateConnections(REQUIRED_ENV_KEYS);
 
-  const connection = {
-    client: process.env.DB_CLIENT,
+  const connectionConfig = {
     id: process.env.DB_ID,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT ? +process.env.DB_PORT : null,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    options: {
-      encrypt: process.env.DB_ENCRYPTION === 'true'
+    client: process.env.DB_CLIENT,
+    connection: {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT ? +process.env.DB_PORT : null,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      options: {
+        encrypt: process.env.DB_ENCRYPTION === 'true'
+      }
     }
   } as ConnectionConfig;
 
-  return [connection];
+  return [connectionConfig];
 }
 
 /**
@@ -162,7 +177,7 @@ async function resolveConnectionsFromFile(filename: string): Promise<ConnectionC
   log('Resolving file: %s', filename);
 
   const loaded = await fs.read(filename);
-  const { connections } = JSON.parse(loaded) as DbConfig;
+  const { connections } = JSON.parse(loaded) as ConnectionsFileSchema;
 
   // TODO: Validate the connections received from file.
 

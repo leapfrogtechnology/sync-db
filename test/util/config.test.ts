@@ -34,15 +34,17 @@ describe('CONFIG:', () => {
       const connections = resolveConnectionsFromEnv();
 
       expect(connections[0]).to.deep.equal({
-        client: 'mssql',
         id: 'mydb',
-        host: 'localhost',
-        port: 1234,
-        user: 'user',
-        password: 'password',
-        database: 'database',
-        options: {
-          encrypt: false
+        client: 'mssql',
+        connection: {
+          host: 'localhost',
+          port: 1234,
+          user: 'user',
+          password: 'password',
+          database: 'database',
+          options: {
+            encrypt: false
+          }
         }
       });
 
@@ -95,10 +97,16 @@ describe('CONFIG:', () => {
     it('should generate a config id using the host and database name if id does not exist.', () => {
       expect(
         getConnectionId({
-          host: 'localhost',
-          database: 'test'
+          connection: {
+            host: 'localhost',
+            database: 'test'
+          }
         } as ConnectionConfig)
       ).to.equal('localhost/test');
+    });
+
+    it('should return empty string when id is not provided and connection string is passed.', () => {
+      expect(getConnectionId({ connection: 'someconnectionstring' } as ConnectionConfig)).to.equal('');
     });
   });
 });
