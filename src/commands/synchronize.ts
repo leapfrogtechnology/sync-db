@@ -9,16 +9,18 @@ import { printError, printLine, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
 
 class Synchronize extends Command {
-  static description = 'Synchronize database';
+  static description = 'Synchronize all the configured database connections.';
 
   /**
    * Available CLI flags.
    */
   static flags = {
-    version: flags.version({ char: 'v', description: 'Print version', name: 'sync-db' }),
-    help: flags.help({ char: 'h', description: 'Print help information' }),
     force: flags.boolean({ char: 'f', description: 'Force synchronization' }),
-    'skip-migration': flags.boolean({ description: 'Skip running migrations' })
+    'skip-migration': flags.boolean({ description: 'Skip running migrations' }),
+    only: flags.string({
+      helpValue: 'CONNECTION_ID',
+      description: 'Filter only a single connection.'
+    })
   };
 
   /**

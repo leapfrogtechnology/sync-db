@@ -1,5 +1,5 @@
-import { Command } from '@oclif/command';
 import { bold, red, cyan } from 'chalk';
+import { Command, flags } from '@oclif/command';
 
 import { migrateRollback } from '../api';
 import { dbLogger } from '../util/logger';
@@ -9,6 +9,13 @@ import OperationResult from '../domain/operation/OperationResult';
 
 class MigrateRollback extends Command {
   static description = 'Rollback migrations up to the last run batch.';
+
+  static flags = {
+    only: flags.string({
+      helpValue: 'CONNECTION_ID',
+      description: 'Filter only a single connection.'
+    })
+  };
 
   /**
    * Success handler.
@@ -51,10 +58,12 @@ class MigrateRollback extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
+    const { flags: parsedFlags } = this.parse(MigrateRollback);
     const config = await loadConfig();
     const connections = await resolveConnections();
 
     const results = await migrateRollback(config, connections, {
+      ...parsedFlags,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });

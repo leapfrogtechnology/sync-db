@@ -11,7 +11,7 @@ describe('CLI: synchronize', () => {
     it('should print help message.', async () => {
       const { stdout } = await runCli(['synchronize', '--help'], { cwd });
 
-      expect(stdout).contains('Synchronize database');
+      expect(stdout).contains('Synchronize');
       expect(stdout).contains(`USAGE\n  $ sync-db synchronize`);
     });
   });
