@@ -23,12 +23,12 @@ const dropStatementsMap: Mapping<string> = {
 /**
  * Reads an sql file and return it's contents.
  *
- * @param {string} basePath
+ * @param {string} sqlBasePath
  * @param {string} fileName
  * @returns {Promise<SqlCode>}
  */
-export async function resolveFile(basePath: string, fileName: string): Promise<SqlCode> {
-  const filePath = path.resolve(basePath, fileName);
+export async function resolveFile(sqlBasePath: string, fileName: string): Promise<SqlCode> {
+  const filePath = path.resolve(sqlBasePath, fileName);
   const sql = await fs.read(filePath);
 
   return { sql, name: fileName };
@@ -37,12 +37,12 @@ export async function resolveFile(basePath: string, fileName: string): Promise<S
 /**
  * Resolves a list of source files.
  *
- * @param {string} basePath
+ * @param {string} sqlBasePath
  * @param {string[]} files
  * @returns {Promise<SqlCode[]>}
  */
-export async function resolveFiles(basePath: string, files: string[]): Promise<SqlCode[]> {
-  const promises = files.map(filename => resolveFile(basePath, filename));
+export async function resolveFiles(sqlBasePath: string, files: string[]): Promise<SqlCode[]> {
+  const promises = files.map(filename => resolveFile(sqlBasePath, filename));
 
   return Promise.all(promises);
 }
