@@ -21,6 +21,18 @@ export function isCLI(): boolean {
 }
 
 /**
+ * Get the SQL base path - the 'sql' directory under the `basePath`.
+ *
+ * TODO: Think of a better way later.
+ *
+ * @param {Configuration} config
+ * @returns {string}
+ */
+export function getSqlBasePath(config: Configuration): string {
+  return path.join(config.basePath, 'sql');
+}
+
+/**
  * Load config yaml file.
  *
  * @returns {Promise<Configuration>}

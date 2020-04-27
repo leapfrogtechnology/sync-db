@@ -1,9 +1,15 @@
 import * as Knex from 'knex';
+import * as path from 'path';
 
-import { dbLogger } from '../../util/logger';
+import { PrepareOptions } from '../../init';
+import { dbLogger, log } from '../../util/logger';
+import { resolveSqlMigrations } from './migrator';
+import Configuration from '../../domain/Configuration';
 import { executeOperation } from '../../service/execution';
 import MigrationContext from '../../domain/MigrationContext';
 import OperationResult from '../../domain/operation/OperationResult';
+import MigrationSourceContext from '../domain/MigrationSourceContext';
+import SqlMigrationSourceContext from '../source-types/SqlMigrationSourceContext';
 
 export enum KnexMigrationAPI {
   MIGRATE_LIST = 'migrate.list',
@@ -55,4 +61,43 @@ export async function invokeMigrationApi(
 
     return data;
   });
+}
+
+/**
+ * Resolve migration context based on the migration configuration.
+ *
+ * @param {Configuration} config
+ * @param {PrepareOptions} options
+ * @returns {(Promise<MigrationSourceContext | null>)}
+ */
+export async function resolveMigrationContext(
+  config: Configuration,
+  options: PrepareOptions
+): Promise<MigrationSourceContext | null> {
+  if (options.loadMigrations !== true) {
+    return null;
+  }
+
+  log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
+
+  const { basePath, migration } = config;
+
+  // Migration directory could be absolute OR could be relative to the basePath.
+  const migrationPath = path.isAbsolute(migration.directory)
+    ? migration.directory
+    : path.join(basePath, migration.directory);
+
+  switch (config.migration.sourceType) {
+    case 'sql':
+      const src = await resolveSqlMigrations(migrationPath);
+
+      log('Available migration sources:\n%O', src);
+
+      return new SqlMigrationSourceContext(src);
+
+    default:
+      // TODO: We'll need to support different types of migrations eg both sql & js
+      // For instance migrations in JS would have different context like JavaScriptMigrationContext.
+      throw new Error(`Unsupported migration.sourceType value "${config.migration.sourceType}".`);
+  }
 }

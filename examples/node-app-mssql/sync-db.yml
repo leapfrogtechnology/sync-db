@@ -1,4 +1,4 @@
-basePath: src/sql
+basePath: src
 execution: sequential
 sql:
   # Create objects in dbo schema
