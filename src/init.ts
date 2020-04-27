@@ -62,7 +62,11 @@ async function resolveMigrationContext(
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
   const { basePath, migration } = config;
-  const migrationPath = path.join(basePath, migration.directory);
+
+  // Migration directory could be absolute OR could be relative to the basePath.
+  const migrationPath = path.isAbsolute(migration.directory)
+    ? migration.directory
+    : path.join(basePath, migration.directory);
 
   switch (config.migration.sourceType) {
     case 'sql':
