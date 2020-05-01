@@ -4,10 +4,10 @@ import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
 import { runCli } from './util';
-import { mkdtempSync } from '../../src/util/fs';
+import { mkdtempSync } from '../../../src/util/fs';
 
 const cwd = mkdtempSync();
-const packageJson = fs.readFileSync(path.join(__dirname, '../../package.json'));
+const packageJson = fs.readFileSync(path.join(__dirname, '../../../package.json'));
 const { version } = JSON.parse(packageJson.toString());
 
 describe('CLI:', () => {

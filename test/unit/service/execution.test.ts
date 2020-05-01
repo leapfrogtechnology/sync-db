@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import { timeout } from '../../src/util/promise';
-import Configuration from '../../src/domain/Configuration';
-import * as executionService from '../../src/service/execution';
+import { timeout } from '../../../src/util/promise';
+import Configuration from '../../../src/domain/Configuration';
+import * as executionService from '../../../src/service/execution';
 
 const getProcesses = (tracker: string[]) => [
   () =>

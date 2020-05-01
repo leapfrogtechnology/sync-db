@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import { prepareInjectionConfigVars, convertToKeyValuePairs } from '../../src/service/configInjection';
+import { prepareInjectionConfigVars, convertToKeyValuePairs } from '../../../src/service/configInjection';
 
 describe('SERVICE: configInjection', () => {
   describe('prepareInjectionConfigVars', () => {

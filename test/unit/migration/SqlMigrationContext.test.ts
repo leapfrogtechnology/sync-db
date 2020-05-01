@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import SqlMigrationEntry from '../../src/migration/domain/SqlMigrationEntry';
-import SqlMigrationSourceContext from '../../src/migration/source-types/SqlMigrationSourceContext';
+import SqlMigrationEntry from '../../../src/migration/domain/SqlMigrationEntry';
+import SqlMigrationSourceContext from '../../../src/migration/source-types/SqlMigrationSourceContext';
 
 describe('MIGRATION: SqlMigrationSourceContext', () => {
   const getInstance = (list: SqlMigrationEntry[]) => new SqlMigrationSourceContext(list);

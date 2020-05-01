@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import { timeout, runSequentially } from '../../src/util/promise';
+import { timeout, runSequentially } from '../../../src/util/promise';
 
 describe('UTIL: promise', () => {
   describe('runSequentially', () => {

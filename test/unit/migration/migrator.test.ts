@@ -2,8 +2,8 @@ import * as path from 'path';
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
-import { write, mkdtemp } from '../../src/util/fs';
-import * as migratorService from '../../src/migration/service/migrator';
+import { write, mkdtemp } from '../../../src/util/fs';
+import * as migratorService from '../../../src/migration/service/migrator';
 
 describe('MIGRATION: migrator', () => {
   describe('getSqlMigrationNames', async () => {

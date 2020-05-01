@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
 import { runCli } from './util';
-import { mkdtempSync } from '../../src/util/fs';
+import { mkdtempSync } from '../../../src/util/fs';
 
 const cwd = mkdtempSync();
 

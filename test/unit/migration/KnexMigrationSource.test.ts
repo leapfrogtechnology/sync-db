@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import KnexMigrationSource from '../../src/migration/KnexMigrationSource';
-import MigrationSourceContext from '../../src/migration/domain/MigrationSourceContext';
+import KnexMigrationSource from '../../../src/migration/KnexMigrationSource';
+import MigrationSourceContext from '../../../src/migration/domain/MigrationSourceContext';
 
 describe('MIGRATION: KnexMigrationSource', () => {
   const getInstance = () => {
