@@ -3,7 +3,6 @@ import * as path from 'path';
 import * as fs from '../util/fs';
 import Configuration from '../domain/Configuration';
 import { getMigrationPath } from '../migration/service/knexMigrator';
-import { printLine } from '../util/io';
 
 const migrationTemplatePath = path.resolve(__dirname, '../../assets/templates/migration');
 
@@ -31,6 +30,5 @@ export async function makeMigration(config: Configuration, filename: string): Pr
   await fs.write(upFilename, createUpTemplate);
   await fs.write(downFilename, createDownTemplate);
 
-  await printLine(`Created ${upFilename}`);
-  await printLine(`Created ${downFilename}`);
+  return [upFilename, downFilename];
 }
