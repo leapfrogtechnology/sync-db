@@ -1,5 +1,6 @@
-import { printLine } from '../util/io';
+import { loadConfig } from '../config';
 import { Command, flags } from '@oclif/command';
+import * as fileMakerService from '../service/fileMaker';
 
 class Prune extends Command {
   static description = 'Make migration files from the template.';
@@ -22,8 +23,16 @@ class Prune extends Command {
    */
   async run(): Promise<void> {
     const { args, flags: parsedFlags } = this.parse(Prune);
+    const config = await loadConfig();
 
-    printLine(JSON.stringify({ args, parsedFlags }));
+    switch (parsedFlags.type) {
+      case 'migration':
+        await fileMakerService.makeMigration(config, args.name);
+        break;
+
+      default:
+        throw new Error(`Unsupported file type ${parsedFlags.type}.`);
+    }
   }
 }
 
