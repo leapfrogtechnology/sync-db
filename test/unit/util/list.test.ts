@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { describe, it } from 'mocha';
 
-import { fmap } from '../../src/util/list';
+import { fmap } from '../../../src/util/list';
 
 describe('UTIL: list', () => {
   describe('fmap', () => {

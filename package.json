@@ -41,6 +41,8 @@
     "lint:fix": "tslint --fix -c tslint.json 'src/**/*.{ts,js}' 'test/**/*.{ts,js}'",
     "test": "yarn lint && yarn test:coverage",
     "test:coverage": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
+    "test:cli": "mocha --forbid-only \"test/cli/**/*.test.ts\"",
+    "test:unit": "mocha --forbid-only \"test/unit/**/*.test.ts\"",
     "watch": "tsc --watch",
     "changelog": "./release.sh changelog",
     "release": "./release.sh bump",

@@ -1,7 +1,7 @@
 import 'mocha';
 import { expect } from 'chai';
 
-import { expandEnvVars, expandEnvVarsInMap } from '../../src/util/env';
+import { expandEnvVars, expandEnvVarsInMap } from '../../../src/util/env';
 
 describe('UTIL: env', () => {
   describe('expandEnvVars', () => {

@@ -3,7 +3,7 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import { write, read, remove, exists, mkdtemp, glob } from '../../src/util/fs';
+import { write, read, remove, exists, mkdtemp, glob } from '../../../src/util/fs';
 
 describe('UTIL: fs', () => {
   let filePath: string;
