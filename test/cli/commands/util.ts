@@ -15,10 +15,18 @@ export function runCli(args?: string[], options?: execa.Options<string>): execa.
 }
 
 /**
- * Check if the list contains at least one value that matches the pattern.
+ * Query a list by regex pattern and return the found value.
+ *
+ * @param {string[]} list
+ * @param {RegExp} pattern
+ * @returns {string}
  */
-export function listContainsPattern(list: string[], pattern: RegExp): boolean {
-  const matches = list.filter(item => pattern.test(item));
+export function queryByPattern(list: string[], pattern: RegExp): string {
+  const found = list.find(item => pattern.test(item));
 
-  return matches.length > 0;
+  if (!found) {
+    throw new Error(`Pattern ${pattern} not found in the list ${list}.`);
+  }
+
+  return found;
 }
