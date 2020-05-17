@@ -1,6 +1,7 @@
 import * as path from 'path';
 
 import * as fs from '../util/fs';
+import { getTimestampString } from '../util/ts';
 import Configuration from '../domain/Configuration';
 import { getMigrationPath } from '../migration/service/knexMigrator';
 
@@ -23,7 +24,7 @@ export async function makeMigration(config: Configuration, filename: string): Pr
   const createUpTemplate = await fs.read(path.join(migrationTemplatePath, 'create_up.sql'));
   const createDownTemplate = await fs.read(path.join(migrationTemplatePath, 'create_down.sql'));
 
-  const timestamp = '20200503200303';
+  const timestamp = getTimestampString();
   const upFilename = path.join(migrationPath, `${timestamp}_${filename}.up.sql`);
   const downFilename = path.join(migrationPath, `${timestamp}_${filename}.down.sql`);
 
