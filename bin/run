@@ -3,4 +3,4 @@
 // Set CLI environment as true.
 process.env.SYNC_DB_CLI = 'true';
 
-require('@oclif/command').run().then(require('@oclif/command/flush')).catch(require('@oclif/errors/handle'));
+require('../lib/commands').run().then(require('@oclif/command/flush')).catch(require('@oclif/errors/handle'));
