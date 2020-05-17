@@ -3,9 +3,9 @@ import * as yaml from 'yamljs';
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import { runCli, listContainsPattern } from './util';
+import { runCli, queryByPattern } from './util';
 import Configuration from '../../../src/domain/Configuration';
-import { mkdir, mkdtemp, write, exists, glob } from '../../../src/util/fs';
+import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs';
 
 describe('CLI: make', () => {
   describe('--help', () => {
@@ -31,18 +31,22 @@ describe('CLI: make', () => {
       } as Configuration)
     );
 
-    const { stdout } = await runCli(['make', 'create_test_table'], { cwd });
+    const { stdout } = await runCli(['make', 'something'], { cwd });
 
     // Check the output.
-    expect(stdout).to.match(/Created.+\d{13}_create_test_table\.up\.sql/);
-    expect(stdout).to.match(/Created.+\d{13}_create_test_table\.down\.sql/);
+    expect(stdout).to.match(/Created.+\d{13}_something\.up\.sql/);
+    expect(stdout).to.match(/Created.+\d{13}_something\.down\.sql/);
 
     // Check files are created.
     const files = await glob(migrationPath);
 
     expect(files.length).to.equal(2);
-    expect(listContainsPattern(files, /\d{13}_create_test_table\.up\.sql/)).to.equal(true);
-    expect(listContainsPattern(files, /\d{13}_create_test_table\.down\.sql/)).to.equal(true);
+
+    const upFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_something\.up\.sql/)));
+    const downFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_something\.down\.sql/)));
+
+    expect(upFile).to.equal('');
+    expect(downFile).to.equal('');
   });
 
   it('should create migration directory automatically if it does not exist.', async () => {
@@ -56,7 +60,7 @@ describe('CLI: make', () => {
       } as Configuration)
     );
 
-    await runCli(['make', 'create_test_table'], { cwd });
+    await runCli(['make', 'something'], { cwd });
 
     // Directory is created.
     const pathExists = await exists(path.join(cwd, 'src/migration'));

@@ -6,7 +6,7 @@ import { getTimestampString } from '../util/ts';
 import Configuration from '../domain/Configuration';
 import { getMigrationPath } from '../migration/service/knexMigrator';
 
-const migrationTemplatePath = path.resolve(__dirname, '../../assets/templates/migration');
+// const migrationTemplatePath = path.resolve(__dirname, '../../assets/templates/migration');
 
 /**
  * Generate migration file(s).
@@ -30,15 +30,16 @@ export async function makeMigration(config: Configuration, filename: string): Pr
     await fs.mkdir(migrationPath, { recursive: true });
   }
 
-  const createUpTemplate = await fs.read(path.join(migrationTemplatePath, 'create_up.sql'));
-  const createDownTemplate = await fs.read(path.join(migrationTemplatePath, 'create_down.sql'));
+  // TODO: Implement this.
+  // const createUpTemplate = await fs.read(path.join(migrationTemplatePath, 'create_up.sql'));
+  // const createDownTemplate = await fs.read(path.join(migrationTemplatePath, 'create_down.sql'));
 
   const timestamp = getTimestampString();
   const upFilename = path.join(migrationPath, `${timestamp}_${filename}.up.sql`);
   const downFilename = path.join(migrationPath, `${timestamp}_${filename}.down.sql`);
 
-  await fs.write(upFilename, createUpTemplate);
-  await fs.write(downFilename, createDownTemplate);
+  await fs.write(upFilename, '');
+  await fs.write(downFilename, '');
 
   return [upFilename, downFilename];
 }
