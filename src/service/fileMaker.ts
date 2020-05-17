@@ -1,6 +1,7 @@
 import * as path from 'path';
 
 import * as fs from '../util/fs';
+import { log } from '../util/logger';
 import { getTimestampString } from '../util/ts';
 import Configuration from '../domain/Configuration';
 import { getMigrationPath } from '../migration/service/knexMigrator';
@@ -21,6 +22,14 @@ export async function makeMigration(config: Configuration, filename: string): Pr
   }
 
   const migrationPath = getMigrationPath(config);
+  const migrationPathExists = await fs.exists(migrationPath);
+
+  if (!migrationPathExists) {
+    log(`Migration path does not exist, creating ${migrationPath}`);
+
+    await fs.mkdir(migrationPath, { recursive: true });
+  }
+
   const createUpTemplate = await fs.read(path.join(migrationTemplatePath, 'create_up.sql'));
   const createDownTemplate = await fs.read(path.join(migrationTemplatePath, 'create_down.sql'));
 
