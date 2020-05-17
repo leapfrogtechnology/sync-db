@@ -11,7 +11,7 @@ const packageJson = fs.readFileSync(path.join(__dirname, '../../../package.json'
 const { version } = JSON.parse(packageJson.toString());
 
 describe('CLI:', () => {
-  describe('default run', () => {
+  describe('with no args', () => {
     it('should display the usage information.', async () => {
       const { stdout } = await runCli([], { cwd });
 
