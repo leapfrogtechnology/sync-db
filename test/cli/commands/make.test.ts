@@ -17,7 +17,19 @@ describe('CLI: make', () => {
     });
   });
 
-  it('should create a migration file when only name is supplied.', async () => {
+  it('should create migration directory automatically if it does not exist.', async () => {
+    const cwd = await mkdtemp();
+    await write(path.join(cwd, 'sync-db.yml'), yaml.stringify({}));
+
+    await runCli(['make', 'something'], { cwd });
+
+    // Directory is created.
+    const pathExists = await exists(path.join(cwd, 'src/migration'));
+
+    expect(pathExists).to.equal(true);
+  });
+
+  it('should create a migration file when name is supplied.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
     const migrationPath = path.join(cwd, 'src/migration');
@@ -49,22 +61,23 @@ describe('CLI: make', () => {
     expect(downFile).to.equal('');
   });
 
-  it('should create migration directory automatically if it does not exist.', async () => {
+  it('should create a migration file with create table template when filename convention is followed.', async () => {
     const cwd = await mkdtemp();
-    await write(
-      path.join(cwd, 'sync-db.yml'),
-      yaml.stringify({
-        migration: {
-          directory: 'migration'
-        }
-      } as Configuration)
+    const migrationPath = path.join(cwd, 'src/migration');
+    await write(path.join(cwd, 'sync-db.yml'), yaml.stringify({}));
+
+    await runCli(['make', 'create_users_table'], { cwd });
+
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(2);
+
+    const upFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_create_users_table\.up\.sql/)));
+    const downFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_create_users_table\.down\.sql/))
     );
 
-    await runCli(['make', 'something'], { cwd });
-
-    // Directory is created.
-    const pathExists = await exists(path.join(cwd, 'src/migration'));
-
-    expect(pathExists).to.equal(true);
+    expect(upFile).contains('CREATE TABLE users');
+    expect(downFile).contains('DROP TABLE users');
   });
 });
