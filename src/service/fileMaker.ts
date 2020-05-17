@@ -2,11 +2,12 @@ import * as path from 'path';
 
 import * as fs from '../util/fs';
 import { log } from '../util/logger';
+import { interpolate } from '../util/string';
 import { getTimestampString } from '../util/ts';
 import Configuration from '../domain/Configuration';
 import { getMigrationPath } from '../migration/service/knexMigrator';
 
-const MIGRATION_TMPL_PATH = path.resolve(__dirname, '../../assets/templates/migration');
+const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../assets/templates/migration');
 const CREATE_TABLE_CONVENTION = /create_(\w+)_table/;
 
 /**
@@ -45,15 +46,13 @@ export async function makeMigration(config: Configuration, filename: string): Pr
     const table = createTableMatched[1];
 
     log(`Create migration for table: ${table}`);
-    console.log('Table: ', table); // tslint:disable-line
 
-    // TODO: Use interpolation function.
     createUpTemplate = await fs
-      .read(path.join(MIGRATION_TMPL_PATH, 'create_up.sql'))
-      .then(template => template.replace(new RegExp('{{table}}', 'g'), table));
+      .read(path.join(MIGRATION_TEMPLATE_PATH, 'create_up.sql'))
+      .then(template => interpolate(template, { table }));
     createDownTemplate = await fs
-      .read(path.join(MIGRATION_TMPL_PATH, 'create_down.sql'))
-      .then(template => template.replace(new RegExp('{{table}}', 'g'), table));
+      .read(path.join(MIGRATION_TEMPLATE_PATH, 'create_down.sql'))
+      .then(template => interpolate(template, { table }));
   }
 
   await fs.write(upFilename, createUpTemplate);
