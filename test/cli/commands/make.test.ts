@@ -43,19 +43,23 @@ describe('CLI: make', () => {
       } as Configuration)
     );
 
-    const { stdout } = await runCli(['make', 'something'], { cwd });
+    const { stdout } = await runCli(['make', 'alter_users_table_drop_column'], { cwd });
 
     // Check the output.
-    expect(stdout).to.match(/Created.+\d{13}_something\.up\.sql/);
-    expect(stdout).to.match(/Created.+\d{13}_something\.down\.sql/);
+    expect(stdout).to.match(/Created.+\d{13}_alter_users_table_drop_column\.up\.sql/);
+    expect(stdout).to.match(/Created.+\d{13}_alter_users_table_drop_column\.down\.sql/);
 
     // Check files are created.
     const files = await glob(migrationPath);
 
     expect(files.length).to.equal(2);
 
-    const upFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_something\.up\.sql/)));
-    const downFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_something\.down\.sql/)));
+    const upFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_alter_users_table_drop_column\.up\.sql/))
+    );
+    const downFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_alter_users_table_drop_column\.down\.sql/))
+    );
 
     expect(upFile).to.equal('');
     expect(downFile).to.equal('');
