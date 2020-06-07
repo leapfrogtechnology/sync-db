@@ -15,11 +15,15 @@ class Synchronize extends Command {
    * Available CLI flags.
    */
   static flags = {
-    force: flags.boolean({ char: 'f', description: 'Force synchronization' }),
-    'skip-migration': flags.boolean({ description: 'Skip running migrations' }),
+    force: flags.boolean({ char: 'f', description: 'Force synchronization.' }),
+    'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
     only: flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
+    }),
+    'connection-resolver': flags.string({
+      helpValue: 'PATH',
+      description: 'Path to the connection resolver.'
     })
   };
 
