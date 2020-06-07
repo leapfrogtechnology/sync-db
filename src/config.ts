@@ -107,8 +107,8 @@ export async function resolveConnections(config: Configuration, resolver?: strin
   //  3. If 1 & 2 are false, try resolving the connections from the environment. If not found fail with error.
   if (connectionsFileExists) {
     connections = await resolveConnectionsFromFile(filename);
-  } else if (resolver) {
-    connections = await resolveConnectionsUsingResolver(config, resolver);
+  } else if (resolver || config.connectionResolver) {
+    connections = await resolveConnectionsUsingResolver(resolver || config.connectionResolver);
   } else {
     log('Connections file not provided.');
 
@@ -137,20 +137,12 @@ export async function resolveConnections(config: Configuration, resolver?: strin
  * @param {string} resolver
  * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnectionsUsingResolver(
-  config: Configuration,
-  resolver: string
-): Promise<ConnectionConfig[]> {
+export async function resolveConnectionsUsingResolver(resolver: string): Promise<ConnectionConfig[]> {
   log('Resolving connection resolver: %s', resolver);
-  const connectionResolver = resolver || config.connectionResolver;
 
-  const connectionResolverExists = await fs.exists(connectionResolver);
+  const resolverPath = resolver ? path.resolve(process.cwd(), resolver) : '';
 
-  if (!connectionResolverExists) {
-    throw new Error(`Could not find the connection resolver '${resolver}.`);
-  }
-
-  const { resolve } = (await import(connectionResolver)) as ConnectionResolver;
+  const { resolve } = (await import(resolverPath)) as ConnectionResolver;
 
   if (!resolve) {
     throw new Error(`Resolver '${resolver}' does not expose a 'resolve' function.`);
@@ -224,7 +216,7 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
  * @returns {Promise<ConnectionConfig[]>}
  */
 async function resolveConnectionsFromFile(filename: string): Promise<ConnectionConfig[]> {
-  log('Resolving file: %s', filename);
+  log('Resolving connections file: %s', filename);
 
   const loaded = await fs.read(filename);
   const { connections } = JSON.parse(loaded) as ConnectionsFileSchema;
