@@ -1,5 +1,8 @@
 # Change Log
 
+## [v1.0.0-experimental.20200428](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200428) (2020-04-27)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200427...v1.0.0-experimental.20200428)
+
 ## [v1.0.0-experimental.20200427](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200427) (2020-04-27)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.6...v1.0.0-experimental.20200427)
 
