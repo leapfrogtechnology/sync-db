@@ -11,6 +11,10 @@ import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
+interface ConnectionResolver {
+  resolve: () => Promise<ConnectionConfig[]>;
+}
+
 /**
  * Check if this is being run via the sync-db cli or not.
  *
@@ -88,18 +92,20 @@ export function validate(config: Configuration) {
  *
  * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnections(): Promise<ConnectionConfig[]> {
+export async function resolveConnections(resolver?: string): Promise<ConnectionConfig[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
   const connectionsFileExists = await fs.exists(filename);
 
-  let connections;
+  let connections: ConnectionConfig[];
 
   // If connections file exists, resolve connections from that.
   // otherwise fallback to getting the connection from the env vars.
   if (connectionsFileExists) {
     connections = await resolveConnectionsFromFile(filename);
+  } else if (resolver) {
+    connections = await resolveConnectionsUsingResolver(resolver);
   } else {
     log('Connections file not provided.');
 
@@ -119,6 +125,30 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
   );
 
   return connections;
+}
+
+/**
+ * Resolve connections using the provided connection resolver.
+ *
+ * @param {string} resolver
+ * @returns {Promise<ConnectionConfig[]>}
+ */
+export async function resolveConnectionsUsingResolver(resolver: string): Promise<ConnectionConfig[]> {
+  log('Resolving connection resolver: %s', resolver);
+
+  const connectionResolverExists = await fs.exists(resolver);
+
+  if (!connectionResolverExists) {
+    throw new Error(`Could not find the connection resolver '${resolver}.`);
+  }
+
+  const { resolve } = (await import(resolver)) as ConnectionResolver;
+
+  if (!resolve) {
+    throw new Error(`Resolver '${resolver}' does not expose a 'resolve' function.`);
+  }
+
+  return resolve();
 }
 
 /**
