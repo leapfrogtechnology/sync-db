@@ -3,6 +3,8 @@ import * as os from 'os';
 import * as path from 'path';
 import { promisify } from 'util';
 
+export const mkdir = promisify(fs.mkdir);
+
 /**
  * Create a temporary directory and return it's path.
  *

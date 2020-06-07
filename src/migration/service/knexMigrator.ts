@@ -80,12 +80,7 @@ export async function resolveMigrationContext(
 
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
-  const { basePath, migration } = config;
-
-  // Migration directory could be absolute OR could be relative to the basePath.
-  const migrationPath = path.isAbsolute(migration.directory)
-    ? migration.directory
-    : path.join(basePath, migration.directory);
+  const migrationPath = getMigrationPath(config);
 
   switch (config.migration.sourceType) {
     case 'sql':
@@ -100,4 +95,20 @@ export async function resolveMigrationContext(
       // For instance migrations in JS would have different context like JavaScriptMigrationContext.
       throw new Error(`Unsupported migration.sourceType value "${config.migration.sourceType}".`);
   }
+}
+
+/**
+ * Get Migration directory path.
+ *
+ * @param {Configuration} config
+ * @returns {string}
+ */
+export function getMigrationPath(config: Configuration): string {
+  const { basePath, migration } = config;
+  // Migration directory could be absolute OR could be relative to the basePath.
+  const migrationPath = path.isAbsolute(migration.directory)
+    ? migration.directory
+    : path.join(basePath, migration.directory);
+
+  return migrationPath;
 }
