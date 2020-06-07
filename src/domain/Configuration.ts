@@ -7,6 +7,7 @@ interface Configuration {
   basePath: string;
   execution: 'parallel' | 'sequential';
   sql: string[];
+  connectionResolver: string;
   hooks: {
     pre_sync: string[];
     post_sync: string[];

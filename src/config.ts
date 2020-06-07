@@ -92,7 +92,8 @@ export function validate(config: Configuration) {
  *
  * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnections(resolver?: string): Promise<ConnectionConfig[]> {
+
+export async function resolveConnections(config: Configuration, resolver?: string): Promise<ConnectionConfig[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
@@ -105,7 +106,7 @@ export async function resolveConnections(resolver?: string): Promise<ConnectionC
   if (connectionsFileExists) {
     connections = await resolveConnectionsFromFile(filename);
   } else if (resolver) {
-    connections = await resolveConnectionsUsingResolver(resolver);
+    connections = await resolveConnectionsUsingResolver(config, resolver);
   } else {
     log('Connections file not provided.');
 
@@ -130,19 +131,24 @@ export async function resolveConnections(resolver?: string): Promise<ConnectionC
 /**
  * Resolve connections using the provided connection resolver.
  *
+ * @param {Configuration} config
  * @param {string} resolver
  * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnectionsUsingResolver(resolver: string): Promise<ConnectionConfig[]> {
+export async function resolveConnectionsUsingResolver(
+  config: Configuration,
+  resolver: string
+): Promise<ConnectionConfig[]> {
   log('Resolving connection resolver: %s', resolver);
+  const connectionResolver = resolver || config.connectionResolver;
 
-  const connectionResolverExists = await fs.exists(resolver);
+  const connectionResolverExists = await fs.exists(connectionResolver);
 
   if (!connectionResolverExists) {
     throw new Error(`Could not find the connection resolver '${resolver}.`);
   }
 
-  const { resolve } = (await import(resolver)) as ConnectionResolver;
+  const { resolve } = (await import(connectionResolver)) as ConnectionResolver;
 
   if (!resolve) {
     throw new Error(`Resolver '${resolver}' does not expose a 'resolve' function.`);
