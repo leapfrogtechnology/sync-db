@@ -11,6 +11,10 @@ import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
+interface ConnectionResolver {
+  resolve: () => Promise<ConnectionConfig[]>;
+}
+
 /**
  * Check if this is being run via the sync-db cli or not.
  *
@@ -88,18 +92,23 @@ export function validate(config: Configuration) {
  *
  * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnections(): Promise<ConnectionConfig[]> {
+
+export async function resolveConnections(config: Configuration, resolver?: string): Promise<ConnectionConfig[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
   const connectionsFileExists = await fs.exists(filename);
 
-  let connections;
+  let connections: ConnectionConfig[];
 
-  // If connections file exists, resolve connections from that.
-  // otherwise fallback to getting the connection from the env vars.
+  // Connection resolution process:
+  //  1. If connections file exists, use that to resolve connections.
+  //  2. If connection resolver is set via flag or configuration, use it.
+  //  3. If 1 & 2 are false, try resolving the connections from the environment. If not found fail with error.
   if (connectionsFileExists) {
     connections = await resolveConnectionsFromFile(filename);
+  } else if (resolver || config.connectionResolver) {
+    connections = await resolveConnectionsUsingResolver(resolver || config.connectionResolver);
   } else {
     log('Connections file not provided.');
 
@@ -119,6 +128,27 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
   );
 
   return connections;
+}
+
+/**
+ * Resolve connections using the provided connection resolver.
+ *
+ * @param {Configuration} config
+ * @param {string} resolver
+ * @returns {Promise<ConnectionConfig[]>}
+ */
+export async function resolveConnectionsUsingResolver(resolver: string): Promise<ConnectionConfig[]> {
+  log('Resolving connection resolver: %s', resolver);
+
+  const resolverPath = resolver ? path.resolve(process.cwd(), resolver) : '';
+
+  const { resolve } = (await import(resolverPath)) as ConnectionResolver;
+
+  if (!resolve) {
+    throw new Error(`Resolver '${resolver}' does not expose a 'resolve' function.`);
+  }
+
+  return resolve();
 }
 
 /**
@@ -186,7 +216,7 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
  * @returns {Promise<ConnectionConfig[]>}
  */
 async function resolveConnectionsFromFile(filename: string): Promise<ConnectionConfig[]> {
-  log('Resolving file: %s', filename);
+  log('Resolving connections file: %s', filename);
 
   const loaded = await fs.read(filename);
   const { connections } = JSON.parse(loaded) as ConnectionsFileSchema;

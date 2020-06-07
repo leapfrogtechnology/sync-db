@@ -13,6 +13,10 @@ class Prune extends Command {
     only: flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
+    }),
+    'connection-resolver': flags.string({
+      helpValue: 'PATH',
+      description: 'Path to the connection resolver.'
     })
   };
 
@@ -40,7 +44,7 @@ class Prune extends Command {
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(Prune);
     const config = await loadConfig();
-    const connections = await resolveConnections();
+    const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
     const results = await prune(config, connections, {
       ...parsedFlags,
