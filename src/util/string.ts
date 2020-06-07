@@ -5,7 +5,7 @@
  *  {{name}}
  *
  * @example
- * interpolate('<div>>{{text}}</div>', {text: 'Hello World!'})
+ * interpolate('<div>{{text}}</div>', {text: 'Hello World!'})
  *  => '<div>Hello World!</div>'
  *
  * @param {string} template
