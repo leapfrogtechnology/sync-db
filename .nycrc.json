@@ -1,7 +1,6 @@
 {
   "extends": "@istanbuljs/nyc-config-typescript",
   "include": ["src"],
-  "require": ["ts-node/register"],
   "cache": false,
   "sourceMap": true,
   "all": true,
