@@ -101,8 +101,10 @@ export async function resolveConnections(config: Configuration, resolver?: strin
 
   let connections: ConnectionConfig[];
 
-  // If connections file exists, resolve connections from that.
-  // otherwise fallback to getting the connection from the env vars.
+  // Connection resolution process:
+  //  1. If connections file exists, use that to resolve connections.
+  //  2. If connection resolver is set via flag or configuration, use it.
+  //  3. If 1 & 2 are false, try resolving the connections from the environment. If not found fail with error.
   if (connectionsFileExists) {
     connections = await resolveConnectionsFromFile(filename);
   } else if (resolver) {
