@@ -131,7 +131,7 @@ class Synchronize extends Command {
 
     try {
       const config = await loadConfig();
-      const connections = await resolveConnections();
+      const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
       const timeStart = process.hrtime();
 
       await printLine('Synchronizing...\n');
