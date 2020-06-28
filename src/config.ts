@@ -12,7 +12,7 @@ import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
 interface ConnectionResolver {
-  resolve: () => Promise<ConnectionConfig[]>;
+  resolve: (config: Configuration) => Promise<ConnectionConfig[]>;
 }
 
 /**
@@ -108,7 +108,7 @@ export async function resolveConnections(config: Configuration, resolver?: strin
   if (connectionsFileExists) {
     connections = await resolveConnectionsFromFile(filename);
   } else if (resolver || config.connectionResolver) {
-    connections = await resolveConnectionsUsingResolver(resolver || config.connectionResolver);
+    connections = await resolveConnectionsUsingResolver(resolver || config.connectionResolver, config);
   } else {
     log('Connections file not provided.');
 
@@ -133,11 +133,14 @@ export async function resolveConnections(config: Configuration, resolver?: strin
 /**
  * Resolve connections using the provided connection resolver.
  *
- * @param {Configuration} config
  * @param {string} resolver
+ * @param {Configuration} config
  * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnectionsUsingResolver(resolver: string): Promise<ConnectionConfig[]> {
+export async function resolveConnectionsUsingResolver(
+  resolver: string,
+  config: Configuration
+): Promise<ConnectionConfig[]> {
   log('Resolving connection resolver: %s', resolver);
 
   const resolverPath = resolver ? path.resolve(process.cwd(), resolver) : '';
@@ -148,7 +151,7 @@ export async function resolveConnectionsUsingResolver(resolver: string): Promise
     throw new Error(`Resolver '${resolver}' does not expose a 'resolve' function.`);
   }
 
-  return resolve();
+  return resolve(config);
 }
 
 /**
