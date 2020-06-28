@@ -1,5 +1,15 @@
 # Change Log
 
+## [v1.0.0-experimental.20200628](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200628) (2020-06-28)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200607...v1.0.0-experimental.20200628)
+
+**Closed Issues**
+
+- Ability to use a custom connection resolver [\#32](https://github.com/leapfrogtechnology/sync-db/issues/32) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[config](https://github.com/leapfrogtechnology/sync-db/labels/config)] [[connections](https://github.com/leapfrogtechnology/sync-db/labels/connections)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)]
+
+## [v1.0.0-experimental.20200607](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200607) (2020-06-07)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200428...v1.0.0-experimental.20200607)
+
 ## [v1.0.0-experimental.20200428](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200428) (2020-04-27)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200427...v1.0.0-experimental.20200428)
 
