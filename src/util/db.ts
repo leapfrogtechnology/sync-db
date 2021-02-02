@@ -1,6 +1,13 @@
 import * as Knex from 'knex';
+import { dbLogger, log } from './logger';
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
+import ConnectionReference from '../domain/ConnectionReference';
+
+/**
+ * Database connections given by the user or the CLI frontend.
+ */
+export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig;
 
 /**
  * Returns true if the provided object is a knex connection instance.
@@ -31,10 +38,66 @@ export function getConfig(db: Knex): ConnectionConfig {
 
 /**
  * Create a new connection instance (knex) using the connection config.
+ * Throws error if the config already holds a Knex's instance.
  *
  * @param {ConnectionConfig} config
  * @returns {Knex}
  */
 export function createInstance(config: ConnectionConfig): Knex {
-  return Knex({ connection: config, client: config.client });
+  if (isKnexInstance(config.connection)) {
+    throw new Error('The provided connection already contains a connection instance.');
+  }
+
+  const { host, database } = config.connection as any;
+
+  log(`Connecting to database: ${host}/${database}`);
+
+  return Knex({
+    client: config.client,
+    connection: config.connection
+  });
+}
+
+/**
+ * Run a callback function with in a transaction.
+ *
+ * @param {ConnectionReference} db
+ * @param {(trx: Knex.Transaction) => Promise<T>} callback
+ * @returns {Promise<T>}
+ */
+export function withTransaction<T>(
+  db: ConnectionReference,
+  callback: (trx: Knex.Transaction) => Promise<T>
+): Promise<T> {
+  const dbLog = dbLogger(db.id);
+
+  return db.connection.transaction(async trx => {
+    dbLog('BEGIN: transaction');
+
+    const result = await callback(trx);
+
+    dbLog('END: transaction');
+
+    return result;
+  });
+}
+
+/**
+ * Map user provided connection(s) to the connection instances.
+ *
+ * @param {(DatabaseConnections)} connectionConfig
+ * @returns {ConnectionReference[]}
+ */
+export function mapToConnectionReferences(connectionConfig: DatabaseConnections): ConnectionReference[] {
+  const list = Array.isArray(connectionConfig) ? connectionConfig : [connectionConfig];
+
+  return list.map(config => {
+    if (isKnexInstance(config.connection)) {
+      log(`Received connection instance to database: ${config.connection.client.config.connection.database}`);
+
+      return { connection: config.connection, id: getConnectionId(config) };
+    }
+
+    return { connection: createInstance(config), id: getConnectionId(config) };
+  });
 }

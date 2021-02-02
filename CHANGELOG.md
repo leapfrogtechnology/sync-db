@@ -1,5 +1,27 @@
 # Change Log
 
+## [v1.0.0-experimental.20200628](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200628) (2020-06-28)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200607...v1.0.0-experimental.20200628)
+
+**Closed Issues**
+
+- Ability to use a custom connection resolver [\#32](https://github.com/leapfrogtechnology/sync-db/issues/32) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[config](https://github.com/leapfrogtechnology/sync-db/labels/config)] [[connections](https://github.com/leapfrogtechnology/sync-db/labels/connections)] [[feature](https://github.com/leapfrogtechnology/sync-db/labels/feature)]
+
+## [v1.0.0-experimental.20200607](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200607) (2020-06-07)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200428...v1.0.0-experimental.20200607)
+
+## [v1.0.0-experimental.20200428](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200428) (2020-04-27)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200427...v1.0.0-experimental.20200428)
+
+## [v1.0.0-experimental.20200427](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.20200427) (2020-04-27)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.6...v1.0.0-experimental.20200427)
+
+**Changes**
+
+- Upgrade prettier and reformat code [\#61](https://github.com/leapfrogtechnology/sync-db/pull/61) [[aesthetics](https://github.com/leapfrogtechnology/sync-db/labels/aesthetics)] [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Drop Node 8.x support - minimum required version \>= 10.x [\#60](https://github.com/leapfrogtechnology/sync-db/pull/60) [[breaking change](https://github.com/leapfrogtechnology/sync-db/labels/breaking%20change)] [[chore](https://github.com/leapfrogtechnology/sync-db/labels/chore)] [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Organize directories and minor improvements for consistency and trivial fixes [\#57](https://github.com/leapfrogtechnology/sync-db/pull/57) [[aesthetics](https://github.com/leapfrogtechnology/sync-db/labels/aesthetics)] [[chore](https://github.com/leapfrogtechnology/sync-db/labels/chore)] [[improvement](https://github.com/leapfrogtechnology/sync-db/labels/improvement)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+
 ## [v1.0.0-beta.6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.6) (2020-03-24)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.5...v1.0.0-beta.6)
 
@@ -129,7 +151,7 @@
 **Changes**
 
 - Fix file name mistake [\#30](https://github.com/leapfrogtechnology/sync-db/pull/30) ([p0k8h](https://github.com/p0k8h))
-- Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[programmatic-api](https://github.com/leapfrogtechnology/sync-db/labels/programmatic-api)] ([p0k8h](https://github.com/p0k8h))
+- Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) [[example](https://github.com/leapfrogtechnology/sync-db/labels/example)] [[programmatic api](https://github.com/leapfrogtechnology/sync-db/labels/programmatic%20api)] ([p0k8h](https://github.com/p0k8h))
 - Throw an error if object type names doesn't match directory convention [\#28](https://github.com/leapfrogtechnology/sync-db/pull/28) [[bugfix](https://github.com/leapfrogtechnology/sync-db/labels/bugfix)] ([p0k8h](https://github.com/p0k8h))
 - Upgrade TypeScript to 3.7.2 [\#27](https://github.com/leapfrogtechnology/sync-db/pull/27) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Upgrade knex minimum version to 0.19.5 [\#26](https://github.com/leapfrogtechnology/sync-db/pull/26) [[dependencies](https://github.com/leapfrogtechnology/sync-db/labels/dependencies)] [[security](https://github.com/leapfrogtechnology/sync-db/labels/security)] ([kabirbaidhya](https://github.com/kabirbaidhya))
@@ -156,7 +178,7 @@
 **Changes**
 
 - Configure Travis CI for running tests [\#13](https://github.com/leapfrogtechnology/sync-db/pull/13) [[test](https://github.com/leapfrogtechnology/sync-db/labels/test)] ([kabirbaidhya](https://github.com/kabirbaidhya))
-- Simplify programmatic usage and documentation [\#11](https://github.com/leapfrogtechnology/sync-db/pull/11) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[programmatic-api](https://github.com/leapfrogtechnology/sync-db/labels/programmatic-api)] ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Simplify programmatic usage and documentation [\#11](https://github.com/leapfrogtechnology/sync-db/pull/11) [[cli](https://github.com/leapfrogtechnology/sync-db/labels/cli)] [[documentation](https://github.com/leapfrogtechnology/sync-db/labels/documentation)] [[programmatic api](https://github.com/leapfrogtechnology/sync-db/labels/programmatic%20api)] ([kabirbaidhya](https://github.com/kabirbaidhya))
 
 ## [v1.0.0-alpha.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.3) (2019-08-26)
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.2...v1.0.0-alpha.3)

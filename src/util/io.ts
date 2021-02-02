@@ -1,3 +1,5 @@
+import { green, red } from 'chalk';
+
 /**
  * Prints a line into the console (stdout).
  *
@@ -6,6 +8,16 @@
  */
 export function printLine(message: string = ''): Promise<any> {
   return print(message.toString() + '\n');
+}
+
+/**
+ * Print an info line on the console (in green color).
+ *
+ * @param {string} [message='']
+ * @returns {Promise<any>}
+ */
+export function printInfo(message: string = ''): Promise<any> {
+  return printLine(green(message));
 }
 
 /**
@@ -22,9 +34,12 @@ export function print(message: string): Promise<any> {
  * Prints an error message with stack trace available
  * into the stderr.
  *
- * @param {Error} error
+ * @param {any} error
+ * @param {boolean} [stacktrace=true]
  * @returns {Promise<any>}
  */
-export function printError(error: Error): Promise<any> {
-  return new Promise(resolve => process.stderr.write((error.stack || error).toString() + '\n', resolve));
+export function printError(error: any, stacktrace: boolean = true): Promise<any> {
+  const errorStr = stacktrace ? (error.stack || error).toString() : error.toString();
+
+  return new Promise(resolve => process.stderr.write(red(errorStr) + '\n', resolve));
 }

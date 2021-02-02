@@ -9,7 +9,7 @@ const { connections } = require('../connections.sync-db.json');
     // Getting knex instance of mssql database with id db1.
     const db = knex({
       client: 'mssql',
-      connection: connections.find(({ id }) => id === 'db1')
+      connection: connections.find(({ id }) => id === 'testdb1')
     });
 
     const tasks = await db.raw('SELECT * FROM utils.vw_tasks');

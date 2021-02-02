@@ -2,14 +2,18 @@ import * as path from 'path';
 import * as yaml from 'yamljs';
 import { mergeDeepRight } from 'ramda';
 
-import { log } from './logger';
 import * as fs from './util/fs';
+import { log } from './util/logger';
 import { isObject } from './util/types';
-import DbConfig from './domain/DbConfig';
-import SyncConfig from './domain/SyncConfig';
+import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
+import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
+
+interface ConnectionResolver {
+  resolve: (config: Configuration) => Promise<ConnectionConfig[]>;
+}
 
 /**
  * Check if this is being run via the sync-db cli or not.
@@ -21,19 +25,31 @@ export function isCLI(): boolean {
 }
 
 /**
+ * Get the SQL base path - the 'sql' directory under the `basePath`.
+ *
+ * TODO: Think of a better way later.
+ *
+ * @param {Configuration} config
+ * @returns {string}
+ */
+export function getSqlBasePath(config: Configuration): string {
+  return path.join(config.basePath, 'sql');
+}
+
+/**
  * Load config yaml file.
  *
- * @returns {Promise<SyncConfig>}
+ * @returns {Promise<Configuration>}
  */
-export async function loadConfig(): Promise<SyncConfig> {
+export async function loadConfig(): Promise<Configuration> {
   log('Resolving config file.');
 
   const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
-  const loadedConfig = (await yaml.load(filename)) as SyncConfig;
+  const loadedConfig = (await yaml.load(filename)) as Configuration;
 
   log('Resolved config file.');
 
-  const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as SyncConfig;
+  const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as Configuration;
 
   validate(loaded);
 
@@ -53,9 +69,9 @@ export async function loadConfig(): Promise<SyncConfig> {
 /**
  * Validate the loaded configuration.
  *
- * @param {SyncConfig} config
+ * @param {Configuration} config
  */
-export function validate(config: SyncConfig) {
+export function validate(config: Configuration) {
   const { injectedConfig } = config;
 
   log('Validating config.');
@@ -76,18 +92,23 @@ export function validate(config: SyncConfig) {
  *
  * @returns {Promise<ConnectionConfig[]>}
  */
-export async function resolveConnections(): Promise<ConnectionConfig[]> {
+
+export async function resolveConnections(config: Configuration, resolver?: string): Promise<ConnectionConfig[]> {
   log('Resolving database connections.');
 
   const filename = path.resolve(process.cwd(), CONNECTIONS_FILENAME);
   const connectionsFileExists = await fs.exists(filename);
 
-  let connections;
+  let connections: ConnectionConfig[];
 
-  // If connections file exists, resolve connections from that.
-  // otherwise fallback to getting the connection from the env vars.
+  // Connection resolution process:
+  //  1. If connections file exists, use that to resolve connections.
+  //  2. If connection resolver is set via flag or configuration, use it.
+  //  3. If 1 & 2 are false, try resolving the connections from the environment. If not found fail with error.
   if (connectionsFileExists) {
     connections = await resolveConnectionsFromFile(filename);
+  } else if (resolver || config.connectionResolver) {
+    connections = await resolveConnectionsUsingResolver(resolver || config.connectionResolver, config);
   } else {
     log('Connections file not provided.');
 
@@ -96,10 +117,41 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
 
   log(
     'Resolved connections: %O',
-    connections.map(({ id, host, database }) => ({ id, host, database }))
+    connections.map(({ id, client, connection }) => ({
+      id,
+      client,
+      connection: {
+        host: (connection as any).host,
+        database: (connection as any).database
+      }
+    }))
   );
 
   return connections;
+}
+
+/**
+ * Resolve connections using the provided connection resolver.
+ *
+ * @param {string} resolver
+ * @param {Configuration} config
+ * @returns {Promise<ConnectionConfig[]>}
+ */
+export async function resolveConnectionsUsingResolver(
+  resolver: string,
+  config: Configuration
+): Promise<ConnectionConfig[]> {
+  log('Resolving connection resolver: %s', resolver);
+
+  const resolverPath = resolver ? path.resolve(process.cwd(), resolver) : '';
+
+  const { resolve } = (await import(resolverPath)) as ConnectionResolver;
+
+  if (!resolve) {
+    throw new Error(`Resolver '${resolver}' does not expose a 'resolve' function.`);
+  }
+
+  return resolve(config);
 }
 
 /**
@@ -109,7 +161,13 @@ export async function resolveConnections(): Promise<ConnectionConfig[]> {
  * @returns {string}
  */
 export function getConnectionId(connectionConfig: ConnectionConfig): string {
-  return connectionConfig.id || `${connectionConfig.host}/${connectionConfig.database}`;
+  if (connectionConfig.id) {
+    return connectionConfig.id;
+  }
+
+  const { host, database } = connectionConfig.connection as any;
+
+  return host && database ? `${host}/${database}` : '';
 }
 
 /**
@@ -136,20 +194,22 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
 
   validateConnections(REQUIRED_ENV_KEYS);
 
-  const connection = {
-    client: process.env.DB_CLIENT,
+  const connectionConfig = {
     id: process.env.DB_ID,
-    host: process.env.DB_HOST,
-    port: process.env.DB_PORT ? +process.env.DB_PORT : null,
-    user: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    options: {
-      encrypt: process.env.DB_ENCRYPTION === 'true'
+    client: process.env.DB_CLIENT,
+    connection: {
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT ? +process.env.DB_PORT : null,
+      user: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      options: {
+        encrypt: process.env.DB_ENCRYPTION === 'true'
+      }
     }
   } as ConnectionConfig;
 
-  return [connection];
+  return [connectionConfig];
 }
 
 /**
@@ -159,10 +219,10 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
  * @returns {Promise<ConnectionConfig[]>}
  */
 async function resolveConnectionsFromFile(filename: string): Promise<ConnectionConfig[]> {
-  log('Resolving file: %s', filename);
+  log('Resolving connections file: %s', filename);
 
   const loaded = await fs.read(filename);
-  const { connections } = JSON.parse(loaded) as DbConfig;
+  const { connections } = JSON.parse(loaded) as ConnectionsFileSchema;
 
   // TODO: Validate the connections received from file.
 

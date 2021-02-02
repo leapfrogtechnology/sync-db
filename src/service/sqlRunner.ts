@@ -3,9 +3,9 @@ import * as path from 'path';
 import { reverse, keys } from 'ramda';
 
 import * as fs from '../util/fs';
-import { dbLogger } from '../logger';
 import Mapping from '../domain/Mapping';
 import SqlCode from '../domain/SqlCode';
+import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
@@ -23,12 +23,12 @@ const dropStatementsMap: Mapping<string> = {
 /**
  * Reads an sql file and return it's contents.
  *
- * @param {string} basePath
+ * @param {string} sqlBasePath
  * @param {string} fileName
  * @returns {Promise<SqlCode>}
  */
-export async function resolveFile(basePath: string, fileName: string): Promise<SqlCode> {
-  const filePath = path.resolve(basePath, fileName);
+export async function resolveFile(sqlBasePath: string, fileName: string): Promise<SqlCode> {
+  const filePath = path.resolve(sqlBasePath, fileName);
   const sql = await fs.read(filePath);
 
   return { sql, name: fileName };
@@ -37,12 +37,12 @@ export async function resolveFile(basePath: string, fileName: string): Promise<S
 /**
  * Resolves a list of source files.
  *
- * @param {string} basePath
+ * @param {string} sqlBasePath
  * @param {string[]} files
  * @returns {Promise<SqlCode[]>}
  */
-export async function resolveFiles(basePath: string, files: string[]): Promise<SqlCode[]> {
-  const promises = files.map(filename => resolveFile(basePath, filename));
+export async function resolveFiles(sqlBasePath: string, files: string[]): Promise<SqlCode[]> {
+  const promises = files.map(filename => resolveFile(sqlBasePath, filename));
 
   return Promise.all(promises);
 }
