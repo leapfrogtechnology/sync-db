@@ -22,15 +22,15 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
         {
           name: '0001_mgr',
           queries: {
-            up: up,
-            down: down
+            up,
+            down
           }
         },
         {
           name: '0002_mgr',
           queries: {
-            up: up,
-            down: down
+            up,
+            down
           }
         }
       ]);
@@ -46,13 +46,13 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
       {
         name: '0001_mgr',
         queries: {
-          up: up,
-          down: down
+          up,
+          down
         }
       }
     ]);
     it('should return the migration runner.', async () => {
-      let db: any;
+      const db: any = null;
       const runner = instance.get('0001_mgr');
       const upResult = await runner.up(db);
       const downResult = await runner.down(db);

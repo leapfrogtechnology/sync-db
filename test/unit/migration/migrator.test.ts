@@ -105,11 +105,11 @@ describe('MIGRATION: migrator', () => {
 
       // Populate migration files to a directory.
       await Promise.all([
-        write(path.join(migrationPath, '0001_mgr.js'), 'SELECT 1'),
-        write(path.join(migrationPath, '0002_mgr.ts'), 'SELECT 1'),
-        write(path.join(migrationPath, '0003_mgr.js'), 'SELECT 1'),
-        write(path.join(migrationPath, '0004_mgr.ts'), 'SELECT 1'),
-        write(path.join(migrationPath, '0005_mgr.js'), 'SELECT 1')
+        write(path.join(migrationPath, '0001_mgr.js'), ''),
+        write(path.join(migrationPath, '0002_mgr.ts'), ''),
+        write(path.join(migrationPath, '0003_mgr.js'), ''),
+        write(path.join(migrationPath, '0004_mgr.ts'), ''),
+        write(path.join(migrationPath, '0005_mgr.js'), '')
       ]);
 
       const result = await migratorService.getJavaScriptMigrationNames(migrationPath, 'js');
@@ -123,12 +123,12 @@ describe('MIGRATION: migrator', () => {
 
       // Populate migration files to a directory.
       await Promise.all([
-        write(path.join(migrationPath, '0001_mgr.ts'), 'SELECT 1'),
-        write(path.join(migrationPath, '0002_mgr.ts'), 'SELECT 1'),
+        write(path.join(migrationPath, '0001_mgr.ts'), ''),
+        write(path.join(migrationPath, '0002_mgr.ts'), ''),
         write(path.join(migrationPath, 'test.sql'), 'SELECT 2'),
         write(path.join(migrationPath, 'migrate.sql'), 'SELECT 3'),
         write(path.join(migrationPath, '.gitignore'), ''),
-        write(path.join(migrationPath, '0003_mgr.js'), 'SELECT 1')
+        write(path.join(migrationPath, '0003_mgr.js'), '')
       ]);
 
       const result = await migratorService.getJavaScriptMigrationNames(migrationPath, 'ts');
