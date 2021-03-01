@@ -1,4 +1,4 @@
-import Knex from "knex";
+import Knex from 'knex';
 
 interface JavaScriptMigrationEntry {
   name: string;
@@ -8,4 +8,4 @@ interface JavaScriptMigrationEntry {
   };
 }
 
-export default JavaScriptMigrationEntry
+export default JavaScriptMigrationEntry;

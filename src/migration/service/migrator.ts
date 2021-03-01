@@ -5,7 +5,8 @@ import { resolveFile } from '../../service/sqlRunner';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
 
-const FILE_PATTERN_JS = /(.+).(js|ts)$/
+const FILE_PATTERN_JS = /(.+).(js)$/;
+const FILE_PATTERN_TS = /(.+).(ts)$/;
 const FILE_PATTERN_SQL = /(.+)\.(up|down)\.sql$/;
 
 /**
@@ -38,14 +39,16 @@ export async function getSqlMigrationNames(migrationPath: string): Promise<strin
  * that needs to be run.
  *
  * @param {string} migrationPath
+ * @param {string} extension
  * @returns {Promise<string[]>}
  */
-export async function getJavaScriptMigrationNames(migrationPath: string): Promise<string[]> {
+export async function getJavaScriptMigrationNames(migrationPath: string, extension: string): Promise<string[]> {
   const files = await glob(migrationPath);
   const migrationSet = new Set<string>();
+  const pattern: RegExp = extension === 'js' ? FILE_PATTERN_JS : FILE_PATTERN_TS;
 
   files.forEach(filename => {
-    const match = filename.match(FILE_PATTERN_JS);
+    const match = filename.match(pattern);
 
     if (match) {
       migrationSet.add(match[1]);
@@ -89,12 +92,15 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
  * @param {string} extension
  * @returns {Promise<SqlMigrationEntry[]>}
  */
-export async function resolveJavaScriptMigrations(migrationPath: string, extension: string = 'js'): Promise<JavaScriptMigrationEntry[]> {
-  const migrationNames = await getJavaScriptMigrationNames(migrationPath);
+export async function resolveJavaScriptMigrations(
+  migrationPath: string,
+  extension: string = 'js'
+): Promise<JavaScriptMigrationEntry[]> {
+  const migrationNames = await getJavaScriptMigrationNames(migrationPath, extension);
   const migrationPromises = migrationNames.map(async name => {
     const filename = `${name}.${extension}`;
 
-    const {up, down} = require(path.resolve(migrationPath, filename));
+    const { up, down } = require(path.resolve(migrationPath, filename));
 
     return {
       name,

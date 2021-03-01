@@ -3,7 +3,7 @@ import * as path from 'path';
 
 import { PrepareOptions } from '../../init';
 import { dbLogger, log } from '../../util/logger';
-import { resolveSqlMigrations , resolveJavaScriptMigrations} from './migrator';
+import { resolveSqlMigrations, resolveJavaScriptMigrations } from './migrator';
 import Configuration from '../../domain/Configuration';
 import { executeOperation } from '../../service/execution';
 import MigrationContext from '../../domain/MigrationContext';
@@ -96,14 +96,14 @@ export async function resolveMigrationContext(
 
       log('Available migration sources:\n%O', srcJS);
 
-      return new JavaScriptMigrationContext(srcJS)
+      return new JavaScriptMigrationContext(srcJS);
 
     case 'typescript':
-        const srcTS = await resolveJavaScriptMigrations(migrationPath, 'ts');
+      const srcTS = await resolveJavaScriptMigrations(migrationPath, 'ts');
 
-        log('Available migration sources:\n%O', srcTS);
+      log('Available migration sources:\n%O', srcTS);
 
-        return new JavaScriptMigrationContext(srcTS)
+      return new JavaScriptMigrationContext(srcTS);
 
     default:
       // TODO: We'll need to support different types of migrations eg both sql & js
