@@ -3,13 +3,14 @@ import * as path from 'path';
 
 import { PrepareOptions } from '../../init';
 import { dbLogger, log } from '../../util/logger';
-import { resolveSqlMigrations } from './migrator';
+import { resolveSqlMigrations , resolveJavaScriptMigrations} from './migrator';
 import Configuration from '../../domain/Configuration';
 import { executeOperation } from '../../service/execution';
 import MigrationContext from '../../domain/MigrationContext';
 import OperationResult from '../../domain/operation/OperationResult';
 import MigrationSourceContext from '../domain/MigrationSourceContext';
 import SqlMigrationSourceContext from '../source-types/SqlMigrationSourceContext';
+import JavaScriptMigrationContext from '../source-types/JavaScriptMigrationSourceContext';
 
 export enum KnexMigrationAPI {
   MIGRATE_LIST = 'migrate.list',
@@ -81,14 +82,28 @@ export async function resolveMigrationContext(
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
   const migrationPath = getMigrationPath(config);
+  const sourceType: string = config.migration.sourceType
 
-  switch (config.migration.sourceType) {
+  switch (sourceType) {
     case 'sql':
       const src = await resolveSqlMigrations(migrationPath);
 
       log('Available migration sources:\n%O', src);
 
       return new SqlMigrationSourceContext(src);
+
+    case 'javascript' || 'typescript':
+      let srcJS;
+
+      if (sourceType === 'javascript') {
+        srcJS = await resolveJavaScriptMigrations(migrationPath);
+      }else {
+        srcJS = await resolveJavaScriptMigrations(migrationPath, 'ts');
+      }
+
+      log('Available migration sources:\n%O', srcJS);
+
+      return new JavaScriptMigrationContext(srcJS)
 
     default:
       // TODO: We'll need to support different types of migrations eg both sql & js
