@@ -82,9 +82,8 @@ export async function resolveMigrationContext(
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
   const migrationPath = getMigrationPath(config);
-  const sourceType: string = config.migration.sourceType
 
-  switch (sourceType) {
+  switch (config.migration.sourceType) {
     case 'sql':
       const src = await resolveSqlMigrations(migrationPath);
 
@@ -92,18 +91,19 @@ export async function resolveMigrationContext(
 
       return new SqlMigrationSourceContext(src);
 
-    case 'javascript' || 'typescript':
-      let srcJS;
-
-      if (sourceType === 'javascript') {
-        srcJS = await resolveJavaScriptMigrations(migrationPath);
-      }else {
-        srcJS = await resolveJavaScriptMigrations(migrationPath, 'ts');
-      }
+    case 'javascript':
+      const srcJS = await resolveJavaScriptMigrations(migrationPath);
 
       log('Available migration sources:\n%O', srcJS);
 
       return new JavaScriptMigrationContext(srcJS)
+
+    case 'typescript':
+        const srcTS = await resolveJavaScriptMigrations(migrationPath, 'ts');
+
+        log('Available migration sources:\n%O', srcTS);
+
+        return new JavaScriptMigrationContext(srcTS)
 
     default:
       // TODO: We'll need to support different types of migrations eg both sql & js
