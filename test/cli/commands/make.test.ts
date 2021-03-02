@@ -84,4 +84,66 @@ describe('CLI: make', () => {
     expect(upFile).contains('CREATE TABLE users');
     expect(downFile).contains('DROP TABLE users');
   });
+  it('should create a migration file when name is supplied and sourceType is javascript.', async () => {
+    // Write sync-db.yml file.
+    const cwd = await mkdtemp();
+    const migrationPath = path.join(cwd, 'src/migration');
+    await mkdir(migrationPath, { recursive: true });
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration',
+          sourceType: 'javascript'
+        }
+      } as Configuration)
+    );
+
+    const { stdout } = await runCli(['make', 'alter_users_table_drop_column'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/Created.+\d{13}_alter_users_table_drop_column\.js/);
+
+    // Check files are created.
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(1);
+
+    const migrationFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_alter_users_table_drop_column\.js/))
+    );
+
+    expect(migrationFile).to.equal('');
+  });
+  it('should create a migration file when name is supplied and sourceType is typescript.', async () => {
+    // Write sync-db.yml file.
+    const cwd = await mkdtemp();
+    const migrationPath = path.join(cwd, 'src/migration');
+    await mkdir(migrationPath, { recursive: true });
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration',
+          sourceType: 'typescript'
+        }
+      } as Configuration)
+    );
+
+    const { stdout } = await runCli(['make', 'create_table_demo_users'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/Created.+\d{13}_create_table_demo_users\.ts/);
+
+    // Check files are created.
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(1);
+
+    const migrationFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_create_table_demo_users\.ts/))
+    );
+
+    expect(migrationFile).to.equal('');
+  });
 });
