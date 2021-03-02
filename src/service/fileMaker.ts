@@ -5,6 +5,7 @@ import { log } from '../util/logger';
 import { interpolate } from '../util/string';
 import { getTimestampString } from '../util/ts';
 import Configuration from '../domain/Configuration';
+import FileExtensionTypes from '../enum/FileExtensionTypes';
 import { getMigrationPath } from '../migration/service/knexMigrator';
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../assets/templates/migration');
@@ -42,7 +43,7 @@ export async function makeMigration(config: Configuration, filename: string): Pr
     case 'typescript':
       log(`Creating TS migration. ${migrationPath}/${filename}`);
 
-      return makeJSMigration(filename, migrationPath, timestamp, 'ts');
+      return makeJSMigration(filename, migrationPath, timestamp, FileExtensionTypes.TS);
 
     default:
       throw new Error(`Unsupported migration.sourceType value "${config.migration.sourceType}".`);
@@ -99,7 +100,7 @@ export async function makeJSMigration(
   filename: string,
   migrationPath: string,
   timestamp: string,
-  extension: string = 'js'
+  extension: string = FileExtensionTypes.JS
 ): Promise<string[]> {
   const migrationFilename = path.join(migrationPath, `${timestamp}_${filename}.${extension}`);
 

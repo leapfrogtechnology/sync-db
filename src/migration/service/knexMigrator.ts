@@ -7,6 +7,7 @@ import { resolveSqlMigrations, resolveJavaScriptMigrations } from './migrator';
 import Configuration from '../../domain/Configuration';
 import { executeOperation } from '../../service/execution';
 import MigrationContext from '../../domain/MigrationContext';
+import FileExtensionTypes from '../../enum/FileExtensionTypes';
 import OperationResult from '../../domain/operation/OperationResult';
 import MigrationSourceContext from '../domain/MigrationSourceContext';
 import SqlMigrationSourceContext from '../source-types/SqlMigrationSourceContext';
@@ -99,7 +100,7 @@ export async function resolveMigrationContext(
       return new JavaScriptMigrationContext(srcJS);
 
     case 'typescript':
-      const srcTS = await resolveJavaScriptMigrations(migrationPath, 'ts');
+      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensionTypes.TS);
 
       log('Available migration sources:\n%O', srcTS);
 

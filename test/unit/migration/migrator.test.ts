@@ -155,7 +155,7 @@ describe('MIGRATION: migrator', () => {
       }
 
       function down(db) {
-        return db.schema.dropTable('rounding_records');
+        return db.schema.dropTable('demo_table');
       }
 
       module.exports = {
@@ -165,7 +165,7 @@ describe('MIGRATION: migrator', () => {
       `;
       const exampleTs = `
       /**
-       * Create rounding_records table.
+       * Create test_demo table.
        *
        * @param {Knex} db
        * @returns {Promise}
@@ -183,7 +183,7 @@ describe('MIGRATION: migrator', () => {
       }
 
       /**
-       * Drop rounding_records table.
+       * Drop test_demo table.
        *
        * @param {Knex} db
        * @returns {Promise}
