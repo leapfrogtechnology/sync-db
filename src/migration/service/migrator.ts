@@ -3,11 +3,11 @@ import * as path from 'path';
 import { glob, exists } from '../../util/fs';
 import { resolveFile } from '../../service/sqlRunner';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
-import FileExtensionTypes from '../../enum/FileExtensionTypes';
+import FileExtensions from '../../enum/FileExtensions';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
 
-const FILE_PATTERN_JS = /(.+).(js)$/;
-const FILE_PATTERN_TS = /(.+).(ts)$/;
+const FILE_PATTERN_JS = /(.+).js$/;
+const FILE_PATTERN_TS = /(.+).ts$/;
 const FILE_PATTERN_SQL = /(.+)\.(up|down)\.sql$/;
 
 /**
@@ -44,11 +44,11 @@ export async function getSqlMigrationNames(migrationPath: string): Promise<strin
  * @returns {Promise<string[]>}
  */
 export async function getJavaScriptMigrationNames(migrationPath: string, extension: string): Promise<string[]> {
-  const files = await glob(migrationPath);
+  const filenames = await glob(migrationPath);
   const migrationSet = new Set<string>();
-  const pattern: RegExp = extension === FileExtensionTypes.JS ? FILE_PATTERN_JS : FILE_PATTERN_TS;
+  const pattern = extension === FileExtensions.JS ? FILE_PATTERN_JS : FILE_PATTERN_TS;
 
-  files.forEach(filename => {
+  filenames.forEach(filename => {
     const match = filename.match(pattern);
 
     if (match) {
@@ -95,7 +95,7 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
  */
 export async function resolveJavaScriptMigrations(
   migrationPath: string,
-  extension: string = FileExtensionTypes.JS
+  extension: string = FileExtensions.JS
 ): Promise<JavaScriptMigrationEntry[]> {
   const migrationNames = await getJavaScriptMigrationNames(migrationPath, extension);
   const migrationPromises = migrationNames.map(async name => {

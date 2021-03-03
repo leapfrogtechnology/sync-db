@@ -105,17 +105,21 @@ describe('MIGRATION: migrator', () => {
 
       // Populate migration files to a directory.
       await Promise.all([
-        write(path.join(migrationPath, '0001_mgr.js'), ''),
-        write(path.join(migrationPath, '0002_mgr.ts'), ''),
-        write(path.join(migrationPath, '0003_mgr.js'), ''),
-        write(path.join(migrationPath, '0004_mgr.ts'), ''),
-        write(path.join(migrationPath, '0005_mgr.js'), '')
+        write(path.join(migrationPath, '0001_create_table_users.js'), ''),
+        write(path.join(migrationPath, '0002_alter_table_user_add_gender.ts'), ''),
+        write(path.join(migrationPath, '0003_create_phone_table.js'), ''),
+        write(path.join(migrationPath, '0004_create_address_table.ts'), ''),
+        write(path.join(migrationPath, '0005_alter_table_address_remove_id.js'), '')
       ]);
 
       const result = await migratorService.getJavaScriptMigrationNames(migrationPath, 'js');
 
       // Test the migrations entries retrieved from the directory.
-      expect(result).to.deep.equal(['0001_mgr', '0003_mgr', '0005_mgr']);
+      expect(result).to.deep.equal([
+        '0001_create_table_users',
+        '0003_create_phone_table',
+        '0005_alter_table_address_remove_id'
+      ]);
     });
 
     it('should not return other files under the directory that are not migrations.', async () => {
@@ -123,20 +127,21 @@ describe('MIGRATION: migrator', () => {
 
       // Populate migration files to a directory.
       await Promise.all([
-        write(path.join(migrationPath, '0001_mgr.ts'), ''),
-        write(path.join(migrationPath, '0002_mgr.ts'), ''),
+        write(path.join(migrationPath, '0001_create_table_users.ts'), ''),
+        write(path.join(migrationPath, '0002_alter_table_user_add_gender.ts'), ''),
         write(path.join(migrationPath, 'test.sql'), 'SELECT 2'),
         write(path.join(migrationPath, 'migrate.sql'), 'SELECT 3'),
         write(path.join(migrationPath, '.gitignore'), ''),
-        write(path.join(migrationPath, '0003_mgr.js'), '')
+        write(path.join(migrationPath, '0005_alter_table_address_remove_id.js'), '')
       ]);
 
       const result = await migratorService.getJavaScriptMigrationNames(migrationPath, 'ts');
 
       // Test the migrations entries retrieved from the directory.
-      expect(result).to.deep.equal(['0001_mgr', '0002_mgr']);
+      expect(result).to.deep.equal(['0001_create_table_users', '0002_alter_table_user_add_gender']);
     });
   });
+
   describe('resolveJavaScriptMigrations', () => {
     it('should resolve all the information related to the available migration entries.', async () => {
       const migrationPath = await mkdtemp();
@@ -163,6 +168,7 @@ describe('MIGRATION: migrator', () => {
         down: down
       }
       `;
+
       const exampleTs = `
       /**
        * Create test_demo table.
@@ -192,10 +198,11 @@ describe('MIGRATION: migrator', () => {
         return db.schema.dropTable('test_demo');
       }
       `;
+
       // Populate migration files to a directory.
       await Promise.all([
-        write(path.join(migrationPath, '0001_mgr.js'), exampleJs),
-        write(path.join(migrationPath, '0002_mgr.ts'), exampleTs),
+        write(path.join(migrationPath, '0001_create_table_users.js'), exampleJs),
+        write(path.join(migrationPath, '0002_alter_table_user_add_gender.ts'), exampleTs),
         write(path.join(migrationPath, '.gitignore'), '')
       ]);
 
@@ -204,12 +211,12 @@ describe('MIGRATION: migrator', () => {
 
       // Test the migrations entries retrieved from the directory.
       expect(result.length).to.equal(1);
-      expect(result[0].name).to.deep.equal('0001_mgr');
+      expect(result[0].name).to.deep.equal('0001_create_table_users');
       expect(result[0].queries.up.name).to.deep.equal('up');
       expect(result[0].queries.down.name).to.deep.equal('down');
 
       expect(result1.length).to.equal(1);
-      expect(result1[0].name).to.deep.equal('0002_mgr');
+      expect(result1[0].name).to.deep.equal('0002_alter_table_user_add_gender');
       expect(result1[0].queries.up.name).to.deep.equal('up');
       expect(result1[0].queries.down.name).to.deep.equal('down');
     });

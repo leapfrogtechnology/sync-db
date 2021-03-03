@@ -1,0 +1,24 @@
+/**
+ * Create <table_name> table.
+ *
+ * @param {Knex} knex
+ * @returns {Promise}
+ */
+function up(knex) {
+  return knex.schema.createTable('table_name', table => {
+    table.increments('id').primary();
+    table.timestamps(true, true);
+  });
+}
+
+/**
+ * Drop <table_name> table.
+ *
+ * @param {Knex} knex
+ * @returns {Promise}
+ */
+function down(knex) {
+  return knex.schema.dropTable('table_name');
+}
+
+module.exports = {up, down}

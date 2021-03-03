@@ -7,6 +7,32 @@ import { runCli, queryByPattern } from './util';
 import Configuration from '../../../src/domain/Configuration';
 import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs';
 
+const tsTemplate = `import * as Knex from 'knex';
+
+/**
+ * Create <table_name> table.
+ *
+ * @param {Knex} db
+ * @returns {Promise}
+ */
+export function up(db: Knex) {
+  return db.schema.createTable('table_name', table => {
+    table.increments('id').primary().unsigned();
+    table.specificType('created_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
+    table.specificType('updated_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
+  });
+}
+
+/**
+ * Drop <table_name> table.
+ *
+ * @param {Knex} db
+ * @returns {Promise}
+ */
+export function down(db: Knex) {
+  return db.schema.dropTable('table_name');
+}
+`;
 describe('CLI: make', () => {
   describe('--help', () => {
     it('should print help message.', async () => {
@@ -84,6 +110,7 @@ describe('CLI: make', () => {
     expect(upFile).contains('CREATE TABLE users');
     expect(downFile).contains('DROP TABLE users');
   });
+
   it('should create a migration file when name is supplied and sourceType is javascript.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
@@ -115,6 +142,7 @@ describe('CLI: make', () => {
 
     expect(migrationFile).to.equal('');
   });
+
   it('should create a migration file when name is supplied and sourceType is typescript.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
@@ -145,5 +173,38 @@ describe('CLI: make', () => {
     );
 
     expect(migrationFile).to.equal('');
+  });
+
+  it('should create a migration file with template when name matches filename convention for typescript.', async () => {
+    // Write sync-db.yml file.
+
+    const cwd = await mkdtemp();
+    const migrationPath = path.join(cwd, 'src/migration');
+    await mkdir(migrationPath, { recursive: true });
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration',
+          sourceType: 'typescript'
+        }
+      } as Configuration)
+    );
+
+    const { stdout } = await runCli(['make', 'create_demo_users_table'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/Created.+\d{13}_create_demo_users_table\.ts/);
+
+    // Check files are created.
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(1);
+
+    const migrationFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_create_demo_users_table\.ts/))
+    );
+
+    expect(migrationFile).to.equal(tsTemplate);
   });
 });

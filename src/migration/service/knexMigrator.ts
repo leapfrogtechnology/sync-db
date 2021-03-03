@@ -3,13 +3,13 @@ import * as path from 'path';
 
 import { PrepareOptions } from '../../init';
 import { dbLogger, log } from '../../util/logger';
-import { resolveSqlMigrations, resolveJavaScriptMigrations } from './migrator';
 import Configuration from '../../domain/Configuration';
+import FileExtensions from '../../enum/FileExtensions';
 import { executeOperation } from '../../service/execution';
 import MigrationContext from '../../domain/MigrationContext';
-import FileExtensionTypes from '../../enum/FileExtensionTypes';
 import OperationResult from '../../domain/operation/OperationResult';
 import MigrationSourceContext from '../domain/MigrationSourceContext';
+import { resolveSqlMigrations, resolveJavaScriptMigrations } from './migrator';
 import SqlMigrationSourceContext from '../source-types/SqlMigrationSourceContext';
 import JavaScriptMigrationContext from '../source-types/JavaScriptMigrationSourceContext';
 
@@ -100,7 +100,7 @@ export async function resolveMigrationContext(
       return new JavaScriptMigrationContext(srcJS);
 
     case 'typescript':
-      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensionTypes.TS);
+      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensions.TS);
 
       log('Available migration sources:\n%O', srcTS);
 

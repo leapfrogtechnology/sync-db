@@ -5,7 +5,7 @@ import { log } from '../util/logger';
 import { interpolate } from '../util/string';
 import { getTimestampString } from '../util/ts';
 import Configuration from '../domain/Configuration';
-import FileExtensionTypes from '../enum/FileExtensionTypes';
+import FileExtensions from '../enum/FileExtensions';
 import { getMigrationPath } from '../migration/service/knexMigrator';
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../assets/templates/migration');
@@ -43,7 +43,7 @@ export async function makeMigration(config: Configuration, filename: string): Pr
     case 'typescript':
       log(`Creating TS migration. ${migrationPath}/${filename}`);
 
-      return makeJSMigration(filename, migrationPath, timestamp, FileExtensionTypes.TS);
+      return makeJSMigration(filename, migrationPath, timestamp, FileExtensions.TS);
 
     default:
       throw new Error(`Unsupported migration.sourceType value "${config.migration.sourceType}".`);
@@ -100,11 +100,24 @@ export async function makeJSMigration(
   filename: string,
   migrationPath: string,
   timestamp: string,
-  extension: string = FileExtensionTypes.JS
+  extension: string = FileExtensions.JS
 ): Promise<string[]> {
-  const migrationFilename = path.join(migrationPath, `${timestamp}_${filename}.${extension}`);
+  let createTemplate = '';
 
-  await fs.write(migrationFilename, '');
+  const migrationFilename = path.join(migrationPath, `${timestamp}_${filename}.${extension}`);
+  const createTableMatched = filename.match(CREATE_TABLE_CONVENTION);
+
+  if (createTableMatched) {
+    const table = createTableMatched[1];
+
+    log(`Create migration for table: ${table}`);
+
+    createTemplate = await fs
+      .read(path.join(MIGRATION_TEMPLATE_PATH, `create_table_${extension}.stub`))
+      .then(template => interpolate(template, { table }));
+  }
+
+  await fs.write(migrationFilename, createTemplate);
 
   return [migrationFilename];
 }
