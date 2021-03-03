@@ -2,8 +2,8 @@ import * as path from 'path';
 
 import { glob, exists } from '../../util/fs';
 import { resolveFile } from '../../service/sqlRunner';
-import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 import FileExtensions from '../../enum/FileExtensions';
+import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
 
 const FILE_PATTERN_JS = /(.+).js$/;
@@ -98,15 +98,21 @@ export async function resolveJavaScriptMigrations(
   extension: string = FileExtensions.JS
 ): Promise<JavaScriptMigrationEntry[]> {
   const migrationNames = await getJavaScriptMigrationNames(migrationPath, extension);
-  const migrationPromises = migrationNames.map(async name => {
-    const filename = `${name}.${extension}`;
 
-    // transpile & execute file required on the fly
+  if (extension === FileExtensions.TS) {
+    // Transpile & execute ts files required on the fly
     require('ts-node').register({
       transpileOnly: true
     });
+  }
 
-    const { up, down } = require(path.resolve(migrationPath, filename));
+  // On the fly es6 => commonJS
+  const esmRequire = require('esm')(module);
+
+  const migrationPromises = migrationNames.map(async name => {
+    const filename = `${name}.${extension}`;
+
+    const { up, down } = esmRequire(path.resolve(migrationPath, filename));
 
     return {
       name,
