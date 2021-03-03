@@ -99,24 +99,29 @@ export async function resolveJavaScriptMigrations(
 ): Promise<JavaScriptMigrationEntry[]> {
   const migrationNames = await getJavaScriptMigrationNames(migrationPath, extension);
 
+  let mRequire: NodeRequire = require;
+
   if (extension === FileExtensions.TS) {
     // Transpile & execute ts files required on the fly
     require('ts-node').register({
       transpileOnly: true
     });
+  } else {
+    // On the fly es6 => commonJS
+    mRequire = require('esm')(module);
   }
-
-  // On the fly es6 => commonJS
-  const esmRequire = require('esm')(module);
 
   const migrationPromises = migrationNames.map(async name => {
     const filename = `${name}.${extension}`;
 
-    const { up, down } = esmRequire(path.resolve(migrationPath, filename));
+    const { up, down } = mRequire(path.resolve(migrationPath, filename));
 
     return {
       name,
-      queries: { up, down }
+      methods: {
+        up,
+        down
+      }
     };
   });
 

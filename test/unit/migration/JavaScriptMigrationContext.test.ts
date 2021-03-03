@@ -21,14 +21,14 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
       const instance = getInstance([
         {
           name: '0001_mgr',
-          queries: {
+          methods: {
             up,
             down
           }
         },
         {
           name: '0002_mgr',
-          queries: {
+          methods: {
             up,
             down
           }
@@ -45,7 +45,7 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
     const instance = getInstance([
       {
         name: '0001_mgr',
-        queries: {
+        methods: {
           up,
           down
         }

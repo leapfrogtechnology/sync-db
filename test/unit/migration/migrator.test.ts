@@ -212,13 +212,13 @@ describe('MIGRATION: migrator', () => {
       // Test the migrations entries retrieved from the directory.
       expect(result.length).to.equal(1);
       expect(result[0].name).to.deep.equal('0001_create_table_users');
-      expect(result[0].queries.up.name).to.deep.equal('up');
-      expect(result[0].queries.down.name).to.deep.equal('down');
+      expect(result[0].methods.up.name).to.deep.equal('up');
+      expect(result[0].methods.down.name).to.deep.equal('down');
 
       expect(result1.length).to.equal(1);
       expect(result1[0].name).to.deep.equal('0002_alter_table_user_add_gender');
-      expect(result1[0].queries.up.name).to.deep.equal('up');
-      expect(result1[0].queries.down.name).to.deep.equal('down');
+      expect(result1[0].methods.up.name).to.deep.equal('up');
+      expect(result1[0].methods.down.name).to.deep.equal('down');
     });
 
     it('should return empty array if the migration directory is empty.', async () => {

@@ -107,8 +107,6 @@ export async function resolveMigrationContext(
       return new JavaScriptMigrationContext(srcTS);
 
     default:
-      // TODO: We'll need to support different types of migrations eg both sql & js
-      // For instance migrations in JS would have different context like JavaScriptMigrationContext.
       throw new Error(`Unsupported migration.sourceType value "${config.migration.sourceType}".`);
   }
 }

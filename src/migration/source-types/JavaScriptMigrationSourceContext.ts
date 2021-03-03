@@ -4,7 +4,7 @@ import MigrationSourceContext from '../domain/MigrationSourceContext';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
 
 /**
- * SQL source migration context for KnexMigrationSource.
+ * JavaScript source migration context for KnexMigrationSource.
  */
 class JavaScriptMigrationContext implements MigrationSourceContext {
   private list: JavaScriptMigrationEntry[];
@@ -12,7 +12,7 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
   public connectionId: string;
 
   /**
-   * SqlMigrationContext constructor.
+   * JavaScriptMigrationContext constructor.
    *
    * @param {JavaScriptMigrationEntry[]} list
    */
@@ -63,8 +63,8 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
     }
 
     return {
-      up: entry.queries.up,
-      down: entry.queries.down
+      up: entry.methods.up,
+      down: entry.methods.down
     };
   }
 }
