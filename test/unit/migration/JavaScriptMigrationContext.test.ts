@@ -51,6 +51,7 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
         }
       }
     ]);
+
     it('should return the migration runner.', async () => {
       const db: any = null;
       const runner = instance.get('0001_mgr');

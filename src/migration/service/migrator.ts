@@ -37,7 +37,7 @@ export async function getSqlMigrationNames(migrationPath: string): Promise<strin
 
 /**
  * Glob the migration directory and retrieve all the migration entries (names)
- * that needs to be run.
+ * that need to be run.
  *
  * @param {string} migrationPath
  * @param {string} extension
@@ -100,6 +100,11 @@ export async function resolveJavaScriptMigrations(
   const migrationNames = await getJavaScriptMigrationNames(migrationPath, extension);
   const migrationPromises = migrationNames.map(async name => {
     const filename = `${name}.${extension}`;
+
+    // transpile & execute file required on the fly
+    require('ts-node').register({
+      transpileOnly: true
+    });
 
     const { up, down } = require(path.resolve(migrationPath, filename));
 
