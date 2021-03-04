@@ -33,6 +33,7 @@ export function down(db: Knex) {
   return db.schema.dropTable('table_name');
 }
 `;
+
 describe('CLI: make', () => {
   describe('--help', () => {
     it('should print help message.', async () => {

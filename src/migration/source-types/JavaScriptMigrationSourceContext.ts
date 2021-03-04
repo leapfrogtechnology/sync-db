@@ -21,7 +21,7 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
     this.log = logger;
     this.connectionId = '';
 
-    this.log('Instantiated JavaScriptMigrationContext.');
+    this.log('Instantiated JavaScript/TypeScript migration context.');
   }
 
   /**

@@ -14,27 +14,27 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
       expect(instance.keys()).to.deep.equal([]);
     });
 
-    const up = (db: Knex): Promise<any> => new Promise(resolve => null);
-    const down = (db: Knex): Promise<any> => new Promise(resolve => null);
-
     it('should return the migration names.', () => {
+      const up = (db: Knex): Promise<any> => new Promise(resolve => null);
+      const down = (db: Knex): Promise<any> => new Promise(resolve => null);
+
       const instance = getInstance([
         {
-          name: '0001_mgr',
+          name: '0001_create_users_table',
           methods: {
             up,
             down
           }
         },
         {
-          name: '0002_mgr',
+          name: '0002_alter_users_table',
           methods: {
             up,
             down
           }
         }
       ]);
-      expect(instance.keys()).to.deep.equal(['0001_mgr', '0002_mgr']);
+      expect(instance.keys()).to.deep.equal(['0001_create_users_table', '0002_alter_users_table']);
     });
   });
 
@@ -44,7 +44,7 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
 
     const instance = getInstance([
       {
-        name: '0001_mgr',
+        name: '0001_alter_users_table',
         methods: {
           up,
           down
@@ -54,7 +54,7 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
 
     it('should return the migration runner.', async () => {
       const db: any = null;
-      const runner = instance.get('0001_mgr');
+      const runner = instance.get('0001_alter_users_table');
       const upResult = await runner.up(db);
       const downResult = await runner.down(db);
 
