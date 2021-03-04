@@ -2,7 +2,17 @@ language: node_js
 
 node_js:
   - node
-  - 10
+
+install:
+  # Install hub
+  - sudo snap install hub --classic
+  - hub --version
+
+  # Install jq
+  - sudo apt-get install jq
+
+  # Install change log generator
+  - gem install github_changelog_generator
 
 before_script:
   - yarn format:check
@@ -12,3 +22,17 @@ before_script:
 script:
   - yarn test:coverage
   - yarn codecov
+#   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo "$TRAVIS_BRANCH"; else echo "$TRAVIS_PULL_REQUEST_BRANCH"; fi)
+#   - if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./compare.sh
+
+# deploy:
+#     provider: npm
+#     email: "$NPM_EMAIL"
+#     api_key: "$NPM_API_TOKEN"
+#     skip_cleanup: true
+#     on:
+#         branch: master
+#         condition:  $NEXT != false
+
+# after_deploy:
+#   - ./release.sh bump
