@@ -24,7 +24,6 @@ script:
   - yarn codecov
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo "$TRAVIS_BRANCH"; else echo "$TRAVIS_PULL_REQUEST_BRANCH"; fi)
   - if [ "$BRANCH" == "release-test" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./compare.sh
-
 # deploy:
 #     provider: npm
 #     email: "$NPM_EMAIL"
