@@ -1,0 +1,25 @@
+import * as Knex from 'knex';
+
+/**
+ * Create <table_name> table.
+ *
+ * @param {Knex} db
+ * @returns {Promise}
+ */
+export function up(db: Knex) {
+  return db.schema.createTable('table_name', table => {
+    table.increments('id').primary().unsigned();
+    table.specificType('created_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
+    table.specificType('updated_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
+  });
+}
+
+/**
+ * Drop <table_name> table.
+ *
+ * @param {Knex} db
+ * @returns {Promise}
+ */
+export function down(db: Knex) {
+  return db.schema.dropTable('table_name');
+}

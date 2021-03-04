@@ -3,13 +3,15 @@ import * as path from 'path';
 
 import { PrepareOptions } from '../../init';
 import { dbLogger, log } from '../../util/logger';
-import { resolveSqlMigrations } from './migrator';
 import Configuration from '../../domain/Configuration';
+import FileExtensions from '../../enum/FileExtensions';
 import { executeOperation } from '../../service/execution';
 import MigrationContext from '../../domain/MigrationContext';
 import OperationResult from '../../domain/operation/OperationResult';
 import MigrationSourceContext from '../domain/MigrationSourceContext';
+import { resolveSqlMigrations, resolveJavaScriptMigrations } from './migrator';
 import SqlMigrationSourceContext from '../source-types/SqlMigrationSourceContext';
+import JavaScriptMigrationContext from '../source-types/JavaScriptMigrationSourceContext';
 
 export enum KnexMigrationAPI {
   MIGRATE_LIST = 'migrate.list',
@@ -90,9 +92,21 @@ export async function resolveMigrationContext(
 
       return new SqlMigrationSourceContext(src);
 
+    case 'javascript':
+      const srcJS = await resolveJavaScriptMigrations(migrationPath);
+
+      log('Available migration sources:\n%O', srcJS);
+
+      return new JavaScriptMigrationContext(srcJS);
+
+    case 'typescript':
+      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensions.TS);
+
+      log('Available migration sources:\n%O', srcTS);
+
+      return new JavaScriptMigrationContext(srcTS);
+
     default:
-      // TODO: We'll need to support different types of migrations eg both sql & js
-      // For instance migrations in JS would have different context like JavaScriptMigrationContext.
       throw new Error(`Unsupported migration.sourceType value "${config.migration.sourceType}".`);
   }
 }
