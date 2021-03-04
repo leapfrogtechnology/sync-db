@@ -16,7 +16,7 @@ fi
 
 printfln "Commit range: $COMMIT_RANGE"
 
-old_version=$(git checkout master &> /dev/null && \
+old_version=$(git checkout master && \
   cat package.json | jq -r ".version")
 
 printfln "Old package version: ${old_version}"
