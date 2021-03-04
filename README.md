@@ -4,7 +4,6 @@ Command line utility to synchronize and version control relational database obje
 
 [![Version](https://img.shields.io/npm/v/@leapfrogtechnology/sync-db.svg?style=flat-square)](https://npmjs.org/package/@leapfrogtechnology/sync-db)
 [![Travis](https://img.shields.io/travis/com/leapfrogtechnology/sync-db.svg?style=flat-square)](https://travis-ci.com/leapfrogtechnology/sync-db)
-[![Language Grade: TypeScript](https://img.shields.io/lgtm/grade/javascript/g/laudio/sync-db.svg?style=flat-square&logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/laudio/sync-db/context:javascript)
 [![Codecov](https://img.shields.io/codecov/c/github/leapfrogtechnology/sync-db?style=flat-square)](https://codecov.io/gh/leapfrogtechnology/sync-db)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db#contributing)
 [![LICENSE](https://img.shields.io/github/license/leapfrogtechnology/sync-db.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db/blob/master/LICENSE)
