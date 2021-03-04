@@ -22,8 +22,8 @@ before_script:
 script:
   - yarn test:coverage
   - yarn codecov
-#   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo "$TRAVIS_BRANCH"; else echo "$TRAVIS_PULL_REQUEST_BRANCH"; fi)
-#   - if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./compare.sh
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo "$TRAVIS_BRANCH"; else echo "$TRAVIS_PULL_REQUEST_BRANCH"; fi)
+  - if [ "$BRANCH" == "release-test" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./compare.sh
 
 # deploy:
 #     provider: npm
