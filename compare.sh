@@ -10,7 +10,7 @@ printfln() {
 }
 
 git fetch --all
-git checkout master
+git checkout release-test
 
 old_version=$(cat package.json | jq -r ".version")
 
@@ -18,6 +18,7 @@ printfln "Old package version: ${old_version}"
 
 latest_commit_hash=$(git rev-parse HEAD)
 printfln "Latest commit hash: ${latest_commit_hash}"
+
 data=$(hub api -H "Accept: application/vnd.github.groot-preview+json" /repos/leapfrogtechnology/sync-db/commits/"${latest_commit_hash}"/pulls) || true
 
 pr_branch_name=$(echo "$data" | jq -r ".[0].head.ref")
@@ -38,4 +39,5 @@ else
 fi
 
 printfln "Value of NEXT is: ${NEXT}."
+git checkout release-test
 
