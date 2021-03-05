@@ -14,10 +14,11 @@ install:
   # Install change log generator
   - gem install github_changelog_generator
 
-# before_script:
-#   - yarn format:check
-#   - yarn lint
-#   - yarn build
+before_script:
+  - git fetch --unshallow
+  # - yarn format:check
+  # - yarn lint
+  # - yarn build
 
 script:
   # - yarn test:coverage
