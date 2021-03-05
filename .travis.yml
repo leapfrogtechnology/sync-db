@@ -1,8 +1,23 @@
 language: node_js
 
+sudo: required
+
 node_js:
   - node
-  - 10
+
+addons:
+  apt:
+    packages:
+      - python
+
+install:
+  # Install hub
+  - sudo snap install hub --classic
+  - hub --version
+
+  # Install semver for versioning
+  - sudo curl https://raw.githubusercontent.com/fsaintjacques/semver-tool/3.0.0/src/semver -o /usr/local/bin/semver && sudo chmod +x /usr/local/bin/semver
+  - semver --version
 
 before_script:
   - yarn format:check
@@ -12,3 +27,13 @@ before_script:
 script:
   - yarn test:coverage
   - yarn codecov
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo "$TRAVIS_BRANCH"; else echo "$TRAVIS_PULL_REQUEST_BRANCH"; fi)
+  - if [ "$BRANCH" == "master" ] || [ "$BRANCH" == "dev" ]; then ./release.sh bump; fi
+
+deploy:
+  provider: npm
+  email: '$NPM_EMAIL'
+  api_key: '$NPM_API_TOKEN'
+  skip_cleaskinup: true
+  on:
+    branch: master

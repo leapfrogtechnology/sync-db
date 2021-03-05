@@ -25,28 +25,33 @@ changelog() {
 }
 
 bump() {
-  # Bump package version and generate changelog
-  VERSION="${NEXT/v/}"
 
-  echo "Bump version to ${VERSION}"
+  if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+      printfln "Exiting for pull request without versioning."
+  fi
 
-  # Update version in the following files
-  sed -i "s/\(\"version\":\s*\"\)[^\"]*\(\"\)/\1${VERSION}\2/g" package.json
+  last_tag=$(git tag --sort=-creatordate | head -n 1)
 
-  # Generate change log
-  changelog
-  echo ""
+  printfln "$last_tag"
 
-  # Generate new build.
-  yarn && yarn test && yarn build
+  if [ -z "$last_tag" ]; then
+      new_tag="1.0.0"
+  else
+      if [ "$BRANCH" == "master" ]; then
+          new_tag=$(semver bump major $last_tag)
+      elif [ "$BRANCH" == "dev" ]; then
+          new_tag=$(semver bump patch $last_tag)
+          timestamp=$(date -u +%Y%m%d%H%M%S)
+          new_tag="${new_tag}-${BRANCH}.$timestamp"
+      fi
+  fi
 
-  # Prepare to commit
-  git add CHANGELOG.md package.json yarn.lock && \
-    git commit -v --edit -m "${VERSION} Release :tada: :fireworks: :bell:" && \
-    git tag "$NEXT" && \
-    echo -e "\nRelease tagged $NEXT"
-  git push origin HEAD --tags
-  yarn publish --new-version "${VERSION}" --no-git-tag-version
+  if [ "$BRANCH" == "dev" ] || [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
+      echo "Bumping the version: ${last_tag} -> ${new_tag}"
+      git tag "${new_tag}"
+
+      hub release create "$new_tag" -m "$new_tag" || true
+  fi
 }
 
 # Run command received from args.
