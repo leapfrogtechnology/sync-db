@@ -16,7 +16,6 @@ fi
 
 printfln "Commit range: $COMMIT_RANGE"
 
-git remote update
 git fetch --all
 git branch
 git fetch origin master

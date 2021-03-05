@@ -3,6 +3,9 @@ language: node_js
 node_js:
   - node
 
+git:
+  depth: false
+
 install:
   # Install hub
   - sudo snap install hub --classic
@@ -14,8 +17,7 @@ install:
   # Install change log generator
   - gem install github_changelog_generator
 
-before_script:
-  - git fetch --unshallow
+# before_script:
   # - yarn format:check
   # - yarn lint
   # - yarn build
