@@ -8,18 +8,6 @@ set -e
 printfln() {
   printf "\n$1\n"
 }
-if [ -n "$TRAVIS_COMMIT_RANGE" ]; then
-  if ! git rev-list "$TRAVIS_COMMIT_RANGE" >/dev/null; then
-    TRAVIS_COMMIT_RANGE=
-  fi
-fi
-
-# Find all the commits for the current build
-if [ -n "$TRAVIS_COMMIT_RANGE" ]; then
-  COMMIT_RANGE="${TRAVIS_COMMIT_RANGE/.../..}"
-fi
-
-printfln "Commit range: $COMMIT_RANGE"
 
 git fetch --all
 git checkout master
@@ -28,7 +16,7 @@ old_version=$(cat package.json | jq -r ".version")
 
 printfln "Old package version: ${old_version}"
 
-latest_commit_hash=${COMMIT_RANGE##*..}
+latest_commit_hash=$(git rev-parse HEAD)
 printfln "Latest commit hash: ${latest_commit_hash}"
 data=$(hub api -H "Accept: application/vnd.github.groot-preview+json" /repos/leapfrogtechnology/sync-db/commits/"${latest_commit_hash}"/pulls) || true
 
