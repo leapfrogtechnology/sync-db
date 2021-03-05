@@ -20,9 +20,9 @@ git fetch --all
 ls -al
 git branch
 git fetch origin master
+git checkout master
 
-old_version=$(git checkout master &> /dev/null && \
-  cat package.json | jq -r ".version")
+old_version=$(cat package.json | jq -r ".version")
 
 printfln "Old package version: ${old_version}"
 
