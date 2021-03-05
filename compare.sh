@@ -8,6 +8,11 @@ set -e
 printfln() {
   printf "\n$1\n"
 }
+if [ -n "$TRAVIS_COMMIT_RANGE" ]; then
+  if ! git rev-list "$TRAVIS_COMMIT_RANGE" >/dev/null; then
+    TRAVIS_COMMIT_RANGE=
+  fi
+fi
 
 # Find all the commits for the current build
 if [ -n "$TRAVIS_COMMIT_RANGE" ]; then
