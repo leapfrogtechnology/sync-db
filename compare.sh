@@ -8,9 +8,10 @@ set -e
 printfln() {
   printf "\n$1\n"
 }
+base_commit_hash=$(git rev-parse @~)
 
 git fetch --all
-git checkout release-test
+git checkout ${base_commit_hash}
 
 old_version=$(cat package.json | jq -r ".version")
 
@@ -28,7 +29,7 @@ printfln "PR branch name: ${pr_branch_name}"
 new_version=$(git checkout ${pr_branch_name} &> /dev/null && \
   cat package.json | jq -r ".version")
 
-printfln "Old package version: ${new_version}"
+printfln "New package version: ${new_version}"
 
 if [ "$old_version" != "$new_version" ]; then
 
