@@ -17,10 +17,9 @@ fi
 printfln "Commit range: $COMMIT_RANGE"
 
 git fetch --all
-ls -al
 git branch
 git fetch origin master
-git checkout master
+git checkout -qf master
 
 old_version=$(cat package.json | jq -r ".version")
 
