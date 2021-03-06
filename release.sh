@@ -4,6 +4,10 @@
 
 set -e
 
+printfln() {
+  printf "\n$1\n"
+}
+
 changelog() {
   # NOTE: This requires github_changelog_generator to be installed.
   # https://github.com/skywinder/github-changelog-generator
@@ -39,6 +43,39 @@ bump() {
       git tag "${NEXT}"
 
       hub release create "$NEXT" -m "$NEXT" || true
+  fi
+}
+
+compare_and_release() {
+  ## Compare the package.json file from two recent commits to master branch and export value to NEXT variable
+  ## if differs else NEXT=false
+
+  previous_commit_hash=$(git rev-parse @~)
+
+  git fetch --all
+  git checkout ${previous_commit_hash}
+
+  old_version=$(cat package.json | jq -r ".version")
+
+  printfln "Old package version: ${old_version}"
+
+  git checkout master
+
+  new_version=$(cat package.json | jq -r ".version")
+
+  printfln "New package version: ${new_version}"
+
+  NEXT=false
+
+  if [ "$old_version" != "$new_version" ]; then
+    printfln "Publishing changes to npm with version: ${new_version}."
+    NEXT=${new_version}
+  fi
+
+  printfln "Value of NEXT is: ${NEXT}."
+
+  if [ -n "$NEXT" ] && [ "$NEXT" != "false" ]; then
+    bump
   fi
 }
 
