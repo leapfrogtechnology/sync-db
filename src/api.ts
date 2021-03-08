@@ -41,7 +41,7 @@ export async function synchronize(
     'skip-migration': false,
     ...options
   };
-  const { onStarted, ...invokeParams } = params;
+  const { onStarted: _, ...invokeParams } = params;
 
   // TODO: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
