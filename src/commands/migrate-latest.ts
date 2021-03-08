@@ -1,4 +1,4 @@
-import { bold, red, cyan } from 'chalk';
+import { bold, red, cyan, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { migrateLatest } from '../api';
@@ -23,6 +23,15 @@ class MigrateLatest extends Command {
   };
 
   /**
+   * Started event handler.
+   */
+  onStarted = async (result: OperationResult) => {
+    await printLine(bold(` ▸ ${result.connectionId}`));
+    await printLine(bold(' ▸ DRY RUN STARTED'));
+    await printInfo('   [✓] Migration - started');
+  };
+
+  /**
    * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
@@ -32,7 +41,7 @@ class MigrateLatest extends Command {
 
     log('Up to date: ', alreadyUpToDate);
 
-    await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
+    await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)\n`);
 
     if (alreadyUpToDate) {
       await printInfo('   Already up to date.\n');
@@ -45,7 +54,8 @@ class MigrateLatest extends Command {
       await printLine(cyan(`   - ${item}`));
     }
 
-    await printInfo(`\n   Ran ${list.length} migrations.\n`);
+    await printInfo(`\n   Ran ${list.length} migrations.`);
+    await printLine(bold(green(' ▸ DRY RUN SUCCESS\n')));
   };
 
   /**
@@ -55,6 +65,7 @@ class MigrateLatest extends Command {
     printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);
+    await printLine(bold(red(' ▸ DRY RUN FAILED')));
   };
 
   /**
@@ -69,6 +80,7 @@ class MigrateLatest extends Command {
 
     const results = await migrateLatest(config, connections, {
       ...parsedFlags,
+      onStarted: this.onStarted,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });

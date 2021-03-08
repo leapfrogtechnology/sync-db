@@ -1,4 +1,4 @@
-import { bold, red, cyan } from 'chalk';
+import { bold, red, cyan, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { migrateRollback } from '../api';
@@ -23,6 +23,16 @@ class MigrateRollback extends Command {
   };
 
   /**
+   * Started event handler.
+   */
+  onStarted = async (result: OperationResult) => {
+    await printLine(bold(` ▸ ${result.connectionId}`));
+    await printLine(bold(' ▸ DRY RUN STARTED'));
+    await printInfo('   [✓] Migration Rollback - started');
+  };
+
+
+  /**
    * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
@@ -32,7 +42,7 @@ class MigrateRollback extends Command {
 
     log('Already on the top of migrations: ', allRolledBack);
 
-    await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
+    await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)\n`);
 
     if (allRolledBack) {
       await printLine('   No more migrations to rollback.\n');
@@ -46,6 +56,7 @@ class MigrateRollback extends Command {
     }
 
     await printInfo(`\n   Rolled back ${list.length} migrations.\n`);
+    await printLine(bold(green(' ▸ DRY RUN SUCCESS\n')));
   };
 
   /**
@@ -55,6 +66,7 @@ class MigrateRollback extends Command {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);
+    await printLine(bold(red(' ▸ DRY RUN FAILED')));
   };
 
   /**
@@ -69,6 +81,7 @@ class MigrateRollback extends Command {
 
     const results = await migrateRollback(config, connections, {
       ...parsedFlags,
+      onStarted: this.onStarted,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });

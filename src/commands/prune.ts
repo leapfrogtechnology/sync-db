@@ -1,9 +1,9 @@
-import { bold, red } from 'chalk';
+import { bold, green, red } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { prune } from '../api';
-import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
+import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
 
 class Prune extends Command {
@@ -22,10 +22,20 @@ class Prune extends Command {
   };
 
   /**
+   * Started event handler.
+   */
+  onStarted = async (result: OperationResult) => {
+    await printLine(bold(` ▸ ${result.connectionId}`));
+    await printLine(bold(' ▸ DRY RUN STARTED'));
+    await printInfo('   [✓] Pruning - started');
+  };
+
+  /**
    * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
+    await printLine(bold(green(' ▸ DRY RUN SUCCESS\n')));
   };
 
   /**
@@ -35,6 +45,7 @@ class Prune extends Command {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);
+    await printLine(bold(red(' ▸ DRY RUN FAILED\n')));
   };
 
   /**
@@ -49,6 +60,7 @@ class Prune extends Command {
 
     const results = await prune(config, connections, {
       ...parsedFlags,
+      onStarted: this.onStarted,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });

@@ -96,16 +96,6 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
     const { timeStart } = options;
     const log = dbLogger(connectionId);
 
-    // Trigger onStarted handler if bound.
-    if (context.params.onStarted) {
-      await context.params.onStarted({
-        connectionId,
-        success: false,
-        data: null,
-        timeElapsed: getElapsedTime(timeStart)
-      });
-    }
-
     await teardown(trx, context);
 
     // Trigger onTeardownSuccess if bound.
