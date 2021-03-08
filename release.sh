@@ -31,7 +31,7 @@ changelog() {
 bump() {
 
   if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-      printfln "Exiting for pull request without versioning."
+      printfln "Skipping release for pull request"
 
       exit 0;
   fi
@@ -52,6 +52,7 @@ compare_and_release() {
   ## Compare the package.json file from two recent commits to master branch and export value to NEXT variable
   ## if differs else NEXT=false
 
+  # Get the second last commit from the master branch after merge.
   previous_commit_hash=$(git rev-parse @~)
 
   git fetch --all
@@ -70,7 +71,7 @@ compare_and_release() {
   NEXT=false
 
   if [ "$old_version" != "$new_version" ]; then
-    printfln "Publishing changes to npm with version: ${new_version}."
+    printfln "Publishing changes to npm with version: ${new_version}"
     NEXT=${new_version}
   fi
 
