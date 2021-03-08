@@ -29,7 +29,7 @@ script:
 
 jobs:
   include:
-    - stage: deploy
+    - stage: test
       if: branch = master
       node_js: node
       deploy:
