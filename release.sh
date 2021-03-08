@@ -29,28 +29,18 @@ changelog() {
 }
 
 bump() {
-
-  if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-      printfln "Skipping release for pull request"
-
-      exit 0;
-  fi
-
   last_tag=$(git tag --sort=-creatordate | head -n 1)
 
   printfln "$last_tag"
 
-  if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
-      echo "Bumping the version: ${last_tag} -> ${NEXT}"
-      git tag "${NEXT}"
-
-      hub release create "$NEXT" -m "$NEXT" || true
-  fi
+  echo "Bumping the version: ${last_tag} -> ${NEXT}"
+  git tag "${NEXT}"
+  hub release create "$NEXT" -m "$NEXT" || true
 }
 
 compare_and_release() {
-  ## Compare the package.json file from two recent commits to master branch and export value to NEXT variable
-  ## if differs else NEXT=false
+  ## Compare the package.json file from two recent commits to master branch and export
+  ## value to NEXT variable if it differs.
 
   # Get the second last commit from the master branch after merge.
   previous_commit_hash=$(git rev-parse @~)
