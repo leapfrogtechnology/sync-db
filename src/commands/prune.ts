@@ -10,6 +10,7 @@ class Prune extends Command {
   static description = 'Drop all the synchronized db objects except the ones created via migrations.';
 
   static flags = {
+    'dry-run': flags.boolean({ char: 'f', description: 'Dry Run Prune.', default: false }),
     only: flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'

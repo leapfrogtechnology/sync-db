@@ -16,6 +16,7 @@ class Synchronize extends Command {
    */
   static flags = {
     force: flags.boolean({ char: 'f', description: 'Force synchronization.' }),
+    'dry-run': flags.boolean({ char: 'f', description: 'Dry Run synchronization.', default: false }),
     'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
     only: flags.string({
       helpValue: 'CONNECTION_ID',

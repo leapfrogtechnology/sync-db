@@ -11,6 +11,7 @@ class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
   static flags = {
+    'dry-run': flags.boolean({ char: 'f', description: 'Dry Run migration.', default: false }),
     only: flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
