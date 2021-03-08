@@ -33,7 +33,6 @@ class Synchronize extends Command {
    */
   onStarted = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
-    await printLine(bold(' ▸ DRY RUN STARTED'));
     await printInfo('   [✓] Synchronization - started');
   };
 
@@ -81,15 +80,13 @@ class Synchronize extends Command {
    */
   onSuccess = async (result: OperationResult) => {
     await printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)`);
-    await printLine(bold(green(' ▸ DRY RUN SUCCESS\n')));
-  }
+  };
 
   /**
    * Failure handler for the whole process - if the process failed.
    */
   onFailed = async (result: OperationResult) => {
     await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)`));
-    await printLine(bold(red(' ▸ DRY RUN FAILED\n')));
   };
 
   /**

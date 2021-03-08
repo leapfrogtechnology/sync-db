@@ -1,4 +1,4 @@
-import { bold, red, cyan, green } from 'chalk';
+import { bold, red, cyan } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { migrateLatest } from '../api';
@@ -27,7 +27,7 @@ class MigrateLatest extends Command {
    */
   onStarted = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
-    await printLine(bold(' ▸ DRY RUN STARTED'));
+
     await printInfo('   [✓] Migration - started');
   };
 
@@ -55,7 +55,6 @@ class MigrateLatest extends Command {
     }
 
     await printInfo(`\n   Ran ${list.length} migrations.`);
-    await printLine(bold(green(' ▸ DRY RUN SUCCESS\n')));
   };
 
   /**
@@ -65,7 +64,6 @@ class MigrateLatest extends Command {
     printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);
-    await printLine(bold(red(' ▸ DRY RUN FAILED')));
   };
 
   /**

@@ -1,4 +1,4 @@
-import { bold, red, cyan, green } from 'chalk';
+import { bold, red, cyan } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { migrateRollback } from '../api';
@@ -27,10 +27,8 @@ class MigrateRollback extends Command {
    */
   onStarted = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
-    await printLine(bold(' ▸ DRY RUN STARTED'));
     await printInfo('   [✓] Migration Rollback - started');
   };
-
 
   /**
    * Success handler.
@@ -56,7 +54,6 @@ class MigrateRollback extends Command {
     }
 
     await printInfo(`\n   Rolled back ${list.length} migrations.\n`);
-    await printLine(bold(green(' ▸ DRY RUN SUCCESS\n')));
   };
 
   /**
@@ -66,7 +63,6 @@ class MigrateRollback extends Command {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);
-    await printLine(bold(red(' ▸ DRY RUN FAILED')));
   };
 
   /**

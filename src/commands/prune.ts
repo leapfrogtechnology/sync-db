@@ -1,4 +1,4 @@
-import { bold, green, red } from 'chalk';
+import { bold, red } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { prune } from '../api';
@@ -26,7 +26,6 @@ class Prune extends Command {
    */
   onStarted = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId}`));
-    await printLine(bold(' ▸ DRY RUN STARTED'));
     await printInfo('   [✓] Pruning - started');
   };
 
@@ -35,7 +34,6 @@ class Prune extends Command {
    */
   onSuccess = async (result: OperationResult) => {
     await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
-    await printLine(bold(green(' ▸ DRY RUN SUCCESS\n')));
   };
 
   /**
@@ -45,7 +43,6 @@ class Prune extends Command {
     await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
 
     await printError(`   ${result.error}\n`);
-    await printLine(bold(red(' ▸ DRY RUN FAILED\n')));
   };
 
   /**

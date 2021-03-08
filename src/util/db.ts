@@ -80,8 +80,9 @@ export async function withTransaction<T>(
     const trx = await db.connection.transaction();
     const res = await callback(trx);
 
-    dbLog('END: DRY RUN transaction');
-    dbLog('END: DRY RUN trx.isCompleted():', trx.isCompleted());
+    trx.rollback()
+
+    dbLog('END: Dry Run transaction rolled-back successfully');
 
     return res;
   }
