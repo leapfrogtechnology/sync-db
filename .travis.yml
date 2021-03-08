@@ -2,7 +2,19 @@ language: node_js
 
 node_js:
   - node
-  - 10
+  - 14
+  - 12
+
+git:
+  depth: false
+
+install:
+  # Install hub
+  - sudo snap install hub --classic
+  - hub --version
+
+  # install dependencies
+  - yarn
 
 before_script:
   - yarn format:check
@@ -12,3 +24,17 @@ before_script:
 script:
   - yarn test:coverage
   - yarn codecov
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo "$TRAVIS_BRANCH"; else echo "$TRAVIS_PULL_REQUEST_BRANCH"; fi)
+  - if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./release.sh compare_and_release; fi
+
+jobs:
+  include:
+    - stage: deploy
+      if: branch = master
+      node_js: node
+      deploy:
+        provider: npm
+        email: '$NPM_EMAIL'
+        api_key: '$NPM_TOKEN'
+        on:
+          branch: master
