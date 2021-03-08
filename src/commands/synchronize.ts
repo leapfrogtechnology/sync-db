@@ -70,23 +70,21 @@ class Synchronize extends Command {
    * Migration failure handler.
    */
   onMigrationFailed = async (result: OperationResult) => {
-    await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)\n`));
-
-    // await printError(`   ${result.error}\n`);
+    await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)`));
   };
 
   /**
    * Success handler for the whole process - after all completed.
    */
   onSuccess = async (result: OperationResult) => {
-    await printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)`);
+    await printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
   };
 
   /**
    * Failure handler for the whole process - if the process failed.
    */
   onFailed = async (result: OperationResult) => {
-    await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)`));
+    await printLine(red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));
   };
 
   /**
@@ -130,12 +128,14 @@ class Synchronize extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(Synchronize);
+    const isDryRun = parsedFlags['dry-run'];
 
     try {
       const config = await loadConfig();
       const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
       const timeStart = process.hrtime();
 
+      isDryRun && (await printLine('• DRY RUN STARTED\n'));
       await printLine('Synchronizing...\n');
 
       const results = await synchronize(config, connections, {
@@ -151,6 +151,8 @@ class Synchronize extends Command {
       const { totalCount, failedCount, successfulCount } = await this.processResults(results);
 
       if (successfulCount > 0) {
+        isDryRun && (await printLine(green('[✓] DRY RUN SUCCESS\n')));
+
         // Display output.
         await printLine(
           `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
@@ -162,6 +164,8 @@ class Synchronize extends Command {
       if (failedCount === 0) {
         return process.exit(0);
       }
+
+      isDryRun && (await printLine(red('[✖] DRY RUN FAILED\n')));
 
       throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
     } catch (e) {

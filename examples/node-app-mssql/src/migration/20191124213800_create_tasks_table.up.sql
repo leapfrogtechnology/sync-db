@@ -1,4 +1,4 @@
-CREATE TABLE tasks (
+CREATE tasks (
   id INT PRIMARY KEY IDENTITY(1, 1),
   user_id INT NOT NULL,
   title VARCHAR(255) NOT NULL,

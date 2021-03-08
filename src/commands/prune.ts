@@ -1,4 +1,4 @@
-import { bold, red } from 'chalk';
+import { bold, green, red } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { prune } from '../api';
@@ -32,15 +32,13 @@ class Prune extends Command {
   /**
    * Success handler.
    */
-  onSuccess = async (result: OperationResult) => {
-    await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
-  };
+  onSuccess = (result: OperationResult) => printInfo(`   [✓] Pruning - completed (${result.timeElapsed}s)\n`);
 
   /**
    * Failure handler.
    */
   onFailed = async (result: OperationResult) => {
-    await printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
+    await printLine(red(`   [✖] Pruning - failed (${result.timeElapsed}s)\n`));
 
     await printError(`   ${result.error}\n`);
   };
@@ -52,9 +50,11 @@ class Prune extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(Prune);
+    const isDryRun = parsedFlags['dry-run'];
     const config = await loadConfig();
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
+    isDryRun && (await printLine('• DRY RUN STARTED\n'));
     const results = await prune(config, connections, {
       ...parsedFlags,
       onStarted: this.onStarted,
@@ -65,8 +65,12 @@ class Prune extends Command {
     const failedCount = results.filter(({ success }) => !success).length;
 
     if (failedCount === 0) {
+      isDryRun && (await printLine(green('[✓] DRY RUN SUCCESS\n')));
+
       return process.exit(0);
     }
+
+    isDryRun && (await printLine(red('[✖] DRY RUN FAILED\n')));
 
     printError(`Error: Prune failed for ${failedCount} connection(s).`);
     process.exit(-1);
