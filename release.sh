@@ -32,6 +32,8 @@ bump() {
 
   if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
       printfln "Exiting for pull request without versioning."
+
+      exit 0;
   fi
 
   last_tag=$(git tag --sort=-creatordate | head -n 1)
@@ -71,8 +73,6 @@ compare_and_release() {
     printfln "Publishing changes to npm with version: ${new_version}."
     NEXT=${new_version}
   fi
-
-  printfln "Value of NEXT is: ${NEXT}."
 
   if [ -n "$NEXT" ] && [ "$NEXT" != "false" ]; then
     bump
