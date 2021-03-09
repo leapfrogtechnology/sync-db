@@ -34,6 +34,8 @@ bump() {
   printfln "$last_tag"
 
   echo "Bumping the version: ${last_tag} -> ${NEXT}"
+  NEXT="v${NEXT}"
+
   git tag "${NEXT}"
   hub release create "$NEXT" -m "$NEXT" || true
 }
