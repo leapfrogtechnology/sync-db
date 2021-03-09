@@ -8,6 +8,18 @@ printfln() {
   printf "\n$1\n"
 }
 
+setup_git() {
+  git config --global user.email "travis@travis-ci.org"
+  git config --global user.name "Travis CI"
+}
+
+git_push() {
+  git remote rm origin
+  # Add new "origin" with access token in the git URL for authentication
+  git remote add origin https://leapfrogtechnology:${GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git > /dev/null
+  git push origin master --quiet > /dev/null
+}
+
 changelog() {
   # NOTE: This requires github_changelog_generator to be installed.
   # https://github.com/skywinder/github-changelog-generator
@@ -73,11 +85,14 @@ compare_and_release() {
     bump
     changelog
 
+    setup_git
+
     git add CHANGELOG.md
     git commit -v --edit -m "${NEXT} Release :tada: :fireworks: :bell:"
-    git push origin master
 
-    printfln "Updated changelog."
+    git_push
+
+    printfln "Changelog updated."
   fi
 }
 
