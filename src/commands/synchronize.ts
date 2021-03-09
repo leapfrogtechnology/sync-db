@@ -155,13 +155,13 @@ class Synchronize extends Command {
         // Display output.
         await printLine(
           `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
-            `(${getElapsedTime(timeStart)}s)`
+            `(${getElapsedTime(timeStart)}s)\n`
         );
       }
 
       // If all completed successfully, exit gracefully.
       if (failedCount === 0) {
-        if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
+        if (isDryRun) await printLine(magenta('• DRY RUN ENDED\n'));
 
         return process.exit(0);
       }

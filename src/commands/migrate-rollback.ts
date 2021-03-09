@@ -86,7 +86,7 @@ class MigrateRollback extends Command {
     const failedCount = results.filter(({ success }) => !success).length;
 
     if (failedCount === 0) {
-      if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
+      if (isDryRun) await printLine(magenta('• DRY RUN ENDED\n'));
 
       return process.exit(0);
     }
