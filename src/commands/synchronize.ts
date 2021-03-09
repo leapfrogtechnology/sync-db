@@ -1,5 +1,5 @@
-import { bold, cyan, red, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
+import { bold, cyan, red, green, magenta } from 'chalk';
 
 import { synchronize } from '../api';
 import { getElapsedTime } from '../util/ts';
@@ -16,6 +16,7 @@ class Synchronize extends Command {
    */
   static flags = {
     force: flags.boolean({ char: 'f', description: 'Force synchronization.' }),
+    'dry-run': flags.boolean({ char: 'f', description: 'Dry Run synchronization.', default: false }),
     'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
     only: flags.string({
       helpValue: 'CONNECTION_ID',
@@ -69,16 +70,15 @@ class Synchronize extends Command {
    * Migration failure handler.
    */
   onMigrationFailed = async (result: OperationResult) => {
-    await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)\n`));
-
-    // await printError(`   ${result.error}\n`);
+    await printLine(red(`   [✖] Migrations - failed (${result.timeElapsed}s)`));
   };
 
   /**
    * Success handler for the whole process - after all completed.
    */
-  onSuccess = (result: OperationResult) =>
-    printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
+  onSuccess = async (result: OperationResult) => {
+    await printLine(green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
+  };
 
   /**
    * Failure handler for the whole process - if the process failed.
@@ -128,11 +128,14 @@ class Synchronize extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(Synchronize);
+    const isDryRun = parsedFlags['dry-run'];
 
     try {
       const config = await loadConfig();
       const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
       const timeStart = process.hrtime();
+
+      if (isDryRun) await printLine(magenta('\n• DRY RUN STARTED\n'));
 
       await printLine('Synchronizing...\n');
 
@@ -152,12 +155,14 @@ class Synchronize extends Command {
         // Display output.
         await printLine(
           `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
-            `(${getElapsedTime(timeStart)}s)`
+            `(${getElapsedTime(timeStart)}s)\n`
         );
       }
 
       // If all completed successfully, exit gracefully.
       if (failedCount === 0) {
+        if (isDryRun) await printLine(magenta('• DRY RUN ENDED\n'));
+
         return process.exit(0);
       }
 
@@ -167,6 +172,8 @@ class Synchronize extends Command {
       log(e);
 
       await printError(e.toString());
+
+      if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
 
       process.exit(-1);
     }
