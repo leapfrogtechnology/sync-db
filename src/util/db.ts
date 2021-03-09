@@ -82,7 +82,7 @@ export async function withTransaction<T>(
 
     trx.rollback();
 
-    dbLog('END: Dry Run transaction rolled-back successfully');
+    dbLog('END: Dry Run transaction rolled back successfully');
 
     return res;
   }

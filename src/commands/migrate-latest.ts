@@ -1,5 +1,5 @@
-import { bold, red, cyan, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
+import { bold, red, cyan, green, yellow, magenta } from 'chalk';
 
 import { migrateLatest } from '../api';
 import { dbLogger } from '../util/logger';
@@ -75,7 +75,7 @@ class MigrateLatest extends Command {
     const config = await loadConfig();
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
-    if (isDryRun) await printLine('• DRY RUN STARTED\n');
+    if (isDryRun) await printLine(magenta('\n• DRY RUN STARTED\n'));
 
     const results = await migrateLatest(config, connections, {
       ...parsedFlags,
@@ -87,14 +87,15 @@ class MigrateLatest extends Command {
     const failedCount = results.filter(({ success }) => !success).length;
 
     if (failedCount === 0) {
-      if (isDryRun) await printLine(green('[✓] DRY RUN SUCCESS\n'));
+      if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
 
       return process.exit(0);
     }
 
-    if (isDryRun) await printLine(red('[✖] DRY RUN FAILED\n'));
-
     printError(`Error: Migration failed for ${failedCount} connection(s).`);
+
+    if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
+
     process.exit(-1);
   }
 }

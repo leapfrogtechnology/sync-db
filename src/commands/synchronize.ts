@@ -1,5 +1,5 @@
-import { bold, cyan, red, green } from 'chalk';
 import { Command, flags } from '@oclif/command';
+import { bold, cyan, red, green, magenta  } from 'chalk';
 
 import { synchronize } from '../api';
 import { getElapsedTime } from '../util/ts';
@@ -135,7 +135,7 @@ class Synchronize extends Command {
       const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
       const timeStart = process.hrtime();
 
-      if (isDryRun) await printLine('• DRY RUN STARTED\n');
+      if (isDryRun) await printLine(magenta('\n• DRY RUN STARTED\n'));
 
       await printLine('Synchronizing...\n');
 
@@ -152,8 +152,6 @@ class Synchronize extends Command {
       const { totalCount, failedCount, successfulCount } = await this.processResults(results);
 
       if (successfulCount > 0) {
-        if (isDryRun) await printLine(green('[✓] DRY RUN SUCCESS\n'));
-
         // Display output.
         await printLine(
           `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
@@ -163,10 +161,10 @@ class Synchronize extends Command {
 
       // If all completed successfully, exit gracefully.
       if (failedCount === 0) {
+        if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
+
         return process.exit(0);
       }
-
-      if (isDryRun) await printLine(red('[✖] DRY RUN FAILED\n'));
 
       throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
     } catch (e) {
@@ -174,6 +172,8 @@ class Synchronize extends Command {
       log(e);
 
       await printError(e.toString());
+
+      if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
 
       process.exit(-1);
     }

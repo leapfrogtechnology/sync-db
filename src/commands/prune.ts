@@ -1,5 +1,5 @@
-import { bold, green, red } from 'chalk';
 import { Command, flags } from '@oclif/command';
+import { bold, green, magenta, red, yellow } from 'chalk';
 
 import { prune } from '../api';
 import { loadConfig, resolveConnections } from '..';
@@ -54,7 +54,7 @@ class Prune extends Command {
     const config = await loadConfig();
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
-    if (isDryRun) await printLine('• DRY RUN STARTED\n');
+    if (isDryRun) await printLine(magenta('\n• DRY RUN STARTED\n'));
 
     const results = await prune(config, connections, {
       ...parsedFlags,
@@ -66,15 +66,16 @@ class Prune extends Command {
     const failedCount = results.filter(({ success }) => !success).length;
 
     if (failedCount === 0) {
-      if (isDryRun) await printLine(green('[✓] DRY RUN SUCCESS\n'));
+      if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
 
       return process.exit(0);
     }
 
-    if (isDryRun) await printLine(red('[✖] DRY RUN FAILED\n'));
-
     printError(`Error: Prune failed for ${failedCount} connection(s).`);
-    process.exit(-1);
+
+    if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
+
+     process.exit(-1);
   }
 }
 
