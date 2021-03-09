@@ -41,7 +41,7 @@ class MigrateLatest extends Command {
 
     log('Up to date: ', alreadyUpToDate);
 
-    await printInfo(`   [✓] Migration - completed (${result.timeElapsed}s)\n`);
+    await printInfo(`   [✓] Migration - completed (${result.timeElapsed}s)`);
 
     if (alreadyUpToDate) {
       await printInfo('   Already up to date.\n');

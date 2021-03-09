@@ -40,7 +40,7 @@ class MigrateRollback extends Command {
 
     log('Already on the top of migrations: ', allRolledBack);
 
-    await printInfo(`   [✓] Rollback - completed (${result.timeElapsed}s)\n`);
+    await printInfo(`   [✓] Rollback - completed (${result.timeElapsed}s)`);
 
     if (allRolledBack) {
       await printLine('   No more migrations to rollback.\n');
