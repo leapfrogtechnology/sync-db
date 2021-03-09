@@ -25,7 +25,6 @@ script:
   - yarn test:coverage
   - yarn codecov
   - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo "$TRAVIS_BRANCH"; else echo "$TRAVIS_PULL_REQUEST_BRANCH"; fi)
-  - if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./release.sh compare_and_release; fi
 
 jobs:
   include:
@@ -39,3 +38,6 @@ jobs:
         skip_cleanup: true
         on:
           branch: master
+
+      after_deploy:
+        - if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./release.sh compare_and_release; fi
