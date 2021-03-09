@@ -1,5 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { bold, red, cyan, green, yellow, magenta } from 'chalk';
+import { bold, red, cyan, magenta } from 'chalk';
 
 import { migrateRollback } from '../api';
 import { dbLogger } from '../util/logger';

@@ -1,5 +1,5 @@
+import { bold, magenta, red } from 'chalk';
 import { Command, flags } from '@oclif/command';
-import { bold, green, magenta, red, yellow } from 'chalk';
 
 import { prune } from '../api';
 import { loadConfig, resolveConnections } from '..';
