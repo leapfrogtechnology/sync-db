@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.0.0-beta.6](https://github.com/leapfrogtechnology/sync-db/tree/HEAD)
+## [1.0.0-beta.7](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.7)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200628...HEAD)
 
