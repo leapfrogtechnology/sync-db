@@ -18,11 +18,13 @@ changelog() {
 
   echo "Generating changelog upto version: $NEXT"
   github_changelog_generator \
+    --user="leapfrogtechnology" \
+    --project="sync-db" \
+    --token="$GITHUB_TOKEN" \
     --no-verbose \
     --pr-label "**Changes**" \
     --bugs-label "**Bug Fixes**" \
     --issues-label "**Closed Issues**" \
-    --issue-line-labels=ALL \
     --future-release="$NEXT" \
     --release-branch=master \
     --exclude-labels=unnecessary,duplicate,question,invalid,wontfix
@@ -69,6 +71,13 @@ compare_and_release() {
 
   if [ -n "$NEXT" ] && [ "$NEXT" != "false" ]; then
     bump
+    changelog
+
+    git add CHANGELOG.md
+    git commit -v --edit -m "${NEXT} Release :tada: :fireworks: :bell:"
+    git push origin master
+
+    printfln "Updated changelog."
   fi
 }
 
