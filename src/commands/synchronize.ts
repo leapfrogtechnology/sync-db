@@ -1,5 +1,5 @@
 import { Command, flags } from '@oclif/command';
-import { bold, cyan, red, green, magenta  } from 'chalk';
+import { bold, cyan, red, green, magenta } from 'chalk';
 
 import { synchronize } from '../api';
 import { getElapsedTime } from '../util/ts';

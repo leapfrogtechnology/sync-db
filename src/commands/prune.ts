@@ -75,7 +75,7 @@ class Prune extends Command {
 
     if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
 
-     process.exit(-1);
+    process.exit(-1);
   }
 }
 
