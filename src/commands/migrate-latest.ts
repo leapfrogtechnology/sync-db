@@ -75,7 +75,8 @@ class MigrateLatest extends Command {
     const config = await loadConfig();
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
-    isDryRun && (await printLine('• DRY RUN STARTED\n'));
+    if (isDryRun) await printLine('• DRY RUN STARTED\n');
+
     const results = await migrateLatest(config, connections, {
       ...parsedFlags,
       onStarted: this.onStarted,
@@ -86,12 +87,12 @@ class MigrateLatest extends Command {
     const failedCount = results.filter(({ success }) => !success).length;
 
     if (failedCount === 0) {
-      isDryRun && (await printLine(green('[✓] DRY RUN SUCCESS\n')));
+      if (isDryRun) await printLine(green('[✓] DRY RUN SUCCESS\n'));
 
       return process.exit(0);
     }
 
-    isDryRun && (await printLine(red('[✖] DRY RUN FAILED\n')));
+    if (isDryRun) await printLine(red('[✖] DRY RUN FAILED\n'));
 
     printError(`Error: Migration failed for ${failedCount} connection(s).`);
     process.exit(-1);

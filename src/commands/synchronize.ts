@@ -135,7 +135,8 @@ class Synchronize extends Command {
       const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
       const timeStart = process.hrtime();
 
-      isDryRun && (await printLine('• DRY RUN STARTED\n'));
+      if (isDryRun) await printLine('• DRY RUN STARTED\n');
+
       await printLine('Synchronizing...\n');
 
       const results = await synchronize(config, connections, {
@@ -151,7 +152,7 @@ class Synchronize extends Command {
       const { totalCount, failedCount, successfulCount } = await this.processResults(results);
 
       if (successfulCount > 0) {
-        isDryRun && (await printLine(green('[✓] DRY RUN SUCCESS\n')));
+        if (isDryRun) await printLine(green('[✓] DRY RUN SUCCESS\n'));
 
         // Display output.
         await printLine(
@@ -165,7 +166,7 @@ class Synchronize extends Command {
         return process.exit(0);
       }
 
-      isDryRun && (await printLine(red('[✖] DRY RUN FAILED\n')));
+      if (isDryRun) await printLine(red('[✖] DRY RUN FAILED\n'));
 
       throw new Error(`Synchronization failed for ${failedCount} / ${totalCount} connections.`);
     } catch (e) {
