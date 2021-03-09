@@ -4,6 +4,10 @@
 
 set -e
 
+printfln() {
+  printf "\n$1\n"
+}
+
 changelog() {
   # NOTE: This requires github_changelog_generator to be installed.
   # https://github.com/skywinder/github-changelog-generator
@@ -25,28 +29,45 @@ changelog() {
 }
 
 bump() {
-  # Bump package version and generate changelog
-  VERSION="${NEXT/v/}"
+  last_tag=$(git tag --sort=-creatordate | head -n 1)
 
-  echo "Bump version to ${VERSION}"
+  printfln "$last_tag"
 
-  # Update version in the following files
-  sed -i "s/\(\"version\":\s*\"\)[^\"]*\(\"\)/\1${VERSION}\2/g" package.json
+  echo "Bumping the version: ${last_tag} -> ${NEXT}"
+  git tag "${NEXT}"
+  hub release create "$NEXT" -m "$NEXT" || true
+}
 
-  # Generate change log
-  changelog
-  echo ""
+compare_and_release() {
+  ## Compare the package.json file from two recent commits to master branch and export
+  ## value to NEXT variable if it differs.
 
-  # Generate new build.
-  yarn && yarn test && yarn build
+  # Get the second last commit from the master branch after merge.
+  previous_commit_hash=$(git rev-parse @~)
 
-  # Prepare to commit
-  git add CHANGELOG.md package.json yarn.lock && \
-    git commit -v --edit -m "${VERSION} Release :tada: :fireworks: :bell:" && \
-    git tag "$NEXT" && \
-    echo -e "\nRelease tagged $NEXT"
-  git push origin HEAD --tags
-  yarn publish --new-version "${VERSION}" --no-git-tag-version
+  git fetch --all
+  git checkout ${previous_commit_hash}
+
+  old_version=$(cat package.json | jq -r ".version")
+
+  printfln "Old package version: ${old_version}"
+
+  git checkout master
+
+  new_version=$(cat package.json | jq -r ".version")
+
+  printfln "New package version: ${new_version}"
+
+  NEXT=false
+
+  if [ "$old_version" != "$new_version" ]; then
+    printfln "Publishing changes to npm with version: ${new_version}"
+    NEXT=${new_version}
+  fi
+
+  if [ -n "$NEXT" ] && [ "$NEXT" != "false" ]; then
+    bump
+  fi
 }
 
 # Run command received from args.

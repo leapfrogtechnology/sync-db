@@ -57,6 +57,7 @@
     "@oclif/plugin-help": "^2",
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
+    "esm": "^3.2.25",
     "globby": "^10.0.2",
     "knex": "^0.20.11",
     "ramda": "^0.26.1",
@@ -87,7 +88,7 @@
     "typescript": "^3.8.2"
   },
   "engines": {
-    "node": ">= 10.16.0"
+    "node": ">= 12.13.0"
   },
   "publishConfig": {
     "access": "public"
