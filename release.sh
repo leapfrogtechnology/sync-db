@@ -67,6 +67,8 @@ compare_and_release() {
   if [ "$old_version" != "$new_version" ]; then
     printfln "Publishing changes to npm with version: ${new_version}"
     NEXT=${new_version}
+  else
+    printfln "Skipping publish as package version has not changed"
   fi
 
   if [ -n "$NEXT" ] && [ "$NEXT" != "false" ]; then
