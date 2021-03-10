@@ -17,6 +17,9 @@ install:
   - sudo snap install hub --classic
   - hub --version
 
+  # Install github-changelog-generator.
+  - gem install github_changelog_generator
+
   # install dependencies
   - yarn
 
