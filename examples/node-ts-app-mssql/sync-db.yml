@@ -1,0 +1,31 @@
+basePath: src
+execution: sequential
+sql:
+  # Create objects in dbo schema
+  - function/dbo/sum.sql
+  - function/dbo/square.sql
+
+  # Create objects in utils schema
+  - schema/utils.sql
+  - function/utils/product.sql
+  - procedure/utils/get_date.sql
+  - view/utils/vw_users.sql
+  - view/utils/vw_tasks.sql
+
+  # Create objects in testdata schema
+  - schema/testdata.sql
+  - procedure/testdata/setup_data.sql
+
+hooks:
+  post_sync:
+    - scripts/setup.sql
+
+migration:
+  sourceType: typescript
+  directory: migration
+
+injectedConfig:
+  vars:
+    create_admin: 'world'
+    admin_email: 'admin@example.com'
+    task_status: 'hello'

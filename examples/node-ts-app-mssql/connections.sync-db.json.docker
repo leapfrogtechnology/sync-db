@@ -1,0 +1,15 @@
+{
+  "connections": [
+    {
+      "id": "testdb1",
+      "client": "mssql",
+      "connection": {
+        "host": "mssql",
+        "port": 1433,
+        "user": "sa",
+        "database": "master",
+        "password": "Password@123"
+      }
+    }
+  ]
+}
