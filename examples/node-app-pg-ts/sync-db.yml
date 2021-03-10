@@ -15,4 +15,4 @@ sql:
 
 migration:
   directory: migrations
-  sourceType: javascript
+  sourceType: typescript

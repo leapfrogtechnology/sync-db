@@ -16,7 +16,9 @@
   "dependencies": {
     "@leapfrogtechnology/sync-db": "1.0.0-beta.8",
     "knex": "^0.20.3",
-    "pg": "^7.14.0"
+    "pg": "^7.14.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.3"
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
