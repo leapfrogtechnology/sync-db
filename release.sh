@@ -18,11 +18,13 @@ changelog() {
 
   echo "Generating changelog upto version: $NEXT"
   github_changelog_generator \
+    --user="leapfrogtechnology" \
+    --project="sync-db" \
+    --token="$GITHUB_TOKEN" \
     --no-verbose \
     --pr-label "**Changes**" \
     --bugs-label "**Bug Fixes**" \
     --issues-label "**Closed Issues**" \
-    --issue-line-labels=ALL \
     --future-release="$NEXT" \
     --release-branch=master \
     --exclude-labels=unnecessary,duplicate,question,invalid,wontfix
@@ -65,9 +67,27 @@ compare_and_release() {
   if [ "$old_version" != "$new_version" ]; then
     printfln "Publishing changes to npm with version: ${new_version}"
     NEXT=${new_version}
+  else
+    printfln "Skipping publish as package version has not changed"
   fi
 
   if [ -n "$NEXT" ] && [ "$NEXT" != "false" ]; then
+    changelog
+
+    git config --global user.email "travis@travis-ci.org"
+    git config --global user.name "Travis CI"
+
+    git add CHANGELOG.md
+    git commit -v --edit -m "${NEXT} Release :tada: :fireworks: :bell:" -m "[skip ci]"
+
+    git remote rm origin
+    # Add new "origin" with access token in the git URL for authentication
+    git remote add origin https://leapfrogtechnology:${GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git > /dev/null
+    git push origin master --quiet > /dev/null
+
+    printfln "Changelog updated."
+
+    # Bump & release tag
     bump
   fi
 }
