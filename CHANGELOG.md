@@ -1,15 +1,33 @@
 # Changelog
 
-## [1.0.0-beta.7](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.7)
+## [1.0.0-beta.8](https://github.com/leapfrogtechnology/sync-db/tree/1.0.0-beta.8) (2021-03-10)
 
-[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200628...HEAD)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.7...1.0.0-beta.8)
 
-**Closed issues:**
+**Implemented enhancements:**
+
+- Add new command --print-sql which prints sql statements for all the steps [\#95](https://github.com/leapfrogtechnology/sync-db/issues/95)
+
+**Changes**
+
+- FIX - Install changelog generator [\#102](https://github.com/leapfrogtechnology/sync-db/pull/102) ([samirsilwal](https://github.com/samirsilwal))
+- Remove short character \(-f\) command for dry-run [\#101](https://github.com/leapfrogtechnology/sync-db/pull/101) ([cham11ng](https://github.com/cham11ng))
+- Upgrade vulnerable packages [\#99](https://github.com/leapfrogtechnology/sync-db/pull/99) ([mesaugat](https://github.com/mesaugat))
+- Update script to auto generate changelog [\#98](https://github.com/leapfrogtechnology/sync-db/pull/98) ([samirsilwal](https://github.com/samirsilwal))
+- Integrate dry run feature by introducing `--dry-run` flag [\#94](https://github.com/leapfrogtechnology/sync-db/pull/94) ([cham11ng](https://github.com/cham11ng))
+
+## [v1.0.0-beta.7](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.7) (2021-03-09)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200628...v1.0.0-beta.7)
+
+**Closed Issues**
 
 - Remove support for Node 10 [\#89](https://github.com/leapfrogtechnology/sync-db/issues/89)
 
-**Merged pull requests:**
+**Changes**
 
+- FIX - Tag package only after deploy stage [\#97](https://github.com/leapfrogtechnology/sync-db/pull/97) ([samirsilwal](https://github.com/samirsilwal))
+- Update package version =\> 1.0.0-beta.6 [\#96](https://github.com/leapfrogtechnology/sync-db/pull/96) ([samirsilwal](https://github.com/samirsilwal))
 - Automate sync-db release [\#93](https://github.com/leapfrogtechnology/sync-db/pull/93) ([samirsilwal](https://github.com/samirsilwal))
 - Support JS/TS migration support for sync-db [\#88](https://github.com/leapfrogtechnology/sync-db/pull/88) ([samirsilwal](https://github.com/samirsilwal))
 - Bump lodash from 4.17.15 to 4.17.20 [\#87](https://github.com/leapfrogtechnology/sync-db/pull/87) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -32,11 +50,11 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200607...v1.0.0-experimental.20200628)
 
-**Closed issues:**
+**Closed Issues**
 
 - Ability to use a custom connection resolver [\#32](https://github.com/leapfrogtechnology/sync-db/issues/32)
 
-**Merged pull requests:**
+**Changes**
 
 - Provide configuration as an arg to the connection resolver's resolve function [\#70](https://github.com/leapfrogtechnology/sync-db/pull/70) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
@@ -48,7 +66,7 @@
 
 - Split unit tests and cli tests and add separate yarn scripts [\#67](https://github.com/leapfrogtechnology/sync-db/pull/67) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
-**Merged pull requests:**
+**Changes**
 
 - Support connection resolver [\#69](https://github.com/leapfrogtechnology/sync-db/pull/69) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Introduce make command to generate migration files [\#68](https://github.com/leapfrogtechnology/sync-db/pull/68) ([kabirbaidhya](https://github.com/kabirbaidhya))
@@ -57,7 +75,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.20200427...v1.0.0-experimental.20200428)
 
-**Merged pull requests:**
+**Changes**
 
 - Change the basePath to be the base directory for the whole codebase not just sql \(breaking change\) [\#66](https://github.com/leapfrogtechnology/sync-db/pull/66) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Make connections config consistent with Knex's config \(breaking change\) [\#65](https://github.com/leapfrogtechnology/sync-db/pull/65) ([kabirbaidhya](https://github.com/kabirbaidhya))
@@ -66,7 +84,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.6...v1.0.0-experimental.20200427)
 
-**Merged pull requests:**
+**Changes**
 
 - Ability to run all commands for a specific connection using a CLI option \(--only\) [\#64](https://github.com/leapfrogtechnology/sync-db/pull/64) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Update node-app-mssql example to use new SQL migrations [\#63](https://github.com/leapfrogtechnology/sync-db/pull/63) ([kabirbaidhya](https://github.com/kabirbaidhya))
@@ -80,7 +98,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.5...v1.0.0-beta.6)
 
-**Merged pull requests:**
+**Changes**
 
 - Setup prettier and integrate format checking in the CI [\#56](https://github.com/leapfrogtechnology/sync-db/pull/56) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Support both sequential and parallel execution strategies for running synchronization [\#55](https://github.com/leapfrogtechnology/sync-db/pull/55) ([kabirbaidhya](https://github.com/kabirbaidhya))
@@ -94,7 +112,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.4...v1.0.0-beta.5)
 
-**Merged pull requests:**
+**Changes**
 
 - Bump knex version to 0.20.11 [\#48](https://github.com/leapfrogtechnology/sync-db/pull/48) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
@@ -102,7 +120,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.3...v1.0.0-beta.4)
 
-**Fixed bugs:**
+**Bug Fixes**
 
 - Fix ramda merge convert issue ¯\\(ツ\)/¯ [\#47](https://github.com/leapfrogtechnology/sync-db/pull/47) ([cham11ng](https://github.com/cham11ng))
 
@@ -110,7 +128,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.2...v1.0.0-beta.3)
 
-**Fixed bugs:**
+**Bug Fixes**
 
 - Fix fs.exists\(\) util ¯\\_\(ツ\)\_/¯ [\#46](https://github.com/leapfrogtechnology/sync-db/pull/46) ([cham11ng](https://github.com/cham11ng))
 
@@ -118,7 +136,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.1...v1.0.0-beta.2)
 
-**Merged pull requests:**
+**Changes**
 
 - Support resolving connections from the environment directly as a fallback option [\#45](https://github.com/leapfrogtechnology/sync-db/pull/45) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
@@ -126,7 +144,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.9-2...v1.0.0-beta.1)
 
-**Merged pull requests:**
+**Changes**
 
 - Add new io utility for standard I/O operations [\#44](https://github.com/leapfrogtechnology/sync-db/pull/44) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Bump codecov from 3.6.1 to 3.6.5 [\#43](https://github.com/leapfrogtechnology/sync-db/pull/43) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -140,7 +158,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.9...v1.0.0-experimental.9-1)
 
-**Merged pull requests:**
+**Changes**
 
 - Update example to demonstrate config injection [\#37](https://github.com/leapfrogtechnology/sync-db/pull/37) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
@@ -152,7 +170,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-5...v1.0.0-experimental.8-6)
 
-**Merged pull requests:**
+**Changes**
 
 - Avoid vendor specific defaults in the config [\#41](https://github.com/leapfrogtechnology/sync-db/pull/41) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Generate connection with port as number when using --generate-connections CLI arg [\#40](https://github.com/leapfrogtechnology/sync-db/pull/40) ([silwalanish](https://github.com/silwalanish))
@@ -183,12 +201,12 @@
 
 - CLI arg to generate connections from the environment [\#33](https://github.com/leapfrogtechnology/sync-db/pull/33) ([p0k8h](https://github.com/p0k8h))
 
-**Closed issues:**
+**Closed Issues**
 
 - New CLI arg to generate connections file using the environment variables [\#31](https://github.com/leapfrogtechnology/sync-db/issues/31)
 - Add new example project based on postgres [\#25](https://github.com/leapfrogtechnology/sync-db/issues/25)
 
-**Merged pull requests:**
+**Changes**
 
 - Add example project for postgres [\#35](https://github.com/leapfrogtechnology/sync-db/pull/35) ([Prabeshpd](https://github.com/Prabeshpd))
 
@@ -196,7 +214,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.7...v1.0.0-alpha.8)
 
-**Merged pull requests:**
+**Changes**
 
 - Bump knex to version 0.20.4 and upgrade vulnerable packages [\#34](https://github.com/leapfrogtechnology/sync-db/pull/34) ([mesaugat](https://github.com/mesaugat))
 
@@ -208,7 +226,7 @@
 
 - Setup docker and docker-compose configuration for the node-app-mssql example [\#23](https://github.com/leapfrogtechnology/sync-db/pull/23) ([silwalanish](https://github.com/silwalanish))
 
-**Fixed bugs:**
+**Bug Fixes**
 
 - Logs are misleading in rollback / teardown stage [\#5](https://github.com/leapfrogtechnology/sync-db/issues/5)
 
@@ -216,14 +234,14 @@
 
 - Upgrade knex minimum version to 0.19.5 [\#26](https://github.com/leapfrogtechnology/sync-db/pull/26) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
-**Closed issues:**
+**Closed Issues**
 
 - Add sample tables using knex migrations for the node-app-mssql example [\#21](https://github.com/leapfrogtechnology/sync-db/issues/21)
 - CI - Integrate test code coverage reporting. [\#18](https://github.com/leapfrogtechnology/sync-db/issues/18)
 - Add an example with showing the programmatic usage in Node / JavaScript [\#12](https://github.com/leapfrogtechnology/sync-db/issues/12)
 - Setup docker and docker-compose configuration for the node-app-mssql example [\#8](https://github.com/leapfrogtechnology/sync-db/issues/8)
 
-**Merged pull requests:**
+**Changes**
 
 - Fix file name mistake [\#30](https://github.com/leapfrogtechnology/sync-db/pull/30) ([p0k8h](https://github.com/p0k8h))
 - Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) ([p0k8h](https://github.com/p0k8h))
@@ -236,7 +254,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.5...v1.0.0-alpha.6)
 
-**Merged pull requests:**
+**Changes**
 
 -  Downgrade knex version to 0.16.3 [\#16](https://github.com/leapfrogtechnology/sync-db/pull/16) ([SafalPandey](https://github.com/SafalPandey))
 
@@ -252,7 +270,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.3...v1.0.0-alpha.4)
 
-**Merged pull requests:**
+**Changes**
 
 - Configure Travis CI for running tests [\#13](https://github.com/leapfrogtechnology/sync-db/pull/13) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Simplify programmatic usage and documentation [\#11](https://github.com/leapfrogtechnology/sync-db/pull/11) ([kabirbaidhya](https://github.com/kabirbaidhya))
@@ -265,7 +283,7 @@
 
 - Enable passing connection instance as well as connection config for synchronization [\#10](https://github.com/leapfrogtechnology/sync-db/pull/10) ([SafalPandey](https://github.com/SafalPandey))
 
-**Merged pull requests:**
+**Changes**
 
 - Improvements on the README Documentation [\#7](https://github.com/leapfrogtechnology/sync-db/pull/7) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
@@ -273,7 +291,7 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.1...v1.0.0-alpha.2)
 
-**Merged pull requests:**
+**Changes**
 
 - Remove password attribute from connections object before logging [\#6](https://github.com/leapfrogtechnology/sync-db/pull/6) ([SafalPandey](https://github.com/SafalPandey))
 - Set published source for sync-db [\#4](https://github.com/leapfrogtechnology/sync-db/pull/4) ([shradayshakya](https://github.com/shradayshakya))
@@ -286,7 +304,7 @@
 
 - Refactor code for accessing database connections. [\#1](https://github.com/leapfrogtechnology/sync-db/pull/1) ([shradayshakya](https://github.com/shradayshakya))
 
-**Merged pull requests:**
+**Changes**
 
 - Add documentation for global installation [\#2](https://github.com/leapfrogtechnology/sync-db/pull/2) ([shradayshakya](https://github.com/shradayshakya))
 
