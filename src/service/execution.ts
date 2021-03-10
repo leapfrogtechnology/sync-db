@@ -44,6 +44,16 @@ export async function executeOperation<T extends OperationContext>(
 
   const timeStart = process.hrtime();
 
+  // Trigger onStarted handler if bound.
+  if (context.params.onStarted) {
+    await context.params.onStarted({
+      connectionId,
+      success: false,
+      data: null,
+      timeElapsed: getElapsedTime(timeStart)
+    });
+  }
+
   try {
     result.data = await func({ timeStart });
 

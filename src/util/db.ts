@@ -60,16 +60,32 @@ export function createInstance(config: ConnectionConfig): Knex {
 
 /**
  * Run a callback function with in a transaction.
+ * If `dryRun` is true, transaction will not be committed.
  *
  * @param {ConnectionReference} db
  * @param {(trx: Knex.Transaction) => Promise<T>} callback
+ * @param {boolean} dryRun?
  * @returns {Promise<T>}
  */
-export function withTransaction<T>(
+export async function withTransaction<T>(
   db: ConnectionReference,
-  callback: (trx: Knex.Transaction) => Promise<T>
+  callback: (trx: Knex.Transaction) => Promise<T>,
+  dryRun?: boolean
 ): Promise<T> {
   const dbLog = dbLogger(db.id);
+
+  if (dryRun) {
+    dbLog('BEGIN: Dry Run transaction');
+
+    const trx = await db.connection.transaction();
+    const res = await callback(trx);
+
+    trx.rollback();
+
+    dbLog('END: Dry Run transaction rolled back successfully');
+
+    return res;
+  }
 
   return db.connection.transaction(async trx => {
     dbLog('BEGIN: transaction');

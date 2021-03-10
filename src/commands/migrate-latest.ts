@@ -1,5 +1,5 @@
-import { bold, red, cyan } from 'chalk';
 import { Command, flags } from '@oclif/command';
+import { bold, red, cyan, magenta } from 'chalk';
 
 import { migrateLatest } from '../api';
 import { dbLogger } from '../util/logger';
@@ -11,6 +11,7 @@ class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
   static flags = {
+    'dry-run': flags.boolean({ char: 'f', description: 'Dry Run migration.', default: false }),
     only: flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
@@ -19,6 +20,15 @@ class MigrateLatest extends Command {
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
     })
+  };
+
+  /**
+   * Started event handler.
+   */
+  onStarted = async (result: OperationResult) => {
+    await printLine(bold(` ▸ ${result.connectionId}`));
+
+    await printInfo('   [✓] Migration - started');
   };
 
   /**
@@ -31,7 +41,7 @@ class MigrateLatest extends Command {
 
     log('Up to date: ', alreadyUpToDate);
 
-    await printLine(bold(` ▸ ${result.connectionId} - Successful`) + ` (${result.timeElapsed}s)`);
+    await printInfo(`   [✓] Migration - completed (${result.timeElapsed}s)`);
 
     if (alreadyUpToDate) {
       await printInfo('   Already up to date.\n');
@@ -41,19 +51,17 @@ class MigrateLatest extends Command {
 
     // Completed migrations.
     for (const item of list) {
-      await printLine(cyan(`   - ${item}`));
+      await printLine(cyan(`       - ${item}`));
     }
 
-    await printInfo(`\n   Ran ${list.length} migrations.\n`);
+    await printInfo(`   Ran ${list.length} migrations.\n`);
   };
 
   /**
    * Failure handler.
    */
   onFailed = async (result: OperationResult) => {
-    printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
-
-    await printError(`   ${result.error}\n`);
+    await printLine(bold(red(`   [✓] Migration - Failed\n`)));
   };
 
   /**
@@ -63,11 +71,15 @@ class MigrateLatest extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(MigrateLatest);
+    const isDryRun = parsedFlags['dry-run'];
     const config = await loadConfig();
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
+    if (isDryRun) await printLine(magenta('\n• DRY RUN STARTED\n'));
+
     const results = await migrateLatest(config, connections, {
       ...parsedFlags,
+      onStarted: this.onStarted,
       onSuccess: this.onSuccess,
       onFailed: this.onFailed
     });
@@ -75,10 +87,15 @@ class MigrateLatest extends Command {
     const failedCount = results.filter(({ success }) => !success).length;
 
     if (failedCount === 0) {
+      if (isDryRun) await printLine(magenta('• DRY RUN ENDED\n'));
+
       return process.exit(0);
     }
 
     printError(`Error: Migration failed for ${failedCount} connection(s).`);
+
+    if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
+
     process.exit(-1);
   }
 }
