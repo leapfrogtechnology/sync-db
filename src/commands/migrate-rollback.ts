@@ -11,7 +11,7 @@ class MigrateRollback extends Command {
   static description = 'Rollback migrations up to the last run batch.';
 
   static flags = {
-    'dry-run': flags.boolean({ char: 'f', description: 'Dry Run migration rollback.', default: false }),
+    'dry-run': flags.boolean({ description: 'Dry run rollback.', default: false }),
     only: flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
