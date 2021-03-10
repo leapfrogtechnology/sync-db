@@ -4,15 +4,17 @@
   "scripts": {
     "lint": "eslint src/index.js",
     "lint:fix": "eslint --fix src/index.js",
-    "sync-db": "sync-db",
+    "synchronize": "../../bin/run-dev.sh synchronize",
+    "clean": "../../bin/run-dev.sh prune",
+    "migrate:list": "../../bin/run-dev.sh migrate-list",
+    "migrate": "../../bin/run-dev.sh migrate-latest",
+    "rollback": "../../bin/run-dev.sh migrate-rollback",
     "start": " babel-node src/index.js",
-    "make": "knex --knexfile=knexfile.js migrate:make",
-    "migrate": "knex --knexfile=knexfile.js migrate:latest",
-    "rollback": "knex --knexfile=knexfile.js migrate:rollback"
+    "make": "knex --knexfile=knexfile.js migrate:make"
   },
   "license": "MIT",
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "^1.0.0-alpha.8",
+    "@leapfrogtechnology/sync-db": "1.0.0-beta.7",
     "knex": "^0.20.3",
     "pg": "^7.14.0"
   },
