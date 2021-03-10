@@ -2,9 +2,9 @@ basePath: src
 execution: sequential
 
 sql:
-  # Create objects in dbo schema
-  - function/dbo/sum.sql
-  - function/dbo/square.sql
+  # Create objects in public schema
+  - function/public/sum.sql
+  - function/public/square.sql
 
   # Create objects in utils schema
   - schema/utils.sql
