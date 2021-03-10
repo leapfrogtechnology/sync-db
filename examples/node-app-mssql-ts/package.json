@@ -12,7 +12,7 @@
     "rollback": "../../bin/run-dev.sh migrate-rollback"
   },
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "^1.0.0-beta.7",
+    "@leapfrogtechnology/sync-db": "^1.0.0-beta.8",
     "knex": "^0.20.2",
     "mssql": "^5.1.0",
     "ts-node": "^9.1.1",

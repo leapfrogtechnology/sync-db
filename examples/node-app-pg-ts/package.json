@@ -14,7 +14,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "1.0.0-beta.7",
+    "@leapfrogtechnology/sync-db": "1.0.0-beta.8",
     "knex": "^0.20.3",
     "pg": "^7.14.0",
     "ts-node": "^9.1.1",

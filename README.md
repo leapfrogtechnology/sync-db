@@ -148,8 +148,6 @@ sql:
   - **`tableName`** `(string)` - Custom name for table to store migrations meta data.
 
 - **`connectionResolver`** (`string`) - Connection resolver file name optional if connections are resolved using `connections.sync-db.json`.
-    
-
 
 ### 2. Database Connections
 
