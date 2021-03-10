@@ -1,12 +1,15 @@
 {
   "connections": [
     {
-      "id": "db1",
-      "host": "postgresdb",
-      "user": "testdb",
-      "port": 5432,
-      "database_url": "postgresql://<username>:<databasepassword>@postgres:5432/<database>",
-      "client": "postgresql"
+      "id": "laudio_test_db",
+      "client": "postgresql",
+      "connection": {
+        "host": "localhost",
+        "port": 5432,
+        "user": "testdb",
+        "database_url": "postgresql://<username>:<databasepassword>@postgres:5432/<database>",
+        "password": "secret"
+      }
     }
   ]
 }
