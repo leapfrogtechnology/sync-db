@@ -36,8 +36,6 @@ bump() {
   printfln "$last_tag"
 
   echo "Bumping the version: ${last_tag} -> ${NEXT}"
-  NEXT="v${NEXT}"
-
   git tag "${NEXT}"
   hub release create "$NEXT" -m "$NEXT" || true
 }
@@ -66,12 +64,12 @@ compare_and_release() {
 
   if [ "$old_version" != "$new_version" ]; then
     printfln "Publishing changes to npm with version: ${new_version}"
-    NEXT=${new_version}
+    NEXT="v${new_version}"
   else
     printfln "Skipping publish as package version has not changed"
   fi
 
-  if [ -n "$NEXT" ] && [ "$NEXT" != "false" ]; then
+  if [ "$NEXT" != "false" ]; then
     changelog
 
     git config --global user.email "travis@travis-ci.org"
