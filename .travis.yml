@@ -35,6 +35,8 @@ jobs:
     - stage: deploy
       if: branch = master
       node_js: node
+      before_deploy:
+        - if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./release.sh compare_and_release; fi
       deploy:
         provider: npm
         email: '$NPM_EMAIL'
@@ -42,6 +44,3 @@ jobs:
         skip_cleanup: true
         on:
           branch: master
-
-      after_deploy:
-        - if [ "$BRANCH" == "master" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./release.sh compare_and_release; fi

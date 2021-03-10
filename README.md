@@ -144,13 +144,13 @@ sql:
   File paths listed here are relative to `${basePath}/sql` value.
 - **`migration`** `(array)` - Migrations specific configurations.
 
-    - **`sourceType`** `(string)` - Type of migration file. Value `defaults` to sql.
-          - **example**: javascript, typescript.
-    - **`tableName`** `(string)` - Custom name for table to store migrations meta data.
+  - **`sourceType`** `(string)` - Type of migration file. Value `defaults` to sql. - **example**: javascript, typescript.
+  - **`tableName`** `(string)` - Custom name for table to store migrations meta data.
 
 - **`connectionResolver`** (`string`) - Connection resolver file name optional if connections are resolved using `connections.sync-db.json`.
-      
-   
+    
+
+
 ### 2. Database Connections
 
 Database connections are configured in `connections.sync-db.json` file in your project root directory as shown below.
@@ -240,7 +240,7 @@ $ bin/run-dev.sh
 
 Publish a new version.
 
-Create a PR updating **version** in package.json to master. 
+Create a PR updating **version** in package.json to master.
 
 ## License
 
