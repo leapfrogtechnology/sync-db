@@ -76,7 +76,9 @@ compare_and_release() {
     git config --global user.name "Travis CI"
 
     git add CHANGELOG.md
-    git commit -v --edit -m "${NEXT} Release :tada: :fireworks: :bell:"
+    git commit -v --edit -m "${NEXT} Release :tada: :fireworks: :bell:
+    [skip ci]
+    "
 
     git remote rm origin
     # Add new "origin" with access token in the git URL for authentication
