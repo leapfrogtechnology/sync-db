@@ -1,0 +1,8 @@
+--
+-- Calculate square of a number.
+--
+CREATE FUNCTION public.sum(INTEGER, INTEGER) RETURNS INTEGER
+ AS 'SELECT $1 + $2;'
+    LANGUAGE SQL
+    IMMUTABLE
+    RETURNS NULL ON NULL INPUT;

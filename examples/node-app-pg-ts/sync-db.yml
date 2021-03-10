@@ -1,0 +1,18 @@
+basePath: src
+execution: sequential
+
+sql:
+  # Create objects in public schema
+  - function/public/sum.sql
+  - function/public/square.sql
+
+  # Create objects in utils schema
+  - schema/utils.sql
+  - function/utils/product.sql
+  - procedure/utils/get_date.sql
+  - view/utils/vw_table_names.sql
+  - view/utils/vw_user_names.sql
+
+migration:
+  directory: migrations
+  sourceType: typescript
