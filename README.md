@@ -67,6 +67,7 @@ COMMANDS
   synchronize       Synchronize all the configured database connections.
 
 FLAGS
+  -f, --force                 Force synchronization.
   --connection-resolver=PATH  Path to the connection resolver.
   --only=CONNECTION_ID        Filter only a single connection.
   --skip-migration            Skip running migrations.
@@ -192,11 +193,11 @@ await db.transaction(async trx => {
 
 ## Examples
 
-1. [Node MSSQL Javascript Sample](examples/node-app-mssql-js)
-2. [Node MSSQL Typescript Sample](examples/node-app-mssql-ts)
+1. [Node MSSQL JavaScript Sample](examples/node-app-mssql)
+2. [Node MSSQL TypeScript Sample](examples/node-app-mssql-ts)
 3. [Node MSSQL Programmatic Usage Sample](examples/node-mssql-programmatic-use)
-4. [Node PostgreSQL Javascript Sample](examples/node-app-pg-js)
-5. [Node PostgreSQL Typescript Sample](examples/node-app-pg-ts)
+4. [Node PostgreSQL JavaScript Sample](examples/node-app-pg)
+5. [Node PostgreSQL TypeScript Sample](examples/node-app-pg-ts)
 
 ## Changelog
 
