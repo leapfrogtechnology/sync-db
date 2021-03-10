@@ -1,4 +1,5 @@
-basePath: src/sql
+basePath: src
+execution: sequential
 sql:
   # Create objects in dbo schema
   - function/dbo/sum.sql
@@ -10,3 +11,7 @@ sql:
   - procedure/utils/get_date.sql
   - view/utils/vw_table_names.sql
   - view/utils/vw_user_names.sql
+
+migration:
+  sourceType: javascript
+  directory: migrations

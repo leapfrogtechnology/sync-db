@@ -55,10 +55,23 @@ USAGE
   $ sync-db
 
 OPTIONS
-  -f, --force                 Force synchronization
   -h, --help                  Print help information
   -v, --version               Print version
-  -c, --generate-connections  Generate connections.sync-db.json file
+
+COMMANDS
+  make              Make migration files from the template.
+  migrate-latest    Run the migrations up to the latest changes.
+  migrate-list      List all the migrations.
+  migrate-rollback  Rollback migrations up to the last run batch.
+  prune             Drop all the synchronized db objects except the ones created via migrations.
+  synchronize       Synchronize all the configured database connections.
+
+FLAGS
+  -f, --force                 Force synchronization.
+  --connection-resolver=PATH  Path to the connection resolver.
+  --only=CONNECTION_ID        Filter only a single connection.
+  --skip-migration            Skip running migrations.
+  --dry-run                   Dry run migrations and synchronization.
 ```
 
 Refer to the [examples](#examples) section below for full example with CLI usage.
@@ -130,6 +143,12 @@ sql:
 - **`basePath`** `(string)` - Base directory to hold all your SQL & migrations codebase (default: "src").
 - **`sql`** `(array)` - A series of SQL file paths that are to be run in ordered sequence (top to bottom), based on dependency. It should be noted that the source files needs to follow this convention of [directory hierarchy](docs/sql.md).
   File paths listed here are relative to `${basePath}/sql` value.
+- **`migration`** `(array)` - Migrations specific configurations.
+
+  - **`sourceType`** `(string)` - Type of migration file. Value `defaults` to sql. - **example**: javascript, typescript.
+  - **`tableName`** `(string)` - Custom name for table to store migrations meta data.
+
+- **`connectionResolver`** (`string`) - Connection resolver file name optional if connections are resolved using `connections.sync-db.json`.
 
 ### 2. Database Connections
 
@@ -157,6 +176,10 @@ Since it contains all your database credentials, it is recommended that you **DO
 
 Note: The `connections` key expects an array, so you can also provide multiple databases and `sync-db` ensures your configured db objects are synced across all these databases.
 
+Connection using **connection-resolver.js**
+
+File consists a `resolve` function which returns an array of connections to the databases. Add the resolver file name to **`connectionResolver`** field in sync-db.yml.
+
 #### Caveat
 
 Setup and Teardown steps aren't always run within a single transaction. **You need to pass the transaction instance object explicitly to make sure this happens.**
@@ -170,9 +193,11 @@ await db.transaction(async trx => {
 
 ## Examples
 
-1. [Node MSSQL Sample](examples/node-app-mssql)
-2. [Node MSSQL Programmatic Usage Sample](examples/node-mssql-programmatic-use)
-3. [Node PostgreSQL Sample](examples/node-app-pg)
+1. [Node MSSQL JavaScript Sample](examples/node-app-mssql)
+2. [Node MSSQL TypeScript Sample](examples/node-app-mssql-ts)
+3. [Node MSSQL Programmatic Usage Sample](examples/node-mssql-programmatic-use)
+4. [Node PostgreSQL JavaScript Sample](examples/node-app-pg)
+5. [Node PostgreSQL TypeScript Sample](examples/node-app-pg-ts)
 
 ## Changelog
 
@@ -214,9 +239,7 @@ $ bin/run-dev.sh
 
 Publish a new version.
 
-```bash
-$ NEXT=v1.0.0-beta.6 yarn release
-```
+Create a PR updating **version** in package.json to master.
 
 ## License
 

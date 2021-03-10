@@ -9,7 +9,8 @@ exports.up = knex => {
     table.increments('id');
     table.string('name').notNullable();
     table.enu('status', ['active', 'inactive']).notNullable();
-    table.foreign('user').references('id').inTable('users');
+    table.integer('user_id').notNullable();
+    table.foreign('user_id').references('id').inTable('users');
     table.timestamp('created_at').defaultTo(knex.fn.now());
     table.timestamp('updated_at').defaultTo(knex.fn.now());
   });
