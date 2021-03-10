@@ -1,8 +1,8 @@
 --
 -- Calculate square of a number.
 --
-CREATE FUNCTION [dbo].square(@x INT) RETURNS INT
-AS
-BEGIN
-  RETURN @x * @x;
-END
+CREATE FUNCTION sum(INTEGER, INTEGER) RETURNS INTEGER
+ AS 'SELECT $1 + $2;'
+    LANGUAGE SQL
+    IMMUTABLE
+    RETURNS NULL ON NULL INPUT;
