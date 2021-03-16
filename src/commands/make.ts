@@ -9,6 +9,10 @@ class Make extends Command {
 
   static args = [{ name: 'name', description: 'Object or filename to generate.', required: true }];
   static flags = {
+    name: flags.string({
+      helpValue: 'TYPE',
+      description: 'Name of table/view/routine.'
+    }),
     type: flags.string({
       char: 't',
       helpValue: 'TYPE',
@@ -26,7 +30,7 @@ class Make extends Command {
   async run(): Promise<void> {
     const { args, flags: parsedFlags } = this.parse(Make);
     const config = await loadConfig();
-    const list = await this.makeFiles(config, args.name, parsedFlags.type);
+    const list = await this.makeFiles(config, args.name, parsedFlags.type, parsedFlags.name);
 
     for (const filename of list) {
       await printLine(`Created ${filename}`);
@@ -37,14 +41,15 @@ class Make extends Command {
    * Make files based on the given name and type.
    *
    * @param {Configuration} config
-   * @param {string} name
-   * @param {string} [type]
+   * @param {string} filename
+   * @param {string} type
+   * @param {string} objectName
    * @returns {Promise<string[]>}
    */
-  async makeFiles(config: Configuration, name: string, type?: string): Promise<string[]> {
+  async makeFiles(config: Configuration, filename: string, type?: string, objectName?: string): Promise<string[]> {
     switch (type) {
       case 'migration':
-        return fileMakerService.makeMigration(config, name);
+        return fileMakerService.makeMigration(config, filename, objectName);
 
       default:
         throw new Error(`Unsupported file type ${type}.`);
