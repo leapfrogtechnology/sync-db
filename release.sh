@@ -41,20 +41,12 @@ bump() {
 }
 
 compare_and_release() {
-  ## Compare the package.json file from two recent commits to master branch and export
+  ## Compare the package.json file from published package to master branch and export
   ## value to NEXT variable if it differs.
 
-  # Get the second last commit from the master branch after merge.
-  previous_commit_hash=$(git rev-parse @~)
-
-  git fetch --all
-  git checkout ${previous_commit_hash}
-
-  old_version=$(cat package.json | jq -r ".version")
+  old_version=$(npm show @leapfrogtechnology/sync-db version)
 
   printfln "Old package version: ${old_version}"
-
-  git checkout master
 
   new_version=$(cat package.json | jq -r ".version")
 
