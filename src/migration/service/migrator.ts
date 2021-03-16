@@ -90,12 +90,14 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
  * Resolve all the migration source for each of the migration entries using the configurations.
  *
  * @param {string} migrationPath
- * @param {string} extension
- * @returns {Promise<SqlMigrationEntry[]>}
+ * @param {string=FileExtensions.JS} extension
+ * @param {boolean=false} includeExtension
+ * @returns {Promise<JavaScriptMigrationEntry[]>}
  */
 export async function resolveJavaScriptMigrations(
   migrationPath: string,
-  extension: string = FileExtensions.JS
+  extension: string = FileExtensions.JS,
+  includeExtension: boolean = false
 ): Promise<JavaScriptMigrationEntry[]> {
   const migrationNames = await getJavaScriptMigrationNames(migrationPath, extension);
 
@@ -117,7 +119,7 @@ export async function resolveJavaScriptMigrations(
     const { up, down } = mRequire(path.resolve(migrationPath, filename));
 
     return {
-      name,
+      name: includeExtension ? filename : name,
       methods: {
         up,
         down

@@ -146,7 +146,8 @@ sql:
 - **`migration`** `(array)` - Migrations specific configurations.
 
   - **`sourceType`** `(string)` - Type of migration file. Value `defaults` to sql. - **example**: javascript, typescript.
-  - **`tableName`** `(string)` - Custom name for table to store migrations meta data.
+  - **`tableName`** `(string)` - Custom name for table to store migrations meta data. (Default: `knex_migrations`)
+  - **`includeExtension`** `(boolean)` - Include migration file extension (`.js` or `.ts`) in migrations table for `sourceType` value `javascript` and `typescript`. (Default: `false`)
 
 - **`connectionResolver`** (`string`) - Connection resolver file name optional if connections are resolved using `connections.sync-db.json`.
 

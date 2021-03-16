@@ -93,14 +93,14 @@ export async function resolveMigrationContext(
       return new SqlMigrationSourceContext(src);
 
     case 'javascript':
-      const srcJS = await resolveJavaScriptMigrations(migrationPath);
+      const srcJS = await resolveJavaScriptMigrations(migrationPath, FileExtensions.JS, config.migration.includeExtension);
 
       log('Available migration sources:\n%O', srcJS);
 
       return new JavaScriptMigrationContext(srcJS);
 
     case 'typescript':
-      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensions.TS);
+      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensions.TS, config.migration.includeExtension);
 
       log('Available migration sources:\n%O', srcTS);
 
