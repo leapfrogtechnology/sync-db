@@ -117,7 +117,7 @@ export async function resolveJavaScriptMigrations(
     const { up, down } = mRequire(path.resolve(migrationPath, filename));
 
     return {
-      name,
+      name: filename,
       methods: {
         up,
         down
