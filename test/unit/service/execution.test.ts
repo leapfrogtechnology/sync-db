@@ -46,8 +46,8 @@ describe('SERVICE: execution', () => {
         execution: 'parallel'
       } as Configuration);
 
-      expect(result).to.deep.equal(['Task A', 'Task B', 'Task C', 'Task D']);
-      expect(tracker).to.deep.equal(['Task C', 'Task D', 'Task A', 'Task B']);
+      expect(result).to.have.deep.members(['Task A', 'Task B', 'Task C', 'Task D']);
+      expect(tracker).to.have.deep.members(['Task C', 'Task D', 'Task A', 'Task B']);
     });
 
     it('should throw an error if unknown strategy is provided.', () => {
