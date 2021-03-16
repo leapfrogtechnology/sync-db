@@ -1,0 +1,25 @@
+import * as Knex from 'knex';
+
+/**
+ * Alter {{table}} table.
+ *
+ * @param {Knex} db
+ * @returns {Promise}
+ */
+export function up(db: Knex) {
+  return db.schema.alterTable('{{table}}', table => {
+    //
+  });
+}
+
+/**
+ * Revert above migration in {{table}} table.
+ *
+ * @param {Knex} db
+ * @returns {Promise}
+ */
+export function down(db: Knex) {
+  return db.schema.alterTable('{{table}}', table => {
+    //
+  });
+}
