@@ -221,6 +221,60 @@ describe('MIGRATION: migrator', () => {
       expect(result1[0].methods.down.name).to.deep.equal('down');
     });
 
+    it('should include extension in the resolved object.', async () => {
+      const migrationPath = await mkdtemp();
+
+      const exampleJs = `
+      function up(db) {
+        return db.schema.createTable('demo_table', table => {
+          table.increments('id').primary()
+        });
+      }
+
+      function down(db) {
+        return db.schema.dropTable('demo_table');
+      }
+
+      module.exports = {
+        up: up,
+        down: down
+      }
+      `;
+
+      const exampleTs = `
+      export function up(db: any) {
+        return db.schema.createTable('test_demo', (table: any) => {
+          table.increments('id').primary()
+        });
+      }
+
+      export function down(db: any) {
+        return db.schema.dropTable('test_demo');
+      }
+      `;
+
+      // Populate migration files to a directory.
+      await Promise.all([
+        write(path.join(migrationPath, '0001_create_table_users.js'), exampleJs),
+        write(path.join(migrationPath, '0002_alter_table_users_add_gender.ts'), exampleTs),
+        write(path.join(migrationPath, '.gitignore'), '')
+      ]);
+
+      const result = await migratorService.resolveJavaScriptMigrations(migrationPath, 'js', true);
+      const result1 = await migratorService.resolveJavaScriptMigrations(migrationPath, 'ts', true);
+
+      // Test the migrations entries retrieved from the directory.
+      expect(result.length).to.equal(1);
+      expect(result[0].name).to.deep.equal('0001_create_table_users.js');
+      expect(result[0].methods.up.name).to.deep.equal('up');
+      expect(result[0].methods.down.name).to.deep.equal('down');
+
+      expect(result1.length).to.equal(1);
+      expect(result1[0].name).to.deep.equal('0002_alter_table_users_add_gender.ts');
+      expect(result1[0].methods.up.name).to.deep.equal('up');
+      expect(result1[0].methods.down.name).to.deep.equal('down');
+    });
+
     it('should return empty array if the migration directory is empty.', async () => {
       const migrationPath = await mkdtemp();
       const result = await migratorService.resolveJavaScriptMigrations(migrationPath);
