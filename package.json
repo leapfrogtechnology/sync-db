@@ -51,7 +51,6 @@
     "format:check": "prettier --check . '**/*.{ts,js,md,yaml,json}'"
   },
   "dependencies": {
-    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^2",
@@ -65,6 +64,7 @@
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@oclif/test": "^1",
     "@oclif/tslint": "^3",
     "@types/chai": "^4.2.7",
