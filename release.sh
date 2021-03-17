@@ -72,8 +72,8 @@ compare_and_release() {
 
     git remote rm origin
     # Add new "origin" with access token in the git URL for authentication
-    git remote add origin https://leapfrogtechnology:${GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git > /dev/null
-    git push origin master --quiet > /dev/null
+    git remote add origin https://leapfrogtechnology:${GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git
+    git push origin master
 
     printfln "Changelog updated."
 
