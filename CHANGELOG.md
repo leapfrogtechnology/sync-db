@@ -1,8 +1,28 @@
 # Changelog
 
-## [1.0.0-beta.8](https://github.com/leapfrogtechnology/sync-db/tree/1.0.0-beta.8) (2021-03-10)
+## [v1.0.0-beta.9](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.9) (2021-03-16)
 
-[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.7...1.0.0-beta.8)
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.8...v1.0.0-beta.9)
+
+**Bug Fixes**
+
+- Fix migration issue by including file extension [\#107](https://github.com/leapfrogtechnology/sync-db/pull/107) ([cham11ng](https://github.com/cham11ng))
+
+**Closed Issues**
+
+- Add examples and update documentation for JS/TS migrations and dry-run command [\#90](https://github.com/leapfrogtechnology/sync-db/issues/90)
+
+**Changes**
+
+- Fix parallel strategy test case and release.sh script [\#108](https://github.com/leapfrogtechnology/sync-db/pull/108) ([cham11ng](https://github.com/cham11ng))
+- Move @istanbuljs/nyc-config-typescript to dev dependencies [\#106](https://github.com/leapfrogtechnology/sync-db/pull/106) ([cham11ng](https://github.com/cham11ng))
+- Fix release script to use proper version in commit message [\#104](https://github.com/leapfrogtechnology/sync-db/pull/104) ([samirsilwal](https://github.com/samirsilwal))
+- Update changelog manually [\#103](https://github.com/leapfrogtechnology/sync-db/pull/103) ([samirsilwal](https://github.com/samirsilwal))
+- Add examples and update documentation for JS/TS migrations and dry-run command [\#100](https://github.com/leapfrogtechnology/sync-db/pull/100) ([cham11ng](https://github.com/cham11ng))
+
+## [v1.0.0-beta.8](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.8) (2021-03-10)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.7...v1.0.0-beta.8)
 
 **Implemented enhancements:**
 
@@ -14,7 +34,6 @@
 - Remove short character \(-f\) command for dry-run [\#101](https://github.com/leapfrogtechnology/sync-db/pull/101) ([cham11ng](https://github.com/cham11ng))
 - Upgrade vulnerable packages [\#99](https://github.com/leapfrogtechnology/sync-db/pull/99) ([mesaugat](https://github.com/mesaugat))
 - Update script to auto generate changelog [\#98](https://github.com/leapfrogtechnology/sync-db/pull/98) ([samirsilwal](https://github.com/samirsilwal))
-- Integrate dry run feature by introducing `--dry-run` flag [\#94](https://github.com/leapfrogtechnology/sync-db/pull/94) ([cham11ng](https://github.com/cham11ng))
 
 ## [v1.0.0-beta.7](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.7) (2021-03-09)
 
@@ -28,6 +47,7 @@
 
 - FIX - Tag package only after deploy stage [\#97](https://github.com/leapfrogtechnology/sync-db/pull/97) ([samirsilwal](https://github.com/samirsilwal))
 - Update package version =\> 1.0.0-beta.6 [\#96](https://github.com/leapfrogtechnology/sync-db/pull/96) ([samirsilwal](https://github.com/samirsilwal))
+- Integrate dry run feature by introducing `--dry-run` flag [\#94](https://github.com/leapfrogtechnology/sync-db/pull/94) ([cham11ng](https://github.com/cham11ng))
 - Automate sync-db release [\#93](https://github.com/leapfrogtechnology/sync-db/pull/93) ([samirsilwal](https://github.com/samirsilwal))
 - Support JS/TS migration support for sync-db [\#88](https://github.com/leapfrogtechnology/sync-db/pull/88) ([samirsilwal](https://github.com/samirsilwal))
 - Bump lodash from 4.17.15 to 4.17.20 [\#87](https://github.com/leapfrogtechnology/sync-db/pull/87) ([dependabot[bot]](https://github.com/apps/dependabot))
@@ -225,6 +245,7 @@
 **Implemented enhancements:**
 
 - Setup docker and docker-compose configuration for the node-app-mssql example [\#23](https://github.com/leapfrogtechnology/sync-db/pull/23) ([silwalanish](https://github.com/silwalanish))
+- Support knex transactions in synchronize [\#15](https://github.com/leapfrogtechnology/sync-db/pull/15) ([SafalPandey](https://github.com/SafalPandey))
 
 **Bug Fixes**
 
@@ -247,7 +268,6 @@
 - Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) ([p0k8h](https://github.com/p0k8h))
 - Throw an error if object type names doesn't match directory convention [\#28](https://github.com/leapfrogtechnology/sync-db/pull/28) ([p0k8h](https://github.com/p0k8h))
 - Upgrade TypeScript to 3.7.2 [\#27](https://github.com/leapfrogtechnology/sync-db/pull/27) ([kabirbaidhya](https://github.com/kabirbaidhya))
-- Use knex to create, run, rollback migrations with samples [\#24](https://github.com/leapfrogtechnology/sync-db/pull/24) ([p0k8h](https://github.com/p0k8h))
 - Integrate test code coverage reporting with Codecov and Travis. [\#19](https://github.com/leapfrogtechnology/sync-db/pull/19) ([ghost](https://github.com/ghost))
 
 ## [v1.0.0-alpha.6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.6) (2019-08-28)
@@ -256,15 +276,16 @@
 
 **Changes**
 
+- Use knex to create, run, rollback migrations with samples [\#24](https://github.com/leapfrogtechnology/sync-db/pull/24) ([p0k8h](https://github.com/p0k8h))
 -  Downgrade knex version to 0.16.3 [\#16](https://github.com/leapfrogtechnology/sync-db/pull/16) ([SafalPandey](https://github.com/SafalPandey))
 
 ## [v1.0.0-alpha.5](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.5) (2019-08-28)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.4...v1.0.0-alpha.5)
 
-**Implemented enhancements:**
+**Changes**
 
-- Support knex transactions in synchronize [\#15](https://github.com/leapfrogtechnology/sync-db/pull/15) ([SafalPandey](https://github.com/SafalPandey))
+- Simplify programmatic usage and documentation [\#11](https://github.com/leapfrogtechnology/sync-db/pull/11) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
 ## [v1.0.0-alpha.4](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.4) (2019-08-27)
 
@@ -273,7 +294,6 @@
 **Changes**
 
 - Configure Travis CI for running tests [\#13](https://github.com/leapfrogtechnology/sync-db/pull/13) ([kabirbaidhya](https://github.com/kabirbaidhya))
-- Simplify programmatic usage and documentation [\#11](https://github.com/leapfrogtechnology/sync-db/pull/11) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
 ## [v1.0.0-alpha.3](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.3) (2019-08-26)
 
@@ -286,6 +306,7 @@
 **Changes**
 
 - Improvements on the README Documentation [\#7](https://github.com/leapfrogtechnology/sync-db/pull/7) ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Add documentation for global installation [\#2](https://github.com/leapfrogtechnology/sync-db/pull/2) ([shradayshakya](https://github.com/shradayshakya))
 
 ## [v1.0.0-alpha.2](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.2) (2019-08-09)
 
@@ -303,10 +324,6 @@
 **Implemented enhancements:**
 
 - Refactor code for accessing database connections. [\#1](https://github.com/leapfrogtechnology/sync-db/pull/1) ([shradayshakya](https://github.com/shradayshakya))
-
-**Changes**
-
-- Add documentation for global installation [\#2](https://github.com/leapfrogtechnology/sync-db/pull/2) ([shradayshakya](https://github.com/shradayshakya))
 
 
 
