@@ -248,9 +248,7 @@ describe('CLI: make', () => {
 
     expect(files.length).to.equal(1);
 
-    const migrationFile = await read(
-      path.join(migrationPath, queryByPattern(files, /\d{13}_settings\.ts/))
-    );
+    const migrationFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_settings\.ts/)));
     const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_ts.stub'));
 
     expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'settings' }));
