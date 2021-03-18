@@ -5,7 +5,8 @@ interface MakeOptions {
   migrationPath: string;
   timestamp: string;
   extension: FileExtensions;
-  stubPath: string | null;
+  stubPath: string;
+  create?: boolean;
 }
 
 export default MakeOptions;

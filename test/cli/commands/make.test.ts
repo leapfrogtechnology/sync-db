@@ -10,13 +10,13 @@ import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs'
 const tsTemplate = `import * as Knex from 'knex';
 
 /**
- * Create <table_name> table.
+ * Create demo_users table.
  *
  * @param {Knex} db
  * @returns {Promise}
  */
 export function up(db: Knex) {
-  return db.schema.createTable('table_name', table => {
+  return db.schema.createTable('demo_users', table => {
     table.increments('id').primary().unsigned();
     table.specificType('created_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
     table.specificType('updated_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
@@ -24,13 +24,13 @@ export function up(db: Knex) {
 }
 
 /**
- * Drop <table_name> table.
+ * Drop demo_users table.
  *
  * @param {Knex} db
  * @returns {Promise}
  */
 export function down(db: Knex) {
-  return db.schema.dropTable('table_name');
+  return db.schema.dropTable('demo_users');
 }
 `;
 

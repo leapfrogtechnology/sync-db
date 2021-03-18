@@ -1,7 +1,9 @@
 import * as path from 'path';
+import { cyan } from 'chalk';
 
 import * as fs from '../util/fs';
 import { log } from '../util/logger';
+import { printInfo, printLine } from '../util/io';
 import { interpolate } from '../util/string';
 import { getTimestampString } from '../util/ts';
 import MakeOptions from '../domain/MakeOptions';
@@ -11,6 +13,11 @@ import { getMigrationPath } from '../migration/service/knexMigrator';
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../assets/templates/migration');
 const CREATE_TABLE_CONVENTION = /create_(\w+)_table/;
+const SOURCE_TYPE_STUBS = {
+  sql: ['create_up.stub', 'create_down.stub'],
+  javascript: ['create_js.stub', 'update_js.stub'],
+  typescript: ['create_ts.stub', 'update_ts.stub']
+};
 
 /**
  * Get template stub directory path.
@@ -19,14 +26,38 @@ const CREATE_TABLE_CONVENTION = /create_(\w+)_table/;
  * @param {string} stubPath
  * @returns {string | null}
  */
-export function getStubPath(config: Configuration): string | null {
-  if (!config.migration.stubPath) {
-    return null;
+export async function publish(config: Configuration) {
+  const stubPath = path.join(config.basePath, '/stubs');
+  const stubPathExists = await fs.exists(stubPath);
+
+  if (!stubPathExists) {
+    log(`Stub path does not exist, creating ${stubPath}`);
+
+    await fs.mkdir(stubPath, { recursive: true });
   }
 
-  return path.isAbsolute(config.migration.stubPath)
-    ? config.migration.stubPath
-    : path.join(config.basePath, config.migration.stubPath);
+  const stubs = SOURCE_TYPE_STUBS[config.migration.sourceType] || [];
+  log(`Stubs to be moved: ${stubs}`);
+  await printLine('');
+
+  const res = await Promise.all(
+    stubs.map(async stub => {
+      if (await fs.exists(path.join(stubPath, stub))) {
+        return false;
+      }
+
+      await fs.copy(path.join(MIGRATION_TEMPLATE_PATH, stub), path.join(stubPath, stub));
+      await printLine(cyan(`  - ${stub}`));
+
+      return true;
+    })
+  );
+
+  if (res.includes(true)) {
+    await printInfo('\n Stubs published successfully.\n');
+  } else {
+    await printLine(' Nothing to publish.\n');
+  }
 }
 
 /**
@@ -34,10 +65,14 @@ export function getStubPath(config: Configuration): string | null {
  *
  * @param {Configuration} config
  * @param {string} filename
- * @param {string} objectName
+ * @param {Partial<MakeOptions} options
  * @returns {Promise<string[]>}
  */
-export async function makeMigration(config: Configuration, filename: string, objectName?: string): Promise<string[]> {
+export async function makeMigration(
+  config: Configuration,
+  filename: string,
+  options?: Partial<MakeOptions>
+): Promise<string[]> {
   const migrationPath = getMigrationPath(config);
   const migrationPathExists = await fs.exists(migrationPath);
 
@@ -48,14 +83,14 @@ export async function makeMigration(config: Configuration, filename: string, obj
   }
 
   const timestamp = getTimestampString();
-  const stubPath = getStubPath(config);
+  const stubPath = path.join(config.basePath, '/stubs');
 
   switch (config.migration.sourceType) {
     case 'sql':
       log(`Creating sql migration. ${migrationPath}/${filename}`);
 
       return makeSqlMigration(filename, {
-        objectName,
+        ...options,
         migrationPath,
         timestamp,
         stubPath
@@ -65,7 +100,7 @@ export async function makeMigration(config: Configuration, filename: string, obj
       log(`Creating JS migration. ${migrationPath}/${filename}`);
 
       return makeJSMigration(filename, {
-        objectName,
+        ...options,
         migrationPath,
         timestamp,
         stubPath,
@@ -76,7 +111,7 @@ export async function makeMigration(config: Configuration, filename: string, obj
       log(`Creating TS migration. ${migrationPath}/${filename}`);
 
       return makeJSMigration(filename, {
-        objectName,
+        ...options,
         migrationPath,
         timestamp,
         stubPath,
@@ -98,7 +133,7 @@ export async function makeMigration(config: Configuration, filename: string, obj
 export async function makeSqlMigration(filename: string, options: Omit<MakeOptions, 'extension'>): Promise<string[]> {
   let createUpTemplate = '';
   let createDownTemplate = '';
-  const { migrationPath, timestamp, stubPath } = options;
+  const { migrationPath, timestamp } = options;
 
   const upFilename = path.join(migrationPath, `${timestamp}_${filename}.up.sql`);
   const downFilename = path.join(migrationPath, `${timestamp}_${filename}.down.sql`);
@@ -111,12 +146,12 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
 
     log(`Create migration for table: ${table}`);
 
-    createUpTemplate = await fs
-      .read(stubPath || path.join(MIGRATION_TEMPLATE_PATH, 'create_up.sql'))
-      .then(template => interpolate(template, { table }));
-    createDownTemplate = await fs
-      .read(stubPath || path.join(MIGRATION_TEMPLATE_PATH, 'create_down.sql'))
-      .then(template => interpolate(template, { table }));
+    createUpTemplate = await getTemplate(options.stubPath, 'create_up.sql').then(template =>
+      interpolate(template, { table })
+    );
+    createDownTemplate = await getTemplate(options.stubPath, 'create_down.sql').then(template =>
+      interpolate(template, { table })
+    );
   }
 
   await fs.write(upFilename, createUpTemplate);
@@ -133,26 +168,34 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
  * @returns {Promise<string[]>}
  */
 export async function makeJSMigration(filename: string, options: MakeOptions): Promise<string[]> {
-  let template = '';
-  let table = options.objectName;
-
-  const { migrationPath, timestamp, extension, stubPath } = options;
+  const { migrationPath, timestamp, extension } = options;
   const migrationFilename = path.join(migrationPath, `${timestamp}_${filename}.${extension}`);
   const createTableMatched = filename.match(CREATE_TABLE_CONVENTION);
 
-  if (createTableMatched) {
-    table = table || createTableMatched[1];
+  const table = options.objectName || (createTableMatched && createTableMatched[1]);
+  const isCreateStub = !!createTableMatched || !!options.create;
 
-    log(`Create migration for table: ${table}`);
+  log(`Migration for table '${table}' created.`);
 
-    template = await fs.read(stubPath || path.join(MIGRATION_TEMPLATE_PATH, `create_table_${extension}.stub`));
-  } else {
-    log(`Migration for table: ${table}`);
-
-    template = await fs.read(stubPath || path.join(MIGRATION_TEMPLATE_PATH, `alter_${extension}.stub`));
-  }
+  const stubFile = `${isCreateStub ? 'create' : 'update'}_${extension}.stub`;
+  const template = await getTemplate(options.stubPath, stubFile);
 
   await fs.write(migrationFilename, interpolate(template, { table }));
 
   return [migrationFilename];
+}
+
+/**
+ * Get template from stub file. It looks for published directory stubs files first to use customized
+ * stub file. It uses default sync-db stubs if directory is not published.
+ *
+ * @param  {string} stubPath
+ * @param  {string} stubFile
+ * @returns {Promise<string>}
+ */
+async function getTemplate(stubPath: string, stubFile: string): Promise<string> {
+  const stubFileExists = await fs.exists(path.join(stubPath, stubFile));
+  const templatePath = path.join(stubFileExists ? stubPath : MIGRATION_TEMPLATE_PATH, stubFile);
+
+  return fs.read(templatePath);
 }

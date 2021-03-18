@@ -3,15 +3,19 @@ import { printLine } from '../util/io';
 import { Command, flags } from '@oclif/command';
 import Configuration from '../domain/Configuration';
 import * as fileMakerService from '../service/fileMaker';
+import MakeOptions from '../domain/MakeOptions';
 
 class Make extends Command {
   static description = 'Make migration files from the template.';
 
   static args = [{ name: 'name', description: 'Object or filename to generate.', required: true }];
   static flags = {
-    name: flags.string({
-      helpValue: 'TYPE',
-      description: 'Name of table/view/routine.'
+    'object-name': flags.string({
+      description: 'Name of table/view/routine to migrate.'
+    }),
+    create: flags.boolean({
+      default: false,
+      description: 'A flag to generate create table stub.'
     }),
     type: flags.string({
       char: 't',
@@ -30,7 +34,10 @@ class Make extends Command {
   async run(): Promise<void> {
     const { args, flags: parsedFlags } = this.parse(Make);
     const config = await loadConfig();
-    const list = await this.makeFiles(config, args.name, parsedFlags.type, parsedFlags.name);
+    const list = await this.makeFiles(config, args.name, parsedFlags.type, {
+      create: parsedFlags.create,
+      objectName: parsedFlags['object-name']
+    });
 
     for (const filename of list) {
       await printLine(`Created ${filename}`);
@@ -46,10 +53,15 @@ class Make extends Command {
    * @param {string} objectName
    * @returns {Promise<string[]>}
    */
-  async makeFiles(config: Configuration, filename: string, type?: string, objectName?: string): Promise<string[]> {
+  async makeFiles(
+    config: Configuration,
+    filename: string,
+    type?: string,
+    options?: Partial<MakeOptions>
+  ): Promise<string[]> {
     switch (type) {
       case 'migration':
-        return fileMakerService.makeMigration(config, filename, objectName);
+        return fileMakerService.makeMigration(config, filename, options);
 
       default:
         throw new Error(`Unsupported file type ${type}.`);
