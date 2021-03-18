@@ -222,7 +222,7 @@ describe('CLI: make', () => {
     expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'demo_users' }));
   });
 
-  it('should create a migration file with template with --create and --object-name flag.', async () => {
+  it('should create TS migration file with template with --create and --object-name flag.', async () => {
     // Write sync-db.yml file.
 
     const cwd = await mkdtemp();
@@ -252,5 +252,40 @@ describe('CLI: make', () => {
     const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_ts.stub'));
 
     expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'settings' }));
+  });
+
+  it('should create SQL migration file with template with --create and --object-name flag.', async () => {
+    // Write sync-db.yml file.
+
+    const cwd = await mkdtemp();
+    const migrationPath = path.join(cwd, 'src/migration');
+    await mkdir(migrationPath, { recursive: true });
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration'
+        }
+      } as Configuration)
+    );
+
+    const { stdout } = await runCli(['make', 'settings', '--create', '--object-name=settings'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/Created.+\d{13}_settings\.up\.sql/);
+    expect(stdout).to.match(/Created.+\d{13}_settings\.down\.sql/);
+
+    // Check files are created.
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(2);
+
+    const upFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_settings\.up\.sql/)));
+    const downFile = await read(path.join(migrationPath, queryByPattern(files, /\d{13}_settings\.down\.sql/)));
+    const upSQL = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_up.stub'));
+    const downSQL = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_down.stub'));
+
+    expect(upFile).to.equal(interpolate(upSQL, { table: 'settings' }));
+    expect(downFile).to.equal(interpolate(downSQL, { table: 'settings' }));
   });
 });

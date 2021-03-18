@@ -134,9 +134,10 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
 
   // Use the create migration template if the filename follows the pattern: create_<table>_table.sql
   const createTableMatched = filename.match(CREATE_TABLE_CONVENTION);
+  const isCreateStub = !!createTableMatched || !!options.create;
 
-  if (createTableMatched) {
-    const table = createTableMatched[1];
+  if (isCreateStub) {
+    const table = options.objectName || (createTableMatched && createTableMatched[1]);
 
     log(`Create migration for table: ${table}`);
 
