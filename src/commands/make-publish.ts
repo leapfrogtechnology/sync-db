@@ -1,6 +1,8 @@
-import { loadConfig } from '../config';
+import { cyan } from 'chalk';
 import { Command } from '@oclif/command';
 
+import { loadConfig } from '../config';
+import { printInfo, printLine } from '../util/io';
 import * as fileMakerService from '../service/fileMaker';
 
 class MakePublish extends Command {
@@ -14,7 +16,19 @@ class MakePublish extends Command {
   async run(): Promise<void> {
     const config = await loadConfig();
 
-    await fileMakerService.publish(config);
+    await printLine('');
+
+    const templates = await fileMakerService.publish(config);
+
+    for (const template of templates) {
+      await printLine(cyan(`  - ${template}`));
+    }
+
+    if (templates.length) {
+      await printInfo('\n Templates published successfully.\n');
+    } else {
+      await printLine(' Nothing to publish.\n');
+    }
   }
 }
 

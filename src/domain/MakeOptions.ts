@@ -5,7 +5,7 @@ interface MakeOptions {
   migrationPath: string;
   timestamp: string;
   extension: FileExtensions;
-  stubPath: string;
+  baseTemplatePath: string;
   create?: boolean;
 }
 

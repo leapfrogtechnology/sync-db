@@ -1,9 +1,7 @@
 import * as path from 'path';
-import { cyan } from 'chalk';
 
 import * as fs from '../util/fs';
 import { log } from '../util/logger';
-import { printInfo, printLine } from '../util/io';
 import { interpolate } from '../util/string';
 import { getTimestampString } from '../util/ts';
 import MakeOptions from '../domain/MakeOptions';
@@ -26,39 +24,34 @@ const SOURCE_TYPE_STUBS = {
  * @param {string} stubPath
  * @returns {string | null}
  */
-export async function publish(config: Configuration) {
-  const stubPath = path.join(config.basePath, '/stubs');
-  const stubPathExists = await fs.exists(stubPath);
+export async function publish(config: Configuration): Promise<string[]> {
+  const templateFiles = [];
+  const templateBasePath = path.join(config.basePath, '/stubs');
+  const templateBasePathExists = await fs.exists(templateBasePath);
+  const templates = SOURCE_TYPE_STUBS[config.migration.sourceType] || [];
 
-  if (!stubPathExists) {
-    log(`Stub path does not exist, creating ${stubPath}`);
+  if (!templateBasePathExists) {
+    log(`Template base path does not exist, creating ${templateBasePath}`);
 
-    await fs.mkdir(stubPath, { recursive: true });
+    await fs.mkdir(templateBasePath, { recursive: true });
   }
 
-  const stubs = SOURCE_TYPE_STUBS[config.migration.sourceType] || [];
+  log(`Templates to be moved: ${templates}`);
 
-  log(`Templates to be moved: ${stubs}`);
-  await printLine('');
+  for (const template of templates) {
+    if (await fs.exists(path.join(templateBasePath, template))) {
+      log(`File already exists: ${template}`);
 
-  const res = await Promise.all(
-    stubs.map(async stub => {
-      if (await fs.exists(path.join(stubPath, stub))) {
-        return false;
-      }
+      continue;
+    }
 
-      await fs.copy(path.join(MIGRATION_TEMPLATE_PATH, stub), path.join(stubPath, stub));
-      await printLine(cyan(`  - ${stub}`));
-
-      return true;
-    })
-  );
-
-  if (res.includes(true)) {
-    await printInfo('\n Templates published successfully.\n');
-  } else {
-    await printLine(' Nothing to publish.\n');
+    await fs.copy(path.join(MIGRATION_TEMPLATE_PATH, template), path.join(templateBasePath, template));
+    templateFiles.push(template);
   }
+
+  log(`Templates moved: ${templateFiles}`);
+
+  return templateFiles;
 }
 
 /**
@@ -84,7 +77,7 @@ export async function makeMigration(
   }
 
   const timestamp = getTimestampString();
-  const stubPath = path.join(config.basePath, '/stubs');
+  const baseTemplatePath = path.join(config.basePath, '/stubs');
 
   switch (config.migration.sourceType) {
     case 'sql':
@@ -94,7 +87,7 @@ export async function makeMigration(
         ...options,
         migrationPath,
         timestamp,
-        stubPath
+        baseTemplatePath
       });
 
     case 'javascript':
@@ -104,7 +97,7 @@ export async function makeMigration(
         ...options,
         migrationPath,
         timestamp,
-        stubPath,
+        baseTemplatePath,
         extension: FileExtensions.JS
       });
 
@@ -115,7 +108,7 @@ export async function makeMigration(
         ...options,
         migrationPath,
         timestamp,
-        stubPath,
+        baseTemplatePath,
         extension: FileExtensions.TS
       });
 
@@ -147,10 +140,10 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
 
     log(`Create migration for table: ${table}`);
 
-    createUpTemplate = await getTemplate(options.stubPath, 'create_up.stub').then(template =>
+    createUpTemplate = await getTemplate(options.baseTemplatePath, 'create_up.stub').then(template =>
       interpolate(template, { table })
     );
-    createDownTemplate = await getTemplate(options.stubPath, 'create_down.stub').then(template =>
+    createDownTemplate = await getTemplate(options.baseTemplatePath, 'create_down.stub').then(template =>
       interpolate(template, { table })
     );
   }
@@ -178,8 +171,8 @@ export async function makeJSMigration(filename: string, options: MakeOptions): P
 
   log(`Migration for table '${table}' created.`);
 
-  const stubFile = `${isCreateStub ? 'create' : 'update'}_${extension}.stub`;
-  const template = await getTemplate(options.stubPath, stubFile);
+  const templateFilename = `${isCreateStub ? 'create' : 'update'}_${extension}.stub`;
+  const template = await getTemplate(options.baseTemplatePath, templateFilename);
 
   await fs.write(migrationFilename, interpolate(template, { table }));
 
@@ -187,16 +180,15 @@ export async function makeJSMigration(filename: string, options: MakeOptions): P
 }
 
 /**
- * Get template from stub file. It looks for published directory stubs files first to use customized
- * stub file. It uses default sync-db stubs if directory is not published.
+ * Get template string by reading stub files either from project base path or sync-db assets' path.
  *
- * @param  {string} stubPath
- * @param  {string} stubFile
+ * @param  {string} baseTemplatePath
+ * @param  {string} templateFilename
  * @returns {Promise<string>}
  */
-async function getTemplate(stubPath: string, stubFile: string): Promise<string> {
-  const stubFileExists = await fs.exists(path.join(stubPath, stubFile));
-  const templatePath = path.join(stubFileExists ? stubPath : MIGRATION_TEMPLATE_PATH, stubFile);
+async function getTemplate(baseTemplatePath: string, templateFilename: string): Promise<string> {
+  const baseFilePathExists = await fs.exists(path.join(baseTemplatePath, templateFilename));
+  const templatePath = path.join(baseFilePathExists ? baseTemplatePath : MIGRATION_TEMPLATE_PATH, templateFilename);
 
   return fs.read(templatePath);
 }
