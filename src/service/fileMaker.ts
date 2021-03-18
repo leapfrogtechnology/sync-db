@@ -147,10 +147,10 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
 
     log(`Create migration for table: ${table}`);
 
-    createUpTemplate = await getTemplate(options.stubPath, 'create_up.sql').then(template =>
+    createUpTemplate = await getTemplate(options.stubPath, 'create_up.stub').then(template =>
       interpolate(template, { table })
     );
-    createDownTemplate = await getTemplate(options.stubPath, 'create_down.sql').then(template =>
+    createDownTemplate = await getTemplate(options.stubPath, 'create_down.stub').then(template =>
       interpolate(template, { table })
     );
   }

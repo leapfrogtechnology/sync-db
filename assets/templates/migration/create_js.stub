@@ -1,11 +1,11 @@
 /**
  * Create {{table}} table.
  *
- * @param {Knex} knex
+ * @param {Knex} db
  * @returns {Promise}
  */
-export function up(knex) {
-  return knex.schema.createTable('{{table}}', table => {
+export function up(db) {
+  return db.schema.createTable('{{table}}', table => {
     table.increments('id').primary();
     table.timestamps(true, true);
   });
@@ -14,9 +14,9 @@ export function up(knex) {
 /**
  * Drop {{table}} table.
  *
- * @param {Knex} knex
+ * @param {Knex} db
  * @returns {Promise}
  */
-export function down(knex) {
-  return knex.schema.dropTable('{{table}}');
+export function down(db) {
+  return db.schema.dropTable('{{table}}');
 }

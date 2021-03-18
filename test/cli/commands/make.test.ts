@@ -6,33 +6,9 @@ import { it, describe } from 'mocha';
 import { runCli, queryByPattern } from './util';
 import Configuration from '../../../src/domain/Configuration';
 import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs';
+import { interpolate } from '../../../src/util/string';
 
-const tsTemplate = `import * as Knex from 'knex';
-
-/**
- * Create demo_users table.
- *
- * @param {Knex} db
- * @returns {Promise}
- */
-export function up(db: Knex) {
-  return db.schema.createTable('demo_users', table => {
-    table.increments('id').primary().unsigned();
-    table.specificType('created_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
-    table.specificType('updated_at', 'datetimeoffset').defaultTo(db.fn.now()).notNullable();
-  });
-}
-
-/**
- * Drop demo_users table.
- *
- * @param {Knex} db
- * @returns {Promise}
- */
-export function down(db: Knex) {
-  return db.schema.dropTable('demo_users');
-}
-`;
+const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../../assets/templates/migration');
 
 describe('CLI: make', () => {
   describe('--help', () => {
@@ -54,6 +30,36 @@ describe('CLI: make', () => {
     const pathExists = await exists(path.join(cwd, 'src/migration'));
 
     expect(pathExists).to.equal(true);
+  });
+
+  it('should publish the template files and sourceType is sql.', async () => {
+    // Write sync-db.yml file.
+    const cwd = await mkdtemp();
+    const stubPath = path.join(cwd, 'src/stubs');
+    await mkdir(stubPath, { recursive: true });
+
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration'
+        }
+      } as Configuration)
+    );
+    const { stdout } = await runCli(['make-publish'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/create_up\.stub/);
+    expect(stdout).to.match(/create_down\.stub/);
+
+    // Check files are created.
+    const files = await glob(stubPath);
+    const upFileExists = await exists(path.join(stubPath, queryByPattern(files, /create_up\.stub/)));
+    const downFileExists = await exists(path.join(stubPath, queryByPattern(files, /create_down\.stub/)));
+
+    expect(files.length).to.equal(2);
+    expect(upFileExists).to.equal(true);
+    expect(downFileExists).to.equal(true);
   });
 
   it('should create a migration file when name is supplied.', async () => {
@@ -140,8 +146,9 @@ describe('CLI: make', () => {
     const migrationFile = await read(
       path.join(migrationPath, queryByPattern(files, /\d{13}_alter_users_table_drop_column\.js/))
     );
+    const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'update_js.stub'));
 
-    expect(migrationFile).to.equal('');
+    expect(migrationFile).to.equal(fileOutput);
   });
 
   it('should create a migration file when name is supplied and sourceType is typescript.', async () => {
@@ -172,8 +179,9 @@ describe('CLI: make', () => {
     const migrationFile = await read(
       path.join(migrationPath, queryByPattern(files, /\d{13}_create_table_demo_users\.ts/))
     );
+    const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'update_ts.stub'));
 
-    expect(migrationFile).to.equal('');
+    expect(migrationFile).to.equal(fileOutput);
   });
 
   it('should create a migration file with template when name matches filename convention for typescript.', async () => {
@@ -205,7 +213,8 @@ describe('CLI: make', () => {
     const migrationFile = await read(
       path.join(migrationPath, queryByPattern(files, /\d{13}_create_demo_users_table\.ts/))
     );
+    const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_ts.stub'));
 
-    expect(migrationFile).to.equal(tsTemplate);
+    expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'demo_users' }));
   });
 });
