@@ -4,9 +4,9 @@ import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
 import { runCli, queryByPattern } from './util';
+import { interpolate } from '../../../src/util/string';
 import Configuration from '../../../src/domain/Configuration';
 import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs';
-import { interpolate } from '../../../src/util/string';
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../../assets/templates/migration');
 
@@ -30,36 +30,6 @@ describe('CLI: make', () => {
     const pathExists = await exists(path.join(cwd, 'src/migration'));
 
     expect(pathExists).to.equal(true);
-  });
-
-  it('should publish the template files and sourceType is sql.', async () => {
-    // Write sync-db.yml file.
-    const cwd = await mkdtemp();
-    const stubPath = path.join(cwd, 'src/stubs');
-    await mkdir(stubPath, { recursive: true });
-
-    await write(
-      path.join(cwd, 'sync-db.yml'),
-      yaml.stringify({
-        migration: {
-          directory: 'migration'
-        }
-      } as Configuration)
-    );
-    const { stdout } = await runCli(['make-publish'], { cwd });
-
-    // Check the output.
-    expect(stdout).to.match(/create_up\.stub/);
-    expect(stdout).to.match(/create_down\.stub/);
-
-    // Check files are created.
-    const files = await glob(stubPath);
-    const upFileExists = await exists(path.join(stubPath, queryByPattern(files, /create_up\.stub/)));
-    const downFileExists = await exists(path.join(stubPath, queryByPattern(files, /create_down\.stub/)));
-
-    expect(files.length).to.equal(2);
-    expect(upFileExists).to.equal(true);
-    expect(downFileExists).to.equal(true);
   });
 
   it('should create a migration file when name is supplied.', async () => {
@@ -216,5 +186,73 @@ describe('CLI: make', () => {
     const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_ts.stub'));
 
     expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'demo_users' }));
+  });
+
+  it('should create a migration file with template when name matches filename convention for typescript.', async () => {
+    // Write sync-db.yml file.
+
+    const cwd = await mkdtemp();
+    const migrationPath = path.join(cwd, 'src/migration');
+    await mkdir(migrationPath, { recursive: true });
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration',
+          sourceType: 'typescript'
+        }
+      } as Configuration)
+    );
+
+    const { stdout } = await runCli(['make', 'create_demo_users_table'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/Created.+\d{13}_create_demo_users_table\.ts/);
+
+    // Check files are created.
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(1);
+
+    const migrationFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_create_demo_users_table\.ts/))
+    );
+    const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_ts.stub'));
+
+    expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'demo_users' }));
+  });
+
+  it('should create a migration file with template with --create and --object-name flag.', async () => {
+    // Write sync-db.yml file.
+
+    const cwd = await mkdtemp();
+    const migrationPath = path.join(cwd, 'src/migration');
+    await mkdir(migrationPath, { recursive: true });
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration',
+          sourceType: 'typescript'
+        }
+      } as Configuration)
+    );
+
+    const { stdout } = await runCli(['make', 'settings', '--create', '--object-name=settings'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/Created.+\d{13}_settings\.ts/);
+
+    // Check files are created.
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(1);
+
+    const migrationFile = await read(
+      path.join(migrationPath, queryByPattern(files, /\d{13}_settings\.ts/))
+    );
+    const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_ts.stub'));
+
+    expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'settings' }));
   });
 });

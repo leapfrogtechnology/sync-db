@@ -1,9 +1,9 @@
 import { loadConfig } from '../config';
 import { printLine } from '../util/io';
 import { Command, flags } from '@oclif/command';
+import MakeOptions from '../domain/MakeOptions';
 import Configuration from '../domain/Configuration';
 import * as fileMakerService from '../service/fileMaker';
-import MakeOptions from '../domain/MakeOptions';
 
 class Make extends Command {
   static description = 'Make migration files from the template.';

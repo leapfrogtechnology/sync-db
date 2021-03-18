@@ -4,7 +4,7 @@ import { Command } from '@oclif/command';
 import * as fileMakerService from '../service/fileMaker';
 
 class MakePublish extends Command {
-  static description = 'Make migration files from the template.';
+  static description = 'Publish migration templates files.';
 
   /**
    * CLI command execution handler.
