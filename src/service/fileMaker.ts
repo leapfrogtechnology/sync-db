@@ -37,7 +37,8 @@ export async function publish(config: Configuration) {
   }
 
   const stubs = SOURCE_TYPE_STUBS[config.migration.sourceType] || [];
-  log(`Stubs to be moved: ${stubs}`);
+
+  log(`Templates to be moved: ${stubs}`);
   await printLine('');
 
   const res = await Promise.all(
@@ -54,7 +55,7 @@ export async function publish(config: Configuration) {
   );
 
   if (res.includes(true)) {
-    await printInfo('\n Stubs published successfully.\n');
+    await printInfo('\n Templates published successfully.\n');
   } else {
     await printLine(' Nothing to publish.\n');
   }
