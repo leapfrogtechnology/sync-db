@@ -62,23 +62,6 @@ export async function publish(config: Configuration) {
 }
 
 /**
- * Get template stub directory path.
- *
- * @param {string} basePath
- * @param {string} stubPath
- * @returns {string | null}
- */
-export function getStubPath(config: Configuration): string | null {
-  if (!config.migration.stubPath) {
-    return null;
-  }
-
-  return path.isAbsolute(config.migration.stubPath)
-    ? config.migration.stubPath
-    : path.join(config.basePath, config.migration.stubPath);
-}
-
-/**
  * Generate migration file(s).
  *
  * @param {Configuration} config

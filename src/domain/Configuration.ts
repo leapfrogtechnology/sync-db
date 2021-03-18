@@ -19,7 +19,6 @@ interface Configuration {
     directory: string;
     tableName: string;
     sourceType: 'sql' | 'javascript' | 'typescript';
-    stubPath?: string;
   };
 }
 
