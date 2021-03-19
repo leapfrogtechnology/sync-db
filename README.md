@@ -39,6 +39,7 @@ This utility uses [Knex](http://knexjs.org/) under the hood so these are the [su
 You can use `sync-db` both as a CLI utility and programmatically.
 
 <!-- usage -->
+
 ```sh-session
 $ npm install -g @leapfrogtechnology/sync-db
 $ sync-db COMMAND
@@ -50,6 +51,7 @@ USAGE
   $ sync-db COMMAND
 ...
 ```
+
 <!-- usagestop -->
 
 ## Commands
@@ -59,16 +61,17 @@ When installed globally, you can invoke the CLI directly.
 The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configuration](#configuration).
 
 <!-- commands -->
-* [`sync-db `](#sync-db-)
-* [`sync-db help [COMMAND]`](#sync-db-help-command)
-* [`sync-db make NAME`](#sync-db-make-name)
-* [`sync-db migrate-latest`](#sync-db-migrate-latest)
-* [`sync-db migrate-list`](#sync-db-migrate-list)
-* [`sync-db migrate-rollback`](#sync-db-migrate-rollback)
-* [`sync-db prune`](#sync-db-prune)
-* [`sync-db synchronize`](#sync-db-synchronize)
 
-## `sync-db `
+- [`sync-db`](#sync-db-)
+- [`sync-db help [COMMAND]`](#sync-db-help-command)
+- [`sync-db make NAME`](#sync-db-make-name)
+- [`sync-db migrate-latest`](#sync-db-migrate-latest)
+- [`sync-db migrate-list`](#sync-db-migrate-list)
+- [`sync-db migrate-rollback`](#sync-db-migrate-rollback)
+- [`sync-db prune`](#sync-db-prune)
+- [`sync-db synchronize`](#sync-db-synchronize)
+
+## `sync-db`
 
 ```
 USAGE
@@ -191,7 +194,9 @@ OPTIONS
 ```
 
 _See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/synchronize.ts)_
+
 <!-- commandsstop -->
+
 Refer to the [examples](#examples) section below for full example with CLI usage.
 
 ## Programmatic Usage

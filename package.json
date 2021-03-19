@@ -52,7 +52,7 @@
     "release": "./release.sh bump",
     "format": "prettier --write . '**/*.{ts,js,md,yaml,json}'",
     "format:check": "prettier --check . '**/*.{ts,js,md,yaml,json}'",
-    "doc:cli": "oclif-dev readme"
+    "doc:cli": "oclif-dev readme && prettier --write README.md"
   },
   "dependencies": {
     "@oclif/command": "^1",
