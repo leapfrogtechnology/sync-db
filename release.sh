@@ -62,7 +62,7 @@ compare_and_release() {
   fi
 
   if [ "$NEXT" != "false" ]; then
-    # Change CHANGELOG.md
+    # Update CHANGELOG.md
     changelog
 
     # Update commands and usage of CLI in README.md
