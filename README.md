@@ -39,6 +39,18 @@ This utility uses [Knex](http://knexjs.org/) under the hood so these are the [su
 You can use `sync-db` both as a CLI utility and programmatically.
 
 <!-- usage -->
+```sh-session
+$ npm install -g @leapfrogtechnology/sync-db
+$ sync-db COMMAND
+running command...
+$ sync-db (-v|--version|version)
+@leapfrogtechnology/sync-db/1.0.0-beta.9 darwin-x64 node-v12.20.1
+$ sync-db --help [COMMAND]
+USAGE
+  $ sync-db COMMAND
+...
+```
+<!-- usagestop -->
 
 ## Commands
 
@@ -47,6 +59,139 @@ When installed globally, you can invoke the CLI directly.
 The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configuration](#configuration).
 
 <!-- commands -->
+* [`sync-db `](#sync-db-)
+* [`sync-db help [COMMAND]`](#sync-db-help-command)
+* [`sync-db make NAME`](#sync-db-make-name)
+* [`sync-db migrate-latest`](#sync-db-migrate-latest)
+* [`sync-db migrate-list`](#sync-db-migrate-list)
+* [`sync-db migrate-rollback`](#sync-db-migrate-rollback)
+* [`sync-db prune`](#sync-db-prune)
+* [`sync-db synchronize`](#sync-db-synchronize)
+
+## `sync-db `
+
+```
+USAGE
+  $ sync-db
+```
+
+_See code: [src/commands/index.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/index.ts)_
+
+## `sync-db help [COMMAND]`
+
+display help for sync-db
+
+```
+USAGE
+  $ sync-db help [COMMAND]
+
+ARGUMENTS
+  COMMAND  command to show help for
+
+OPTIONS
+  --all  see all commands in CLI
+```
+
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
+
+## `sync-db make NAME`
+
+Make migration files from the template.
+
+```
+USAGE
+  $ sync-db make NAME
+
+ARGUMENTS
+  NAME  Object or filename to generate.
+
+OPTIONS
+  -t, --type=TYPE  [default: migration] Type of file to generate.
+```
+
+_See code: [src/commands/make.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/make.ts)_
+
+## `sync-db migrate-latest`
+
+Run the migrations up to the latest changes.
+
+```
+USAGE
+  $ sync-db migrate-latest
+
+OPTIONS
+  --connection-resolver=PATH  Path to the connection resolver.
+  --dry-run                   Dry run migration.
+  --only=CONNECTION_ID        Filter only a single connection.
+```
+
+_See code: [src/commands/migrate-latest.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/migrate-latest.ts)_
+
+## `sync-db migrate-list`
+
+List all the migrations.
+
+```
+USAGE
+  $ sync-db migrate-list
+
+OPTIONS
+  --connection-resolver=PATH  Path to the connection resolver.
+  --only=CONNECTION_ID        Filter only a single connection.
+```
+
+_See code: [src/commands/migrate-list.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/migrate-list.ts)_
+
+## `sync-db migrate-rollback`
+
+Rollback migrations up to the last run batch.
+
+```
+USAGE
+  $ sync-db migrate-rollback
+
+OPTIONS
+  --connection-resolver=PATH  Path to the connection resolver.
+  --dry-run                   Dry run rollback.
+  --only=CONNECTION_ID        Filter only a single connection.
+```
+
+_See code: [src/commands/migrate-rollback.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/migrate-rollback.ts)_
+
+## `sync-db prune`
+
+Drop all the synchronized db objects except the ones created via migrations.
+
+```
+USAGE
+  $ sync-db prune
+
+OPTIONS
+  --connection-resolver=PATH  Path to the connection resolver.
+  --dry-run                   Dry run prune.
+  --only=CONNECTION_ID        Filter only a single connection.
+```
+
+_See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/prune.ts)_
+
+## `sync-db synchronize`
+
+Synchronize all the configured database connections.
+
+```
+USAGE
+  $ sync-db synchronize
+
+OPTIONS
+  -f, --force                 Force synchronization.
+  --connection-resolver=PATH  Path to the connection resolver.
+  --dry-run                   Dry run synchronization.
+  --only=CONNECTION_ID        Filter only a single connection.
+  --skip-migration            Skip running migrations.
+```
+
+_See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/synchronize.ts)_
+<!-- commandsstop -->
 Refer to the [examples](#examples) section below for full example with CLI usage.
 
 ## Programmatic Usage
