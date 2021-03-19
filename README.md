@@ -38,45 +38,18 @@ This utility uses [Knex](http://knexjs.org/) under the hood so these are the [su
 
 You can use `sync-db` both as a CLI utility and programmatically.
 
-### CLI
+<!-- usage -->
+
+## Commands
 
 When installed globally, you can invoke the CLI directly.
 
 The CLI exposes a single command `sync-db` that runs synchronize operation based on your [configuration](#configuration).
 
-**CLI Options**
-
-Below shown are the available CLI options , which is also the output printed by `sync-db --help`.
-
-```bash
-Synchronize database
-
-USAGE
-  $ sync-db
-
-OPTIONS
-  -h, --help                  Print help information
-  -v, --version               Print version
-
-COMMANDS
-  make              Make migration files from the template.
-  migrate-latest    Run the migrations up to the latest changes.
-  migrate-list      List all the migrations.
-  migrate-rollback  Rollback migrations up to the last run batch.
-  prune             Drop all the synchronized db objects except the ones created via migrations.
-  synchronize       Synchronize all the configured database connections.
-
-FLAGS
-  -f, --force                 Force synchronization.
-  --connection-resolver=PATH  Path to the connection resolver.
-  --only=CONNECTION_ID        Filter only a single connection.
-  --skip-migration            Skip running migrations.
-  --dry-run                   Dry run migrations and synchronization.
-```
-
+<!-- commands -->
 Refer to the [examples](#examples) section below for full example with CLI usage.
 
-### Programmatic Usage
+## Programmatic Usage
 
 You may use programmatic API as shown below in case you need better flexibility based on your needs.
 
