@@ -62,12 +62,16 @@ compare_and_release() {
   fi
 
   if [ "$NEXT" != "false" ]; then
+    # Update CHANGELOG.md
     changelog
+
+    # Update commands and usage of CLI in README.md
+    yarn doc:update
 
     git config --global user.email "travis@travis-ci.org"
     git config --global user.name "Travis CI"
 
-    git add CHANGELOG.md
+    git add CHANGELOG.md README.md
     git commit -v -m "${NEXT} Release :tada: :fireworks: :bell:" -m "[skip ci]"
 
     git remote rm origin

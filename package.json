@@ -16,7 +16,10 @@
   },
   "oclif": {
     "bin": "sync-db",
-    "commands": "./lib/commands"
+    "commands": "./lib/commands",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
   },
   "repository": "https://github.com/leapfrogtechnology/sync-db",
   "homepage": "https://github.com/leapfrogtechnology/sync-db",
@@ -48,7 +51,8 @@
     "changelog": "./release.sh changelog",
     "release": "./release.sh bump",
     "format": "prettier --write . '**/*.{ts,js,md,yaml,json}'",
-    "format:check": "prettier --check . '**/*.{ts,js,md,yaml,json}'"
+    "format:check": "prettier --check . '**/*.{ts,js,md,yaml,json}'",
+    "doc:cli": "oclif-dev readme && prettier --write README.md"
   },
   "dependencies": {
     "@oclif/command": "^1",
@@ -65,6 +69,7 @@
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@oclif/dev-cli": "^1.26.0",
     "@oclif/test": "^1",
     "@oclif/tslint": "^3",
     "@types/chai": "^4.2.7",
