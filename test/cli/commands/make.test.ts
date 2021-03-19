@@ -156,7 +156,6 @@ describe('CLI: make', () => {
 
   it('should create a migration file with template when name matches filename convention for typescript.', async () => {
     // Write sync-db.yml file.
-
     const cwd = await mkdtemp();
     const migrationPath = path.join(cwd, 'src/migration');
     await mkdir(migrationPath, { recursive: true });
@@ -222,9 +221,8 @@ describe('CLI: make', () => {
     expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'demo_users' }));
   });
 
-  it('should create TS migration file with template with --create and --object-name flag.', async () => {
+  it('should create TS migration template with --create and --object-name flag.', async () => {
     // Write sync-db.yml file.
-
     const cwd = await mkdtemp();
     const migrationPath = path.join(cwd, 'src/migration');
     await mkdir(migrationPath, { recursive: true });
@@ -256,7 +254,6 @@ describe('CLI: make', () => {
 
   it('should create SQL migration file with template with --create and --object-name flag.', async () => {
     // Write sync-db.yml file.
-
     const cwd = await mkdtemp();
     const migrationPath = path.join(cwd, 'src/migration');
     await mkdir(migrationPath, { recursive: true });
