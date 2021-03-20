@@ -114,8 +114,8 @@ describe('CLI: make-publish', () => {
     const cwd = await mkdtemp();
     const stubPath = path.join(cwd, 'src/stubs');
     await mkdir(stubPath, { recursive: true });
-    const createUpPath = path.join(stubPath, "create_up.stub")
-    const createDownPath = path.join(stubPath, "create_down.stub")
+    const createUpPath = path.join(stubPath, 'create_up.stub');
+    const createDownPath = path.join(stubPath, 'create_down.stub');
 
     await write(
       path.join(cwd, 'sync-db.yml'),
@@ -125,8 +125,8 @@ describe('CLI: make-publish', () => {
         }
       } as Configuration)
     );
-    await write(createUpPath, "CREATE TABLE {{table}} (id INT PRIMARY KEY)")
-    await write(createDownPath, "DROP TABLE {{table}}")
+    await write(createUpPath, 'CREATE TABLE {{table}} (id INT PRIMARY KEY)');
+    await write(createDownPath, 'DROP TABLE {{table}}');
 
     const { stdout } = await runCli(['make-publish'], { cwd });
 
@@ -140,7 +140,7 @@ describe('CLI: make-publish', () => {
     const createDown = await read(path.join(stubPath, queryByPattern(files, /create_down\.stub/)));
 
     expect(files.length).to.equal(2);
-    expect(createUp).to.equal("CREATE TABLE {{table}} (id INT PRIMARY KEY)");
-    expect(createDown).to.equal("DROP TABLE {{table}}");
+    expect(createUp).to.equal('CREATE TABLE {{table}} (id INT PRIMARY KEY)');
+    expect(createDown).to.equal('DROP TABLE {{table}}');
   });
 });
