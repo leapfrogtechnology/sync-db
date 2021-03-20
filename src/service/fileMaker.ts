@@ -40,7 +40,7 @@ export async function publish(config: Configuration): Promise<MakePublishResult>
   log(`Templates to be moved: ${templates}`);
 
   for (const template of templates) {
-    const templatePath = path.join(templateBasePath, template)
+    const templatePath = path.join(templateBasePath, template);
 
     if (await fs.exists(templatePath)) {
       log(`File already exists: ${templatePath}`);
