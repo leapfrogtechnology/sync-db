@@ -15,7 +15,7 @@ class Make extends Command {
     }),
     create: flags.boolean({
       default: false,
-      description: 'A flag to generate create table stub.'
+      description: 'Generate create table stub.'
     }),
     type: flags.string({
       char: 't',
