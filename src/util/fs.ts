@@ -107,3 +107,21 @@ export function remove(filepath: string): Promise<void> {
     });
   });
 }
+/**
+ * Copy file.
+ *
+ * @param {string} fromPath
+ * @param {string} toPath
+ * @returns {Promise<void>}
+ */
+export function copy(fromPath: string, toPath: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    fs.copyFile(fromPath, toPath, err => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve();
+    });
+  });
+}

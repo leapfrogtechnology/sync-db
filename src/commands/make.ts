@@ -1,6 +1,7 @@
 import { loadConfig } from '../config';
 import { printLine } from '../util/io';
 import { Command, flags } from '@oclif/command';
+import MakeOptions from '../domain/MakeOptions';
 import Configuration from '../domain/Configuration';
 import * as fileMakerService from '../service/fileMaker';
 
@@ -9,6 +10,13 @@ class Make extends Command {
 
   static args = [{ name: 'name', description: 'Object or filename to generate.', required: true }];
   static flags = {
+    'object-name': flags.string({
+      description: 'Name of table/view/routine to migrate.'
+    }),
+    create: flags.boolean({
+      default: false,
+      description: 'Generate create table stub.'
+    }),
     type: flags.string({
       char: 't',
       helpValue: 'TYPE',
@@ -26,7 +34,10 @@ class Make extends Command {
   async run(): Promise<void> {
     const { args, flags: parsedFlags } = this.parse(Make);
     const config = await loadConfig();
-    const list = await this.makeFiles(config, args.name, parsedFlags.type);
+    const list = await this.makeFiles(config, args.name, parsedFlags.type, {
+      create: parsedFlags.create,
+      objectName: parsedFlags['object-name']
+    });
 
     for (const filename of list) {
       await printLine(`Created ${filename}`);
@@ -37,14 +48,20 @@ class Make extends Command {
    * Make files based on the given name and type.
    *
    * @param {Configuration} config
-   * @param {string} name
-   * @param {string} [type]
+   * @param {string} filename
+   * @param {string} type
+   * @param {string} objectName
    * @returns {Promise<string[]>}
    */
-  async makeFiles(config: Configuration, name: string, type?: string): Promise<string[]> {
+  async makeFiles(
+    config: Configuration,
+    filename: string,
+    type?: string,
+    options?: Partial<MakeOptions>
+  ): Promise<string[]> {
     switch (type) {
       case 'migration':
-        return fileMakerService.makeMigration(config, name);
+        return fileMakerService.makeMigration(config, filename, options);
 
       default:
         throw new Error(`Unsupported file type ${type}.`);

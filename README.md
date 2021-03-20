@@ -45,7 +45,7 @@ $ npm install -g @leapfrogtechnology/sync-db
 $ sync-db COMMAND
 running command...
 $ sync-db (-v|--version|version)
-@leapfrogtechnology/sync-db/1.0.0-beta.9 darwin-x64 node-v12.20.1
+@leapfrogtechnology/sync-db/1.0.0-beta.10 darwin-x64 node-v12.20.1
 $ sync-db --help [COMMAND]
 USAGE
   $ sync-db COMMAND
@@ -65,6 +65,7 @@ The CLI exposes a single command `sync-db` that runs synchronize operation based
 - [`sync-db`](#sync-db-)
 - [`sync-db help [COMMAND]`](#sync-db-help-command)
 - [`sync-db make NAME`](#sync-db-make-name)
+- [`sync-db make-publish`](#sync-db-make-publish)
 - [`sync-db migrate-latest`](#sync-db-migrate-latest)
 - [`sync-db migrate-list`](#sync-db-migrate-list)
 - [`sync-db migrate-rollback`](#sync-db-migrate-rollback)
@@ -78,7 +79,7 @@ USAGE
   $ sync-db
 ```
 
-_See code: [src/commands/index.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/index.ts)_
+_See code: [src/commands/index.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/index.ts)_
 
 ## `sync-db help [COMMAND]`
 
@@ -109,10 +110,23 @@ ARGUMENTS
   NAME  Object or filename to generate.
 
 OPTIONS
-  -t, --type=TYPE  [default: migration] Type of file to generate.
+  -t, --type=TYPE            [default: migration] Type of file to generate.
+  --create                   A flag to generate create table stub.
+  --object-name=object-name  Name of table/view/routine to migrate.
 ```
 
-_See code: [src/commands/make.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/make.ts)_
+_See code: [src/commands/make.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/make.ts)_
+
+## `sync-db make-publish`
+
+Publish migration templates files.
+
+```
+USAGE
+  $ sync-db make-publish
+```
+
+_See code: [src/commands/make-publish.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/make-publish.ts)_
 
 ## `sync-db migrate-latest`
 
@@ -128,7 +142,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/migrate-latest.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/migrate-latest.ts)_
+_See code: [src/commands/migrate-latest.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/migrate-latest.ts)_
 
 ## `sync-db migrate-list`
 
@@ -143,7 +157,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/migrate-list.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/migrate-list.ts)_
+_See code: [src/commands/migrate-list.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/migrate-list.ts)_
 
 ## `sync-db migrate-rollback`
 
@@ -159,7 +173,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/migrate-rollback.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/migrate-rollback.ts)_
+_See code: [src/commands/migrate-rollback.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/migrate-rollback.ts)_
 
 ## `sync-db prune`
 
@@ -175,7 +189,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/prune.ts)_
+_See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/prune.ts)_
 
 ## `sync-db synchronize`
 
@@ -193,7 +207,7 @@ OPTIONS
   --skip-migration            Skip running migrations.
 ```
 
-_See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.9/src/commands/synchronize.ts)_
+_See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v1.0.0-beta.10/src/commands/synchronize.ts)_
 
 <!-- commandsstop -->
 

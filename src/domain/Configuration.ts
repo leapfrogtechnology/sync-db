@@ -18,7 +18,6 @@ interface Configuration {
   migration: {
     directory: string;
     tableName: string;
-    // TODO: Only 'sql' is supported sourceType now. JS will be supported later.
     sourceType: 'sql' | 'javascript' | 'typescript';
   };
 }
