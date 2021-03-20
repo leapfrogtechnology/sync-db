@@ -7,6 +7,7 @@ import { getTimestampString } from '../util/ts';
 import MakeOptions from '../domain/MakeOptions';
 import Configuration from '../domain/Configuration';
 import FileExtensions from '../enum/FileExtensions';
+import MakePublishResult from '../domain/MakePublishResult';
 import { getMigrationPath } from '../migration/service/knexMigrator';
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../assets/templates/migration');
@@ -18,14 +19,14 @@ const SOURCE_TYPE_STUBS = {
 };
 
 /**
- * Get template stub directory path.
+ * Copy stub files to user directory and return list of template names.
  *
- * @param {string} basePath
- * @param {string} stubPath
- * @returns {string | null}
+ * @param  {Configuration} config
+ * @returns {Promise<MakePublishResult>}
  */
-export async function publish(config: Configuration): Promise<string[]> {
-  const templateFiles = [];
+export async function publish(config: Configuration): Promise<MakePublishResult> {
+  const ignoredList = [];
+  const movedList = [];
   const templateBasePath = path.join(config.basePath, '/stubs');
   const templateBasePathExists = await fs.exists(templateBasePath);
   const templates = SOURCE_TYPE_STUBS[config.migration.sourceType] || [];
@@ -39,19 +40,20 @@ export async function publish(config: Configuration): Promise<string[]> {
   log(`Templates to be moved: ${templates}`);
 
   for (const template of templates) {
-    if (await fs.exists(path.join(templateBasePath, template))) {
-      log(`File already exists: ${template}`);
+    const templatePath = path.join(templateBasePath, template)
+
+    if (await fs.exists(templatePath)) {
+      log(`File already exists: ${templatePath}`);
+      ignoredList.push(templatePath);
 
       continue;
     }
 
     await fs.copy(path.join(MIGRATION_TEMPLATE_PATH, template), path.join(templateBasePath, template));
-    templateFiles.push(template);
+    movedList.push(templatePath);
   }
 
-  log(`Templates moved: ${templateFiles}`);
-
-  return templateFiles;
+  return { ignoredList, movedList };
 }
 
 /**

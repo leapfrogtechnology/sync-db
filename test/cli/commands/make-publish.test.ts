@@ -17,7 +17,7 @@ describe('CLI: make-publish', () => {
     });
   });
 
-  it('should publish the template files and sourceType is sql.', async () => {
+  it('should publish the template files when sourceType is sql.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
     const stubPath = path.join(cwd, 'src/stubs');
@@ -34,8 +34,8 @@ describe('CLI: make-publish', () => {
     const { stdout } = await runCli(['make-publish'], { cwd });
 
     // Check the output.
-    expect(stdout).to.match(/create_up\.stub/);
-    expect(stdout).to.match(/create_down\.stub/);
+    expect(stdout).to.match(/src\/stubs\/create_up\.stub/);
+    expect(stdout).to.match(/src\/stubs\/create_down\.stub/);
 
     // Check files are created.
     const files = await glob(stubPath);
@@ -47,7 +47,7 @@ describe('CLI: make-publish', () => {
     expect(downFileExists).to.equal(true);
   });
 
-  it('should publish the template files and sourceType is javascript.', async () => {
+  it('should publish the template files when sourceType is javascript.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
     const stubPath = path.join(cwd, 'src/stubs');
@@ -65,8 +65,8 @@ describe('CLI: make-publish', () => {
     const { stdout } = await runCli(['make-publish'], { cwd });
 
     // Check the output.
-    expect(stdout).to.match(/create_js\.stub/);
-    expect(stdout).to.match(/update_js\.stub/);
+    expect(stdout).to.match(/src\/stubs\/create_js\.stub/);
+    expect(stdout).to.match(/src\/stubs\/update_js\.stub/);
 
     // Check files are created.
     const files = await glob(stubPath);
@@ -78,7 +78,7 @@ describe('CLI: make-publish', () => {
     expect(updateFileExists).to.equal(true);
   });
 
-  it('should publish the template files and sourceType is typescript.', async () => {
+  it('should publish the template files when sourceType is typescript.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
     const stubPath = path.join(cwd, 'src/stubs');
@@ -96,8 +96,8 @@ describe('CLI: make-publish', () => {
     const { stdout } = await runCli(['make-publish'], { cwd });
 
     // Check the output.
-    expect(stdout).to.match(/create_ts\.stub/);
-    expect(stdout).to.match(/update_ts\.stub/);
+    expect(stdout).to.match(/src\/stubs\/create_ts\.stub/);
+    expect(stdout).to.match(/src\/stubs\/update_ts\.stub/);
 
     // Check files are created.
     const files = await glob(stubPath);

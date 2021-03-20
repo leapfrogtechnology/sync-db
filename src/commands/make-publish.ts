@@ -1,4 +1,4 @@
-import { cyan } from 'chalk';
+import { grey, cyan } from 'chalk';
 import { Command } from '@oclif/command';
 
 import { loadConfig } from '../config';
@@ -16,18 +16,24 @@ class MakePublish extends Command {
   async run(): Promise<void> {
     const config = await loadConfig();
 
-    await printLine('');
+    await printLine();
 
-    const templates = await fileMakerService.publish(config);
+    const { ignoredList, movedList } = await fileMakerService.publish(config);
+    const movedCount = movedList.length;
 
-    for (const template of templates) {
-      await printLine(cyan(`  - ${template}`));
+    // Completed migrations.
+    for (const template of movedList) {
+      await printLine(cyan(`   • ${template}`));
     }
 
-    if (templates.length) {
+    for (const template of ignoredList) {
+      await printLine(grey(`   - ${template} (exists)`));
+    }
+
+    if (movedCount) {
       await printInfo('\n Templates published successfully.\n');
     } else {
-      await printLine(' Nothing to publish.\n');
+      await printLine('\n Nothing to publish.\n');
     }
   }
 }
