@@ -27,7 +27,7 @@ const SOURCE_TYPE_STUBS = {
 export async function publish(config: Configuration): Promise<MakePublishResult> {
   const ignoredList = [];
   const movedList = [];
-  const templateBasePath = path.join(config.basePath, '/stubs');
+  const templateBasePath = path.join(config.basePath, '/stub');
   const templateBasePathExists = await fs.exists(templateBasePath);
   const templates = SOURCE_TYPE_STUBS[config.migration.sourceType] || [];
 
@@ -79,7 +79,7 @@ export async function makeMigration(
   }
 
   const timestamp = getTimestampString();
-  const baseTemplatePath = path.join(config.basePath, '/stubs');
+  const baseTemplatePath = path.join(config.basePath, '/stub');
 
   switch (config.migration.sourceType) {
     case 'sql':

@@ -234,7 +234,7 @@ describe('CLI: make', () => {
   it('should create a migration file with custom template for typescript.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
-    const stubPath = path.join(cwd, 'src/stubs');
+    const stubPath = path.join(cwd, 'src/stub');
     const migrationPath = path.join(cwd, 'src/migration');
     const createPath = path.join(stubPath, 'create_ts.stub');
 
