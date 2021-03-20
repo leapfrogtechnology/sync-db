@@ -74,10 +74,9 @@ compare_and_release() {
     git add CHANGELOG.md README.md
     git commit -v -m "${NEXT} Release :tada: :fireworks: :bell:" -m "[skip ci]"
 
-    git remote rm origin
     # Add new "origin" with access token in the git URL for authentication
-    git remote add origin https://leapfrogtechnology:${GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git
-    git push origin master
+    git remote add lft https://leapfrogtechnology:${GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git
+    git push lft master
 
     printfln "Changelog updated."
 
