@@ -52,12 +52,12 @@
     "release": "./release.sh bump",
     "format": "prettier --write . '**/*.{ts,js,md,yaml,json}'",
     "format:check": "prettier --check . '**/*.{ts,js,md,yaml,json}'",
-    "doc:cli": "oclif-dev readme && prettier --write README.md"
+    "doc:update": "oclif-dev readme && prettier --write README.md"
   },
   "dependencies": {
     "@oclif/command": "^1",
     "@oclif/config": "^1",
-    "@oclif/plugin-help": "^2",
+    "@oclif/plugin-help": "^3",
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
     "esm": "^3.2.25",
