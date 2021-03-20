@@ -5,7 +5,7 @@ import { it, describe } from 'mocha';
 
 import { runCli, queryByPattern } from './util';
 import Configuration from '../../../src/domain/Configuration';
-import { mkdir, mkdtemp, write, exists, glob } from '../../../src/util/fs';
+import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs';
 
 describe('CLI: make-publish', () => {
   describe('--help', () => {
@@ -107,5 +107,40 @@ describe('CLI: make-publish', () => {
     expect(files.length).to.equal(2);
     expect(createFileExists).to.equal(true);
     expect(updateFileExists).to.equal(true);
+  });
+
+  it('should not publish the template files if the file already exists.', async () => {
+    // Write sync-db.yml file.
+    const cwd = await mkdtemp();
+    const stubPath = path.join(cwd, 'src/stubs');
+    await mkdir(stubPath, { recursive: true });
+    const createUpPath = path.join(stubPath, "create_up.stub")
+    const createDownPath = path.join(stubPath, "create_down.stub")
+
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration'
+        }
+      } as Configuration)
+    );
+    await write(createUpPath, "CREATE TABLE {{table}} (id INT PRIMARY KEY)")
+    await write(createDownPath, "DROP TABLE {{table}}")
+
+    const { stdout } = await runCli(['make-publish'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/src\/stubs\/create_up\.stub \(exists\)/);
+    expect(stdout).to.match(/src\/stubs\/create_down\.stub \(exists\)/);
+
+    // Check files are created.
+    const files = await glob(stubPath);
+    const createUp = await read(path.join(stubPath, queryByPattern(files, /create_up\.stub/)));
+    const createDown = await read(path.join(stubPath, queryByPattern(files, /create_down\.stub/)));
+
+    expect(files.length).to.equal(2);
+    expect(createUp).to.equal("CREATE TABLE {{table}} (id INT PRIMARY KEY)");
+    expect(createDown).to.equal("DROP TABLE {{table}}");
   });
 });
