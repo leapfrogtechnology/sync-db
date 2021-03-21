@@ -15,11 +15,19 @@ const dbConfig = require('../knexfile').connection.connection;
     const { rows: tables } = await db.raw('SELECT * FROM utils.vw_table_names');
     const { rows: users } = await db.raw('SELECT * FROM utils.vw_user_names');
 
-    const { rows: [{ result: sum }] } = await db.raw('SELECT public.sum(6, 7) AS result;');
-    const { rows: [{ result: square }]} = await db.raw('SELECT public.square(6) AS result;');
+    const {
+      rows: [{ result: sum }]
+    } = await db.raw('SELECT public.sum(6, 7) AS result;');
+    const {
+      rows: [{ result: square }]
+    } = await db.raw('SELECT public.square(6) AS result;');
 
-    const { rows: [{ result: product }]} = await db.raw('SELECT utils.product(6, 7) AS result;');
-    const { rows: [{ result: date }]} = await db.raw('SELECT utils.get_date() AS result;');
+    const {
+      rows: [{ result: product }]
+    } = await db.raw('SELECT utils.product(6, 7) AS result;');
+    const {
+      rows: [{ result: date }]
+    } = await db.raw('SELECT utils.get_date() AS result;');
 
     console.log(
       '\nList of table names in the database:\n',
