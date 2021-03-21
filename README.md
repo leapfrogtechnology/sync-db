@@ -45,7 +45,7 @@ $ npm install -g @leapfrogtechnology/sync-db
 $ sync-db COMMAND
 running command...
 $ sync-db (-v|--version|version)
-@leapfrogtechnology/sync-db/1.0.0-beta.10 darwin-x64 node-v12.20.1
+@leapfrogtechnology/sync-db/1.0.0-beta.10 linux-x64 node-v15.12.0
 $ sync-db --help [COMMAND]
 USAGE
   $ sync-db COMMAND
@@ -111,7 +111,7 @@ ARGUMENTS
 
 OPTIONS
   -t, --type=TYPE            [default: migration] Type of file to generate.
-  --create                   A flag to generate create table stub.
+  --create                   Generate create table stub.
   --object-name=object-name  Name of table/view/routine to migrate.
 ```
 
