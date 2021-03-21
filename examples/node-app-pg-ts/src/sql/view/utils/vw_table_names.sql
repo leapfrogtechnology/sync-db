@@ -3,8 +3,8 @@
 --
 CREATE VIEW utils.vw_table_names
 AS (
-  SELECT table_name
+  SELECT table_name AS name
   FROM information_schema.tables
   WHERE table_schema = 'public'
-    AND table_type = 'BASE TABLE'
+  AND table_type = 'BASE TABLE'
 );
