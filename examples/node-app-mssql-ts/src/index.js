@@ -9,7 +9,7 @@ const { connections } = require('../connections.sync-db.json');
     // Getting knex instance of mssql database with id db1.
     const db = knex({
       client: 'mssql',
-      connection: connections.find(({ id }) => id === 'testdb1')
+      connection: connections.find(({ id }) => id === 'testdb1').connection
     });
 
     const tasks = await db.raw('SELECT * FROM utils.vw_tasks');
@@ -29,8 +29,8 @@ const { connections } = require('../connections.sync-db.json');
     );
     console.log('\nCalculations:\n', {
       'Sum of 6 and 7': sum,
-      'Product of 6 and 7': product,
-      'Square of 6': square
+      'Square of 6': square,
+      'Product of 6 and 7': product
     });
     console.log('\nCurrent date time:', date);
 
