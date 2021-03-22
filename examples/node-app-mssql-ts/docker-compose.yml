@@ -8,7 +8,7 @@ services:
       - '1433:1433'
     environment:
       ACCEPT_EULA: 'Y'
-      SA_PASSWORD: 'Password@123'
+      SA_PASSWORD: 'Secret@123'
 
   app:
     network_mode: host
