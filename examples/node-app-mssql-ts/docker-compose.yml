@@ -2,15 +2,16 @@ version: '3.3'
 
 services:
   mssql:
-    container_name: 'example-mssql'
+    container_name: 'example-mssql-ts'
     image: 'mcr.microsoft.com/mssql/server:2017-GA-ubuntu'
     ports:
       - '1433:1433'
     environment:
       ACCEPT_EULA: 'Y'
-      SA_PASSWORD: ${DB_PASSWORD}
+      SA_PASSWORD: 'Password@123'
 
   app:
+    network_mode: host
     container_name: 'example-app'
     environment:
       DEBUG: 'sync-db*'
