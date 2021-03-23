@@ -74,5 +74,11 @@ export async function executeOperation<T extends OperationContext>(
     await context.params.onFailed(result);
   }
 
+  if (result.error) {
+    logDb('Result:\n%O', result);
+
+    throw result.error
+  }
+
   return result;
 }
