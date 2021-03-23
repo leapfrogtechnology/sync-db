@@ -77,7 +77,7 @@ export async function executeOperation<T extends OperationContext>(
   if (result.error) {
     logDb('Result:\n%O', result);
 
-    throw result.error
+    throw result.error;
   }
 
   return result;
