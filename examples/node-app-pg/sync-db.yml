@@ -9,7 +9,7 @@ sql:
   # Create objects in utils schema
   - schema/utils.sql
   - function/utils/product.sql
-  - procedure/utils/get_date.sql
+  - function/utils/get_date.sql
   - view/utils/vw_table_names.sql
   - view/utils/vw_user_names.sql
 
