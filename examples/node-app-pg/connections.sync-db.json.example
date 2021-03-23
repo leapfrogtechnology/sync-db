@@ -1,12 +1,12 @@
 {
   "connections": [
     {
-      "id": "laudio_test_db",
-      "client": "postgresql",
+      "id": "db1",
+      "client": "pg",
       "connection": {
-        "host": "localhost",
+        "host": "db",
         "port": 5432,
-        "user": "testdb",
+        "user": "test",
         "database": "testdb",
         "password": "secret"
       }

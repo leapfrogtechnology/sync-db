@@ -1,22 +1,31 @@
 /**
  * Demonstrates use of sync-db to create functions, procedures and views in PostgresSql.
  */
-const knex = require('knex');
-const { connections } = require('../connections.sync-db.json');
+const dbConfig = require('../knexfile').connection.connection;
 
 (async () => {
   try {
-    const db = knex({
-      client: 'postgresql',
-      connection: connections.find(({ id }) => id === 'db1')
+    const db = require('knex')({
+      client: 'pg',
+      connection: `postgresql://${dbConfig.user}:${dbConfig.password}@${dbConfig.host}:${dbConfig.port}/${dbConfig.database}`
     });
 
-    const tables = await db.raw('SELECT * FROM utils.vw_table_names');
-    const users = await db.raw('SELECT * FROM utils.vw_user_names');
-    const [{ result: product }] = await db.raw('SELECT utils.product(6, 7) AS result;');
-    const [{ result: sum }] = await db.raw('SELECT dbo.sum(6, 7) AS result;');
-    const [{ result: square }] = await db.raw('SELECT dbo.square(6) AS result;');
-    const [{ result: date }] = await db.raw('EXEC utils.get_date;');
+    const { rows: tables } = await db.raw('SELECT * FROM utils.vw_table_names');
+    const { rows: users } = await db.raw('SELECT * FROM utils.vw_user_names');
+
+    const {
+      rows: [{ result: sum }]
+    } = await db.raw('SELECT public.sum(6, 7) AS result;');
+    const {
+      rows: [{ result: square }]
+    } = await db.raw('SELECT public.square(6) AS result;');
+
+    const {
+      rows: [{ result: product }]
+    } = await db.raw('SELECT utils.product(6, 7) AS result;');
+    const {
+      rows: [{ result: date }]
+    } = await db.raw('SELECT utils.get_date() AS result;');
 
     console.log(
       '\nList of table names in the database:\n',
@@ -28,8 +37,8 @@ const { connections } = require('../connections.sync-db.json');
     );
     console.log('\nCalculations:\n', {
       'Sum of 6 and 7': sum,
-      'Product of 6 and 7': product,
-      'Square of 6': square
+      'Square of 6': square,
+      'Product of 6 and 7': product
     });
     console.log('\nCurrent date time:', date);
 

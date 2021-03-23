@@ -9,20 +9,16 @@
     "migrate:list": "../../bin/run-dev.sh migrate-list",
     "migrate": "../../bin/run-dev.sh migrate-latest",
     "rollback": "../../bin/run-dev.sh migrate-rollback",
-    "start": " babel-node src/index.js",
+    "start": "node src/index.js",
     "make": "knex --knexfile=knexfile.js migrate:make"
   },
   "license": "MIT",
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "1.0.0-beta.8",
-    "knex": "^0.20.3",
-    "pg": "^7.14.0"
+    "@leapfrogtechnology/sync-db": "1.0.0-beta.10",
+    "knex": "^0.95.2",
+    "pg": "^8.5.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.4",
-    "@babel/node": "^7.7.4",
-    "@babel/preset-env": "^7.7.4",
-    "@babel/register": "^7.7.4",
     "eslint": "^6.7.2",
     "eslint-config-leapfrog": "^2.0.1"
   }
