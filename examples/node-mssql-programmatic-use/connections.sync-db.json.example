@@ -2,12 +2,14 @@
   "connections": [
     {
       "id": "db1",
-      "host": "localhost",
-      "port": 1433,
-      "user": "db1user",
-      "database": "db1",
-      "password": "password",
-      "client": "mssql"
+      "client": "mssql",
+      "connection": {
+        "host": "localhost",
+        "port": 1433,
+        "user": "sa",
+        "database": "tempdb",
+        "password": "Password@123"
+      }
     }
   ]
 }

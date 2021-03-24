@@ -16,81 +16,66 @@ Configure database connection(s) in the `connections.sync-db.json`.
 $ cp connections.sync-db.json.example connections.sync-db.json
 ```
 
-## Running
+## Run
 
-Run the command below to perform a migration:
-
-```
-$ yarn migrate
-```
-
-Run `sync-db` to synchronize all database objects (views, functions, procedures, schemas, etc) in the configured database(s).
-
-```
-$ yarn sync-db
-```
-
-Run the sample node app.
-
-```
-$ yarn start
-```
-
-**Output**
-
-```
-List of table names in the database:
- [ 'knex_migrations', 'knex_migrations_lock', 'users', 'tasks' ]
-
-List of user names in the database:
- [
-  'sa',
-  'public',
-  'sysadmin',
-  'securityadmin',
-  'serveradmin',
-  'setupadmin',
-  'processadmin',
-  'diskadmin',
-  'dbcreator',
-  'bulkadmin',
-  '##MS_SQLResourceSigningCertificate##',
-  '##MS_SQLReplicationSigningCertificate##',
-  '##MS_SQLAuthenticatorCertificate##',
-  '##MS_PolicySigningCertificate##',
-  '##MS_SmoExtendedSigningCertificate##',
-  '##MS_PolicyEventProcessingLogin##',
-  '##MS_PolicyTsqlExecutionLogin##',
-  '##MS_AgentSigningCertificate##',
-  'BUILTIN\\Administrators',
-  'NT AUTHORITY\\NETWORK SERVICE',
-  'NT AUTHORITY\\SYSTEM'
-]
-
-Calculations:
- { 'Sum of 6 and 7': 13, 'Product of 6 and 7': 42, 'Square of 6': 36 }
-
-Current date time: 2019-11-28T10:09:36.507Z
-```
-
-## Docker
-
-Set `DB_PASSWORD` (password for `SA` user) in environment. e.g.
+Run the docker-compose services in order.
 
 ```bash
-$ export DB_PASSWORD=Password@123
-```
-
-Configure database connection(s) in the `connections.sync-db.json`. Use same `password` as `DB_PASSWORD`
-Note: `host` has to be the service name of docker container for `mssql`.
-
-```bash
-$ cp connections.sync-db.json.docker connections.sync-db.json
-```
-
-Then run (in order).
-
-```bash
-$ docker-compose up mssql
+$ docker-compose up -d db
 $ docker-compose up app
+```
+
+## Output
+
+```bash
+example-app | yarn run v1.22.5
+example-app | $ /app/node_modules/.bin/sync-db synchronize
+example-app | Synchronizing...
+example-app |
+example-app |  ▸ db1
+example-app |    [✓] Synchronization - started
+example-app |    [✓] Synchronization - pruned (0.04s)
+example-app |    [✓] Migrations - up to date (0.07s)
+example-app |    [✓] Synchronization - completed (0.14s)
+example-app |
+example-app | Synchronization complete for 1 / 1 connection(s). (1.01s)
+example-app |
+example-app | Done in 1.64s.
+example-app | yarn run v1.22.5
+example-app | $ node src/index.js
+example-app |
+example-app | List of table names in the database:
+example-app |  [ 'knex_migrations', 'knex_migrations_lock', 'users', 'tasks' ]
+example-app |
+example-app | List of user names in the database:
+example-app |  [
+example-app |   'sa',
+example-app |   'public',
+example-app |   'sysadmin',
+example-app |   'securityadmin',
+example-app |   'serveradmin',
+example-app |   'setupadmin',
+example-app |   'processadmin',
+example-app |   'diskadmin',
+example-app |   'dbcreator',
+example-app |   'bulkadmin',
+example-app |   '##MS_SQLResourceSigningCertificate##',
+example-app |   '##MS_SQLReplicationSigningCertificate##',
+example-app |   '##MS_SQLAuthenticatorCertificate##',
+example-app |   '##MS_PolicySigningCertificate##',
+example-app |   '##MS_SmoExtendedSigningCertificate##',
+example-app |   '##MS_PolicyEventProcessingLogin##',
+example-app |   '##MS_PolicyTsqlExecutionLogin##',
+example-app |   '##MS_AgentSigningCertificate##',
+example-app |   'BUILTIN\\Administrators',
+example-app |   'NT AUTHORITY\\SYSTEM',
+example-app |   'NT AUTHORITY\\NETWORK SERVICE'
+example-app | ]
+example-app |
+example-app | Calculations:
+example-app |  { 'Sum of 6 and 7': 13, 'Square of 6': 36, 'Product of 6 and 7': 42 }
+example-app |
+example-app | Current date time: 2021-03-24T11:36:39.230Z
+example-app | Done in 0.95s.
+example-app exited with code 0
 ```
