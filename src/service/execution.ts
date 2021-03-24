@@ -59,7 +59,8 @@ export async function executeOperation<T extends OperationContext>(
 
     result.success = true;
   } catch (e) {
-    logDb(`Error caught for connection ${connectionId}:`, e);
+    logDb(`Error caught for connection ${connectionId}:`);
+
     result.error = e;
   }
 
@@ -77,7 +78,7 @@ export async function executeOperation<T extends OperationContext>(
   if (result.error) {
     logDb('Result:\n%O', result);
 
-    throw result.error;
+    throw { result };
   }
 
   return result;
