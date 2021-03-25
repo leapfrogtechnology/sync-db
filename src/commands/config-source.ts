@@ -36,6 +36,7 @@ class ConfigSource extends Command {
       const { actualSource } = await yaml.load(cacheDestination);
 
       printLine(cyan(`Configuration source is currently switched to - ${actualSource}`));
+
       return;
     }
 
@@ -44,7 +45,7 @@ class ConfigSource extends Command {
 }
 
 /**
- * Copy & create cache configuration source for given filename.
+ * Cache configuration from given config file.
  *
  * @param {string} name
  * @param {string} cacheDestination
