@@ -107,6 +107,26 @@ export function remove(filepath: string): Promise<void> {
     });
   });
 }
+
+/**
+ * Append data to file.
+ *
+ * @param {string} filepath
+ * @param {string} data
+ * @returns {Promise<void>}
+ */
+export function appendFile(filepath: string, data: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    fs.appendFile(filepath, data, err => {
+      if (err) {
+        return reject(err);
+      }
+
+      return resolve();
+    });
+  });
+}
+
 /**
  * Copy file.
  *

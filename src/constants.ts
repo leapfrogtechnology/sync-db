@@ -8,7 +8,8 @@ import Configuration from './domain/Configuration';
 export const NS_PER_SEC = 1e9;
 
 // SyncDb specific constants
-export const CONFIG_FILENAME = 'sync-db.yml';
+export const DEFAULT_CONFIG_FILENAME = 'sync-db.yml';
+export const CONFIG_CACHE_FILENAME = 'config-source.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
 export const INJECTED_CONFIG_TABLE = '__sync_db_injected_config';

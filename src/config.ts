@@ -9,7 +9,15 @@ import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
-import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
+import {
+  DEFAULT_CONFIG,
+  DEFAULT_CONFIG_FILENAME,
+  CONNECTIONS_FILENAME,
+  REQUIRED_ENV_KEYS,
+  CONFIG_CACHE_FILENAME
+} from './constants';
+
+const DEFAULT_CONFIG_PATH = path.resolve(__dirname, '../assets');
 
 interface ConnectionResolver {
   resolve: (config: Configuration) => Promise<ConnectionConfig[]>;
@@ -44,7 +52,16 @@ export function getSqlBasePath(config: Configuration): string {
 export async function loadConfig(): Promise<Configuration> {
   log('Resolving config file.');
 
-  const filename = path.resolve(process.cwd(), CONFIG_FILENAME);
+  let filename = path.resolve(process.cwd(), DEFAULT_CONFIG_FILENAME);
+
+  const cacheFileExists = await fs.exists(path.join(DEFAULT_CONFIG_PATH, CONFIG_CACHE_FILENAME));
+
+  if (cacheFileExists) {
+    filename = DEFAULT_CONFIG_PATH + `/${CONFIG_CACHE_FILENAME}`;
+  }
+
+  log(`Config source - ${filename}`);
+
   const loadedConfig = (await yaml.load(filename)) as Configuration;
 
   log('Resolved config file.');
