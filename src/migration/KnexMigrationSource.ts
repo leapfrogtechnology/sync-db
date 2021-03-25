@@ -41,8 +41,6 @@ class KnexMigrationSource {
    * @returns {string}
    */
   getMigrationName(migration: string): string {
-    this.log('getMigrationName - resolve: ', migration);
-
     return migration;
   }
 

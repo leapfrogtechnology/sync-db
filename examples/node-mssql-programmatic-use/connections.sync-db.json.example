@@ -4,11 +4,11 @@
       "id": "db1",
       "client": "mssql",
       "connection": {
-        "host": "localhost",
+        "host": "db",
         "port": 1433,
         "user": "sa",
         "database": "tempdb",
-        "password": "Password@123"
+        "password": "Secret@123"
       }
     }
   ]
