@@ -1,5 +1,25 @@
 # Changelog
 
+## [v1.0.0-beta.11](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.11) (2021-03-25)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.10...v1.0.0-beta.11)
+
+**Bug Fixes**
+
+- Throw an exception to rollback transaction if SQL migration fails [\#117](https://github.com/leapfrogtechnology/sync-db/pull/117) ([cham11ng](https://github.com/cham11ng))
+
+**Closed Issues**
+
+- Simplify all the examples and bump sync-db to latest version [\#114](https://github.com/leapfrogtechnology/sync-db/issues/114)
+
+**Changes**
+
+- Fixes in progammatic example [\#118](https://github.com/leapfrogtechnology/sync-db/pull/118) ([samirsilwal](https://github.com/samirsilwal))
+- Fixes in mssql & pg node examples with JS migrations [\#116](https://github.com/leapfrogtechnology/sync-db/pull/116) ([samirsilwal](https://github.com/samirsilwal))
+- Some fixes in example for ts migrations with node & mssql [\#115](https://github.com/leapfrogtechnology/sync-db/pull/115) ([samirsilwal](https://github.com/samirsilwal))
+- Move ts-node to dependencies [\#113](https://github.com/leapfrogtechnology/sync-db/pull/113) ([mesaugat](https://github.com/mesaugat))
+- Make running the example a trivial process [\#112](https://github.com/leapfrogtechnology/sync-db/pull/112) ([mesaugat](https://github.com/mesaugat))
+
 ## [v1.0.0-beta.10](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.10) (2021-03-21)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.9...v1.0.0-beta.10)
@@ -182,6 +202,7 @@
 - Add new io utility for standard I/O operations [\#44](https://github.com/leapfrogtechnology/sync-db/pull/44) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Bump codecov from 3.6.1 to 3.6.5 [\#43](https://github.com/leapfrogtechnology/sync-db/pull/43) ([dependabot[bot]](https://github.com/apps/dependabot))
 - Run synchronize in a single transaction per connection [\#39](https://github.com/leapfrogtechnology/sync-db/pull/39) ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Update example to demonstrate config injection [\#37](https://github.com/leapfrogtechnology/sync-db/pull/37) ([kabirbaidhya](https://github.com/kabirbaidhya))
 
 ## [v1.0.0-experimental.9-2](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.9-2) (2020-02-15)
 
@@ -191,17 +212,13 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.9...v1.0.0-experimental.9-1)
 
-**Changes**
-
-- Update example to demonstrate config injection [\#37](https://github.com/leapfrogtechnology/sync-db/pull/37) ([kabirbaidhya](https://github.com/kabirbaidhya))
-
 ## [v1.0.0-alpha.9](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.9) (2020-02-04)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-6...v1.0.0-alpha.9)
 
-## [v1.0.0-experimental.8-6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-6) (2020-02-03)
+**Implemented enhancements:**
 
-[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-5...v1.0.0-experimental.8-6)
+- CLI arg to generate connections from the environment [\#33](https://github.com/leapfrogtechnology/sync-db/pull/33) ([p0k8h](https://github.com/p0k8h))
 
 **Changes**
 
@@ -209,6 +226,11 @@
 - Generate connection with port as number when using --generate-connections CLI arg [\#40](https://github.com/leapfrogtechnology/sync-db/pull/40) ([silwalanish](https://github.com/silwalanish))
 - Update dependencies - typescript & tslint [\#38](https://github.com/leapfrogtechnology/sync-db/pull/38) ([kabirbaidhya](https://github.com/kabirbaidhya))
 - Config Injection - ability to inject dynamic configurations such that the running SQL transactions could access them [\#36](https://github.com/leapfrogtechnology/sync-db/pull/36) ([kabirbaidhya](https://github.com/kabirbaidhya))
+- Add example project for postgres [\#35](https://github.com/leapfrogtechnology/sync-db/pull/35) ([Prabeshpd](https://github.com/Prabeshpd))
+
+## [v1.0.0-experimental.8-6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-6) (2020-02-03)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-experimental.8-5...v1.0.0-experimental.8-6)
 
 ## [v1.0.0-experimental.8-5](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-experimental.8-5) (2020-02-01)
 
@@ -230,18 +252,10 @@
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-alpha.8...v1.0.0-experimental.8-1)
 
-**Implemented enhancements:**
-
-- CLI arg to generate connections from the environment [\#33](https://github.com/leapfrogtechnology/sync-db/pull/33) ([p0k8h](https://github.com/p0k8h))
-
 **Closed Issues**
 
 - New CLI arg to generate connections file using the environment variables [\#31](https://github.com/leapfrogtechnology/sync-db/issues/31)
 - Add new example project based on postgres [\#25](https://github.com/leapfrogtechnology/sync-db/issues/25)
-
-**Changes**
-
-- Add example project for postgres [\#35](https://github.com/leapfrogtechnology/sync-db/pull/35) ([Prabeshpd](https://github.com/Prabeshpd))
 
 ## [v1.0.0-alpha.8](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.8) (2019-12-18)
 
@@ -343,4 +357,4 @@
 
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
+\* *This Changelog was automatically generated       by [github_changelog_generator]      (https://github.com/github-changelog-generator/github-changelog-generator)*
