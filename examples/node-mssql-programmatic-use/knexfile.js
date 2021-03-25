@@ -1,4 +1,3 @@
-require('@babel/register');
 const { connections } = require('./connections.sync-db.json');
 
 module.exports = {

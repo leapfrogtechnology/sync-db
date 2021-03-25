@@ -8,8 +8,9 @@ services:
       - '1433:1433'
     environment:
       ACCEPT_EULA: 'Y'
-      SA_PASSWORD: ${DB_PASSWORD}
+      SA_PASSWORD: 'Secret@123'
 
   app:
+    network_mode: host
     container_name: 'example-app'
     build: .
