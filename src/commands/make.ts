@@ -1,5 +1,6 @@
 import { loadConfig } from '../config';
 import { printLine } from '../util/io';
+import { CONFIG_FILENAME } from '../constants';
 import { Command, flags } from '@oclif/command';
 import MakeOptions from '../domain/MakeOptions';
 import Configuration from '../domain/Configuration';
@@ -19,7 +20,7 @@ class Make extends Command {
     }),
     config: flags.string({
       char: 'c',
-      default: 'sync-db.yml',
+      default: CONFIG_FILENAME,
       description: 'Custom configuration file.'
     }),
     type: flags.string({

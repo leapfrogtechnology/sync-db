@@ -2,6 +2,7 @@ import { Command, flags } from '@oclif/command';
 import { bold, grey, red, cyan, yellow } from 'chalk';
 
 import { migrateList } from '../api';
+import { CONFIG_FILENAME } from '../constants';
 import { printLine, printError } from '../util/io';
 import { loadConfig, resolveConnections } from '..';
 import OperationResult from '../domain/operation/OperationResult';
@@ -20,7 +21,7 @@ class MigrateList extends Command {
     }),
     config: flags.string({
       char: 'c',
-      default: 'sync-db.yml',
+      default: CONFIG_FILENAME,
       description: 'Custom configuration file.'
     })
   };

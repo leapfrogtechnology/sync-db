@@ -3,6 +3,7 @@ import { bold, red, cyan, magenta } from 'chalk';
 
 import { migrateRollback } from '../api';
 import { dbLogger } from '../util/logger';
+import { CONFIG_FILENAME } from '../constants';
 import { loadConfig, resolveConnections } from '..';
 import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
@@ -22,7 +23,7 @@ class MigrateRollback extends Command {
     }),
     config: flags.string({
       char: 'c',
-      default: 'sync-db.yml',
+      default: CONFIG_FILENAME,
       description: 'Custom configuration file.'
     })
   };

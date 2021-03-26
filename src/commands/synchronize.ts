@@ -3,6 +3,7 @@ import { bold, cyan, red, green, magenta } from 'chalk';
 
 import { synchronize } from '../api';
 import { getElapsedTime } from '../util/ts';
+import { CONFIG_FILENAME } from '../constants';
 import { log, dbLogger } from '../util/logger';
 import { loadConfig, resolveConnections } from '../config';
 import { printError, printLine, printInfo } from '../util/io';
@@ -28,7 +29,7 @@ class Synchronize extends Command {
     }),
     config: flags.string({
       char: 'c',
-      default: 'sync-db.yml',
+      default: CONFIG_FILENAME,
       description: 'Custom configuration file.'
     })
   };

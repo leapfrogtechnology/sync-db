@@ -41,10 +41,10 @@ export function getSqlBasePath(config: Configuration): string {
  *
  * @returns {Promise<Configuration>}
  */
-export async function loadConfig(configFileName: string = CONFIG_FILENAME): Promise<Configuration> {
+export async function loadConfig(configFilename: string = CONFIG_FILENAME): Promise<Configuration> {
   log('Resolving config file.');
 
-  const filename = path.resolve(process.cwd(), configFileName);
+  const filename = path.resolve(process.cwd(), configFilename);
   const loadedConfig = (await yaml.load(filename)) as Configuration;
 
   log('Resolved config file.');
