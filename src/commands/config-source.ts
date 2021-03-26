@@ -1,10 +1,10 @@
 import * as path from 'path';
 import { cyan } from 'chalk';
 import * as yaml from 'yamljs';
-import { Command } from '@oclif/command';
+import { Command, flags } from '@oclif/command';
 
 import { printLine } from '../util/io';
-import { copy, exists, appendFile } from '../util/fs';
+import { copy, exists, appendFile, remove } from '../util/fs';
 import { DEFAULT_CONFIG_FILENAME, CONFIG_CACHE_FILENAME } from '../constants';
 
 const DEFAULT_CONFIG_PATH = path.resolve(__dirname, '../../assets');
@@ -15,6 +15,12 @@ class ConfigSource extends Command {
   static args = [
     { name: 'filename', description: 'Object or filename to containing configurations.', required: false }
   ];
+  static flags = {
+    reset: flags.boolean({
+      default: false,
+      description: 'Remove the cached configuration.'
+    })
+  };
 
   /**
    * CLI command execution handler.
@@ -22,25 +28,28 @@ class ConfigSource extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { args } = this.parse(ConfigSource);
+    const { args, flags: parsedFlags } = this.parse(ConfigSource);
     const cacheDestination = path.join(DEFAULT_CONFIG_PATH, CONFIG_CACHE_FILENAME);
 
-    if (!args.filename) {
-      const fileExists = await exists(cacheDestination);
+    const cacheExists = await exists(cacheDestination);
 
-      if (!fileExists) {
-        printLine(cyan(`Configuration source is currently switched to - ${DEFAULT_CONFIG_FILENAME}`));
+    if (parsedFlags.reset) {
+      if (cacheExists) {
+        await remove(path.join(DEFAULT_CONFIG_PATH, CONFIG_CACHE_FILENAME));
+        await printLine(cyan(`\nConfiguration source is reset to - ${DEFAULT_CONFIG_FILENAME}\n`));
 
         return;
       }
-      const { actualSource } = await yaml.load(cacheDestination);
-
-      printLine(cyan(`Configuration source is currently switched to - ${actualSource}`));
+      await printLine(cyan(`\nNo cached configuration found. Current source - ${DEFAULT_CONFIG_FILENAME}\n`));
 
       return;
     }
 
-    await createCacheConfigurationSource(args.filename, cacheDestination);
+    if (args.filename) {
+      await createCacheConfigurationSource(args.filename, cacheDestination);
+    } else {
+      await showCacheConfigurationSource(cacheExists, cacheDestination);
+    }
   }
 }
 
@@ -59,7 +68,24 @@ async function createCacheConfigurationSource(name: string, cacheDestination: st
 
   await appendFile(cacheDestination, meta);
 
-  printLine(cyan(`Configuration source switched to - ${filename}`));
+  printLine(cyan(`\nConfiguration source switched to - ${filename}\n`));
+}
+
+/**
+ * Show cached configuration source.
+ *
+ * @param {boolean} cacheExists
+ * @param {string} cacheDestination
+ */
+async function showCacheConfigurationSource(cacheExists: boolean, cacheDestination: string): Promise<void> {
+  if (!cacheExists) {
+    await printLine(cyan(`\nConfiguration source is currently switched to - ${DEFAULT_CONFIG_FILENAME}\n`));
+
+    return;
+  }
+  const { actualSource } = await yaml.load(cacheDestination);
+
+  await printLine(cyan(`\nConfiguration source is currently switched to - ${actualSource}\n`));
 }
 
 export default ConfigSource;

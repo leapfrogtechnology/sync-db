@@ -5,7 +5,7 @@ import { it, describe } from 'mocha';
 
 import { runCli } from './util';
 import Configuration from '../../../src/domain/Configuration';
-import { mkdtemp, write, mkdir, glob, remove } from '../../../src/util/fs';
+import { mkdtemp, write, mkdir, glob } from '../../../src/util/fs';
 
 describe('CLI: config-source', () => {
   describe('--help', () => {
@@ -194,10 +194,8 @@ describe('CLI: config-source', () => {
 
     // Two sql (up/down for each) migration are created in src/migration as per config in sync-db.yml
     expect(files2.length).to.equal(2);
-  });
 
-  after(async () => {
     // Remove the cached config as other successive tests would try to fetch config from it.
-    await remove(path.resolve(__dirname, '../../../assets/config-source.yml'));
+    await runCli(['config-source', '--reset'], { cwd });
   });
 });
