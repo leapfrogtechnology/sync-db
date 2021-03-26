@@ -198,39 +198,6 @@ describe('CLI: make', () => {
     expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'demo_users' }));
   });
 
-  it('should create a migration file with template when name matches filename convention for typescript.', async () => {
-    // Write sync-db.yml file.
-    const cwd = await mkdtemp();
-    const migrationPath = path.join(cwd, 'src/migration');
-    await mkdir(migrationPath, { recursive: true });
-    await write(
-      path.join(cwd, 'sync-db.yml'),
-      yaml.stringify({
-        migration: {
-          directory: 'migration',
-          sourceType: 'typescript'
-        }
-      } as Configuration)
-    );
-
-    const { stdout } = await runCli(['make', 'create_demo_users_table'], { cwd });
-
-    // Check the output.
-    expect(stdout).to.match(/Created.+\d{13}_create_demo_users_table\.ts/);
-
-    // Check files are created.
-    const files = await glob(migrationPath);
-
-    expect(files.length).to.equal(1);
-
-    const migrationFile = await read(
-      path.join(migrationPath, queryByPattern(files, /\d{13}_create_demo_users_table\.ts/))
-    );
-    const fileOutput = await read(path.join(MIGRATION_TEMPLATE_PATH, 'create_ts.stub'));
-
-    expect(migrationFile).to.equal(interpolate(fileOutput, { table: 'demo_users' }));
-  });
-
   it('should create a migration file with custom template for typescript.', async () => {
     // Write sync-db.yml file.
     const cwd = await mkdtemp();
@@ -333,5 +300,56 @@ describe('CLI: make', () => {
 
     expect(upFile).to.equal(interpolate(upSQL, { table: 'settings' }));
     expect(downFile).to.equal(interpolate(downSQL, { table: 'settings' }));
+  });
+
+  it('should make migration based on custom configurations with --config flag.', async () => {
+    // Write sync-db.yml file.
+    const cwd = await mkdtemp();
+
+    const migrationPath = path.join(cwd, 'src/migration');
+    await mkdir(migrationPath, { recursive: true });
+
+    const migrationPath1 = path.join(cwd, 'src/migration1');
+    await mkdir(migrationPath1, { recursive: true });
+
+    await write(
+      path.join(cwd, 'sync-db.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration'
+        }
+      } as Configuration)
+    );
+
+    await write(
+      path.join(cwd, 'sync-db-test.yml'),
+      yaml.stringify({
+        migration: {
+          directory: 'migration1',
+          sourceType: 'typescript'
+        }
+      } as Configuration)
+    );
+
+    const { stdout } = await runCli(['make', 'settings'], { cwd });
+
+    // Check the output.
+    expect(stdout).to.match(/Created.+\d{13}_settings\.up\.sql/);
+    expect(stdout).to.match(/Created.+\d{13}_settings\.down\.sql/);
+
+    // Check files are created.
+    const files = await glob(migrationPath);
+
+    expect(files.length).to.equal(2);
+
+    const { stdout: stdout1 } = await runCli(['make', 'settings', '--config=sync-db-test.yml'], { cwd });
+
+    // Check the output.
+    expect(stdout1).to.match(/Created.+\d{13}_settings\.ts/);
+
+    // Check files are created.
+    const files1 = await glob(migrationPath1);
+
+    expect(files1.length).to.equal(1);
   });
 });

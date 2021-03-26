@@ -1,5 +1,5 @@
 import { grey, cyan } from 'chalk';
-import { Command } from '@oclif/command';
+import { Command, flags } from '@oclif/command';
 
 import { loadConfig } from '../config';
 import { printInfo, printLine } from '../util/io';
@@ -7,14 +7,21 @@ import * as fileMakerService from '../service/fileMaker';
 
 class MakePublish extends Command {
   static description = 'Publish migration templates files.';
-
+  static flags = {
+    config: flags.string({
+      char: 'c',
+      default: 'sync-db.yml',
+      description: 'Custom configuration file.'
+    })
+  };
   /**
    * CLI command execution handler.
    *
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const config = await loadConfig();
+    const { flags: parsedFlags } = this.parse(MakePublish);
+    const config = await loadConfig(parsedFlags.config);
 
     await printLine();
 

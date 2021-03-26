@@ -17,6 +17,11 @@ class MigrateList extends Command {
     'connection-resolver': flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
+    }),
+    config: flags.string({
+      char: 'c',
+      default: 'sync-db.yml',
+      description: 'Custom configuration file.'
     })
   };
 
@@ -67,7 +72,7 @@ class MigrateList extends Command {
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(MigrateList);
-    const config = await loadConfig();
+    const config = await loadConfig(parsedFlags.config);
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
     const results = await migrateList(config, connections, {
