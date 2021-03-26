@@ -3,7 +3,6 @@ import { bold, red, cyan, magenta } from 'chalk';
 
 import { migrateLatest } from '../api';
 import { dbLogger } from '../util/logger';
-import { CONFIG_FILENAME } from '../constants';
 import { loadConfig, resolveConnections } from '..';
 import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
@@ -23,7 +22,6 @@ class MigrateLatest extends Command {
     }),
     config: flags.string({
       char: 'c',
-      default: CONFIG_FILENAME,
       description: 'Custom configuration file.'
     })
   };

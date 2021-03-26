@@ -2,7 +2,6 @@ import { bold, magenta, red } from 'chalk';
 import { Command, flags } from '@oclif/command';
 
 import { prune } from '../api';
-import { CONFIG_FILENAME } from '../constants';
 import { loadConfig, resolveConnections } from '..';
 import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
@@ -22,7 +21,6 @@ class Prune extends Command {
     }),
     config: flags.string({
       char: 'c',
-      default: CONFIG_FILENAME,
       description: 'Custom configuration file.'
     })
   };
