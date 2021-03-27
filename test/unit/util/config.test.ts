@@ -162,7 +162,7 @@ describe('CONFIG:', () => {
 
       await expect(loadConfig('sync-db-test.yml')).not.to.be.rejectedWith(
         Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+        `The config filename doesn't match the pattern sync-db.yml or sync-db-*.yml`
       );
 
       const config = await loadConfig('sync-db-test.yml');
@@ -172,27 +172,27 @@ describe('CONFIG:', () => {
     it(`should throw an error if the config file doesn't match the naming convention.`, async () => {
       await expect(loadConfig('sync-db.txt')).to.be.rejectedWith(
         Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+        `The config filename doesn't match the pattern sync-db.yml or sync-db-*.yml`
       );
       await expect(loadConfig('sync-db-test.js')).to.be.rejectedWith(
         Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+        `The config filename doesn't match the pattern sync-db.yml or sync-db-*.yml`
       );
       await expect(loadConfig('sync.yml')).to.be.rejectedWith(
         Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+        `The config filename doesn't match the pattern sync-db.yml or sync-db-*.yml`
       );
       await expect(loadConfig('sync-db.yml.txt')).to.be.rejectedWith(
         Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+        `The config filename doesn't match the pattern sync-db.yml or sync-db-*.yml`
       );
       await expect(loadConfig('sync-db-.yml')).to.be.rejectedWith(
         Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+        `The config filename doesn't match the pattern sync-db.yml or sync-db-*.yml`
       );
       await expect(loadConfig('sync-dbasdfghjkl.yml')).to.be.rejectedWith(
         Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+        `The config filename doesn't match the pattern sync-db.yml or sync-db-*.yml`
       );
     });
 
