@@ -25,6 +25,10 @@ class Synchronize extends Command {
     'connection-resolver': flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
+    }),
+    config: flags.string({
+      char: 'c',
+      description: 'Custom configuration file.'
     })
   };
 
@@ -131,7 +135,7 @@ class Synchronize extends Command {
     const isDryRun = parsedFlags['dry-run'];
 
     try {
-      const config = await loadConfig();
+      const config = await loadConfig(parsedFlags.config);
       const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
       const timeStart = process.hrtime();
 

@@ -17,6 +17,10 @@ class Make extends Command {
       default: false,
       description: 'Generate create table stub.'
     }),
+    config: flags.string({
+      char: 'c',
+      description: 'Custom configuration file.'
+    }),
     type: flags.string({
       char: 't',
       helpValue: 'TYPE',
@@ -33,7 +37,7 @@ class Make extends Command {
    */
   async run(): Promise<void> {
     const { args, flags: parsedFlags } = this.parse(Make);
-    const config = await loadConfig();
+    const config = await loadConfig(parsedFlags.config);
     const list = await this.makeFiles(config, args.name, parsedFlags.type, {
       create: parsedFlags.create,
       objectName: parsedFlags['object-name']

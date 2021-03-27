@@ -19,6 +19,10 @@ class MigrateLatest extends Command {
     'connection-resolver': flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
+    }),
+    config: flags.string({
+      char: 'c',
+      description: 'Custom configuration file.'
     })
   };
 
@@ -72,7 +76,7 @@ class MigrateLatest extends Command {
   async run(): Promise<void> {
     const { flags: parsedFlags } = this.parse(MigrateLatest);
     const isDryRun = parsedFlags['dry-run'];
-    const config = await loadConfig();
+    const config = await loadConfig(parsedFlags.config);
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
     if (isDryRun) await printLine(magenta('\n• DRY RUN STARTED\n'));
