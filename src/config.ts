@@ -11,7 +11,7 @@ import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
 import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
 
-const CONFIG_FILE_CONVENTION = /^sync-db(-?)[\w]*\.yml$/;
+const CONFIG_FILE_CONVENTION = /^sync-db-[\w]+\.yml$/;
 
 interface ConnectionResolver {
   resolve: (config: Configuration) => Promise<ConnectionConfig[]>;
@@ -46,16 +46,15 @@ export function getSqlBasePath(config: Configuration): string {
 export async function loadConfig(configFilename: string = CONFIG_FILENAME): Promise<Configuration> {
   log('Resolving config file.');
   const isConfigFilePathAbsolute = path.isAbsolute(configFilename);
-  const filenameMatched = isConfigFilePathAbsolute
-    ? path.parse(configFilename).base.match(CONFIG_FILE_CONVENTION)
-    : configFilename.match(CONFIG_FILE_CONVENTION);
+  const filename = isConfigFilePathAbsolute ? path.parse(configFilename).base : configFilename;
+  const filenameMatched = filename.match(CONFIG_FILE_CONVENTION) || filename === CONFIG_FILENAME;
 
   if (!filenameMatched) {
     throw new Error(`The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`);
   }
 
-  const filename = isConfigFilePathAbsolute ? configFilename : path.join(process.cwd(), configFilename);
-  const loadedConfig = (await yaml.load(filename)) as Configuration;
+  const filepath = isConfigFilePathAbsolute ? configFilename : path.join(process.cwd(), configFilename);
+  const loadedConfig = (await yaml.load(filepath)) as Configuration;
 
   log('Resolved config file.');
 

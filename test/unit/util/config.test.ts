@@ -158,32 +158,15 @@ describe('CONFIG:', () => {
         } as Configuration)
       );
 
-      await write(
-        path.join(cwd, 'sync-db.yml'),
-        yaml.stringify({
-          migration: {
-            directory: 'migration',
-            sourceType: 'javascript'
-          }
-        } as Configuration)
-      );
-
       process.chdir(cwd);
 
-      await expect(loadConfig('sync-db.yml')).not.to.be.rejectedWith(
-        Error,
-        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
-      );
       await expect(loadConfig('sync-db-test.yml')).not.to.be.rejectedWith(
         Error,
         `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
       );
 
-      const config = await loadConfig();
+      const config = await loadConfig('sync-db-test.yml');
       expect(config).to.have.property('migration');
-
-      const config1 = await loadConfig('sync-db-test.yml');
-      expect(config1).to.have.property('migration');
     });
 
     it(`should throw an error if the config file doesn't match the naming convention.`, async () => {
@@ -200,6 +183,14 @@ describe('CONFIG:', () => {
         `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
       );
       await expect(loadConfig('sync-db.yml.txt')).to.be.rejectedWith(
+        Error,
+        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+      );
+      await expect(loadConfig('sync-db-.yml')).to.be.rejectedWith(
+        Error,
+        `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
+      );
+      await expect(loadConfig('sync-dbasdfghjkl.yml')).to.be.rejectedWith(
         Error,
         `The config filename doesn't meet the pattern (sync-db.yml or sync-db-*.yml)`
       );
