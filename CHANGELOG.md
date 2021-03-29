@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.0.0-beta.12](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.12) (2021-03-29)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.11...v1.0.0-beta.12)
+
+**Changes**
+
+- Bump  version to 1.0.0-beta.12 [\#121](https://github.com/leapfrogtechnology/sync-db/pull/121) ([samirsilwal](https://github.com/samirsilwal))
+- Ability to provide custom configuration with --config flag [\#120](https://github.com/leapfrogtechnology/sync-db/pull/120) ([samirsilwal](https://github.com/samirsilwal))
+
 ## [v1.0.0-beta.11](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.11) (2021-03-25)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.10...v1.0.0-beta.11)
