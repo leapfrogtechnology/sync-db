@@ -113,7 +113,7 @@ class Synchronize extends Command {
 
       for (const attempt of failedAttempts) {
         await printLine(bold(` ▸ ${attempt.connectionId}\n`));
-        await printError(attempt.error.toString());
+        await printError(attempt.error.result.error);
 
         // Send verbose error with stack trace to debug logs.
         log(attempt.error);
@@ -159,7 +159,7 @@ class Synchronize extends Command {
         // Display output.
         await printLine(
           `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
-            `(${getElapsedTime(timeStart)}s)\n`
+          `(${getElapsedTime(timeStart)}s)\n`
         );
       }
 
