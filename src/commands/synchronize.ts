@@ -159,7 +159,7 @@ class Synchronize extends Command {
         // Display output.
         await printLine(
           `Synchronization complete for ${successfulCount} / ${totalCount} connection(s). ` +
-          `(${getElapsedTime(timeStart)}s)\n`
+            `(${getElapsedTime(timeStart)}s)\n`
         );
       }
 
