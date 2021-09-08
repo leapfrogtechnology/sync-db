@@ -46,6 +46,7 @@ export async function synchronize(
 
   const migrationPath = getMigrationPath(config);
   const dirExist = await existDirectory(migrationPath);
+
   // TODO: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
     loadSqlSources: true,
