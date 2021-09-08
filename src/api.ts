@@ -49,14 +49,14 @@ export async function synchronize(
   // TODO: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
     loadSqlSources: true,
-    loadMigrations: !params['skip-migration'],
+    loadMigrations: !params['skip-migration']
   });
 
   if (!dirExist) {
     params = {
       ...params,
       'skip-migration': true
-    }
+    };
   }
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);

@@ -55,7 +55,7 @@ export function exists(filename: string): Promise<boolean> {
 }
 
 /**
- * Read all files in a directory.
+ * Check if the directory exist.
  *
  * @param {string} pathName
  * @returns {boolean}
@@ -65,15 +65,12 @@ export async function existDirectory(pathName: string) {
     await readDir(pathName);
 
     return true;
-  }
-  catch (err) {
+  } catch (err) {
     log(err);
 
     return false;
   }
 }
-
-
 
 /**
  * Read all files in a directory.

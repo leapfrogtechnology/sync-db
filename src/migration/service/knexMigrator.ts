@@ -91,8 +91,7 @@ export async function resolveMigrationContext(
         log('Available migration sources:\n%O', src);
 
         return new SqlMigrationSourceContext(src);
-      }
-      catch (err) {
+      } catch (err) {
         log(err);
 
         return null;
