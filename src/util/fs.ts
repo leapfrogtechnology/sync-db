@@ -2,9 +2,10 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { promisify } from 'util';
+import { log } from './logger';
 
 export const mkdir = promisify(fs.mkdir);
-
+export const readDir = promisify(fs.readdir);
 /**
  * Create a temporary directory and return it's path.
  *
@@ -52,6 +53,27 @@ export function exists(filename: string): Promise<boolean> {
     fs.access(filename, fs.constants.F_OK, err => resolve(!err));
   });
 }
+
+/**
+ * Read all files in a directory.
+ *
+ * @param {string} pathName
+ * @returns {boolean}
+ */
+export async function existDirectory(pathName: string) {
+  try {
+    await readDir(pathName);
+
+    return true;
+  }
+  catch (err) {
+    log(err);
+
+    return false;
+  }
+}
+
+
 
 /**
  * Read all files in a directory.

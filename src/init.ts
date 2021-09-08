@@ -5,7 +5,6 @@ import { validate, isCLI } from './config';
 import Configuration from './domain/Configuration';
 import KnexMigrationSource from './migration/KnexMigrationSource';
 import { resolveMigrationContext } from './migration/service/knexMigrator';
-import MigrationSourceContext from './migration/domain/MigrationSourceContext';
 
 export interface PrepareOptions {
   loadMigrations?: boolean;
@@ -14,7 +13,6 @@ export interface PrepareOptions {
 
 export interface PreparedRequirements {
   knexMigrationConfig: (connectionId: string) => Knex.MigratorConfig;
-  knexError: MigrationSourceContext | null;
 }
 
 /**
@@ -34,13 +32,11 @@ export async function prepare(config: Configuration, options: PrepareOptions): P
   }
 
   const migrationContext = await resolveMigrationContext(config, options);
-  const knexError = migrationContext;
 
   return {
     knexMigrationConfig: (connectionId: string) => ({
       tableName: config.migration.tableName,
       migrationSource: migrationContext ? new KnexMigrationSource(migrationContext.bind(connectionId)) : null
-    }),
-    knexError
+    })
   };
 }

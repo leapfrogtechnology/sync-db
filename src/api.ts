@@ -19,7 +19,8 @@ import OperationResult from './domain/operation/OperationResult';
 // Service
 import { executeProcesses } from './service/execution';
 import { runSynchronize, runPrune } from './service/sync';
-import { invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
+import { getMigrationPath, invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
+import { checkDirectory, existDirectory } from './util/fs';
 
 /**
  * Synchronize all the configured database connections.
@@ -43,13 +44,15 @@ export async function synchronize(
   };
   const { onStarted: _, ...invokeParams } = params;
 
+  const migrationPath = getMigrationPath(config);
+  const dirExist = await existDirectory(migrationPath);
   // TODO: Need to preload the SQL source code under this step.
-  const { knexMigrationConfig, knexError } = await init.prepare(config, {
+  const { knexMigrationConfig } = await init.prepare(config, {
     loadSqlSources: true,
-    loadMigrations: !params['skip-migration']
+    loadMigrations: !params['skip-migration'],
   });
 
-  if (!knexError) {
+  if (!dirExist) {
     params = {
       ...params,
       'skip-migration': true
