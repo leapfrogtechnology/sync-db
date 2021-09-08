@@ -36,7 +36,7 @@ export async function synchronize(
 ): Promise<OperationResult[]> {
   log('Synchronize');
 
-  const params: SynchronizeParams = {
+  let params: SynchronizeParams = {
     force: false,
     'skip-migration': false,
     ...options
@@ -44,10 +44,17 @@ export async function synchronize(
   const { onStarted: _, ...invokeParams } = params;
 
   // TODO: Need to preload the SQL source code under this step.
-  const { knexMigrationConfig } = await init.prepare(config, {
+  const { knexMigrationConfig, knexError } = await init.prepare(config, {
     loadSqlSources: true,
     loadMigrations: !params['skip-migration']
   });
+
+  if (!knexError) {
+    params = {
+      ...params,
+      'skip-migration': true
+    }
+  }
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>

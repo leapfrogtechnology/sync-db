@@ -86,11 +86,17 @@ export async function resolveMigrationContext(
 
   switch (config.migration.sourceType) {
     case 'sql':
-      const src = await resolveSqlMigrations(migrationPath);
+      try {
+        const src = await resolveSqlMigrations(migrationPath);
+        log('Available migration sources:\n%O', src);
 
-      log('Available migration sources:\n%O', src);
+        return new SqlMigrationSourceContext(src);
+      }
+      catch (err) {
+        log(err);
 
-      return new SqlMigrationSourceContext(src);
+        return null;
+      }
 
     case 'javascript':
       const srcJS = await resolveJavaScriptMigrations(migrationPath);
