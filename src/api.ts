@@ -8,6 +8,7 @@
 
 import * as init from './init';
 import { log } from './util/logger';
+import { existDirectory } from './util/fs';
 import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
 
 import Configuration from './domain/Configuration';
@@ -20,7 +21,6 @@ import OperationResult from './domain/operation/OperationResult';
 import { executeProcesses } from './service/execution';
 import { runSynchronize, runPrune } from './service/sync';
 import { getMigrationPath, invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
-import { checkDirectory, existDirectory } from './util/fs';
 
 /**
  * Synchronize all the configured database connections.
