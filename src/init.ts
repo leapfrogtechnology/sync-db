@@ -9,7 +9,6 @@ import { resolveMigrationContext } from './migration/service/knexMigrator';
 export interface PrepareOptions {
   loadMigrations?: boolean;
   loadSqlSources?: boolean;
-  dirExist?: boolean;
   migrationPath?: string;
 }
 

@@ -60,7 +60,7 @@ export function exists(filename: string): Promise<boolean> {
  * @param {string} pathName
  * @returns {boolean}
  */
-export async function existDir(pathName: string) {
+export async function existsDir(pathName: string) {
   try {
     await readDir(pathName);
 

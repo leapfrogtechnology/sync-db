@@ -8,7 +8,7 @@
 
 import * as init from './init';
 import { log } from './util/logger';
-import { existDir } from './util/fs';
+import { existsDir } from './util/fs';
 import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
 
 import Configuration from './domain/Configuration';
@@ -38,9 +38,9 @@ export async function synchronize(
   log('Synchronize');
 
   const migrationPath = getMigrationPath(config);
-  const dirExist = await existDir(migrationPath);
+  const dirExist = await existsDir(migrationPath);
 
-  let params: SynchronizeParams = {
+  const params: SynchronizeParams = {
     force: false,
     'skip-migration': !dirExist,
     ...options
@@ -50,10 +50,9 @@ export async function synchronize(
 
   // TODO: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
+    migrationPath,
     loadSqlSources: true,
-    loadMigrations: !params['skip-migration'],
-    migrationPath: migrationPath,
-    dirExist: dirExist
+    loadMigrations: dirExist
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);

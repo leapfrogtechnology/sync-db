@@ -76,15 +76,11 @@ export async function resolveMigrationContext(
   config: Configuration,
   options: PrepareOptions
 ): Promise<MigrationSourceContext | null> {
-  if (options.loadMigrations !== true) {
+  if (options.loadMigrations !== true || !options.migrationPath) {
     return null;
   }
 
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
-
-  if (!options.dirExist || !options.migrationPath) {
-    return null;
-  }
 
   switch (config.migration.sourceType) {
     case 'sql':
