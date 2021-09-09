@@ -7,9 +7,9 @@ import KnexMigrationSource from './migration/KnexMigrationSource';
 import { resolveMigrationContext } from './migration/service/knexMigrator';
 
 export interface PrepareOptions {
+  migrationPath?: string;
   loadMigrations?: boolean;
   loadSqlSources?: boolean;
-  migrationPath?: string;
 }
 
 export interface PreparedRequirements {
