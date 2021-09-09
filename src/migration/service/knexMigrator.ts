@@ -77,6 +77,8 @@ export async function resolveMigrationContext(
   options: PrepareOptions
 ): Promise<MigrationSourceContext | null> {
   if (options.loadMigrations !== true || !options.migrationPath) {
+    log('Error finding migration directory');
+
     return null;
   }
 
