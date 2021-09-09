@@ -8,6 +8,7 @@
 
 import * as init from './init';
 import { log } from './util/logger';
+import { existsDir } from './util/fs';
 import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
 
 import Configuration from './domain/Configuration';
@@ -19,7 +20,7 @@ import OperationResult from './domain/operation/OperationResult';
 // Service
 import { executeProcesses } from './service/execution';
 import { runSynchronize, runPrune } from './service/sync';
-import { invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
+import { getMigrationPath, invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
 
 /**
  * Synchronize all the configured database connections.
@@ -36,17 +37,22 @@ export async function synchronize(
 ): Promise<OperationResult[]> {
   log('Synchronize');
 
+  const migrationPath = getMigrationPath(config);
+  const dirExist = await existsDir(migrationPath);
+
   const params: SynchronizeParams = {
     force: false,
-    'skip-migration': false,
+    'skip-migration': !dirExist,
     ...options
   };
+
   const { onStarted: _, ...invokeParams } = params;
 
   // TODO: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
+    migrationPath,
     loadSqlSources: true,
-    loadMigrations: !params['skip-migration']
+    loadMigrations: !params['skip-migration'] || dirExist
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);

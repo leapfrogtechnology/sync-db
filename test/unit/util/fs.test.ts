@@ -3,7 +3,7 @@ import * as path from 'path';
 import { expect } from 'chai';
 import { it, describe } from 'mocha';
 
-import { write, read, remove, exists, mkdtemp, glob } from '../../../src/util/fs';
+import { write, read, remove, exists, mkdtemp, glob, existsDir } from '../../../src/util/fs';
 
 describe('UTIL: fs', () => {
   let filePath: string;
@@ -55,6 +55,22 @@ describe('UTIL: fs', () => {
 
     it('should return false if file does not exits in given file path', async () => {
       const res = await exists('foo/bar');
+
+      expect(res).to.equal(false);
+    });
+  });
+
+  describe('existsDir', () => {
+    it('should return true if directory of given file path exist', async () => {
+      const dirPath = await mkdtemp();
+
+      const res = await existsDir(dirPath);
+
+      expect(res).to.equal(true);
+    });
+
+    it('should return false if directory does not exits in given file path', async () => {
+      const res = await existsDir('foo/bar');
 
       expect(res).to.equal(false);
     });

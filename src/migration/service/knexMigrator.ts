@@ -76,31 +76,28 @@ export async function resolveMigrationContext(
   config: Configuration,
   options: PrepareOptions
 ): Promise<MigrationSourceContext | null> {
-  if (options.loadMigrations !== true) {
+  if (options.loadMigrations !== true || !options.migrationPath) {
     return null;
   }
 
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
-  const migrationPath = getMigrationPath(config);
-
   switch (config.migration.sourceType) {
     case 'sql':
-      const src = await resolveSqlMigrations(migrationPath);
-
+      const src = await resolveSqlMigrations(options.migrationPath);
       log('Available migration sources:\n%O', src);
 
       return new SqlMigrationSourceContext(src);
 
     case 'javascript':
-      const srcJS = await resolveJavaScriptMigrations(migrationPath);
+      const srcJS = await resolveJavaScriptMigrations(options.migrationPath);
 
       log('Available migration sources:\n%O', srcJS);
 
       return new JavaScriptMigrationContext(srcJS);
 
     case 'typescript':
-      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensions.TS);
+      const srcTS = await resolveJavaScriptMigrations(options.migrationPath, FileExtensions.TS);
 
       log('Available migration sources:\n%O', srcTS);
 
