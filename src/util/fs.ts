@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { promisify } from 'util';
 import { log } from './logger';
+import { promisify } from 'util';
 
 export const mkdir = promisify(fs.mkdir);
 export const readDir = promisify(fs.readdir);
@@ -60,7 +60,7 @@ export function exists(filename: string): Promise<boolean> {
  * @param {string} pathName
  * @returns {boolean}
  */
-export async function existDirectory(pathName: string) {
+export async function existDir(pathName: string) {
   try {
     await readDir(pathName);
 

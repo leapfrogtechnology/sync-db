@@ -12,7 +12,6 @@ import MigrationSourceContext from '../domain/MigrationSourceContext';
 import { resolveSqlMigrations, resolveJavaScriptMigrations } from './migrator';
 import SqlMigrationSourceContext from '../source-types/SqlMigrationSourceContext';
 import JavaScriptMigrationContext from '../source-types/JavaScriptMigrationSourceContext';
-import { existDirectory } from '../../util/fs';
 
 export enum KnexMigrationAPI {
   MIGRATE_LIST = 'migrate.list',
@@ -83,29 +82,26 @@ export async function resolveMigrationContext(
 
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
-  const migrationPath = getMigrationPath(config);
-  const dirExist = await existDirectory(migrationPath);
-
-  if (!dirExist) {
+  if (!options.dirExist || !options.migrationPath) {
     return null;
   }
 
   switch (config.migration.sourceType) {
     case 'sql':
-      const src = await resolveSqlMigrations(migrationPath);
+      const src = await resolveSqlMigrations(options.migrationPath);
       log('Available migration sources:\n%O', src);
 
       return new SqlMigrationSourceContext(src);
 
     case 'javascript':
-      const srcJS = await resolveJavaScriptMigrations(migrationPath);
+      const srcJS = await resolveJavaScriptMigrations(options.migrationPath);
 
       log('Available migration sources:\n%O', srcJS);
 
       return new JavaScriptMigrationContext(srcJS);
 
     case 'typescript':
-      const srcTS = await resolveJavaScriptMigrations(migrationPath, FileExtensions.TS);
+      const srcTS = await resolveJavaScriptMigrations(options.migrationPath, FileExtensions.TS);
 
       log('Available migration sources:\n%O', srcTS);
 
