@@ -62,7 +62,9 @@ describe('UTIL: fs', () => {
 
   describe('existsDir', () => {
     it('should return true if directory of given file path exist', async () => {
-      const res = await existsDir(filePath);
+      const dirPath = await mkdtemp();
+
+      const res = await existsDir(dirPath);
 
       expect(res).to.equal(true);
     });
