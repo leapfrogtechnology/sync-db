@@ -84,7 +84,7 @@ export async function resolveMigrationContext(
   log(`Initialize migration context [sourceType=${config.migration.sourceType}]`);
 
   const migrationPath = getMigrationPath(config);
-  const dirExist = existDirectory(migrationPath);
+  const dirExist = await existDirectory(migrationPath);
 
   if (!dirExist) {
     return null;
