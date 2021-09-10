@@ -52,7 +52,7 @@ export async function synchronize(
   const { knexMigrationConfig } = await init.prepare(config, {
     migrationPath,
     loadSqlSources: true,
-    loadMigrations: !params['skip-migration'] || dirExist
+    loadMigrations: !params['skip-migration']
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
