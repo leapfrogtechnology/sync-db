@@ -21,7 +21,7 @@ $ cp connections.sync-db.json.example connections.sync-db.json
 Run the docker-compose services in order.
 
 ```bash
-$ docker-compose up -d db
+$ docker-compose up -d mssql
 $ docker-compose up app
 ```
 
