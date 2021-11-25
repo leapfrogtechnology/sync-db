@@ -4,7 +4,7 @@
       "id": "db1",
       "client": "mssql",
       "connection": {
-        "host": "db",
+        "host": "mssql",
         "port": 1433,
         "user": "sa",
         "database": "tempdb",

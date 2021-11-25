@@ -11,6 +11,5 @@ services:
       SA_PASSWORD: 'Secret@123'
 
   app:
-    network_mode: host
     container_name: 'example-app'
     build: .
