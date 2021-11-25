@@ -77,6 +77,7 @@ class MigrateLatest extends Command {
     const { flags: parsedFlags } = this.parse(MigrateLatest);
     const isDryRun = parsedFlags['dry-run'];
     const config = await loadConfig(parsedFlags.config);
+
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
     if (isDryRun) await printLine(magenta('\n• DRY RUN STARTED\n'));

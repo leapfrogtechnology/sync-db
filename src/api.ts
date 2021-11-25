@@ -134,7 +134,10 @@ export async function migrateLatest(
   log('Migrate Latest');
 
   const params: OperationParams = { ...options };
-  const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
+  const { knexMigrationConfig } = await init.prepare(config, {
+    loadMigrations: true,
+    migrationPath: getMigrationPath(config)
+  });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
@@ -170,7 +173,10 @@ export async function migrateRollback(
   log('Migrate Rollback');
 
   const params: OperationParams = { ...options };
-  const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
+  const { knexMigrationConfig } = await init.prepare(config, {
+    loadMigrations: true,
+    migrationPath: getMigrationPath(config)
+  });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
@@ -206,7 +212,10 @@ export async function migrateList(
   log('Migrate List');
 
   const params: OperationParams = { ...options };
-  const { knexMigrationConfig } = await init.prepare(config, { loadMigrations: true });
+  const { knexMigrationConfig } = await init.prepare(config, {
+    loadMigrations: true,
+    migrationPath: getMigrationPath(config)
+  });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
