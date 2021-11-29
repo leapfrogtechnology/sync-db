@@ -1,5 +1,31 @@
 # Changelog
 
+## [v1.0.0](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0) (2021-11-29)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.13...v1.0.0)
+
+**Bug Fixes**
+
+- Error when removed migration field from sync-db.yml [\#80](https://github.com/leapfrogtechnology/sync-db/issues/80)
+
+**Closed Issues**
+
+- Release version 1.0.0 [\#138](https://github.com/leapfrogtechnology/sync-db/issues/138)
+- One time batch job and preparation SQL scripts [\#17](https://github.com/leapfrogtechnology/sync-db/issues/17)
+
+**Changes**
+
+- Upgrade sync-db to version 1.0.0 [\#141](https://github.com/leapfrogtechnology/sync-db/pull/141) ([Prabeshpd](https://github.com/Prabeshpd))
+- Send migration path before command execution [\#140](https://github.com/leapfrogtechnology/sync-db/pull/140) ([mesaugat](https://github.com/mesaugat))
+- Bump glob-parent from 5.1.1 to 5.1.2 [\#137](https://github.com/leapfrogtechnology/sync-db/pull/137) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump hosted-git-info from 2.7.1 to 2.8.9 [\#136](https://github.com/leapfrogtechnology/sync-db/pull/136) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump path-parse from 1.0.6 to 1.0.7 in /examples/node-app-pg-ts [\#131](https://github.com/leapfrogtechnology/sync-db/pull/131) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump path-parse from 1.0.6 to 1.0.7 in /examples/node-app-mssql-ts [\#130](https://github.com/leapfrogtechnology/sync-db/pull/130) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump path-parse from 1.0.6 to 1.0.7 in /examples/node-app-pg [\#129](https://github.com/leapfrogtechnology/sync-db/pull/129) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump path-parse from 1.0.6 to 1.0.7 in /examples/node-mssql-programmatic-use [\#128](https://github.com/leapfrogtechnology/sync-db/pull/128) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump path-parse from 1.0.6 to 1.0.7 in /examples/node-app-mssql [\#127](https://github.com/leapfrogtechnology/sync-db/pull/127) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump path-parse from 1.0.6 to 1.0.7 [\#126](https://github.com/leapfrogtechnology/sync-db/pull/126) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.0.0-beta.13](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-beta.13) (2021-10-19)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.12...v1.0.0-beta.13)
