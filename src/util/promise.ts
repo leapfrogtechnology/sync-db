@@ -28,7 +28,7 @@ export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]>
       const errors = err as any;
 
       if (errors.originalError) {
-        result.push(errors.originalError)
+        result.push(errors.originalError);
       } else {
         result.push(errors.error);
       }
