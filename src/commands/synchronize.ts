@@ -113,7 +113,7 @@ class Synchronize extends Command {
 
       for (const attempt of failedAttempts) {
         await printLine(bold(` ▸ ${attempt.connectionId}\n`));
-        await printError(attempt.error.result.error);
+        await printError(attempt.error);
 
         // Send verbose error with stack trace to debug logs.
         log(attempt.error);
