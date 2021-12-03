@@ -1,5 +1,16 @@
 # Changelog
 
+## [v1.0.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.1) (2021-12-03)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0...v1.0.1)
+
+**Changes**
+
+- Improve verbose logging [\#145](https://github.com/leapfrogtechnology/sync-db/pull/145) ([cham11ng](https://github.com/cham11ng))
+- Bump axios from 0.21.1 to 0.21.4 in /examples/node-app-mssql-ts [\#144](https://github.com/leapfrogtechnology/sync-db/pull/144) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump axios from 0.21.1 to 0.21.4 in /examples/node-app-mssql [\#143](https://github.com/leapfrogtechnology/sync-db/pull/143) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump axios from 0.21.1 to 0.21.4 in /examples/node-mssql-programmatic-use [\#142](https://github.com/leapfrogtechnology/sync-db/pull/142) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.0.0](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0) (2021-11-29)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0-beta.13...v1.0.0)
