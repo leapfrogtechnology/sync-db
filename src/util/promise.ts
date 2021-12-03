@@ -25,11 +25,13 @@ export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]>
 
       result.push(value);
     } catch (err) {
-      if (!err.result) {
-        throw err;
-      }
+      const errors = err as any;
 
-      result.push(err.result);
+      if (errors.originalError) {
+        result.push(errors.originalError)
+      } else {
+        result.push(errors.error);
+      }
     }
   }
 
