@@ -1,5 +1,52 @@
 # Changelog
 
+## [v1.1.0](https://github.com/leapfrogtechnology/sync-db/tree/v1.1.0) (2022-12-20)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.1...v1.1.0)
+
+**Implemented enhancements:**
+
+- Add support for triggers [\#186](https://github.com/leapfrogtechnology/sync-db/pull/186) ([sarojrana](https://github.com/sarojrana))
+
+**Changes**
+
+- Bump qs from 6.5.2 to 6.5.3 in /examples/node-app-mssql-ts [\#185](https://github.com/leapfrogtechnology/sync-db/pull/185) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump qs from 6.5.2 to 6.5.3 in /examples/node-mssql-programmatic-use [\#184](https://github.com/leapfrogtechnology/sync-db/pull/184) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump qs from 6.5.2 to 6.5.3 in /examples/node-app-mssql [\#183](https://github.com/leapfrogtechnology/sync-db/pull/183) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump decode-uri-component from 0.2.0 to 0.2.2 in /examples/node-app-pg [\#182](https://github.com/leapfrogtechnology/sync-db/pull/182) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump decode-uri-component from 0.2.0 to 0.2.2 in /examples/node-app-mssql-ts [\#181](https://github.com/leapfrogtechnology/sync-db/pull/181) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump decode-uri-component from 0.2.0 to 0.2.2 in /examples/node-mssql-programmatic-use [\#180](https://github.com/leapfrogtechnology/sync-db/pull/180) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump decode-uri-component from 0.2.0 to 0.2.2 in /examples/node-app-pg-ts [\#179](https://github.com/leapfrogtechnology/sync-db/pull/179) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump decode-uri-component from 0.2.0 to 0.2.2 in /examples/node-app-mssql [\#178](https://github.com/leapfrogtechnology/sync-db/pull/178) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump decode-uri-component from 0.2.0 to 0.2.2 [\#177](https://github.com/leapfrogtechnology/sync-db/pull/177) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimatch from 3.0.4 to 3.1.2 in /examples/node-mssql-programmatic-use [\#176](https://github.com/leapfrogtechnology/sync-db/pull/176) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimatch from 3.0.4 to 3.1.2 in /examples/node-app-mssql [\#175](https://github.com/leapfrogtechnology/sync-db/pull/175) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimatch from 3.0.4 to 3.1.2 in /examples/node-app-pg-ts [\#174](https://github.com/leapfrogtechnology/sync-db/pull/174) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimatch from 3.0.4 to 3.1.2 in /examples/node-app-pg [\#173](https://github.com/leapfrogtechnology/sync-db/pull/173) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimatch from 3.0.4 to 3.1.2 in /examples/node-app-mssql-ts [\#172](https://github.com/leapfrogtechnology/sync-db/pull/172) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump async from 2.6.3 to 2.6.4 in /examples/node-app-mssql-ts [\#171](https://github.com/leapfrogtechnology/sync-db/pull/171) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump async from 2.6.3 to 2.6.4 in /examples/node-mssql-programmatic-use [\#170](https://github.com/leapfrogtechnology/sync-db/pull/170) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump async from 2.6.3 to 2.6.4 in /examples/node-app-mssql [\#169](https://github.com/leapfrogtechnology/sync-db/pull/169) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump ansi-regex from 3.0.0 to 3.0.1 in /examples/node-app-mssql [\#168](https://github.com/leapfrogtechnology/sync-db/pull/168) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump ansi-regex from 3.0.0 to 3.0.1 in /examples/node-mssql-programmatic-use [\#167](https://github.com/leapfrogtechnology/sync-db/pull/167) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump ansi-regex from 3.0.0 to 3.0.1 in /examples/node-app-pg-ts [\#166](https://github.com/leapfrogtechnology/sync-db/pull/166) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump ansi-regex from 3.0.0 to 3.0.1 in /examples/node-app-pg [\#165](https://github.com/leapfrogtechnology/sync-db/pull/165) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimist from 1.2.5 to 1.2.6 in /examples/node-app-mssql-ts [\#164](https://github.com/leapfrogtechnology/sync-db/pull/164) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimist from 1.2.5 to 1.2.6 in /examples/node-app-pg-ts [\#163](https://github.com/leapfrogtechnology/sync-db/pull/163) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimist from 1.2.5 to 1.2.6 in /examples/node-app-pg [\#162](https://github.com/leapfrogtechnology/sync-db/pull/162) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimist from 1.2.5 to 1.2.6 in /examples/node-mssql-programmatic-use [\#161](https://github.com/leapfrogtechnology/sync-db/pull/161) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimist from 1.2.5 to 1.2.6 [\#160](https://github.com/leapfrogtechnology/sync-db/pull/160) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump minimist from 1.2.5 to 1.2.6 in /examples/node-app-mssql [\#159](https://github.com/leapfrogtechnology/sync-db/pull/159) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump follow-redirects from 1.14.5 to 1.14.9 in /examples/node-app-mssql [\#158](https://github.com/leapfrogtechnology/sync-db/pull/158) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump follow-redirects from 1.14.5 to 1.14.9 in /examples/node-app-mssql-ts [\#157](https://github.com/leapfrogtechnology/sync-db/pull/157) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump follow-redirects from 1.14.7 to 1.14.8 in /examples/node-mssql-programmatic-use [\#156](https://github.com/leapfrogtechnology/sync-db/pull/156) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump pathval from 1.1.0 to 1.1.1 [\#153](https://github.com/leapfrogtechnology/sync-db/pull/153) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump node-fetch from 2.6.1 to 2.6.7 [\#152](https://github.com/leapfrogtechnology/sync-db/pull/152) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump node-fetch from 2.6.1 to 2.6.7 in /examples/node-app-mssql-ts [\#151](https://github.com/leapfrogtechnology/sync-db/pull/151) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump node-fetch from 2.6.1 to 2.6.7 in /examples/node-mssql-programmatic-use [\#150](https://github.com/leapfrogtechnology/sync-db/pull/150) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump node-fetch from 2.6.1 to 2.6.7 in /examples/node-app-mssql [\#149](https://github.com/leapfrogtechnology/sync-db/pull/149) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump follow-redirects from 1.14.5 to 1.14.7 in /examples/node-mssql-programmatic-use [\#148](https://github.com/leapfrogtechnology/sync-db/pull/148) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.0.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.1) (2021-12-03)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.0...v1.0.1)
@@ -281,7 +328,7 @@
 
 **Implemented enhancements:**
 
-- CLI arg to generate connections from the environment [\#33](https://github.com/leapfrogtechnology/sync-db/pull/33) ([p0k8h](https://github.com/p0k8h))
+- CLI arg to generate connections from the environment [\#33](https://github.com/leapfrogtechnology/sync-db/pull/33) ([parwatcodes](https://github.com/parwatcodes))
 
 **Changes**
 
@@ -353,11 +400,11 @@
 
 **Changes**
 
-- Fix file name mistake [\#30](https://github.com/leapfrogtechnology/sync-db/pull/30) ([p0k8h](https://github.com/p0k8h))
-- Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) ([p0k8h](https://github.com/p0k8h))
-- Throw an error if object type names doesn't match directory convention [\#28](https://github.com/leapfrogtechnology/sync-db/pull/28) ([p0k8h](https://github.com/p0k8h))
+- Fix file name mistake [\#30](https://github.com/leapfrogtechnology/sync-db/pull/30) ([parwatcodes](https://github.com/parwatcodes))
+- Added an example showing programmatic usuage of sync-db Node/JS [\#29](https://github.com/leapfrogtechnology/sync-db/pull/29) ([parwatcodes](https://github.com/parwatcodes))
+- Throw an error if object type names doesn't match directory convention [\#28](https://github.com/leapfrogtechnology/sync-db/pull/28) ([parwatcodes](https://github.com/parwatcodes))
 - Upgrade TypeScript to 3.7.2 [\#27](https://github.com/leapfrogtechnology/sync-db/pull/27) ([kabirbaidhya](https://github.com/kabirbaidhya))
-- Use knex to create, run, rollback migrations with samples [\#24](https://github.com/leapfrogtechnology/sync-db/pull/24) ([p0k8h](https://github.com/p0k8h))
+- Use knex to create, run, rollback migrations with samples [\#24](https://github.com/leapfrogtechnology/sync-db/pull/24) ([parwatcodes](https://github.com/parwatcodes))
 - Integrate test code coverage reporting with Codecov and Travis. [\#19](https://github.com/leapfrogtechnology/sync-db/pull/19) ([ghost](https://github.com/ghost))
 
 ## [v1.0.0-alpha.6](https://github.com/leapfrogtechnology/sync-db/tree/v1.0.0-alpha.6) (2019-08-28)
@@ -420,4 +467,4 @@
 
 
 
-\* *This Changelog was automatically generated       by [github_changelog_generator]      (https://github.com/github-changelog-generator/github-changelog-generator)*
+\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
