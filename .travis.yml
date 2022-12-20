@@ -16,13 +16,14 @@ git:
 
 install:
   # Install hub
-  - sudo snap install hub --classic
+  - sudo apt update
+  - sudo apt install hub
   - hub --version
 
-  # Install github-changelog-generator.
+  # Install github-changelog-generator
   - gem install github_changelog_generator
 
-  # install dependencies
+  # Install dependencies
   - yarn
 
 before_script:
