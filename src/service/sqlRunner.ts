@@ -17,7 +17,8 @@ const dropStatementsMap: Mapping<string> = {
   [DatabaseObjectTypes.SCHEMA]: 'DROP SCHEMA IF EXISTS',
   [DatabaseObjectTypes.VIEW]: 'DROP VIEW IF EXISTS',
   [DatabaseObjectTypes.FUNCTION]: 'DROP FUNCTION IF EXISTS',
-  [DatabaseObjectTypes.PROCEDURE]: 'DROP PROCEDURE IF EXISTS'
+  [DatabaseObjectTypes.PROCEDURE]: 'DROP PROCEDURE IF EXISTS',
+  [DatabaseObjectTypes.TRIGGER]: 'DROP TRIGGER IF EXISTS'
 };
 
 /**

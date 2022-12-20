@@ -4,6 +4,7 @@ sql:
   # Create objects in dbo schema
   - function/dbo/sum.sql
   - function/dbo/square.sql
+  - trigger/dbo/trg_users.sql
 
   # Create objects in utils schema
   - schema/utils.sql
