@@ -1,13 +1,15 @@
 language: node_js
 
+dist: jammy
+
 branches:
   only:
     - master
 
 node_js:
   - node
+  - 18
   - 16
-  - 14
 
 git:
   depth: false
