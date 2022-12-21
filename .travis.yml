@@ -27,6 +27,10 @@ install:
   - yarn
 
 before_script:
+  # Set Ribby as git user
+  - git config user.name "Ribby"
+  - git config user.email "bot@lftechnology.com"
+
   - yarn format:check
   - yarn lint
   - yarn build
