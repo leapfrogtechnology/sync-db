@@ -1,6 +1,5 @@
 import { promisify } from 'util';
-import isNil from 'ramda/src/isNil';
-import flatten from 'ramda/src/flatten';
+import { flatten, isNil } from 'ramda';
 
 /**
  * Promiser - A function that returns a promise.
@@ -20,6 +19,7 @@ export const timeout = promisify(setTimeout);
  */
 export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]> {
   const result: T[] = [];
+  const errors = [];
 
   for (const promiser of promisers) {
     try {
@@ -27,18 +27,20 @@ export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]>
 
       result.push(value);
     } catch (err) {
-      const errors = err as any;
+      const error = err as any;
 
-      if (errors.error) {
-        result.push(errors.error);
+      if (error.error) {
+        errors.push(error.error);
       }
 
-      if (errors.originalError) {
-        result.push(errors.originalError);
+      if (error.originalError) {
+        errors.push(error.originalError);
       }
 
-      result.push(errors);
-      throw flatten(result.filter(r => !isNil(r)));
+      errors.push(error);
+      const errorsWithData = flatten(errors.filter(r => !isNil(r)));
+
+      throw errorsWithData;
     }
   }
 
