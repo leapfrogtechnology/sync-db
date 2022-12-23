@@ -1,4 +1,6 @@
 import { promisify } from 'util';
+import isNil from 'ramda/src/isNil';
+import flatten from 'ramda/src/flatten';
 
 /**
  * Promiser - A function that returns a promise.
@@ -27,13 +29,16 @@ export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]>
     } catch (err) {
       const errors = err as any;
 
+      if (errors.error) {
+        result.push(errors.error);
+      }
+
       if (errors.originalError) {
         result.push(errors.originalError);
-      } else if (errors.error) {
-        result.push(errors.error);
-      } else {
-        throw err;
       }
+
+      result.push(errors);
+      throw flatten(result.filter(r => !isNil(r)));
     }
   }
 
