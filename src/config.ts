@@ -119,7 +119,7 @@ export async function resolveConnections(config: Configuration, resolver?: strin
   } else if (resolver || config.connectionResolver) {
     connections = await resolveConnectionsUsingResolver(resolver || config.connectionResolver, config);
   } else {
-    log('Connections file not provided. Trying to load connection details from env.');
+    log('Connections file not provided. Loading connection details from env.');
 
     connections = resolveConnectionsFromEnv();
   }
