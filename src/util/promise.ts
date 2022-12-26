@@ -32,7 +32,7 @@ export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]>
       }
 
       if (error.originalError) {
-        throw error.originalError
+        throw error.originalError;
       }
 
       throw error;
