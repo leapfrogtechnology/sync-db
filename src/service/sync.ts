@@ -41,7 +41,7 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
     log('PRE-SYNC: End');
   }
 
-  // Run the migration scripts.
+  // Run the synchronization scripts.
   await sqlRunner.runSequentially(trx, sqlScripts, connectionId);
 
   if (postMigrationScripts.length > 0) {
