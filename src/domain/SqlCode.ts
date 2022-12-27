@@ -4,6 +4,7 @@
 interface SqlCode {
   sql: string;
   name: string;
+  dropOnly?: boolean;
 }
 
 export default SqlCode;
