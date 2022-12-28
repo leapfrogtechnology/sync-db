@@ -90,9 +90,9 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   const fileName = fileParts.pop() || '';
   const [type, schema] = fileParts;
 
-  // File name might contain `.dropped` at the end which we need to remove in case of dropping the database objects.
-  let name = fileName.replace(DROP_ONLY_OBJECT_TERMINATOR, '');
-  name = name.replace('.sql', '');
+  // Remove .sql and .dropped (if exists) from the file name.
+  const santizeFileNameRegex = /(.sql)|(.dropped)/g;
+  let name = fileName.replace(santizeFileNameRegex, '');
   const fqon = getFQON(type, name, schema);
 
   return { name, fqon, type, schema };
