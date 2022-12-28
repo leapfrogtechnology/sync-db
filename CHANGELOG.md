@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.1.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.1.1) (2022-12-26)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.1.0...v1.1.1)
+
+**Bug Fixes**
+
+- Fail synchronization if any error occurs while running sql scripts [\#187](https://github.com/leapfrogtechnology/sync-db/pull/187) ([thesamiroli](https://github.com/thesamiroli))
+
 ## [v1.1.0](https://github.com/leapfrogtechnology/sync-db/tree/v1.1.0) (2022-12-20)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.0.1...v1.1.0)
