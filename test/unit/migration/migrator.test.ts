@@ -70,7 +70,7 @@ describe('MIGRATION: migrator', () => {
         {
           name: '0001_mgr',
           queries: {
-            up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr1' },
+            up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr1', dropOnly: false },
             down: undefined
           }
         },
@@ -78,14 +78,14 @@ describe('MIGRATION: migrator', () => {
           name: '0002_mgr',
           queries: {
             up: undefined,
-            down: { name: '0002_mgr.down.sql', sql: 'DROP TABLE test_mgr2' }
+            down: { name: '0002_mgr.down.sql', sql: 'DROP TABLE test_mgr2', dropOnly: false }
           }
         },
         {
           name: '0003_mgr',
           queries: {
-            up: { name: '0003_mgr.up.sql', sql: 'CREATE TABLE test_mgr3' },
-            down: { name: '0003_mgr.down.sql', sql: 'DROP TABLE test_mgr3' }
+            up: { name: '0003_mgr.up.sql', sql: 'CREATE TABLE test_mgr3', dropOnly: false },
+            down: { name: '0003_mgr.down.sql', sql: 'DROP TABLE test_mgr3', dropOnly: false }
           }
         }
       ]);

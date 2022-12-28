@@ -8,6 +8,7 @@ import SqlCode from '../domain/SqlCode';
 import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
+import { DROP_ONLY_OBJECT_TERMINATOR } from '../constants';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
 
 /**
@@ -22,17 +23,26 @@ const dropStatementsMap: Mapping<string> = {
 };
 
 /**
- * Reads an sql file and return it's contents.
+ * Reads an sql file and return it's contents. If a file ends with `.dropped` on the config file,
+ * dropOnly is set as true, and that object would not be synchronized, only dropped.
  *
  * @param {string} sqlBasePath
  * @param {string} fileName
  * @returns {Promise<SqlCode>}
  */
 export async function resolveFile(sqlBasePath: string, fileName: string): Promise<SqlCode> {
-  const filePath = path.resolve(sqlBasePath, fileName);
+  let name = fileName;
+  let dropOnly = false;
+
+  if (fileName.includes(DROP_ONLY_OBJECT_TERMINATOR)) {
+    name = fileName.replace(DROP_ONLY_OBJECT_TERMINATOR, '');
+    dropOnly = true;
+  }
+
+  const filePath = path.resolve(sqlBasePath, name);
   const sql = await fs.read(filePath);
 
-  return { sql, name: fileName };
+  return { sql, name, dropOnly };
 }
 
 /**
@@ -65,7 +75,7 @@ export function getFQON(type: string, name: string, schema?: string): string {
 }
 
 /**
- * Extract sql file info from the filePath
+ * Extract sql file info from the filePath to rollback the synchronization.
  *
  * @param {string} filePath
  * @returns {SqlFileInfo}
@@ -79,7 +89,10 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   const fileParts = filePath.split('/');
   const fileName = fileParts.pop() || '';
   const [type, schema] = fileParts;
-  const name = fileName.replace('.sql', '');
+
+  // Remove .sql and .dropped (if exists) from the file name.
+  const santizeFileNameRegex = /(.sql)|(.dropped)/g;
+  const name = fileName.replace(santizeFileNameRegex, '');
   const fqon = getFQON(type, name, schema);
 
   return { name, fqon, type, schema };
@@ -115,6 +128,12 @@ export function getDropStatement(type: string, fqon: string): string {
 export function runSequentially(trx: Knex, files: SqlCode[], connectionId: string): Promise<any[]> {
   const log = dbLogger(connectionId);
   const promises = files.map(file => {
+    if (file.dropOnly) {
+      log(`Skipping ${file.name} from synchronization.`);
+
+      return () => Promise.resolve();
+    }
+
     log(`Running ${file.name}`);
 
     return () => trx.raw(file.sql);
