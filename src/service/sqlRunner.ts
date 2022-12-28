@@ -92,7 +92,7 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 
   // Remove .sql and .dropped (if exists) from the file name.
   const santizeFileNameRegex = /(.sql)|(.dropped)/g;
-  let name = fileName.replace(santizeFileNameRegex, '');
+  const name = fileName.replace(santizeFileNameRegex, '');
   const fqon = getFQON(type, name, schema);
 
   return { name, fqon, type, schema };
