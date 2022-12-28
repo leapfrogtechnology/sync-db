@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.2.0](https://github.com/leapfrogtechnology/sync-db/tree/v1.2.0) (2022-12-28)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.1.1...v1.2.0)
+
+**Changes**
+
+- Skip synchronization of a database object if .dropped is appended on its name [\#188](https://github.com/leapfrogtechnology/sync-db/pull/188) ([thesamiroli](https://github.com/thesamiroli))
+
 ## [v1.1.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.1.1) (2022-12-26)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.1.0...v1.1.1)
