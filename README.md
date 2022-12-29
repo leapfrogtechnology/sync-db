@@ -200,7 +200,7 @@ _See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db
 
 ## `sync-db synchronize`
 
-Synchronize all the configured database connections. If `.dropped` is appended with an database object's name,
+Synchronize all the configured database connections. If `.drop` is appended with an database object's name,
 then that object will only be dropped, and not synchronized.
 
 ```
@@ -280,7 +280,7 @@ basePath: /path/to/sql
 
 sql:
   - schema/<schema_name>.sql
-  - function/<schema_name>/<function_name>.sql.dropped #While syncing this will only be dropped, not upped.
+  - function/<schema_name>/<function_name>.sql.drop #While syncing this will only be dropped, not synced.
   - procedure/<schema_name>/<procedure_name>.sql
 ```
 
