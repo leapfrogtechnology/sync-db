@@ -280,7 +280,7 @@ basePath: /path/to/sql
 
 sql:
   - schema/<schema_name>.sql
-  - function/<schema_name>/<function_name>.sql.drop #While syncing this will only be dropped, not synced.
+  - function/<schema_name>/<function_name>.sql.drop # While synchronizing this will only be dropped, not synced.
   - procedure/<schema_name>/<procedure_name>.sql
 ```
 
