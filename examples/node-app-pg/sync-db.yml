@@ -12,6 +12,7 @@ sql:
   - function/utils/get_date.sql
   - view/utils/vw_table_names.sql
   - view/utils/vw_user_names.sql
+  - view/utils/vw_current_queries.sql.drop # This view will only be dropped - not synchronized.
 
 migration:
   directory: migrations

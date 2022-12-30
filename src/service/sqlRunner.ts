@@ -23,7 +23,7 @@ const dropStatementsMap: Mapping<string> = {
 };
 
 /**
- * Reads an sql file and return it's contents. If a file ends with `.dropped` on the config file,
+ * Reads an sql file and return it's contents. If a file ends with `.drop` on the config file,
  * dropOnly is set as true, and that object would not be synchronized, only dropped.
  *
  * @param {string} sqlBasePath
@@ -90,8 +90,8 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   const fileName = fileParts.pop() || '';
   const [type, schema] = fileParts;
 
-  // Remove .sql and .dropped (if exists) from the file name.
-  const santizeFileNameRegex = /(.sql)|(.dropped)/g;
+  // Remove .sql and .drop (if exists) from the file name.
+  const santizeFileNameRegex = /(.sql)|(.drop)/g;
   const name = fileName.replace(santizeFileNameRegex, '');
   const fqon = getFQON(type, name, schema);
 
