@@ -12,7 +12,7 @@ sql:
   - procedure/utils/get_date.sql
   - view/utils/vw_users.sql
   - view/utils/vw_tasks.sql
-  - view/utils/vw_user_emails.sql.drop
+  - view/utils/vw_user_emails.sql.drop # This view will only be dropped - not synchronized.
 
   # Create objects in testdata schema
   - schema/testdata.sql
