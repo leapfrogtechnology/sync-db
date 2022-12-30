@@ -5,5 +5,5 @@
 --
 CREATE VIEW utils.vw_current_queries
 AS (
-  SELECT datname, usename, query FROM pg_stat_activity;
+  SELECT datname, usename, query FROM pg_stat_activity
 );
