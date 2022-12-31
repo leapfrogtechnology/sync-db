@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.2.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.2.1) (2022-12-30)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.2.0...v1.2.1)
+
+**Changes**
+
+- Rename `.dropped` to `.drop` & update examples [\#189](https://github.com/leapfrogtechnology/sync-db/pull/189) ([thesamiroli](https://github.com/thesamiroli))
+
 ## [v1.2.0](https://github.com/leapfrogtechnology/sync-db/tree/v1.2.0) (2022-12-28)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.1.1...v1.2.0)
