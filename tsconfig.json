@@ -11,6 +11,7 @@
     "target": "es2017",
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
+    "useUnknownInCatchVariables": false,
     "typeRoots": ["src/@types"]
   },
   "include": ["src/**/*"],
