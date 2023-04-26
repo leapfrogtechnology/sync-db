@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 
 import MigrationRunner from '../domain/MigrationRunner';
 import { dbLogger, log as logger } from '../../util/logger';

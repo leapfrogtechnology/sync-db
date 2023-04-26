@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 
 import { log } from './util/logger';
 import { validate, isCLI } from './config';

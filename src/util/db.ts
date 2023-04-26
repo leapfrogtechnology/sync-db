@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import { dbLogger, log } from './logger';
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';

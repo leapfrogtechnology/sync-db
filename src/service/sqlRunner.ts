@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import * as path from 'path';
 import { reverse, keys } from 'ramda';
 

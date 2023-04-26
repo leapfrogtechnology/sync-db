@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 import { describe, it } from 'mocha';
 import JavaScriptMigrationEntry from '../../../src/migration/domain/JavaScriptMigrationEntry';
 import JavaScriptMigrationContext from '../../../src/migration/source-types/JavaScriptMigrationSourceContext';

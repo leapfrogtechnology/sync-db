@@ -10,7 +10,7 @@ import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs'
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../../assets/templates/migration');
 const CUSTOM_CREATE_TEMPLATE = `
-import * as Knex from "knex";
+import { Knex } from "knex";
 
 export function up(db: Knex) {
   return db.schema.createTable("{{table}}", table => {})

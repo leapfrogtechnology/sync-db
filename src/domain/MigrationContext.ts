@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 
 import OperationParams from './operation/OperationParams';
 import OperationContext from './operation/OperationContext';

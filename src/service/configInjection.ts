@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 
 import Mapping from '../domain/Mapping';
 import { dbLogger } from '../util/logger';
