@@ -23,10 +23,9 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@leapfrogtechnology/sync-db@1.0.0-beta.10":
-  version "1.0.0-beta.10"
-  resolved "https://registry.yarnpkg.com/@leapfrogtechnology/sync-db/-/sync-db-1.0.0-beta.10.tgz#8b335d4a505305fa608a569f4a2f4fe01d62bc63"
-  integrity sha512-rnNoTnf4f1pQrE+hYtZ+gVhS83V5zE2PkoVMJFPLyCe6JMf3uIadaG/r5GOeMAZGxi02R3F0XKqe7J0A+e9EGQ==
+"@leapfrogtechnology/sync-db@./leapfrogtechnology-sync-db-v1.2.1.tgz":
+  version "1.2.1"
+  resolved "./leapfrogtechnology-sync-db-v1.2.1.tgz#0454d2f12caa99fe5dbd91c8e1014893b80189f1"
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
@@ -37,6 +36,7 @@
     globby "^10.0.2"
     knex "^0.20.11"
     ramda "^0.26.1"
+    ts-node "^8"
     tslib "^1"
     yamljs "^0.3.0"
 
@@ -2584,6 +2584,17 @@ to-regex@^3.0.1, to-regex@^3.0.2:
     regex-not "^1.0.2"
     safe-regex "^1.1.0"
 
+ts-node@^8:
+  version "8.10.2"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.10.2.tgz#eee03764633b1234ddd37f8db9ec10b75ec7fb8d"
+  integrity sha512-ISJJGgkIpDdBhWVu3jufsWpK3Rzo7bdiIXJjQc0ynKxVOVcg2oIrf2H2cejminGrptVc6q6/uynAHNCuWGbpVA==
+  dependencies:
+    arg "^4.1.0"
+    diff "^4.0.1"
+    make-error "^1.1.1"
+    source-map-support "^0.5.17"
+    yn "3.1.1"
+
 ts-node@^9.1.1:
   version "9.1.1"
   resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-9.1.1.tgz#51a9a450a3e959401bda5f004a72d54b936d376d"
@@ -2623,10 +2634,10 @@ type-fest@^0.8.1:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
 
-typescript@^4.2.3:
-  version "4.2.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.3.tgz#39062d8019912d43726298f09493d598048c1ce3"
-  integrity sha512-qOcYwxaByStAWrBf4x0fibwZvMRG+r4cQoTjbPtUlrWjBHbmCAww1i448U0GJ+3cNNEtebDteo/cHOR3xJ4wEw==
+typescript@^5.0.4:
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.4.tgz#b217fd20119bd61a94d4011274e0ab369058da3b"
+  integrity sha512-cW9T5W9xY37cc+jfEnaUvX91foxtHkza3Nw3wkoF4sSlKn0MONdkdEndig/qPBWXNkmplh3NzayQzCiHM4/hqw==
 
 unbox-primitive@^1.0.0:
   version "1.0.0"
