@@ -54,7 +54,7 @@ describe('MIGRATION: KnexMigrationSource', () => {
       const instance = await getInstance();
       const dbStub = {} as any;
 
-      const migration = instance.getMigration('mgr_002');
+      const migration = await instance.getMigration('mgr_002');
 
       const upResult = await migration.up(dbStub);
       const downResult = await migration.down(dbStub);
