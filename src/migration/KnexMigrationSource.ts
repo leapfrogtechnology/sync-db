@@ -1,3 +1,4 @@
+import { Knex } from 'knex';
 import { dbLogger } from '../util/logger';
 import MigrationSourceContext from './domain/MigrationSourceContext';
 

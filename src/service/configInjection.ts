@@ -74,6 +74,12 @@ export async function setup(trx: Knex.Transaction, context: SynchronizeContext):
 
   const values = convertToKeyValuePairs(injectedConfig.vars);
 
+  if(!values.length) {
+    log(`Config not available. Skipping insertion on ${INJECTED_CONFIG_TABLE} table.`);
+
+    return;
+  }
+
   // Create table
   log(`Creating table ${INJECTED_CONFIG_TABLE}.`);
   await trx.schema.createTable(INJECTED_CONFIG_TABLE, table => {
