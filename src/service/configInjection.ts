@@ -74,7 +74,7 @@ export async function setup(trx: Knex.Transaction, context: SynchronizeContext):
 
   const values = convertToKeyValuePairs(injectedConfig.vars);
 
-  if(!values.length) {
+  if (!values.length) {
     log(`Config not available. Skipping insertion on ${INJECTED_CONFIG_TABLE} table.`);
 
     return;
