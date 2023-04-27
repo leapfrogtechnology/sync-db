@@ -52,7 +52,7 @@ export function createInstance(config: ConnectionConfig): Knex {
 
   log(`Connecting to database: ${server ? server : host}/${database}`);
 
-  if(config.client === 'mssql' && (!server || !userName)) {
+  if (config.client === 'mssql' && (!server || !userName)) {
     throw new Error(`Db client ${config.client} requires key "server" and "userName".`)
   }
 
