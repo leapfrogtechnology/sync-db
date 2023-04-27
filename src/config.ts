@@ -131,6 +131,7 @@ export async function resolveConnections(config: Configuration, resolver?: strin
       client,
       connection: {
         host: (connection as any).host,
+        server: (connection as any).server,
         database: (connection as any).database
       }
     }))
@@ -214,7 +215,10 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
       database: process.env.DB_NAME,
       options: {
         encrypt: process.env.DB_ENCRYPTION === 'true'
-      }
+      },
+      // Knex config for mssql uses these keys in place of "host" and "user"
+      server: process.env.DB_SERVER,
+      userName: process.env.DB_USERNAME
     }
   } as ConnectionConfig;
 
