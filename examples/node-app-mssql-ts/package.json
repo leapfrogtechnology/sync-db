@@ -12,12 +12,12 @@
     "rollback": "../../bin/run-dev.sh migrate-rollback"
   },
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "1.0.0-beta.10",
+    "@leapfrogtechnology/sync-db": "^1.0.0-beta.10",
     "knex": "^0.95.2",
     "mssql": "^6.3.1",
     "tedious": "^11.0.6",
     "ts-node": "^9.1.1",
-    "typescript": "^5.0.4"
+    "typescript": "^4.2.3"
   },
   "license": "MIT",
   "devDependencies": {
