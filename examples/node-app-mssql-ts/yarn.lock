@@ -102,10 +102,10 @@
   resolved "https://registry.yarnpkg.com/@js-joda/core/-/core-3.2.0.tgz#3e61e21b7b2b8a6be746df1335cf91d70db2a273"
   integrity sha512-PMqgJ0sw5B7FKb2d5bWYIoxjri+QlW/Pys7+Rw82jSH0QN3rB05jZ/VrrsUdh1w4+i2kw9JOejXGq/KhDOX7Kg==
 
-"@leapfrogtechnology/sync-db@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@leapfrogtechnology/sync-db/-/sync-db-1.2.1.tgz#ba153ea94b5b1b7e200e86db0dd5035248af9617"
-  integrity sha512-9S3K0vLl4DaDteppPNr1swrwvfBnAhEjq9R4RGRg6IGo9C4yJdx1hleoJVDxmwjUv3SJePYiB3ceGXdaRoup6g==
+"@leapfrogtechnology/sync-db@1.0.0-beta.10":
+  version "1.0.0-beta.10"
+  resolved "https://registry.yarnpkg.com/@leapfrogtechnology/sync-db/-/sync-db-1.0.0-beta.10.tgz#8b335d4a505305fa608a569f4a2f4fe01d62bc63"
+  integrity sha512-rnNoTnf4f1pQrE+hYtZ+gVhS83V5zE2PkoVMJFPLyCe6JMf3uIadaG/r5GOeMAZGxi02R3F0XKqe7J0A+e9EGQ==
   dependencies:
     "@oclif/command" "^1"
     "@oclif/config" "^1"
@@ -116,7 +116,6 @@
     globby "^10.0.2"
     knex "^0.20.11"
     ramda "^0.26.1"
-    ts-node "^8"
     tslib "^1"
     yamljs "^0.3.0"
 
@@ -3122,17 +3121,6 @@ tr46@~0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/tr46/-/tr46-0.0.3.tgz#8184fd347dac9cdc185992f3a6622e14b9d9ab6a"
   integrity sha1-gYT9NH2snNwYWZLzpmIuFLnZq2o=
-
-ts-node@^8:
-  version "8.10.2"
-  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-8.10.2.tgz#eee03764633b1234ddd37f8db9ec10b75ec7fb8d"
-  integrity sha512-ISJJGgkIpDdBhWVu3jufsWpK3Rzo7bdiIXJjQc0ynKxVOVcg2oIrf2H2cejminGrptVc6q6/uynAHNCuWGbpVA==
-  dependencies:
-    arg "^4.1.0"
-    diff "^4.0.1"
-    make-error "^1.1.1"
-    source-map-support "^0.5.17"
-    yn "3.1.1"
 
 ts-node@^9.1.1:
   version "9.1.1"
