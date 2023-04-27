@@ -1,4 +1,4 @@
-import { Knex } from 'knex';
+import * as Knex from 'knex';
 
 /**
  * Create tasks table.
