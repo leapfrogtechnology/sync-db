@@ -37,7 +37,7 @@ export async function prepare(config: Configuration, options: PrepareOptions): P
   return {
     knexMigrationConfig: (connectionId: string) => ({
       tableName: config.migration.tableName,
-      migrationSource: migrationContext ? new KnexMigrationSource(migrationContext.bind(connectionId)) : null
+      migrationSource: migrationContext ? new KnexMigrationSource(migrationContext.bind(connectionId)) : undefined
     })
   };
 }

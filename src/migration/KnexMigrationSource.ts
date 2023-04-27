@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
 import { dbLogger } from '../util/logger';
+import MigrationRunner from './domain/MigrationRunner';
 import MigrationSourceContext from './domain/MigrationSourceContext';
 
 /**
@@ -8,7 +9,7 @@ import MigrationSourceContext from './domain/MigrationSourceContext';
  *
  * Reference: http://knexjs.org/#Migrations-API
  */
-class KnexMigrationSource {
+class KnexMigrationSource implements Knex.MigrationSource<string> {
   private migrationContext: MigrationSourceContext;
   private log: debug.Debugger;
 
@@ -48,15 +49,16 @@ class KnexMigrationSource {
   /**
    * Get the migration runner.
    *
-   * @param {SqlMigrationEntry} migration
+   * @param {string} name
+   * @returns {Promise<MigrationRunner>}
    */
-  getMigration(name: string) {
+  getMigration(name: string): Promise<MigrationRunner> {
     const migration = this.migrationContext.get(name);
 
     this.log(`getMigration - ${name}`);
     this.log(`getMigration - resolve: %o`, migration);
 
-    return migration;
+    return Promise.resolve(migration);
   }
 }
 
