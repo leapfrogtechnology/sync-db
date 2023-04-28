@@ -1,3 +1,4 @@
+import { Knex } from 'knex';
 import * as path from 'path';
 import * as yaml from 'yamljs';
 import { mergeDeepRight } from 'ramda';
@@ -58,7 +59,7 @@ export async function loadConfig(configFilename: string = CONFIG_FILENAME): Prom
 
   log('Resolved config file.');
 
-  const loaded = mergeDeepRight(DEFAULT_CONFIG, loadedConfig) as Configuration;
+  const loaded = mergeDeepRight<Configuration, Configuration>(DEFAULT_CONFIG, loadedConfig);
 
   validate(loaded);
 
@@ -130,8 +131,8 @@ export async function resolveConnections(config: Configuration, resolver?: strin
       id,
       client,
       connection: {
-        host: (connection as any).host,
-        database: (connection as any).database
+        host: (connection as Knex.ConnectionConfig).host,
+        database: (connection as Knex.ConnectionConfig).database
       }
     }))
   );

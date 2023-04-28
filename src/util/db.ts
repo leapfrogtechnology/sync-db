@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import { Knex, knex } from 'knex';
 import { dbLogger, log } from './logger';
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
@@ -48,11 +48,22 @@ export function createInstance(config: ConnectionConfig): Knex {
     throw new Error('The provided connection already contains a connection instance.');
   }
 
-  const { host, database } = config.connection as any;
+  const { host, database, user } = config.connection as Knex.ConnectionConfig;
 
   log(`Connecting to database: ${host}/${database}`);
 
-  return Knex({
+  if (config.client === 'mssql') {
+    return knex({
+      client: config.client,
+      connection: {
+        ...(config.connection as Knex.MsSqlConnectionConfig),
+        server: host,
+        userName: user
+      }
+    });
+  }
+
+  return knex({
     client: config.client,
     connection: config.connection
   });

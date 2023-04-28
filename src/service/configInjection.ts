@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 
 import Mapping from '../domain/Mapping';
 import { dbLogger } from '../util/logger';
@@ -73,6 +73,12 @@ export async function setup(trx: Knex.Transaction, context: SynchronizeContext):
   }
 
   const values = convertToKeyValuePairs(injectedConfig.vars);
+
+  if (!values.length) {
+    log(`Config not available. Skipping insertion on ${INJECTED_CONFIG_TABLE} table.`);
+
+    return;
+  }
 
   // Create table
   log(`Creating table ${INJECTED_CONFIG_TABLE}.`);

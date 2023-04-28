@@ -1,4 +1,4 @@
-import * as Knex from 'knex';
+import { Knex } from 'knex';
 
 type Value = Date | string | number | boolean | Date[] | string[] | number[] | boolean[] | Buffer | Knex.Raw;
 

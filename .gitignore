@@ -7,3 +7,6 @@
 /tmp
 node_modules
 /coverage
+
+# IDE settings
+.vscode

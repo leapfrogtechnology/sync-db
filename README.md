@@ -240,12 +240,12 @@ import { synchronize, loadConfig, resolveConnections } from '@leapfrogtechnology
 You can also pass your own database connection (eg: Knex connection) instead of resolving `connections.sync-db.json` file.
 
 ```ts
-import * as Knex from 'knex';
+import { knex } from 'knex';
 import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
 
 (async () => {
   const config = await loadConfig(); // Load sync-db.yml
-  const connection = Knex({
+  const connection = knex({
     // Your Knex connection instance.
     client: 'mssql',
     connection: {
