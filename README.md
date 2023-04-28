@@ -249,8 +249,8 @@ import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
     // Your Knex connection instance.
     client: 'mssql',
     connection: {
-      server: 'host',
-      userName: 'userName',
+      host: 'host',
+      user: 'userName',
       password: 'password',
       database: 'dbName'
     }
