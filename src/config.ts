@@ -58,10 +58,10 @@ export async function loadConfig(configFilename: string = CONFIG_FILENAME): Prom
 
   log('Resolved config file.');
 
-  const loaded = (mergeDeepRight<Configuration, Configuration>(
+  const loaded = mergeDeepRight<Configuration, Configuration>(
     DEFAULT_CONFIG,
     loadedConfig
-  ) as unknown) as Configuration;
+  )
 
   validate(loaded);
 
