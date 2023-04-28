@@ -48,12 +48,19 @@ export function createInstance(config: ConnectionConfig): Knex {
     throw new Error('The provided connection already contains a connection instance.');
   }
 
-  const { host, server, database, userName } = config.connection as any;
+  const { host, database, user } = config.connection as Knex.ConnectionConfig;
 
-  log(`Connecting to database: ${server ? server : host}/${database}`);
+  log(`Connecting to database: ${host}/${database}`);
 
-  if (config.client === 'mssql' && (!server || !userName)) {
-    throw new Error(`Db client ${config.client} requires key "server" and "userName".`);
+  if (config.client === 'mssql') {
+    return knex({
+      client: config.client,
+      connection: {
+        ...(config.connection as Knex.MsSqlConnectionConfig),
+        server: host,
+        userName: user
+      }
+    });
   }
 
   return knex({

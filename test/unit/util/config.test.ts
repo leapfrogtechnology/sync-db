@@ -34,7 +34,6 @@ describe('CONFIG:', () => {
       process.env.DB_USERNAME = 'user';
       process.env.DB_PASSWORD = 'password';
       process.env.DB_NAME = 'database';
-      process.env.DB_SERVER = 'localhost';
 
       const connections = resolveConnectionsFromEnv();
 
@@ -47,8 +46,6 @@ describe('CONFIG:', () => {
           user: 'user',
           password: 'password',
           database: 'database',
-          server: 'localhost',
-          userName: 'user',
           options: {
             encrypt: false
           }
@@ -63,7 +60,6 @@ describe('CONFIG:', () => {
       process.env.DB_USERNAME = '';
       process.env.DB_PASSWORD = '';
       process.env.DB_NAME = '';
-      process.env.DB_SERVER = '';
     });
 
     it('should throw an error if the required env vars are not provided.', () => {
