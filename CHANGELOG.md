@@ -1,5 +1,14 @@
 # Changelog
 
+## [v2.0.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.0.0) (2023-04-28)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.2.1...v2.0.0)
+
+**Changes**
+
+- Upgrade `knex(v2.4.2)` and `typescript(v5.0.4)` to latest version [\#198](https://github.com/leapfrogtechnology/sync-db/pull/198) ([kshitish182](https://github.com/kshitish182))
+- Bump json5 from 2.1.2 to 2.2.2 [\#190](https://github.com/leapfrogtechnology/sync-db/pull/190) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v1.2.1](https://github.com/leapfrogtechnology/sync-db/tree/v1.2.1) (2022-12-30)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.2.0...v1.2.1)
