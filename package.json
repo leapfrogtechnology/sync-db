@@ -85,7 +85,7 @@
     "codecov": "^3.5.0",
     "execa": "^4.0.0",
     "get-bin-path": "^5.0.1",
-    "mocha": "^7",
+    "mocha": "^10.2.0",
     "nyc": "^15.0.0",
     "prettier": "2.0.2",
     "tslint": "^6.1.3",
