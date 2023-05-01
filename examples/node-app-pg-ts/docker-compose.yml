@@ -12,3 +12,5 @@ services:
   app:
     container_name: 'example-app'
     build: .
+    environment:
+      DEBUG: 'sync-db*'

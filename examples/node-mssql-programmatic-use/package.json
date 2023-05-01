@@ -13,10 +13,9 @@
     "make": "knex --knexfile=knexfile.js migrate:make"
   },
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "^1.0.0-beta.10",
-    "knex": "^0.95.2",
-    "mssql": "^6.3.1",
-    "tedious": "^11.0.6"
+    "@leapfrogtechnology/sync-db": "^2.0.0",
+    "knex": "^2.4.2",
+    "tedious": "^16.0.0"
   },
   "license": "MIT",
   "devDependencies": {
