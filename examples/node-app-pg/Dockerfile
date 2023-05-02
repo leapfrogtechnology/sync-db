@@ -1,4 +1,4 @@
-From node:14-slim
+From node:18-slim
 WORKDIR /app/
 COPY . .
 RUN yarn
