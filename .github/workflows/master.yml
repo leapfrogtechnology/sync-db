@@ -33,7 +33,7 @@ jobs:
           hub --version
 
       - name: Install github-changelog-generator
-        run: gem install github_changelog_generator
+        run: gem install github_changelog_generator --user-install
 
       - name: Install dependencies
         run: yarn
