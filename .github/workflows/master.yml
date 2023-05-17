@@ -1,0 +1,85 @@
+name: Build and Release from Master
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [node, 18, 16]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install hub
+        run: |
+          sudo apt update
+          sudo apt install hub
+          hub --version
+
+      - name: Install github-changelog-generator
+        run: gem install github_changelog_generator
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Set Ribby as git user
+        run: |
+          git config user.name "Ribby"
+          git config user.email "bot@lftechnology.com"
+
+      - name: Check format
+        run: yarn format:check
+
+      - name: Lint code
+        run: yarn lint
+
+      - name: Build project
+        run: yarn build
+
+      - name: Test coverage
+        run: yarn test:coverage
+
+      - name: Upload coverage to Codecov
+        run: yarn codecov
+
+      - name: Determine branch
+        id: branch
+        run: echo "::set-output name=branch::$(if [ ${{ github.event_name }} == 'pull_request' ]; then echo ${{ github.event.pull_request.head.ref }}; else echo ${{ github.ref }}; fi)"
+
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: node
+
+      - name: Run release script
+        run: ../release.sh compare_and_release
+
+      - name: Deploy to NPM
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm publish
