@@ -77,7 +77,7 @@ jobs:
           node-version: node
 
       - name: Run release script
-        run: ../release.sh compare_and_release
+        run: ../../release.sh compare_and_release
 
       - name: Deploy to NPM
         run: |
