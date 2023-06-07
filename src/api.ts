@@ -40,6 +40,10 @@ export async function synchronize(
   const migrationPath = getMigrationPath(config);
   const dirExist = await existsDir(migrationPath);
 
+  if (!dirExist) {
+    log('Migration directory does not exist');
+  }
+
   const params: SynchronizeParams = {
     force: false,
     'skip-migration': !dirExist,
