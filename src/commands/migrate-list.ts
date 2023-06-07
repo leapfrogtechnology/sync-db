@@ -36,7 +36,9 @@ class MigrateList extends Command {
 
     // Completed migrations.
     for (const item of completedList) {
-      await printLine(cyan(`   • ${item}`));
+      const completedMigrationName = typeof item === 'string' || item instanceof String ? item : item?.name;
+
+      await printLine(cyan(`   • ${completedMigrationName}`));
     }
 
     // Remaining Migrations
