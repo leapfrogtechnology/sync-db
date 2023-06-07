@@ -1,5 +1,22 @@
 # Changelog
 
+## [v2.0.1](https://github.com/leapfrogtechnology/sync-db/tree/v2.0.1) (2023-06-07)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.0.0...v2.0.1)
+
+**Bug Fixes**
+
+- \[object object\] seen while getting migration lists [\#204](https://github.com/leapfrogtechnology/sync-db/issues/204)
+
+**Changes**
+
+- Fix the type displayed instead of migration name with migrate-list [\#206](https://github.com/leapfrogtechnology/sync-db/pull/206) ([samirsilwal](https://github.com/samirsilwal))
+- Remove error log when dir does not exist \(v2.0.1 Release\) [\#205](https://github.com/leapfrogtechnology/sync-db/pull/205) ([mesaugat](https://github.com/mesaugat))
+- chore\(deps\): bump ansi-regex from 3.0.0 to 3.0.1 [\#202](https://github.com/leapfrogtechnology/sync-db/pull/202) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump ansi-regex from 3.0.0 to 3.0.1 in /examples/node-app-mssql-ts [\#201](https://github.com/leapfrogtechnology/sync-db/pull/201) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump knex,typescript and sync-db version in all example apps [\#200](https://github.com/leapfrogtechnology/sync-db/pull/200) ([kshitish182](https://github.com/kshitish182))
+- chore\(deps\): bump minimatch from 3.0.4 to 3.1.2 [\#199](https://github.com/leapfrogtechnology/sync-db/pull/199) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.0.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.0.0) (2023-04-28)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v1.2.1...v2.0.0)
