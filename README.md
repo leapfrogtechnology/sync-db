@@ -44,7 +44,7 @@ $ npm install -g @leapfrogtechnology/sync-db
 $ sync-db COMMAND
 running command...
 $ sync-db (-v|--version|version)
-@leapfrogtechnology/sync-db/2.0.0 linux-x64 node-v20.0.0
+@leapfrogtechnology/sync-db/2.0.1 linux-x64 node-v20.2.0
 $ sync-db --help [COMMAND]
 USAGE
   $ sync-db COMMAND
@@ -78,7 +78,7 @@ USAGE
   $ sync-db
 ```
 
-_See code: [src/commands/index.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/index.ts)_
+_See code: [src/commands/index.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/index.ts)_
 
 ## `sync-db help [COMMAND]`
 
@@ -115,7 +115,7 @@ OPTIONS
   --object-name=object-name  Name of table/view/routine to migrate.
 ```
 
-_See code: [src/commands/make.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/make.ts)_
+_See code: [src/commands/make.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/make.ts)_
 
 ## `sync-db make-publish`
 
@@ -129,7 +129,7 @@ OPTIONS
   -c, --config=config  Custom configuration file.
 ```
 
-_See code: [src/commands/make-publish.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/make-publish.ts)_
+_See code: [src/commands/make-publish.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/make-publish.ts)_
 
 ## `sync-db migrate-latest`
 
@@ -146,7 +146,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/migrate-latest.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/migrate-latest.ts)_
+_See code: [src/commands/migrate-latest.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/migrate-latest.ts)_
 
 ## `sync-db migrate-list`
 
@@ -162,7 +162,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/migrate-list.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/migrate-list.ts)_
+_See code: [src/commands/migrate-list.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/migrate-list.ts)_
 
 ## `sync-db migrate-rollback`
 
@@ -179,7 +179,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/migrate-rollback.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/migrate-rollback.ts)_
+_See code: [src/commands/migrate-rollback.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/migrate-rollback.ts)_
 
 ## `sync-db prune`
 
@@ -196,7 +196,7 @@ OPTIONS
   --only=CONNECTION_ID        Filter only a single connection.
 ```
 
-_See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/prune.ts)_
+_See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/prune.ts)_
 
 ## `sync-db synchronize`
 
@@ -215,7 +215,7 @@ OPTIONS
   --skip-migration            Skip running migrations.
 ```
 
-_See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.0/src/commands/synchronize.ts)_
+_See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/synchronize.ts)_
 
 <!-- commandsstop -->
 
