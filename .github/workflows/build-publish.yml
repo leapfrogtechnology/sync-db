@@ -73,12 +73,12 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: node
-          cache: 'npm'
+          cache: 'yarn'
 
       - name: Run release script
-        run: ../../release.sh compare_and_release
+        run: ./release.sh compare_and_release
 
       - name: Deploy to NPM
         run: |
           echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          npm publish
+          yarn publish
