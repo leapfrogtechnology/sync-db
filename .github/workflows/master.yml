@@ -1,4 +1,4 @@
-name: Build and Release from Master
+name: Build and Publish
 
 on:
   push:
@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 18]
+        node-version: [16, 18, 20]
 
     steps:
       - name: Checkout code
@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          cache: 'yarn'
 
       - name: Install hub
         run: |
@@ -58,11 +58,8 @@ jobs:
       - name: Upload coverage to Codecov
         run: yarn codecov
 
-      - name: Determine branch
-        id: branch
-        run: echo "::set-output name=branch::$(if [ ${{ github.event_name }} == 'pull_request' ]; then echo ${{ github.event.pull_request.head.ref }}; else echo ${{ github.ref }}; fi)"
-
-  deploy:
+  publish:
+    name: Publish this as a package
     needs: build
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
