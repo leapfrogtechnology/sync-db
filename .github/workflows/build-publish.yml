@@ -64,7 +64,7 @@ jobs:
         run: yarn codecov
 
   publish:
-    name: Publish this as a package
+    name: Publish @leapfrogtechnology/sync-db package
     needs: build
     if: github.ref == 'refs/heads/master' && github.event_name == 'push'
 
