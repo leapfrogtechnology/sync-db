@@ -37,7 +37,7 @@ jobs:
           sudo apt install -y ruby-full
           gem --version
 
-      - name: Install github-changelog-generator
+      - name: Install GitHub changelog generator
         run: gem install github_changelog_generator --user-install
 
       - name: Install dependencies
