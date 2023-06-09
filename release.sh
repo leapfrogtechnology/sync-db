@@ -20,7 +20,7 @@ changelog() {
   github_changelog_generator \
     --user="leapfrogtechnology" \
     --project="sync-db" \
-    --token="$GITHUB_TOKEN" \
+    --token="$RIBBY_GITHUB_TOKEN" \
     --no-verbose \
     --pr-label "**Changes**" \
     --bugs-label "**Bug Fixes**" \
@@ -68,15 +68,12 @@ compare_and_release() {
     # Update commands and usage of CLI in README.md
     yarn doc:update
 
-    git config --global user.email "travis@travis-ci.org"
-    git config --global user.name "Travis CI"
-
     git checkout master
     git add CHANGELOG.md README.md
     git commit -v -m "${NEXT} Release :tada: :fireworks: :bell:" -m "[skip ci]"
 
     # Add new remote with access token in the git URL for authentication
-    git remote add lft https://leapfrogtechnology:${GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git
+    git remote add lft https://leapfrogtechnology:${RIBBY_GITHUB_TOKEN}@github.com/leapfrogtechnology/sync-db.git
     git push lft master
 
     printfln "Changelog updated."
