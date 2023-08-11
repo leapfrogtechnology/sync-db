@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command';
+import { Command, Flags } from '@oclif/core';
 import { bold, red, cyan, magenta } from 'chalk';
 
 import { migrateRollback } from '../api';
@@ -11,16 +11,16 @@ class MigrateRollback extends Command {
   static description = 'Rollback migrations up to the last run batch.';
 
   static flags = {
-    'dry-run': flags.boolean({ description: 'Dry run rollback.', default: false }),
-    only: flags.string({
+    'dry-run': Flags.boolean({ description: 'Dry run rollback.', default: false }),
+    only: Flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
     }),
-    'connection-resolver': flags.string({
+    'connection-resolver': Flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
     }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
     })
@@ -73,7 +73,7 @@ class MigrateRollback extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(MigrateRollback);
+    const { flags: parsedFlags } = await this.parse(MigrateRollback);
     const isDryRun = parsedFlags['dry-run'];
     const config = await loadConfig(parsedFlags.config);
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);

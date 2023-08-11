@@ -1,5 +1,5 @@
 import { bold, magenta, red } from 'chalk';
-import { Command, flags } from '@oclif/command';
+import { Command, Flags } from '@oclif/core';
 
 import { prune } from '../api';
 import { loadConfig, resolveConnections } from '..';
@@ -10,16 +10,16 @@ class Prune extends Command {
   static description = 'Drop all the synchronized db objects except the ones created via migrations.';
 
   static flags = {
-    'dry-run': flags.boolean({ description: 'Dry run prune.', default: false }),
-    only: flags.string({
+    'dry-run': Flags.boolean({ description: 'Dry run prune.', default: false }),
+    only: Flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
     }),
-    'connection-resolver': flags.string({
+    'connection-resolver': Flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
     }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
     })
@@ -53,7 +53,7 @@ class Prune extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(Prune);
+    const { flags: parsedFlags } = await this.parse(Prune);
     const isDryRun = parsedFlags['dry-run'];
     const config = await loadConfig(parsedFlags.config);
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);

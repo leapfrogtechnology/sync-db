@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command';
+import { Command, Flags } from '@oclif/core';
 import { bold, grey, red, cyan, yellow } from 'chalk';
 
 import { migrateList } from '../api';
@@ -10,15 +10,15 @@ class MigrateList extends Command {
   static description = 'List all the migrations.';
 
   static flags = {
-    only: flags.string({
+    only: Flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
     }),
-    'connection-resolver': flags.string({
+    'connection-resolver': Flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
     }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
     })
@@ -72,7 +72,7 @@ class MigrateList extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(MigrateList);
+    const { flags: parsedFlags } = await this.parse(MigrateList);
     const config = await loadConfig(parsedFlags.config);
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 

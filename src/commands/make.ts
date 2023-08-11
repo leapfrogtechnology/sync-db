@@ -1,27 +1,27 @@
 import { loadConfig } from '../config';
 import { printLine } from '../util/io';
-import { Command, flags } from '@oclif/command';
 import MakeOptions from '../domain/MakeOptions';
+import { Command, Args, Flags } from '@oclif/core';
 import Configuration from '../domain/Configuration';
 import * as fileMakerService from '../service/fileMaker';
 
 class Make extends Command {
-  static description = 'Make migration files from the template.';
+  static description = 'Create migration files using a template.';
 
-  static args = [{ name: 'name', description: 'Object or filename to generate.', required: true }];
+  static args = { name: Args.string({ description: 'Object or filename to generate.', required: true }) };
   static flags = {
-    'object-name': flags.string({
+    'object-name': Flags.string({
       description: 'Name of table/view/routine to migrate.'
     }),
-    create: flags.boolean({
+    create: Flags.boolean({
       default: false,
       description: 'Generate create table stub.'
     }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
     }),
-    type: flags.string({
+    type: Flags.string({
       char: 't',
       helpValue: 'TYPE',
       description: 'Type of file to generate.',
@@ -36,7 +36,7 @@ class Make extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { args, flags: parsedFlags } = this.parse(Make);
+    const { args, flags: parsedFlags } = await this.parse(Make);
     const config = await loadConfig(parsedFlags.config);
     const list = await this.makeFiles(config, args.name, parsedFlags.type, {
       create: parsedFlags.create,

@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command';
+import { Command, Flags } from '@oclif/core';
 import { bold, cyan, red, green, magenta } from 'chalk';
 
 import { synchronize } from '../api';
@@ -15,18 +15,18 @@ class Synchronize extends Command {
    * Available CLI flags.
    */
   static flags = {
-    force: flags.boolean({ char: 'f', description: 'Force synchronization.' }),
-    'dry-run': flags.boolean({ description: 'Dry run synchronization.', default: false }),
-    'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
-    only: flags.string({
+    force: Flags.boolean({ char: 'f', description: 'Force synchronization.' }),
+    'dry-run': Flags.boolean({ description: 'Dry run synchronization.', default: false }),
+    'skip-migration': Flags.boolean({ description: 'Skip running migrations.' }),
+    only: Flags.string({
       helpValue: 'CONNECTION_ID',
       description: 'Filter only a single connection.'
     }),
-    'connection-resolver': flags.string({
+    'connection-resolver': Flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
     }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
     })
@@ -131,7 +131,7 @@ class Synchronize extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(Synchronize);
+    const { flags: parsedFlags } = await this.parse(Synchronize);
     const isDryRun = parsedFlags['dry-run'];
 
     try {

@@ -55,23 +55,23 @@
     "doc:update": "oclif-dev readme && prettier --write README.md"
   },
   "dependencies": {
-    "@oclif/command": "^1",
-    "@oclif/config": "^1",
-    "@oclif/plugin-help": "^3",
+    "@oclif/core": "^2.11.8",
+    "@oclif/config": "^1.18.16",
+    "@oclif/plugin-help": "^5.2.16",
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
     "esm": "^3.2.25",
     "globby": "^10.0.2",
     "knex": "^2.4.2",
     "ramda": "^0.29.0",
-    "ts-node": "^8",
-    "tslib": "^1",
+    "ts-node": "^10.9.1",
+    "tslib": "^2.6.1",
     "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@oclif/dev-cli": "^1.26.0",
-    "@oclif/test": "^1",
+    "@oclif/test": "^2.4.4",
     "@oclif/tslint": "^3",
     "@types/chai": "^4.2.7",
     "@types/chai-as-promised": "^7.1.2",
@@ -83,8 +83,8 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "codecov": "^3.8.3",
-    "execa": "^4.0.0",
-    "get-bin-path": "^5.0.1",
+    "execa": "^7.2.0",
+    "get-bin-path": "^10.0.0",
     "mocha": "^10.2.0",
     "nyc": "^15.0.0",
     "prettier": "2.0.2",
@@ -93,6 +93,6 @@
     "typescript": "^5.0.2"
   },
   "engines": {
-    "node": ">= 14.15.0"
+    "node": ">= 18.12.0"
   }
 }
