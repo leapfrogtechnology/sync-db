@@ -1,16 +1,16 @@
-import * as execa from 'execa';
 import { getBinPathSync } from 'get-bin-path';
-
-const binPath = getBinPathSync();
+import { execa, Options, ExecaChildProcess } from 'execa';
 
 /**
  * Runs sync-db cli.
  *
  * @param {string[]} [args]
- * @param {execa.Options<string>} [options]
- * @returns {execa.ExecaChildProcess<any>}
+ * @param {Options} [options]
+ * @returns {ExecaChildProcess}
  */
-export function runCli(args?: string[], options?: execa.Options<string>): execa.ExecaChildProcess<any> {
+export function runCli(args?: string[], options?: Options<string>): ExecaChildProcess<any> {
+  const binPath = getBinPathSync() || '';
+
   return execa(binPath, args, options);
 }
 
