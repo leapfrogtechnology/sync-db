@@ -43,7 +43,11 @@ describe('UTIL: promise', () => {
 
     it('should resolve a promise containing the results of the promises in the same order.', async () => {
       const source = [{ value: 'one' }, { value: 'two' }, { value: 'three' }, { value: 'four' }, { value: 'five' }];
-      const promisers = source.map(({ value }) => () => Promise.resolve(value));
+      const promisers = source.map(
+        ({ value }) =>
+          () =>
+            Promise.resolve(value)
+      );
 
       const result = await runSequentially(promisers);
 

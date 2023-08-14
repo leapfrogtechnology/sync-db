@@ -12,15 +12,8 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "useUnknownInCatchVariables": false,
-    "typeRoots": [
-      "src/@types"
-    ]
+    "typeRoots": ["src/@types"]
   },
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ],
-  "exclude": [
-    "node_modules/**/*",
-  ]
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules/**/*"]
 }
