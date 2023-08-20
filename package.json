@@ -55,8 +55,8 @@
     "doc:update": "oclif-dev readme && prettier --write README.md"
   },
   "dependencies": {
-    "@oclif/core": "^2.11.8",
     "@oclif/config": "^1.18.16",
+    "@oclif/core": "^2.11.8",
     "@oclif/plugin-help": "^5.2.16",
     "chalk": "^4.0.0",
     "debug": "^4.1.1",
