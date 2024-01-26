@@ -19,22 +19,22 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
         {
           name: '0001_mgr',
           queries: {
-            up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr1' },
-            down: { name: '0001_mgr.down.sql', sql: 'DROP TABLE test_mgr1' }
+            down: { name: '0001_mgr.down.sql', sql: 'DROP TABLE test_mgr1' },
+            up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr1' }
           }
         },
         {
           name: '0002_mgr',
           queries: {
-            up: { name: '0002_mgr.up.sql', sql: 'CREATE TABLE test_mgr2' },
-            down: { name: '0002_mgr.down.sql', sql: 'DROP TABLE test_mgr2' }
+            down: { name: '0002_mgr.down.sql', sql: 'DROP TABLE test_mgr2' },
+            up: { name: '0002_mgr.up.sql', sql: 'CREATE TABLE test_mgr2' }
           }
         },
         {
           name: '0003_mgr',
           queries: {
-            up: { name: '0003_mgr.up.sql', sql: 'CREATE TABLE test_mgr3' },
-            down: { name: '0003_mgr.down.sql', sql: 'DROP TABLE test_mgr3' }
+            down: { name: '0003_mgr.down.sql', sql: 'DROP TABLE test_mgr3' },
+            up: { name: '0003_mgr.up.sql', sql: 'CREATE TABLE test_mgr3' }
           }
         }
       ]);
@@ -51,8 +51,8 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
       {
         name: '0001_mgr',
         queries: {
-          up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr' },
-          down: { name: '0001_mgr.down.sql', sql: 'DROP TABLE test_mgr' }
+          down: { name: '0001_mgr.down.sql', sql: 'DROP TABLE test_mgr' },
+          up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr' }
         }
       },
       {

@@ -1,12 +1,12 @@
-import * as path from 'path';
-import * as yaml from 'yamljs';
 import { expect } from 'chai';
-import { it, describe } from 'mocha';
+import { describe, it } from 'mocha';
+import * as path from 'node:path';
+import * as yaml from 'yamljs';
 
-import { runCli, queryByPattern } from './util';
-import { interpolate } from '../../../src/util/string';
 import Configuration from '../../../src/domain/Configuration';
-import { mkdir, mkdtemp, write, exists, glob, read } from '../../../src/util/fs';
+import { exists, glob, mkdir, mkdtemp, read, write } from '../../../src/util/fs';
+import { interpolate } from '../../../src/util/string';
+import { queryByPattern, runCli } from './util';
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../../assets/templates/migration');
 const CUSTOM_CREATE_TEMPLATE = `

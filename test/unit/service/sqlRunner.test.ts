@@ -1,5 +1,5 @@
-import 'mocha';
 import { expect } from 'chai';
+import 'mocha';
 
 import * as sqlRunner from '../../../src/service/sqlRunner';
 
@@ -7,37 +7,37 @@ describe('SERVICE: sqlRunner', () => {
   describe('extractSqlFileInfo()', () => {
     it('should return the parsed sql file info from the path (type = function)', () => {
       expect(sqlRunner.extractSqlFileInfo('function/test_data/test_function_name.sql')).to.deep.equal({
-        name: 'test_function_name',
         fqon: 'test_data.test_function_name',
-        type: 'function',
-        schema: 'test_data'
+        name: 'test_function_name',
+        schema: 'test_data',
+        type: 'function'
       });
     });
 
     it('should return the parsed sql file info from the path (type = procedure)', () => {
       expect(sqlRunner.extractSqlFileInfo('procedure/test_data/test_procedure_name.sql')).to.deep.equal({
-        name: 'test_procedure_name',
         fqon: 'test_data.test_procedure_name',
-        type: 'procedure',
-        schema: 'test_data'
+        name: 'test_procedure_name',
+        schema: 'test_data',
+        type: 'procedure'
       });
     });
 
     it('should return the parsed sql file info from the path (type = view)', () => {
       expect(sqlRunner.extractSqlFileInfo('view/test_data/test_view_name.sql')).to.deep.equal({
-        name: 'test_view_name',
         fqon: 'test_data.test_view_name',
-        type: 'view',
-        schema: 'test_data'
+        name: 'test_view_name',
+        schema: 'test_data',
+        type: 'view'
       });
     });
 
     it('should return the parsed sql file info from the path (type = schema)', () => {
       expect(sqlRunner.extractSqlFileInfo('schema/test_data.sql')).to.deep.equal({
-        name: 'test_data',
         fqon: 'test_data',
-        type: 'schema',
-        schema: undefined
+        name: 'test_data',
+        schema: undefined,
+        type: 'schema'
       });
     });
   });

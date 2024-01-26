@@ -1,9 +1,9 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { expect } from 'chai';
-import { it, describe } from 'mocha';
+import { describe, it } from 'mocha';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
-import { write, read, remove, exists, mkdtemp, glob, existsDir } from '../../../src/util/fs';
+import { exists, existsDir, glob, mkdtemp, read, remove, write } from '../../../src/util/fs';
 
 describe('UTIL: fs', () => {
   let filePath: string;
@@ -29,9 +29,7 @@ describe('UTIL: fs', () => {
       expect(res).to.equal(fileContent);
     });
 
-    it('should throw error if filepath is invalid (fs.write)', () => {
-      return expect(write(invalidFilePath, fileContent)).to.eventually.rejected;
-    });
+    it('should throw error if filepath is invalid (fs.write)', () => expect(write(invalidFilePath, fileContent)).to.eventually.rejected);
   });
 
   describe('read', () => {
@@ -41,9 +39,7 @@ describe('UTIL: fs', () => {
       expect(res).to.equal(fileContent);
     });
 
-    it('should throw error if filepath is invalid (fs.read)', () => {
-      return expect(read(invalidFilePath)).to.eventually.rejected;
-    });
+    it('should throw error if filepath is invalid (fs.read)', () => expect(read(invalidFilePath)).to.eventually.rejected);
   });
 
   describe('exists', () => {
@@ -85,9 +81,7 @@ describe('UTIL: fs', () => {
       });
     });
 
-    it('should throw an error if no such file or directory to remove', () => {
-      return expect(remove(invalidFilePath)).to.eventually.rejected;
-    });
+    it('should throw an error if no such file or directory to remove', () => expect(remove(invalidFilePath)).to.eventually.rejected);
   });
 
   describe('glob', async () => {

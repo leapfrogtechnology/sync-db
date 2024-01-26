@@ -24,7 +24,7 @@ export function interpolate(template: string, params: any = {}): string {
       continue;
     }
 
-    result = result.replace(new RegExp('{{' + key + '}}', 'g'), `${value}`);
+    result = result.replaceAll(new RegExp('{{' + key + '}}', 'g'), `${value}`);
   }
 
   return result;

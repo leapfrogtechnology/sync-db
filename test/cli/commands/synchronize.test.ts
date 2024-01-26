@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { it, describe } from 'mocha';
+import { describe, it } from 'mocha';
 
-import { runCli } from './util';
 import { mkdtempSync } from '../../../src/util/fs';
+import { runCli } from './util';
 
 const cwd = mkdtempSync();
 

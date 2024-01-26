@@ -1,13 +1,13 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { Knex } from 'knex';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
+import { INJECTED_CONFIG_TABLE } from '../constants';
+import KeyValuePair from '../domain/KeyValuePair';
 import Mapping from '../domain/Mapping';
-import { dbLogger } from '../util/logger';
 import SynchronizeContext from '../domain/SynchronizeContext';
 import { expandEnvVarsInMap } from '../util/env';
-import KeyValuePair from '../domain/KeyValuePair';
-import { INJECTED_CONFIG_TABLE } from '../constants';
+import { dbLogger } from '../util/logger';
 
 /**
  * Reads and returns the package.json contents.
@@ -74,7 +74,7 @@ export async function setup(trx: Knex.Transaction, context: SynchronizeContext):
 
   const values = convertToKeyValuePairs(injectedConfig.vars);
 
-  if (!values.length) {
+  if (values.length === 0) {
     log(`Config not available. Skipping insertion on ${INJECTED_CONFIG_TABLE} table.`);
 
     return;

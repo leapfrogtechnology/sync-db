@@ -2,10 +2,10 @@
  * SQL source file information..
  */
 interface SqlFileInfo {
-  name: string;
   fqon: string;
-  type: string;
+  name: string;
   schema: string;
+  type: string;
 }
 
 export default SqlFileInfo;

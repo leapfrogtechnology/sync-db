@@ -4,13 +4,13 @@ import { Knex } from 'knex';
  * Database connection configuration.
  */
 interface ConnectionConfig {
-  id?: string;
   client: string;
+  // Additionally, we also support providing a direct Knex connection instance for programmatic API.
+  connection: Knex | Knex.ConnectionConfigProvider | Knex.StaticConnectionConfig | string;
   // This could be anything that Knex supports:
   //  - a connection string
   //  - a Knex.Config.connection config object
-  // Additionally, we also support providing a direct Knex connection instance for programmatic API.
-  connection: string | Knex | Knex.StaticConnectionConfig | Knex.ConnectionConfigProvider;
+  id?: string;
 }
 
 export default ConnectionConfig;

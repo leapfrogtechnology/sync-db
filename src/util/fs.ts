@@ -1,10 +1,11 @@
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
-import { promisify } from 'util';
+import * as fs from 'node:fs';
+import * as os from 'node:os';
+import * as path from 'node:path';
+import { promisify } from 'node:util';
 
 export const mkdir = promisify(fs.mkdir);
 export const readDir = promisify(fs.readdir);
+
 /**
  * Create a temporary directory and return it's path.
  *
@@ -64,7 +65,7 @@ export async function existsDir(pathName: string) {
     await readDir(pathName);
 
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 }
@@ -123,6 +124,7 @@ export function remove(filepath: string): Promise<void> {
     });
   });
 }
+
 /**
  * Copy file.
  *

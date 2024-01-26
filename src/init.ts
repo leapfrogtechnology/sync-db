@@ -1,15 +1,15 @@
 import { Knex } from 'knex';
 
-import { log } from './util/logger';
-import { validate, isCLI } from './config';
+import { isCLI, validate } from './config';
 import Configuration from './domain/Configuration';
 import KnexMigrationSource from './migration/KnexMigrationSource';
 import { resolveMigrationContext } from './migration/service/knexMigrator';
+import { log } from './util/logger';
 
 export interface PrepareOptions {
-  migrationPath?: string;
   loadMigrations?: boolean;
   loadSqlSources?: boolean;
+  migrationPath?: string;
 }
 
 export interface PreparedRequirements {
@@ -36,8 +36,8 @@ export async function prepare(config: Configuration, options: PrepareOptions): P
 
   return {
     knexMigrationConfig: (connectionId: string) => ({
-      tableName: config.migration.tableName,
-      migrationSource: migrationContext ? new KnexMigrationSource(migrationContext.bind(connectionId)) : undefined
+      migrationSource: migrationContext ? new KnexMigrationSource(migrationContext.bind(connectionId)) : undefined,
+      tableName: config.migration.tableName
     })
   };
 }

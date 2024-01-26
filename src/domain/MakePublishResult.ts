@@ -1,6 +1,6 @@
 interface MakePublishResult {
-  movedList: string[];
   ignoredList: string[];
+  movedList: string[];
 }
 
 export default MakePublishResult;

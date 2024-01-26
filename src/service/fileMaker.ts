@@ -1,20 +1,20 @@
-import * as path from 'path';
+import * as path from 'node:path';
 
+import Configuration from '../domain/Configuration';
+import MakeOptions from '../domain/MakeOptions';
+import MakePublishResult from '../domain/MakePublishResult';
+import FileExtensions from '../enum/FileExtensions';
+import { getMigrationPath } from '../migration/service/knexMigrator';
 import * as fs from '../util/fs';
 import { log } from '../util/logger';
 import { interpolate } from '../util/string';
 import { getTimestampString } from '../util/ts';
-import MakeOptions from '../domain/MakeOptions';
-import Configuration from '../domain/Configuration';
-import FileExtensions from '../enum/FileExtensions';
-import MakePublishResult from '../domain/MakePublishResult';
-import { getMigrationPath } from '../migration/service/knexMigrator';
 
 const MIGRATION_TEMPLATE_PATH = path.resolve(__dirname, '../../assets/templates/migration');
 const CREATE_TABLE_CONVENTION = /create_(\w+)_table/;
 const SOURCE_TYPE_STUBS = {
-  sql: ['create_up.stub', 'create_down.stub'],
   javascript: ['create_js.stub', 'update_js.stub'],
+  sql: ['create_up.stub', 'create_down.stub'],
   typescript: ['create_ts.stub', 'update_ts.stub']
 };
 
@@ -82,40 +82,44 @@ export async function makeMigration(
   const baseTemplatePath = path.join(config.basePath, '/stub');
 
   switch (config.migration.sourceType) {
-    case 'sql':
+    case 'sql': {
       log(`Creating sql migration. ${migrationPath}/${filename}`);
 
       return makeSqlMigration(filename, {
         ...options,
+        baseTemplatePath,
         migrationPath,
-        timestamp,
-        baseTemplatePath
+        timestamp
       });
+    }
 
-    case 'javascript':
+    case 'javascript': {
       log(`Creating JS migration. ${migrationPath}/${filename}`);
 
       return makeJSMigration(filename, {
         ...options,
-        migrationPath,
-        timestamp,
         baseTemplatePath,
-        extension: FileExtensions.JS
+        extension: FileExtensions.JS,
+        migrationPath,
+        timestamp
       });
+    }
 
-    case 'typescript':
+    case 'typescript': {
       log(`Creating TS migration. ${migrationPath}/${filename}`);
 
       return makeJSMigration(filename, {
         ...options,
-        migrationPath,
-        timestamp,
         baseTemplatePath,
-        extension: FileExtensions.TS
+        extension: FileExtensions.TS,
+        migrationPath,
+        timestamp
       });
+    }
 
-    default:
+    default: {
       throw new Error(`Unsupported migration.sourceType value "${config.migration.sourceType}".`);
+    }
   }
 }
 
@@ -136,7 +140,7 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
 
   // Use the create migration template if the filename follows the pattern: create_<table>_table.sql
   const createTableMatched = filename.match(CREATE_TABLE_CONVENTION);
-  const isCreateStub = !!createTableMatched || !!options.create;
+  const isCreateStub = Boolean(createTableMatched) || Boolean(options.create);
 
   if (isCreateStub) {
     const table = options.objectName || (createTableMatched && createTableMatched[1]);
@@ -165,12 +169,12 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
  * @returns {Promise<string[]>}
  */
 export async function makeJSMigration(filename: string, options: MakeOptions): Promise<string[]> {
-  const { migrationPath, timestamp, extension } = options;
+  const { extension, migrationPath, timestamp } = options;
   const migrationFilename = path.join(migrationPath, `${timestamp}_${filename}.${extension}`);
   const createTableMatched = filename.match(CREATE_TABLE_CONVENTION);
 
   const table = options.objectName || (createTableMatched && createTableMatched[1]);
-  const isCreateStub = !!createTableMatched || !!options.create;
+  const isCreateStub = Boolean(createTableMatched) || Boolean(options.create);
 
   log(`Migration for table '${table}' created.`);
 

@@ -1,4 +1,5 @@
 import { Knex } from 'knex';
+
 import { dbLogger } from '../util/logger';
 import MigrationRunner from './domain/MigrationRunner';
 import MigrationSourceContext from './domain/MigrationSourceContext';
@@ -10,8 +11,8 @@ import MigrationSourceContext from './domain/MigrationSourceContext';
  * Reference: http://knexjs.org/#Migrations-API
  */
 class KnexMigrationSource implements Knex.MigrationSource<string> {
-  private migrationContext: MigrationSourceContext;
   private log: debug.Debugger;
+  private migrationContext: MigrationSourceContext;
 
   /**
    * KnexMigrationSource constructor.
@@ -21,29 +22,6 @@ class KnexMigrationSource implements Knex.MigrationSource<string> {
   constructor(migrationContext: MigrationSourceContext) {
     this.log = dbLogger(migrationContext.connectionId);
     this.migrationContext = migrationContext;
-  }
-
-  /**
-   * Gets a list of migration names.
-   *
-   * @returns {Promise<string[]>}
-   */
-  getMigrations(): Promise<string[]> {
-    const migrations = this.migrationContext.keys();
-
-    this.log('getMigrations - resolve:\n%O', migrations);
-
-    return Promise.resolve(migrations);
-  }
-
-  /**
-   * Gets the name of the migration.
-   *
-   * @param {string} migration
-   * @returns {string}
-   */
-  getMigrationName(migration: string): string {
-    return migration;
   }
 
   /**
@@ -59,6 +37,29 @@ class KnexMigrationSource implements Knex.MigrationSource<string> {
     this.log(`getMigration - resolve: %o`, migration);
 
     return Promise.resolve(migration);
+  }
+
+  /**
+   * Gets the name of the migration.
+   *
+   * @param {string} migration
+   * @returns {string}
+   */
+  getMigrationName(migration: string): string {
+    return migration;
+  }
+
+  /**
+   * Gets a list of migration names.
+   *
+   * @returns {Promise<string[]>}
+   */
+  getMigrations(): Promise<string[]> {
+    const migrations = this.migrationContext.keys();
+
+    this.log('getMigrations - resolve:\n%O', migrations);
+
+    return Promise.resolve(migrations);
   }
 }
 

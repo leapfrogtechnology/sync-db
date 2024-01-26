@@ -1,16 +1,16 @@
 import { Knex } from 'knex';
-import * as path from 'path';
-import * as yaml from 'yamljs';
+import * as path from 'node:path';
 import { mergeDeepRight } from 'ramda';
+import * as yaml from 'yamljs';
 
-import * as fs from './util/fs';
-import { log } from './util/logger';
-import { isObject } from './util/types';
+import { CONFIG_FILENAME, CONNECTIONS_FILENAME, DEFAULT_CONFIG, REQUIRED_ENV_KEYS } from './constants';
 import Configuration from './domain/Configuration';
 import ConnectionConfig from './domain/ConnectionConfig';
 import ConnectionsFileSchema from './domain/ConnectionsFileSchema';
 import { prepareInjectionConfigVars } from './service/configInjection';
-import { DEFAULT_CONFIG, CONFIG_FILENAME, CONNECTIONS_FILENAME, REQUIRED_ENV_KEYS } from './constants';
+import * as fs from './util/fs';
+import { log } from './util/logger';
+import { isObject } from './util/types';
 
 const CONFIG_FILE_CONVENTION = /^sync-db-\w+\.yml$/;
 
@@ -127,13 +127,13 @@ export async function resolveConnections(config: Configuration, resolver?: strin
 
   log(
     'Resolved connections: %O',
-    connections.map(({ id, client, connection }) => ({
-      id,
+    connections.map(({ client, connection, id }) => ({
       client,
       connection: {
-        host: (connection as Knex.ConnectionConfig).host,
-        database: (connection as Knex.ConnectionConfig).database
-      }
+        database: (connection as Knex.ConnectionConfig).database,
+        host: (connection as Knex.ConnectionConfig).host
+      },
+      id
     }))
   );
 
@@ -175,7 +175,7 @@ export function getConnectionId(connectionConfig: ConnectionConfig): string {
     return connectionConfig.id;
   }
 
-  const { host, database } = connectionConfig.connection as any;
+  const { database, host } = connectionConfig.connection as any;
 
   return host && database ? `${host}/${database}` : '';
 }
@@ -189,7 +189,7 @@ export function getConnectionId(connectionConfig: ConnectionConfig): string {
 function validateConnections(keys: string[]): void {
   const missingVars: string[] = keys.filter(key => !process.env[key]);
 
-  if (missingVars.length) {
+  if (missingVars.length > 0) {
     throw new Error('Following environment variables were not set: ' + missingVars.join(', '));
   }
 }
@@ -205,18 +205,18 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
   validateConnections(REQUIRED_ENV_KEYS);
 
   const connectionConfig = {
-    id: process.env.DB_ID,
     client: process.env.DB_CLIENT,
     connection: {
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT ? +process.env.DB_PORT : null,
-      user: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
+      host: process.env.DB_HOST,
       options: {
         encrypt: process.env.DB_ENCRYPTION === 'true'
-      }
-    }
+      },
+      password: process.env.DB_PASSWORD,
+      port: process.env.DB_PORT ? Number(process.env.DB_PORT) : null,
+      user: process.env.DB_USERNAME
+    },
+    id: process.env.DB_ID
   } as ConnectionConfig;
 
   return [connectionConfig];

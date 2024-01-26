@@ -1,17 +1,17 @@
 import { Knex } from 'knex';
 
-import MigrationRunner from '../domain/MigrationRunner';
 import { dbLogger, log as logger } from '../../util/logger';
-import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import MigrationRunner from '../domain/MigrationRunner';
 import MigrationSourceContext from '../domain/MigrationSourceContext';
+import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 
 /**
  * SQL source migration context for KnexMigrationSource.
  */
 class SqlMigrationSourceContext implements MigrationSourceContext {
+  public connectionId: string;
   private list: SqlMigrationEntry[];
   private log: debug.Debugger;
-  public connectionId: string;
 
   /**
    * SqlMigrationContext constructor.
@@ -40,15 +40,6 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
   }
 
   /**
-   * Get migration keys.
-   *
-   * @returns {string[]}
-   */
-  keys(): string[] {
-    return this.list.map(({ name }) => name);
-  }
-
-  /**
    * Get the migration runner.
    *
    * @param {string} key
@@ -67,17 +58,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
     const logMigration = this.log.extend('migration');
 
     return {
-      up: async (db: Knex) => {
-        if (entry.queries.up) {
-          logMigration(`UP - ${key}`);
-
-          return db.raw(entry.queries.up.sql);
-        }
-
-        return false;
-      },
-
-      down: async (db: Knex) => {
+      async down(db: Knex) {
         if (entry.queries.down) {
           logMigration(`DOWN - ${key}`);
 
@@ -85,8 +66,27 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
         }
 
         return false;
+      },
+
+      async up(db: Knex) {
+        if (entry.queries.up) {
+          logMigration(`UP - ${key}`);
+
+          return db.raw(entry.queries.up.sql);
+        }
+
+        return false;
       }
     };
+  }
+
+  /**
+   * Get migration keys.
+   *
+   * @returns {string[]}
+   */
+  keys(): string[] {
+    return this.list.map(({ name }) => name);
   }
 }
 

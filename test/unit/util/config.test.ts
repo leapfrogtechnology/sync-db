@@ -1,12 +1,12 @@
-import * as path from 'path';
 import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import * as path from 'node:path';
 import * as yaml from 'yamljs';
-import { it, describe } from 'mocha';
 
-import { mkdtemp, write } from '../../../src/util/fs';
+import { getConnectionId, isCLI, loadConfig, resolveConnectionsFromEnv, validate } from '../../../src/config';
 import Configuration from '../../../src/domain/Configuration';
 import ConnectionConfig from '../../../src/domain/ConnectionConfig';
-import { validate, getConnectionId, resolveConnectionsFromEnv, isCLI, loadConfig } from '../../../src/config';
+import { mkdtemp, write } from '../../../src/util/fs';
 
 describe('CONFIG:', () => {
   describe('isCLI', () => {
@@ -38,18 +38,18 @@ describe('CONFIG:', () => {
       const connections = resolveConnectionsFromEnv();
 
       expect(connections[0]).to.deep.equal({
-        id: 'mydb',
         client: 'mssql',
         connection: {
-          host: 'localhost',
-          port: 1234,
-          user: 'user',
-          password: 'password',
           database: 'database',
+          host: 'localhost',
           options: {
             encrypt: false
-          }
-        }
+          },
+          password: 'password',
+          port: 1234,
+          user: 'user'
+        },
+        id: 'mydb'
       });
 
       // Cleanup
@@ -71,7 +71,7 @@ describe('CONFIG:', () => {
 
   describe('validate', () => {
     it('throws error if injectedConfig.vars is not found or is invalid in the config.', () => {
-      expect(() => validate({ injectedConfig: { vars: 'foobar' } } as any)).to.throw(
+      expect(() => validate({ injectedConfig: { vars: 'foobar' } })).to.throw(
         'Invalid configuration value for `injectedConfig.vars`.'
       );
 
@@ -102,8 +102,8 @@ describe('CONFIG:', () => {
       expect(
         getConnectionId({
           connection: {
-            host: 'localhost',
-            database: 'test'
+            database: 'test',
+            host: 'localhost'
           }
         } as ConnectionConfig)
       ).to.equal('localhost/test');

@@ -5,21 +5,21 @@ import Mapping from './Mapping';
  */
 interface Configuration {
   basePath: string;
-  execution: 'parallel' | 'sequential';
-  sql: string[];
   connectionResolver: string;
+  execution: 'parallel' | 'sequential';
   hooks: {
-    pre_sync: string[];
     post_sync: string[];
+    pre_sync: string[];
   };
   injectedConfig: {
     vars: Mapping<string>;
   };
   migration: {
     directory: string;
+    sourceType: 'javascript' | 'sql' | 'typescript';
     tableName: string;
-    sourceType: 'sql' | 'javascript' | 'typescript';
   };
+  sql: string[];
 }
 
 export default Configuration;

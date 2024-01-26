@@ -6,21 +6,19 @@
  * are also meant to be the public interface for the developers using it as a package.
  */
 
-import * as init from './init';
-import { log } from './util/logger';
-import { existsDir } from './util/fs';
-import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
-
 import Configuration from './domain/Configuration';
-import SynchronizeParams from './domain/SynchronizeParams';
 import ConnectionReference from './domain/ConnectionReference';
+import SynchronizeParams from './domain/SynchronizeParams';
 import OperationParams from './domain/operation/OperationParams';
 import OperationResult from './domain/operation/OperationResult';
-
+import * as init from './init';
+import { KnexMigrationAPI, getMigrationPath, invokeMigrationApi } from './migration/service/knexMigrator';
 // Service
 import { executeProcesses } from './service/execution';
-import { runSynchronize, runPrune } from './service/sync';
-import { getMigrationPath, invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
+import { runPrune, runSynchronize } from './service/sync';
+import { DatabaseConnections, mapToConnectionReferences, withTransaction } from './util/db';
+import { existsDir } from './util/fs';
+import { log } from './util/logger';
 
 /**
  * Synchronize all the configured database connections.
@@ -54,30 +52,31 @@ export async function synchronize(
 
   // TODO: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
-    migrationPath,
+    loadMigrations: !params['skip-migration'],
     loadSqlSources: true,
-    loadMigrations: !params['skip-migration']
+    migrationPath
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        runSynchronize(trx, {
-          config,
-          params,
-          connectionId: connection.id,
-          migrateFunc: t =>
-            invokeMigrationApi(t, KnexMigrationAPI.MIGRATE_LATEST, {
-              config,
-              connectionId: connection.id,
-              knexMigrationConfig: knexMigrationConfig(connection.id),
-              params: { ...invokeParams, onSuccess: params.onMigrationSuccess, onFailed: params.onMigrationFailed }
-            })
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          runSynchronize(trx, {
+            config,
+            connectionId: connection.id,
+            migrateFunc: t =>
+              invokeMigrationApi(t, KnexMigrationAPI.MIGRATE_LATEST, {
+                config,
+                connectionId: connection.id,
+                knexMigrationConfig: knexMigrationConfig(connection.id),
+                params: { ...invokeParams, onFailed: params.onMigrationFailed, onSuccess: params.onMigrationSuccess }
+              }),
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
@@ -106,17 +105,18 @@ export async function prune(
   await init.prepare(config, { loadSqlSources: true });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        runPrune(trx, {
-          config,
-          params,
-          connectionId: connection.id
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          runPrune(trx, {
+            config,
+            connectionId: connection.id,
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
@@ -144,18 +144,19 @@ export async function migrateLatest(
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LATEST, {
-          config,
-          params,
-          connectionId: connection.id,
-          knexMigrationConfig: knexMigrationConfig(connection.id)
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LATEST, {
+            config,
+            connectionId: connection.id,
+            knexMigrationConfig: knexMigrationConfig(connection.id),
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
@@ -183,18 +184,19 @@ export async function migrateRollback(
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_ROLLBACK, {
-          config,
-          params,
-          connectionId: connection.id,
-          knexMigrationConfig: knexMigrationConfig(connection.id)
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_ROLLBACK, {
+            config,
+            connectionId: connection.id,
+            knexMigrationConfig: knexMigrationConfig(connection.id),
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
@@ -222,15 +224,16 @@ export async function migrateList(
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(connection, trx =>
-      invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
-        config,
-        params,
-        connectionId: connection.id,
-        knexMigrationConfig: knexMigrationConfig(connection.id)
-      })
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(connection, trx =>
+        invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
+          config,
+          connectionId: connection.id,
+          knexMigrationConfig: knexMigrationConfig(connection.id),
+          params
+        })
+      )
   );
 
   return executeProcesses(processes, config);

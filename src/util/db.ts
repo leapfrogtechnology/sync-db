@@ -1,13 +1,14 @@
 import { Knex, knex } from 'knex';
-import { dbLogger, log } from './logger';
+
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
 import ConnectionReference from '../domain/ConnectionReference';
+import { dbLogger, log } from './logger';
 
 /**
  * Database connections given by the user or the CLI frontend.
  */
-export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig;
+export type DatabaseConnections = ConnectionConfig | ConnectionConfig[];
 
 /**
  * Returns true if the provided object is a knex connection instance.
@@ -18,7 +19,7 @@ export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig;
  * @returns {boolean}
  */
 export function isKnexInstance(obj: any): obj is Knex {
-  return !!(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
+  return Boolean(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
 }
 
 /**
@@ -48,7 +49,7 @@ export function createInstance(config: ConnectionConfig): Knex {
     throw new Error('The provided connection already contains a connection instance.');
   }
 
-  const { host, database, user } = config.connection as Knex.ConnectionConfig;
+  const { database, host, user } = config.connection as Knex.ConnectionConfig;
 
   log(`Connecting to database: ${host}/${database}`);
 

@@ -1,14 +1,14 @@
 import { Knex } from 'knex';
 
-import * as sqlRunner from './sqlRunner';
+import { getSqlBasePath } from '../config';
+import SynchronizeContext from '../domain/SynchronizeContext';
+import OperationContext from '../domain/operation/OperationContext';
+import OperationResult from '../domain/operation/OperationResult';
 import { dbLogger } from '../util/logger';
 import { getElapsedTime } from '../util/ts';
-import SynchronizeContext from '../domain/SynchronizeContext';
 import * as configInjection from './configInjection';
-import OperationResult from '../domain/operation/OperationResult';
-import OperationContext from '../domain/operation/OperationContext';
 import { executeOperation } from './execution';
-import { getSqlBasePath } from '../config';
+import * as sqlRunner from './sqlRunner';
 
 /**
  * Migrate SQL on a database.
@@ -26,7 +26,7 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
   log(`Running setup.`);
 
   const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sql);
-  const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
+  const { post_sync: postMigrationScripts, pre_sync: preMigrationScripts } = hooks;
 
   // Config Injection: Setup
   // This will setup a config table (temporary and accessible only to this transaction).

@@ -1,34 +1,43 @@
-import { Command, flags } from '@oclif/command';
-import { bold, grey, red, cyan, yellow } from 'chalk';
+import { Command, Flags } from '@oclif/core';
+import chalk from 'chalk';
 
-import { migrateList } from '../api';
-import { printLine, printError } from '../util/io';
-import { loadConfig, resolveConnections } from '..';
-import OperationResult from '../domain/operation/OperationResult';
+import { loadConfig, resolveConnections } from '../..';
+import { migrateList } from '../../api';
+import OperationResult from '../../domain/operation/OperationResult';
+import { printError, printLine } from '../../util/io';
 
 class MigrateList extends Command {
   static description = 'List all the migrations.';
 
   static flags = {
-    only: flags.string({
-      helpValue: 'CONNECTION_ID',
-      description: 'Filter only a single connection.'
-    }),
-    'connection-resolver': flags.string({
-      helpValue: 'PATH',
-      description: 'Path to the connection resolver.'
-    }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
+    }),
+    'connection-resolver': Flags.string({
+      description: 'Path to the connection resolver.',
+      helpValue: 'PATH'
+    }),
+    only: Flags.string({
+      description: 'Filter only a single connection.',
+      helpValue: 'CONNECTION_ID'
     })
+  };
+
+  /**
+   * Failure handler.
+   */
+  onFailed = async (result: OperationResult) => {
+    printLine(chalk.bold(chalk.red(` ▸ ${result.connectionId} - Failed`)));
+
+    printError(`   ${result.error}\n`);
   };
 
   /**
    * Success handler.
    */
   onSuccess = async (result: OperationResult) => {
-    await printLine(bold(` ▸ ${result.connectionId}`));
+    printLine(chalk.bold(` ▸ ${result.connectionId}`));
 
     const [completedList, remainingList] = result.data;
     const ranCount = completedList.length;
@@ -38,32 +47,23 @@ class MigrateList extends Command {
     for (const item of completedList) {
       const completedMigrationName = typeof item === 'string' || item instanceof String ? item : item?.name;
 
-      await printLine(cyan(`   • ${completedMigrationName}`));
+      printLine(chalk.cyan(`   • ${completedMigrationName}`));
     }
 
     // Remaining Migrations
     for (const item of remainingList) {
-      await printLine(grey(`   - ${item}`));
+      printLine(chalk.grey(`   - ${item}`));
     }
 
     if (ranCount === 0 && remainingCount === 0) {
-      await printLine(yellow('   No migrations.'));
+      printLine(chalk.yellow('   No migrations.'));
     } else if (remainingCount > 0) {
-      await printLine(yellow(`\n   ${remainingList.length} migrations yet to be run.`));
+      printLine(chalk.yellow(`\n   ${remainingList.length} migrations yet to be run.`));
     } else if (remainingCount === 0) {
-      await printLine('\n   All up to date.');
+      printLine('\n   All up to date.');
     }
 
-    await printLine();
-  };
-
-  /**
-   * Failure handler.
-   */
-  onFailed = async (result: OperationResult) => {
-    printLine(bold(red(` ▸ ${result.connectionId} - Failed`)));
-
-    await printError(`   ${result.error}\n`);
+    printLine();
   };
 
   /**
@@ -72,14 +72,14 @@ class MigrateList extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(MigrateList);
+    const { flags: parsedFlags } = await this.parse(MigrateList);
     const config = await loadConfig(parsedFlags.config);
     const connections = await resolveConnections(config, parsedFlags['connection-resolver']);
 
     const results = await migrateList(config, connections, {
       ...parsedFlags,
-      onSuccess: this.onSuccess,
-      onFailed: this.onFailed
+      onFailed: this.onFailed,
+      onSuccess: this.onSuccess
     });
 
     const failedCount = results.filter(({ success }) => !success).length;

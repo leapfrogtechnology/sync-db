@@ -6,10 +6,10 @@ import OperationResult from './operation/OperationResult';
  */
 interface SynchronizeParams extends OperationParams {
   force: boolean;
+  onMigrationFailed?: (result: OperationResult) => void;
+  onMigrationSuccess?: (result: OperationResult) => void;
+  onTeardownSuccess?: (result: OperationResult) => void;
   'skip-migration': boolean;
-  onTeardownSuccess?: (result: OperationResult) => Promise<any>;
-  onMigrationSuccess?: (result: OperationResult) => Promise<any>;
-  onMigrationFailed?: (result: OperationResult) => Promise<any>;
 }
 
 export default SynchronizeParams;

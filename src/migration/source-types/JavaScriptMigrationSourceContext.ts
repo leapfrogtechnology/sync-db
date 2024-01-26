@@ -1,15 +1,15 @@
-import MigrationRunner from '../domain/MigrationRunner';
 import { dbLogger, log as logger } from '../../util/logger';
-import MigrationSourceContext from '../domain/MigrationSourceContext';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
+import MigrationRunner from '../domain/MigrationRunner';
+import MigrationSourceContext from '../domain/MigrationSourceContext';
 
 /**
  * JavaScript source migration context for KnexMigrationSource.
  */
 class JavaScriptMigrationContext implements MigrationSourceContext {
+  public connectionId: string;
   private list: JavaScriptMigrationEntry[];
   private log: debug.Debugger;
-  public connectionId: string;
 
   /**
    * JavaScriptMigrationContext constructor.
@@ -38,15 +38,6 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
   }
 
   /**
-   * Get migration keys.
-   *
-   * @returns {string[]}
-   */
-  keys(): string[] {
-    return this.list.map(({ name }) => name);
-  }
-
-  /**
    * Get the migration runner.
    *
    * @param {string} key
@@ -63,9 +54,18 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
     }
 
     return {
-      up: entry.methods.up,
-      down: entry.methods.down
+      down: entry.methods.down,
+      up: entry.methods.up
     };
+  }
+
+  /**
+   * Get migration keys.
+   *
+   * @returns {string[]}
+   */
+  keys(): string[] {
+    return this.list.map(({ name }) => name);
   }
 }
 

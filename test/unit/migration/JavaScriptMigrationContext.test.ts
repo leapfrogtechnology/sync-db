@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { Knex } from 'knex';
 import { describe, it } from 'mocha';
+
 import JavaScriptMigrationEntry from '../../../src/migration/domain/JavaScriptMigrationEntry';
 import JavaScriptMigrationContext from '../../../src/migration/source-types/JavaScriptMigrationSourceContext';
 
@@ -20,18 +21,18 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
 
       const instance = getInstance([
         {
-          name: '0001_create_users_table',
           methods: {
-            up,
-            down
-          }
+            down,
+            up
+          },
+          name: '0001_create_users_table'
         },
         {
-          name: '0002_alter_users_table',
           methods: {
-            up,
-            down
-          }
+            down,
+            up
+          },
+          name: '0002_alter_users_table'
         }
       ]);
       expect(instance.keys()).to.deep.equal(['0001_create_users_table', '0002_alter_users_table']);
@@ -44,11 +45,11 @@ describe('MIGRATION: SqlMigrationSourceContext', () => {
 
     const instance = getInstance([
       {
-        name: '0001_alter_users_table',
         methods: {
-          up,
-          down
-        }
+          down,
+          up
+        },
+        name: '0001_alter_users_table'
       }
     ]);
 

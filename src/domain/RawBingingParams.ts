@@ -1,23 +1,23 @@
 import { Knex } from 'knex';
 
-type Value = Date | string | number | boolean | Date[] | string[] | number[] | boolean[] | Buffer | Knex.Raw;
+type Value = Buffer | Date | Date[] | Knex.Raw | boolean | boolean[] | number | number[] | string | string[];
 
 type RawBindingParams = (
-  | Date
   | Buffer
-  | string
-  | number
+  | Date
   | Date[]
-  | boolean
-  | Knex.Raw
-  | string[]
-  | number[]
-  | boolean[]
   | Knex.QueryBuilder
+  | Knex.Raw
+  | boolean
+  | boolean[]
+  | number
+  | number[]
+  | string
+  | string[]
 )[];
 
 export interface ValueMap {
-  [key: string]: Value | Knex.QueryBuilder;
+  [key: string]: Knex.QueryBuilder | Value;
 }
 
 export default RawBindingParams;

@@ -1,11 +1,11 @@
 import { Knex } from 'knex';
 
-import OperationParams from './operation/OperationParams';
 import OperationContext from './operation/OperationContext';
+import OperationParams from './operation/OperationParams';
 
 interface MigrationContext extends OperationContext {
-  params: OperationParams;
   knexMigrationConfig: Knex.MigratorConfig;
+  params: OperationParams;
 }
 
 export default MigrationContext;

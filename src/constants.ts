@@ -1,6 +1,6 @@
 /* Global Constants */
 
-import * as path from 'path';
+import * as path from 'node:path';
 
 import Configuration from './domain/Configuration';
 
@@ -16,19 +16,19 @@ export const DEFAULT_CONFIG: Configuration = {
   basePath: path.resolve(process.cwd(), 'src'),
   connectionResolver: '',
   execution: 'parallel',
-  sql: [],
   hooks: {
-    pre_sync: [],
-    post_sync: []
+    post_sync: [],
+    pre_sync: []
   },
   injectedConfig: {
     vars: {}
   },
   migration: {
     directory: 'migration',
-    tableName: 'knex_migrations', // Note: This is Knex's default value. Just keeping it same.
-    sourceType: 'sql'
-  }
+    sourceType: 'sql',
+    tableName: 'knex_migrations' // Note: This is Knex's default value. Just keeping it same.
+  },
+  sql: []
 };
 
 export const REQUIRED_ENV_KEYS = ['DB_HOST', 'DB_PASSWORD', 'DB_NAME', 'DB_USERNAME', 'DB_PORT', 'DB_CLIENT'];

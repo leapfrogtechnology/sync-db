@@ -1,10 +1,10 @@
-import * as path from 'path';
+import * as path from 'node:path';
 
-import { glob, exists } from '../../util/fs';
-import { resolveFile } from '../../service/sqlRunner';
 import FileExtensions from '../../enum/FileExtensions';
-import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import { resolveFile } from '../../service/sqlRunner';
+import { exists, glob } from '../../util/fs';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
+import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 
 const FILE_PATTERN_JS = /(.+).js$/;
 const FILE_PATTERN_TS = /(.+).ts$/;
@@ -24,15 +24,15 @@ export async function getSqlMigrationNames(migrationPath: string): Promise<strin
   const files = await glob(migrationPath);
   const migrationSet = new Set<string>();
 
-  files.forEach(filename => {
+  for (const filename of files) {
     const match = filename.match(FILE_PATTERN_SQL);
 
     if (match && match.length === 3) {
       migrationSet.add(match[1]);
     }
-  });
+  }
 
-  return Array.from(migrationSet);
+  return [...migrationSet];
 }
 
 /**
@@ -48,15 +48,15 @@ export async function getJavaScriptMigrationNames(migrationPath: string, extensi
   const migrationSet = new Set<string>();
   const pattern = extension === FileExtensions.JS ? FILE_PATTERN_JS : FILE_PATTERN_TS;
 
-  filenames.forEach(filename => {
+  for (const filename of filenames) {
     const match = filename.match(pattern);
 
     if (match) {
       migrationSet.add(match[1]);
     }
-  });
+  }
 
-  return Array.from(migrationSet);
+  return [...migrationSet];
 }
 
 /**
@@ -79,7 +79,7 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
 
     return {
       name,
-      queries: { up, down }
+      queries: { down, up }
     };
   });
 
@@ -114,14 +114,14 @@ export async function resolveJavaScriptMigrations(
   const migrationPromises = migrationNames.map(async name => {
     const filename = `${name}.${extension}`;
 
-    const { up, down } = mRequire(path.resolve(migrationPath, filename));
+    const { down, up } = mRequire(path.resolve(migrationPath, filename));
 
     return {
-      name: filename,
       methods: {
-        up,
-        down
-      }
+        down,
+        up
+      },
+      name: filename
     };
   });
 

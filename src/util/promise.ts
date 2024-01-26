@@ -1,4 +1,4 @@
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 
 /**
  * Promiser - A function that returns a promise.
@@ -24,8 +24,8 @@ export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]>
       const value = await promiser();
 
       result.push(value);
-    } catch (err) {
-      const error = err as any;
+    } catch (error_) {
+      const error = error_ as any;
 
       if (error.error) {
         throw error.error;

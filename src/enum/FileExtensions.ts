@@ -3,8 +3,8 @@
  */
 enum FileExtensions {
   JS = 'js',
-  TS = 'ts',
-  SQL = 'sql'
+  SQL = 'sql',
+  TS = 'ts'
 }
 
 export default FileExtensions;
