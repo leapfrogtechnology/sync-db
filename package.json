@@ -13,7 +13,12 @@
   "bin": {
     "sync-db": "./bin/run.js"
   },
-  "files": ["/bin", "/dist", "/npm-shrinkwrap.json", "/oclif.manifest.json"],
+  "files": [
+    "/bin",
+    "/dist",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
   "dependencies": {
     "@oclif/core": "^3",
     "@oclif/plugin-help": "^5",
@@ -52,7 +57,10 @@
     "bin": "sync-db",
     "dirname": "sync-db",
     "commands": "./dist/commands",
-    "plugins": ["@oclif/plugin-help", "@oclif/plugin-plugins"],
+    "plugins": [
+      "@oclif/plugin-help",
+      "@oclif/plugin-plugins"
+    ],
     "topicSeparator": " ",
     "topics": {
       "hello": {
@@ -71,7 +79,12 @@
     "test:unit": "mocha ./test/unit/**/*.test.ts",
     "version": "oclif readme && git add README.md"
   },
-  "keywords": ["oclif", "sync-db", "db-synchronize", "synchronize-db"],
+  "keywords": [
+    "oclif",
+    "sync-db",
+    "db-synchronize",
+    "synchronize-db"
+  ],
   "engines": {
     "node": ">= 18.0.0"
   }

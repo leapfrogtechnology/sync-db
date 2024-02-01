@@ -31,11 +31,12 @@ export function executeProcesses<T>(processes: Promiser<T>[], config: Configurat
 }
 
 /**
- * Execute a unit operation.
+ * Executes an operation with the provided context and function.
  *
- * @param {T} context The operation context.
- * @param {(options: any) => Promise<any>} func The function to execute after operation is executed.
- * @returns {Promise<OperationResult>} The operation result.
+ * @template T - The type of the operation context.
+ * @param {T} context - The operation context.
+ * @param {(options: { timeStart: [number, number] }) => Promise<any>} func - The function to execute.
+ * @returns {Promise<OperationResult>} - A promise that resolves to the operation result.
  */
 export async function executeOperation<T extends OperationContext>(
   context: T,

@@ -21,7 +21,7 @@ interface ConnectionResolver {
 /**
  * Check if this is being run via the sync-db cli or not.
  *
- * @returns {boolean}
+ * @returns {boolean} - A boolean indicating if this is being run via the sync-db cli or not.
  */
 export function isCLI(): boolean {
   return process.env.SYNC_DB_CLI === 'true';
@@ -32,8 +32,8 @@ export function isCLI(): boolean {
  *
  * TODO: Think of a better way later.
  *
- * @param {Configuration} config
- * @returns {string}
+ * @param {Configuration} config - The sync-db configuration object.
+ * @returns {string} - The SQL base path.
  */
 export function getSqlBasePath(config: Configuration): string {
   return path.join(config.basePath, 'sql');
@@ -42,7 +42,8 @@ export function getSqlBasePath(config: Configuration): string {
 /**
  * Load config yaml file.
  *
- * @returns {Promise<Configuration>}
+ * @param {string} configFilename - The name of the config file.
+ * @returns {Promise<Configuration>} - A promise that resolves with the loaded configuration.
  */
 export async function loadConfig(configFilename: string = CONFIG_FILENAME): Promise<Configuration> {
   log('Resolving config file.');
@@ -79,7 +80,9 @@ export async function loadConfig(configFilename: string = CONFIG_FILENAME): Prom
 /**
  * Validate the loaded configuration.
  *
- * @param {Configuration} config
+ * @param {Configuration} config - The sync-db loaded configuration.
+ * @throws {Error} - Throws an error if the configuration is invalid.
+ * @returns {void} - Returns nothing.
  */
 export function validate(config: Configuration) {
   const { injectedConfig } = config;
@@ -91,7 +94,7 @@ export function validate(config: Configuration) {
     throw new Error('Invalid configuration value for `injectedConfig.vars`.');
   }
 
-  // TODO: Validate the remaining loaded config.
+  // FIX: Validate the remaining loaded config.
   // Throw error if validation fails.
 
   log('Validation passed.');
@@ -143,9 +146,9 @@ export async function resolveConnections(config: Configuration, resolver?: strin
 /**
  * Resolve connections using the provided connection resolver.
  *
- * @param {string} resolver
- * @param {Configuration} config
- * @returns {Promise<ConnectionConfig[]>}
+ * @param {string} resolver - The connection resolver string.
+ * @param {Configuration} config - The sync-db configuration object.
+ * @returns {Promise<ConnectionConfig[]>} - A promise that resolves with the resolved connections.
  */
 export async function resolveConnectionsUsingResolver(
   resolver: string,
@@ -167,8 +170,8 @@ export async function resolveConnectionsUsingResolver(
 /**
  * Get the connection id from the config.
  *
- * @param {ConnectionConfig} connectionConfig
- * @returns {string}
+ * @param {ConnectionConfig} connectionConfig - The connection configuration.
+ * @returns {string} - The connection id.
  */
 export function getConnectionId(connectionConfig: ConnectionConfig): string {
   if (connectionConfig.id) {
@@ -183,7 +186,7 @@ export function getConnectionId(connectionConfig: ConnectionConfig): string {
 /**
  * Validate connection keys.
  *
- * @param {string[]} keys
+ * @param {string[]} keys - The connection keys.
  * @returns {void}
  */
 function validateConnections(keys: string[]): void {
@@ -195,9 +198,9 @@ function validateConnections(keys: string[]): void {
 }
 
 /**
- * Resolve database connections from Env.
+ * Resolve database connections from environment.
  *
- * @returns {ConnectionConfig[]}
+ * @returns {ConnectionConfig[]} - The resolved database connections.
  */
 export function resolveConnectionsFromEnv(): ConnectionConfig[] {
   log('Resolving connections from the environment variables.');
@@ -225,8 +228,8 @@ export function resolveConnectionsFromEnv(): ConnectionConfig[] {
 /**
  * Resolve connections from the file.
  *
- * @param {string} filename
- * @returns {Promise<ConnectionConfig[]>}
+ * @param {string} filename - The name of the connections file.
+ * @returns {Promise<ConnectionConfig[]>} - A promise that resolves with the resolved connections.
  */
 async function resolveConnectionsFromFile(filename: string): Promise<ConnectionConfig[]> {
   log('Resolving connections file: %s', filename);
@@ -234,7 +237,7 @@ async function resolveConnectionsFromFile(filename: string): Promise<ConnectionC
   const loaded = await fs.read(filename);
   const { connections } = JSON.parse(loaded) as ConnectionsFileSchema;
 
-  // TODO: Validate the connections received from file.
+  // FIX: Validate the connections received from file.
 
   return connections;
 }

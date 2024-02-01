@@ -6,19 +6,19 @@ import { promisify } from 'node:util';
 export const mkdir = promisify(fs.mkdir);
 export const readDir = promisify(fs.readdir);
 
-/**
- * Create a temporary directory and return it's path.
+/*
+ * Create a temporary directory and return its path.
  *
- * @returns {Promise<string>}
+ * @returns {Promise<string>} The path of the temporary directory.
  */
-export function mkdtemp() {
+export function mkdtemp(): Promise<string> {
   return promisify(fs.mkdtemp)(`${os.tmpdir()}${path.sep}`);
 }
 
 /**
  * Create a temporary directory and return it's path. (synchronous)
  *
- * @returns {string}
+ * @returns {string} The path of the temporary directory.
  */
 export function mkdtempSync(): string {
   return fs.mkdtempSync(`${os.tmpdir()}${path.sep}`);
@@ -27,8 +27,8 @@ export function mkdtempSync(): string {
 /**
  * Read file contents.
  *
- * @param {string} filename
- * @returns {Promise<string>}
+ * @param {string} filename The path to the file.
+ * @returns {Promise<string>} The contents of the file.
  */
 export function read(filename: string): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -45,8 +45,8 @@ export function read(filename: string): Promise<string> {
 /**
  * Check if the file exists.
  *
- * @param {string} filename
- * @returns {Promise<boolean>}
+ * @param {string} filename The path to the file.
+ * @returns {Promise<boolean>} True if the file exists, false otherwise.
  */
 export function exists(filename: string): Promise<boolean> {
   return new Promise(resolve => {
@@ -57,8 +57,8 @@ export function exists(filename: string): Promise<boolean> {
 /**
  * Check if the directory exist.
  *
- * @param {string} pathName
- * @returns {boolean}
+ * @param {string} pathName The path to the directory.
+ * @returns {boolean} True if the directory exists, false otherwise.
  */
 export async function existsDir(pathName: string) {
   try {
@@ -73,8 +73,8 @@ export async function existsDir(pathName: string) {
 /**
  * Read all files in a directory.
  *
- * @param {string} pathName
- * @returns {Promise<string[]>}
+ * @param {string} pathName The path to the directory.
+ * @returns {Promise<string[]>} The list of files in the directory.
  */
 export function glob(pathName: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
@@ -91,9 +91,9 @@ export function glob(pathName: string): Promise<string[]> {
 /**
  * Write contents to file.
  *
- * @param {string} filepath
- * @param {any} data
- * @returns {Promise<void>}
+ * @param {string} filepath The path to the file.
+ * @param {any} data The contents to write.
+ * @returns {Promise<void>} A promise that resolves when the file is written.
  */
 export function write(filepath: string, data: any): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -110,8 +110,8 @@ export function write(filepath: string, data: any): Promise<void> {
 /**
  * Remove the file.
  *
- * @param {string} filepath
- * @returns {Promise<void>}
+ * @param {string} filepath The path to the file.
+ * @returns {Promise<void>} A promise that resolves when the file is removed.
  */
 export function remove(filepath: string): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -128,9 +128,9 @@ export function remove(filepath: string): Promise<void> {
 /**
  * Copy file.
  *
- * @param {string} fromPath
- * @param {string} toPath
- * @returns {Promise<void>}
+ * @param {string} fromPath The path of the file to copy.
+ * @param {string} toPath The path to copy the file to.
+ * @returns {Promise<void>} A promise that resolves when the file is copied.
  */
 export function copy(fromPath: string, toPath: string): Promise<void> {
   return new Promise((resolve, reject) => {

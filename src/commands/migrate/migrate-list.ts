@@ -26,6 +26,9 @@ class MigrateList extends Command {
 
   /**
    * Failure handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onFailed = async (result: OperationResult) => {
     printLine(chalk.bold(chalk.red(` ▸ ${result.connectionId} - Failed`)));
@@ -35,6 +38,9 @@ class MigrateList extends Command {
 
   /**
    * Success handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onSuccess = async (result: OperationResult) => {
     printLine(chalk.bold(` ▸ ${result.connectionId}`));
@@ -69,7 +75,7 @@ class MigrateList extends Command {
   /**
    * CLI command execution handler.
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = await this.parse(MigrateList);

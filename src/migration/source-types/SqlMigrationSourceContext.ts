@@ -16,7 +16,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
   /**
    * SqlMigrationContext constructor.
    *
-   * @param {SqlMigrationEntry[]} list
+   * @param {SqlMigrationEntry[]} list - The list of SQL migration entries.
    */
   constructor(list: SqlMigrationEntry[]) {
     this.list = list;
@@ -29,7 +29,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
   /**
    * Bind connectionId to the context.
    *
-   * @param {string} connectionId
+   * @param {string} connectionId - The connectionId to bind.
    * @returns {MigrationSourceContext} this
    */
   bind(connectionId: string): MigrationSourceContext {
@@ -42,11 +42,11 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
   /**
    * Get the migration runner.
    *
-   * @param {string} key
-   * @returns {MigrationRunner}
+   * @param {string} key - The migration key.
+   * @returns {MigrationRunner} - The migration runner.
    */
   get(key: string): MigrationRunner {
-    // TODO: Optimize - no need to find from the list for every item you get. Map it internally.
+    // FIX: Optimize - no need to find from the list for every item you get. Map it internally.
     const entry = this.list.find(({ name }) => name === key);
 
     if (!entry) {
@@ -83,7 +83,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
   /**
    * Get migration keys.
    *
-   * @returns {string[]}
+   * @returns {string[]} - The list of migration keys.
    */
   keys(): string[] {
     return this.list.map(({ name }) => name);

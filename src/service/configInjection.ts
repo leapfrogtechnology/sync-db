@@ -12,7 +12,7 @@ import { dbLogger } from '../util/logger';
 /**
  * Reads and returns the package.json contents.
  *
- * @returns {*}
+ * @returns {*} - The package.json contents.
  */
 export function getPackageMetadata(): any {
   return JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json')).toString());
@@ -22,10 +22,10 @@ export function getPackageMetadata(): any {
  * Gets all the default injected config vars that needs to be
  * always available in the injected config table.
  *
- * @returns {Mapping<string>}
+ * @returns {Mapping<string> | {}} - The default system vars.
  */
 function getDefaultSystemVars(): Mapping<string> {
-  // TODO: Add any default config vars here that should always
+  // FIX: Add any default config vars here that should always
   // be available in the __injected_config table.
   return {};
 }
@@ -33,8 +33,8 @@ function getDefaultSystemVars(): Mapping<string> {
 /**
  * Prepares config vars for injecting into the target database.
  *
- * @param {Mapping<string>} vars
- * @returns {Mapping<string>}
+ * @param {Mapping<string>} vars - The config variables.
+ * @returns {Mapping<string>} - The prepared config variables.
  */
 export function prepareInjectionConfigVars(vars: Mapping<string>): Mapping<string> {
   return expandEnvVarsInMap({ ...vars, ...getDefaultSystemVars() });
@@ -43,8 +43,8 @@ export function prepareInjectionConfigVars(vars: Mapping<string>): Mapping<strin
 /**
  * Convert an object (map of key => value) into an array of key / value pairs.
  *
- * @param {Mapping<string>} vars
- * @returns {KeyValuePair[]}
+ * @param {Mapping<string>} vars - The config variables.
+ * @returns {KeyValuePair[]} - The config variables in key value pairs.
  */
 export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
   return Object.entries(vars).map(([key, value]) => ({ key, value }));
@@ -53,9 +53,9 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
 /**
  * Setup the table in the database with the injected config.
  *
- * @param {Knex.Transaction} trx
- * @param {SynchronizeContext} context
- * @returns {Promise<void>}
+ * @param {Knex.Transaction} trx - The knex transaction.
+ * @param {SynchronizeContext} context - The synchronization context.
+ * @returns {Promise<void>} - A promise that resolves when the setup is done.
  */
 export async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const log = dbLogger(context.connectionId);
@@ -65,7 +65,7 @@ export async function setup(trx: Knex.Transaction, context: SynchronizeContext):
 
   const exists = await trx.schema.hasTable(INJECTED_CONFIG_TABLE);
 
-  // TODO: Think about a better solution; it shouldn't have existed in the first place.
+  // FIX: Think about a better solution; it shouldn't have existed in the first place.
   if (exists) {
     log('Warning: Table "${INJECTED_CONFIG_TABLE}" already exists. It will be dropped.');
 
@@ -97,9 +97,9 @@ export async function setup(trx: Knex.Transaction, context: SynchronizeContext):
 /**
  * Drop the injected config table.
  *
- * @param {Knex.Transaction} trx
- * @param {SynchronizeContext} context
- * @returns {Promise<void>}
+ * @param {Knex.Transaction} trx - The knex transaction.
+ * @param {SynchronizeContext} context - The synchronization context.
+ * @returns {Promise<void>} - A promise that resolves when the cleanup is done.
  */
 export async function cleanup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const log = dbLogger(context.connectionId);

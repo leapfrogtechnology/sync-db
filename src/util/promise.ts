@@ -13,8 +13,8 @@ export const timeout = promisify(setTimeout);
 /**
  * Run each of the promise sequentially and return their results in the same order.
  *
- * @param {Promiser<T>[]} promisers
- * @returns {Promise<T[]>}
+ * @param {Promiser<T>[]} promisers - The list of promises.
+ * @returns {Promise<T[]>} - A promise that resolves with the list of results.
  */
 export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]> {
   const result: T[] = [];

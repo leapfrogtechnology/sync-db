@@ -13,9 +13,9 @@ import * as sqlRunner from './sqlRunner';
 /**
  * Migrate SQL on a database.
  *
- * @param {Knex.Transaction} trx
- * @param {SynchronizeContext} context
- * @returns {Promise<void>}
+ * @param {Knex.Transaction} trx - The knex transaction.
+ * @param {SynchronizeContext} context - The synchronization context.
+ * @returns {Promise<void>} - A promise that resolves when the migration is done.
  */
 async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const { connectionId } = context;
@@ -62,12 +62,12 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
 
 /**
  * Executes drop statements (if exists) for all the objects
- * that have been created in the database.
- * They're executed in the reverse order of their creation.
+ * that have been created in the database. It is executed
+ * in the reverse order of its creation.
  *
- * @param {Knex.Transaction} trx
- * @param {OperationContext} context
- * @returns {Promise<void>}
+ * @param {Knex.Transaction} trx - The knex transaction.
+ * @param {OperationContext} context - The operation context.
+ * @returns {Promise<void>} - A promise that resolves when the teardown is done.
  */
 async function teardown(trx: Knex.Transaction, context: OperationContext): Promise<void> {
   const { sql } = context.config;
@@ -86,9 +86,9 @@ async function teardown(trx: Knex.Transaction, context: OperationContext): Promi
 /**
  * Run synchronize on the given database connection (transaction).
  *
- * @param {Knex.Transaction} trx
- * @param {SynchronizeContext} context
- * @returns {Promise<OperationResult>}
+ * @param {Knex.Transaction} trx - The knex transaction.
+ * @param {SynchronizeContext} context - The synchronization context.
+ * @returns {Promise<OperationResult>} - A promise that resolves to the operation result.
  */
 export async function runSynchronize(trx: Knex.Transaction, context: SynchronizeContext): Promise<OperationResult> {
   return executeOperation(context, async options => {
@@ -122,9 +122,9 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 /**
  * Rune prune operation (drop all synchronized objects) on the given database connection (transaction).
  *
- * @param {Knex.Transaction} trx
- * @param {OperationContext} context
- * @returns {Promise<OperationResult>}
+ * @param {Knex.Transaction} trx - The knex transaction.
+ * @param {OperationContext} context - The operation context.
+ * @returns {Promise<OperationResult>} - A promise that resolves to the operation result.
  */
 export async function runPrune(trx: Knex.Transaction, context: OperationContext): Promise<OperationResult> {
   return executeOperation(context, () => teardown(trx, context));

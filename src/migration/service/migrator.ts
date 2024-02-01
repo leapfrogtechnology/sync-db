@@ -17,8 +17,8 @@ const FILE_PATTERN_SQL = /(.+)\.(up|down)\.sql$/;
  * Note: The ".up.sql" and ".down.sql" part of the migration files are
  * omitted and and a pair of those files are considered a single migration entry.
  *
- * @param {string} migrationPath
- * @returns {Promise<string[]>}
+ * @param {string} migrationPath - The migration directory path.
+ * @returns {Promise<string[]>} - A promise that resolves with the list of migration names.
  */
 export async function getSqlMigrationNames(migrationPath: string): Promise<string[]> {
   const files = await glob(migrationPath);
@@ -39,9 +39,9 @@ export async function getSqlMigrationNames(migrationPath: string): Promise<strin
  * Glob the migration directory and retrieve all the migration entries (names)
  * that need to be run.
  *
- * @param {string} migrationPath
- * @param {string} extension
- * @returns {Promise<string[]>}
+ * @param {string} migrationPath - The migration directory path.
+ * @param {string} extension - The file extension.
+ * @returns {Promise<string[]>} - A promise that resolves with the list of migration names.
  */
 export async function getJavaScriptMigrationNames(migrationPath: string, extension: string): Promise<string[]> {
   const filenames = await glob(migrationPath);
@@ -62,8 +62,8 @@ export async function getJavaScriptMigrationNames(migrationPath: string, extensi
 /**
  * Resolve all the migration source for each of the migration entries using the configurations.
  *
- * @param {string} migrationPath
- * @returns {Promise<SqlMigrationEntry[]>}
+ * @param {string} migrationPath - The migration directory path.
+ * @returns {Promise<SqlMigrationEntry[]>} - A promise that resolves with the list of sql migration entries.
  */
 export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMigrationEntry[]> {
   const migrationNames = await getSqlMigrationNames(migrationPath);
@@ -89,9 +89,9 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
 /**
  * Resolve all the migration source for each of the migration entries using the configurations.
  *
- * @param {string} migrationPath
- * @param {string} extension
- * @returns {Promise<SqlMigrationEntry[]>}
+ * @param {string} migrationPath - The migration directory path.
+ * @param {string} extension - The file extension.
+ * @returns {Promise<SqlMigrationEntry[]>} - A promise that resolves with the list of sql migration entries.
  */
 export async function resolveJavaScriptMigrations(
   migrationPath: string,

@@ -13,7 +13,6 @@ import OperationParams from './domain/operation/OperationParams';
 import OperationResult from './domain/operation/OperationResult';
 import * as init from './init';
 import { KnexMigrationAPI, getMigrationPath, invokeMigrationApi } from './migration/service/knexMigrator';
-// Service
 import { executeProcesses } from './service/execution';
 import { runPrune, runSynchronize } from './service/sync';
 import { DatabaseConnections, mapToConnectionReferences, withTransaction } from './util/db';
@@ -23,10 +22,10 @@ import { log } from './util/logger';
 /**
  * Synchronize all the configured database connections.
  *
- * @param {Configuration} config
- * @param {DatabaseConnections} conn
- * @param {SynchronizeParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config  The sync-db configuration object.
+ * @param {DatabaseConnections} conn The database connections.
+ * @param {SynchronizeParams} [options] The options for the synchronize operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function synchronize(
   config: Configuration,
@@ -50,7 +49,7 @@ export async function synchronize(
 
   const { onStarted: _, ...invokeParams } = params;
 
-  // TODO: Need to preload the SQL source code under this step.
+  // FIX: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
     loadMigrations: !params['skip-migration'],
     loadSqlSources: true,
@@ -87,10 +86,10 @@ export async function synchronize(
  *
  * TODO: An ability to prune only a handful of objects from the last.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function prune(
   config: Configuration,
@@ -101,7 +100,7 @@ export async function prune(
 
   const params: OperationParams = { ...options };
 
-  // TODO: Need to preload the SQL source code under this step.
+  // FIX: Need to preload the SQL source code under this step.
   await init.prepare(config, { loadSqlSources: true });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
@@ -123,12 +122,12 @@ export async function prune(
 }
 
 /**
- * Migrate Latest.
+ * Run the migrations for the given connections.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function migrateLatest(
   config: Configuration,
@@ -163,12 +162,12 @@ export async function migrateLatest(
 }
 
 /**
- * Migrate Rollback.
+ * Rollback the migrations for the given connections.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function migrateRollback(
   config: Configuration,
@@ -203,12 +202,12 @@ export async function migrateRollback(
 }
 
 /**
- * List Migrations.
+ * List the migrations for the given connections.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function migrateList(
   config: Configuration,
@@ -242,9 +241,9 @@ export async function migrateList(
 /**
  * Check the filter condition and apply filter if required.
  *
- * @param {ConnectionReference[]} connections
- * @param {string} [filterConnectionId]
- * @returns {ConnectionReference[]}
+ * @param {ConnectionReference[]} connections The list of connections.
+ * @param {string} [filterConnectionId] The connection id to filter.
+ * @returns {ConnectionReference[]} The filtered list of connections.
  */
 function filterConnectionsAsRequired(
   connections: ConnectionReference[],

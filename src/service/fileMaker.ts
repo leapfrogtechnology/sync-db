@@ -21,8 +21,8 @@ const SOURCE_TYPE_STUBS = {
 /**
  * Copy stub files to user directory and return list of template names.
  *
- * @param  {Configuration} config
- * @returns {Promise<MakePublishResult>}
+ * @param  {Configuration} config - The sync-db configuration object.
+ * @returns {Promise<MakePublishResult>} - A promise that resolves with the result of the publish operation.
  */
 export async function publish(config: Configuration): Promise<MakePublishResult> {
   const ignoredList = [];
@@ -59,10 +59,10 @@ export async function publish(config: Configuration): Promise<MakePublishResult>
 /**
  * Generate migration file(s).
  *
- * @param {Configuration} config
- * @param {string} filename
- * @param {Partial<MakeOptions} options
- * @returns {Promise<string[]>}
+ * @param {Configuration} config - The sync-db configuration object.
+ * @param {string} filename - The migration filename.
+ * @param {Partial<MakeOptions>} options - The options for make migration.
+ * @returns {Promise<string[]>} - A promise that resolves with the list of generated migration files.
  */
 export async function makeMigration(
   config: Configuration,
@@ -126,9 +126,9 @@ export async function makeMigration(
 /**
  * Generate sql migration file(s).
  *
- * @param {string} filename
- * @param {MakeOptions} options
- * @returns {Promise<string[]>}
+ * @param {string} filename - The migration filename.
+ * @param {MakeOptions} options - The options for make migration.
+ * @returns {Promise<string[]>} - A promise that resolves with the list of generated migration files.
  */
 export async function makeSqlMigration(filename: string, options: Omit<MakeOptions, 'extension'>): Promise<string[]> {
   let createUpTemplate = '';
@@ -164,9 +164,9 @@ export async function makeSqlMigration(filename: string, options: Omit<MakeOptio
 /**
  * Generate JS/TS migration file(s).
  *
- * @param {string} filename
- * @param {MakeOptions} options
- * @returns {Promise<string[]>}
+ * @param {string} filename - The migration filename.
+ * @param {MakeOptions} options - The options for make migration.
+ * @returns {Promise<string[]>} - A promise that resolves with the list of generated migration files.
  */
 export async function makeJSMigration(filename: string, options: MakeOptions): Promise<string[]> {
   const { extension, migrationPath, timestamp } = options;
@@ -189,9 +189,9 @@ export async function makeJSMigration(filename: string, options: MakeOptions): P
 /**
  * Get template string by reading stub files either from project base path or sync-db assets' path.
  *
- * @param  {string} baseTemplatePath
- * @param  {string} templateFilename
- * @returns {Promise<string>}
+ * @param  {string} baseTemplatePath - The base template path.
+ * @param  {string} templateFilename - The template filename.
+ * @returns {Promise<string>} - A promise that resolves with the template string.
  */
 async function getTemplate(baseTemplatePath: string, templateFilename: string): Promise<string> {
   const baseFilePathExists = await fs.exists(path.join(baseTemplatePath, templateFilename));

@@ -27,6 +27,9 @@ class Prune extends Command {
 
   /**
    * Failure handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onFailed = (result: OperationResult) => {
     printLine(chalk.red(`   [✖] Pruning - failed (${result.timeElapsed}s)\n`));
@@ -36,6 +39,9 @@ class Prune extends Command {
 
   /**
    * Started event handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onStarted = (result: OperationResult) => {
     printLine(chalk.bold(` ▸ ${result.connectionId}`));
@@ -45,13 +51,16 @@ class Prune extends Command {
 
   /**
    * Success handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onSuccess = (result: OperationResult) => printInfo(`   [✓] Pruning - completed (${result.timeElapsed}s)\n`);
 
   /**
    * CLI command execution handler.
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = await this.parse(Prune);

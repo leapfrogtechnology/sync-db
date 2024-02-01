@@ -19,9 +19,9 @@ export interface PreparedRequirements {
 /**
  * Prepare configurations, preload requirements and validate before proceeding further.
  *
- * @param {Configuration} config
- * @param {PrepareOptions} options
- * @returns {Promise<PreparedRequirements>}
+ * @param {Configuration} config - The sync-db configuration object.
+ * @param {PrepareOptions} options - The prepare options.
+ * @returns {Promise<PreparedRequirements>} - A promise that resolves with the prepared requirements.
  */
 export async function prepare(config: Configuration, options: PrepareOptions): Promise<PreparedRequirements> {
   log('Prepare: ', options);

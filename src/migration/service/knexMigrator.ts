@@ -39,10 +39,10 @@ const migrationApiMap = {
 /**
  * Invoke Knex's migration API for given function.
  *
- * @param {Knex.Transaction} trx
- * @param {KnexMigrationAPI} funcName
- * @param {MigrationContext} context
- * @returns {Promise<OperationResult>}
+ * @param {Knex.Transaction} trx - The knex transaction.
+ * @param {KnexMigrationAPI} funcName - The name of the migration API function to invoke.
+ * @param {MigrationContext} context - The migration context.
+ * @returns {Promise<OperationResult>} - A promise that resolves with the operation result.
  */
 export async function invokeMigrationApi(
   trx: Knex.Transaction,
@@ -68,9 +68,9 @@ export async function invokeMigrationApi(
 /**
  * Resolve migration context based on the migration configuration.
  *
- * @param {Configuration} config
- * @param {PrepareOptions} options
- * @returns {(Promise<MigrationSourceContext | null>)}
+ * @param {Configuration} config - The sync-db configuration object.
+ * @param {PrepareOptions} options - The prepare options.
+ * @returns {(Promise<MigrationSourceContext | null>)} - A promise that resolves with the migration source context.
  */
 export async function resolveMigrationContext(
   config: Configuration,
@@ -113,10 +113,10 @@ export async function resolveMigrationContext(
 }
 
 /**
- * Get Migration directory path.
+ * Get migration directory path.
  *
- * @param {Configuration} config
- * @returns {string}
+ * @param {Configuration} config - The sync-db configuration object.
+ * @returns {string} - The migration directory path.
  */
 export function getMigrationPath(config: Configuration): string {
   const { basePath, migration } = config;

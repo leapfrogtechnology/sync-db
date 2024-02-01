@@ -7,6 +7,12 @@ import OperationResult from '../../domain/operation/OperationResult';
 import { printError, printInfo, printLine } from '../../util/io';
 import { dbLogger } from '../../util/logger';
 
+/**
+ * Represents a command to run the migrations up to the latest changes.
+ */
+/**
+ * Represents a command to run the migrations up to the latest changes.
+ */
 class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
@@ -28,13 +34,18 @@ class MigrateLatest extends Command {
 
   /**
    * Failure handler.
+   *
+   * @returns {void}
    */
   onFailed = () => {
     printLine(chalk.bold(chalk.red(`   [✓] Migration - Failed\n`)));
   };
 
   /**
-   * Started event handler.
+   * Event handler for the start of the operation.
+   *
+   * @param {OperationResult} result - The result object of the operation, which includes the connectionId.
+   * @returns {void}
    */
   onStarted = (result: OperationResult) => {
     printLine(chalk.bold(` ▸ ${result.connectionId}`));
@@ -43,7 +54,10 @@ class MigrateLatest extends Command {
   };
 
   /**
-   * Success handler.
+   * Event handler for the successful completion of the operation.
+   *
+   * @param {OperationResult} result - The result object of the operation, which includes the connectionId, data, and timeElapsed.
+   * @returns {Promise<void>} - A Promise that resolves when the operation is successfully completed.
    */
   onSuccess = async (result: OperationResult) => {
     const log = dbLogger(result.connectionId);
@@ -71,7 +85,7 @@ class MigrateLatest extends Command {
   /**
    * CLI command execution handler.
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} - A Promise that resolves when the operation is successfully completed.
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = await this.parse(MigrateLatest);

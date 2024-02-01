@@ -17,7 +17,8 @@ class KnexMigrationSource implements Knex.MigrationSource<string> {
   /**
    * KnexMigrationSource constructor.
    *
-   * @param {MigrationEntry[]} migrationLists
+   * @constructor
+   * @param {MigrationSourceContext} migrationContext - The migration context.
    */
   constructor(migrationContext: MigrationSourceContext) {
     this.log = dbLogger(migrationContext.connectionId);
@@ -27,8 +28,8 @@ class KnexMigrationSource implements Knex.MigrationSource<string> {
   /**
    * Get the migration runner.
    *
-   * @param {string} name
-   * @returns {Promise<MigrationRunner>}
+   * @param {string} name - The name of the migration.
+   * @returns {Promise<MigrationRunner>} - A promise that resolves with the migration runner.
    */
   getMigration(name: string): Promise<MigrationRunner> {
     const migration = this.migrationContext.get(name);
@@ -42,8 +43,8 @@ class KnexMigrationSource implements Knex.MigrationSource<string> {
   /**
    * Gets the name of the migration.
    *
-   * @param {string} migration
-   * @returns {string}
+   * @param {string} migration - The migration name.
+   * @returns {string} - The migration name.
    */
   getMigrationName(migration: string): string {
     return migration;
@@ -52,7 +53,7 @@ class KnexMigrationSource implements Knex.MigrationSource<string> {
   /**
    * Gets a list of migration names.
    *
-   * @returns {Promise<string[]>}
+   * @returns {Promise<string[]>} - A promise that resolves with a list of migration names.
    */
   getMigrations(): Promise<string[]> {
     const migrations = this.migrationContext.keys();

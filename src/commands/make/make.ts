@@ -34,11 +34,11 @@ class Make extends Command {
   /**
    * Make files based on the given name and type.
    *
-   * @param {Configuration} config
-   * @param {string} filename
-   * @param {string} type
-   * @param {string} objectName
-   * @returns {Promise<string[]>}
+   * @param {Configuration} config `sync-db` configuration object.
+   * @param {string} filename The name of the file to generate.
+   * @param {string} type The type of file to generate.
+   * @param {Partial<MakeOptions>} options The options for the file generation.
+   * @returns {Promise<string[]>} The list of generated files.
    */
   async makeFiles(
     config: Configuration,
@@ -60,7 +60,7 @@ class Make extends Command {
   /**
    * CLI command execution handler.
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} The promise that resolves when the command is done.
    */
   async run(): Promise<void> {
     const { args, flags: parsedFlags } = await this.parse(Make);

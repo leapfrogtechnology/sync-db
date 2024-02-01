@@ -12,8 +12,8 @@ const REGEX_VAR_EXPANSION = /\${([A-Za-z]\w+)}/g;
  *    Input: 'Current user is ${USER} at ${HOST}.'
  *    Output: 'Current user is kabir at leapfrog.'
  *
- * @param {string} value
- * @returns {string}
+ * @param {string} value - The string to expand
+ * @returns {string} - The expanded string.
  */
 export function expandEnvVars(value: string): string {
   return value.replaceAll(REGEX_VAR_EXPANSION, (_, key) => process.env[key] || '');
@@ -23,8 +23,8 @@ export function expandEnvVars(value: string): string {
  * Expand environment variables to be expanded that are
  * found in the values of the given map (key => value pairs).
  *
- * @param {Mapping<string>} vars
- * @returns {Mapping<string>}
+ * @param {Mapping<string>} vars - The map of key => value pairs.
+ * @returns {Mapping<string>} - The map of key => value pairs with expanded values.
  */
 export function expandEnvVarsInMap(vars: Mapping<string>): Mapping<string> {
   const entries = Object.entries(vars);

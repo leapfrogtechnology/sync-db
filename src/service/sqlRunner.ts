@@ -26,9 +26,9 @@ const dropStatementsMap: Mapping<string> = {
  * Reads an sql file and return it's contents. If a file ends with `.drop` on the config file,
  * dropOnly is set as true, and that object would not be synchronized, only dropped.
  *
- * @param {string} sqlBasePath
- * @param {string} fileName
- * @returns {Promise<SqlCode>}
+ * @param {string} sqlBasePath - The base path for the sql files.
+ * @param {string} fileName - The name of the sql file.
+ * @returns {Promise<SqlCode>} - A promise that resolves with the sql code.
  */
 export async function resolveFile(sqlBasePath: string, fileName: string): Promise<SqlCode> {
   let name = fileName;
@@ -48,9 +48,9 @@ export async function resolveFile(sqlBasePath: string, fileName: string): Promis
 /**
  * Resolves a list of source files.
  *
- * @param {string} sqlBasePath
- * @param {string[]} files
- * @returns {Promise<SqlCode[]>}
+ * @param {string} sqlBasePath - The base path for the sql files.
+ * @param {string[]} files - The list of file names.
+ * @returns {Promise<SqlCode[]>} - A promise that resolves with the list of sql codes.
  */
 export async function resolveFiles(sqlBasePath: string, files: string[]): Promise<SqlCode[]> {
   const promises = files.map(filename => resolveFile(sqlBasePath, filename));
@@ -61,10 +61,10 @@ export async function resolveFiles(sqlBasePath: string, files: string[]): Promis
 /**
  * Get fully qualified object name.
  *
- * @param {string} type
- * @param {string} name
- * @param {string} [schema]
- * @returns {string}
+ * @param {string} type - The database object type.
+ * @param {string} name - The object name.
+ * @param {string} [schema] - The schema name.
+ * @returns {string} - The fully qualified object name.
  */
 export function getFQON(type: string, name: string, schema?: string): string {
   if (type === DatabaseObjectTypes.SCHEMA || !schema) {
@@ -77,8 +77,8 @@ export function getFQON(type: string, name: string, schema?: string): string {
 /**
  * Extract sql file info from the filePath to rollback the synchronization.
  *
- * @param {string} filePath
- * @returns {SqlFileInfo}
+ * @param {string} filePath - The file path.
+ * @returns {SqlFileInfo} - The sql file info.
  */
 export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   // filePath can have multiple sub directories e.g. views/dbo/abc/vw_example.sql
@@ -101,9 +101,9 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 /**
  * Get SQL DROP statement for the provided object type.
  *
- * @param {string} type   Database object type
- * @param {string} fqon   Fully qualified object name.
- * @returns {string}
+ * @param {string} type - Database object type e.g. view, function, procedure, trigger.
+ * @param {string} fqon - Fully qualified object name.
+ * @returns {string} - The SQL DROP statement.
  */
 export function getDropStatement(type: string, fqon: string): string {
   const dropStatement = dropStatementsMap[type];
@@ -120,10 +120,10 @@ export function getDropStatement(type: string, fqon: string): string {
 /**
  * Run raw queries in the transaction sequentially.
  *
- * @param {Knex} trx
- * @param {SqlCode[]} files
- * @param {string} connectionId
- * @returns {Promise<any[]>}
+ * @param {Knex} trx - The knex transaction.
+ * @param {SqlCode[]} files - The list of sql files.
+ * @param {string} connectionId - The connection id.
+ * @returns {Promise<any[]>} - A promise that resolves with the list of results.
  */
 export function runSequentially(trx: Knex, files: SqlCode[], connectionId: string): Promise<any[]> {
   const log = dbLogger(connectionId);
@@ -145,10 +145,10 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
 /**
  * Rollback SQL files sequentially in reverse order of the file list.
  *
- * @param {Knex} trx
- * @param {SqlFileInfo[]} files
- * @param {string} connectionId
- * @returns {Promise<void>}
+ * @param {Knex} trx - The knex transaction.
+ * @param {SqlFileInfo[]} files - The list of sql files.
+ * @param {string} connectionId - The connection id.
+ * @returns {Promise<void>} - A promise that resolves when the rollback is done.
  */
 export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], connectionId: string): Promise<void> {
   const log = dbLogger(connectionId);

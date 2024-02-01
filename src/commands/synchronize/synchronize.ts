@@ -34,6 +34,9 @@ class Synchronize extends Command {
 
   /**
    * Failure handler for the whole process - if the process failed.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onFailed = async (result: OperationResult) => {
     printLine(chalk.red(`   [✖] Synchronization - failed (${result.timeElapsed}s)\n`));
@@ -41,6 +44,9 @@ class Synchronize extends Command {
 
   /**
    * Migration failure handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onMigrationFailed = async (result: OperationResult) => {
     printLine(chalk.red(`   [✖] Migrations - failed (${result.timeElapsed}s)`));
@@ -48,6 +54,9 @@ class Synchronize extends Command {
 
   /**
    * Migration success handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onMigrationSuccess = async (result: OperationResult) => {
     const logDb = dbLogger(result.connectionId);
@@ -72,12 +81,18 @@ class Synchronize extends Command {
 
   /**
    * Prune success handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onPruneSuccess = (result: OperationResult) =>
     printLine(chalk.green('   [✓] Synchronization - pruned') + ` (${result.timeElapsed}s)`);
 
   /**
    * Started event handler.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onStarted = async (result: OperationResult) => {
     printLine(chalk.bold(` ▸ ${result.connectionId}`));
@@ -86,6 +101,9 @@ class Synchronize extends Command {
 
   /**
    * Success handler for the whole process - after all completed.
+   *
+   * @param {OperationResult} result - The result object of the operation.
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   onSuccess = async (result: OperationResult) => {
     printLine(chalk.green('   [✓] Synchronization - completed') + ` (${result.timeElapsed}s)\n`);
@@ -95,8 +113,8 @@ class Synchronize extends Command {
    * Check the results for each connection and display them.
    * All the successful / failed attempts are displayed and errors are logged.
    *
-   * @param {SyncResult[]} results
-   * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>}
+   * @param {SyncResult[]} results - The results of the synchronization process.
+   * @returns {Promise<{ totalCount: number, failedCount: number, successfulCount: number }>} - The total count of connections, the failed attempts and the successful attempts.
    */
   async processResults(
     results: OperationResult[]
@@ -128,7 +146,7 @@ class Synchronize extends Command {
   /**
    * CLI command execution handler.
    *
-   * @returns {Promise<void>}
+   * @returns {Promise<void>} - A promise that resolves when the operation is complete.
    */
   async run(): Promise<void> {
     const { flags: parsedFlags } = await this.parse(Synchronize);
