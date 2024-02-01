@@ -1,10 +1,10 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { expect } from 'chai';
-import { it, describe } from 'mocha';
+import { describe, it } from 'mocha';
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 
-import { runCli } from './util';
 import { mkdtempSync } from '../../../src/util/fs';
+import { runCli } from './util';
 
 const cwd = mkdtempSync();
 const packageJson = fs.readFileSync(path.join(__dirname, '../../../package.json'));

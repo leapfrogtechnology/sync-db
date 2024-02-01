@@ -8,9 +8,9 @@
  * interpolate('<div>{{text}}</div>', {text: 'Hello World!'})
  *  => '<div>Hello World!</div>'
  *
- * @param {string} template
- * @param {*} [params={}]
- * @returns {string}
+ * @param {string} template - The template string.
+ * @param {*} [params={}] - The params to fill the placeholders.
+ * @returns {string} - The interpolated string.
  */
 export function interpolate(template: string, params: any = {}): string {
   if (!params || !Object.keys(params)) {
@@ -24,7 +24,7 @@ export function interpolate(template: string, params: any = {}): string {
       continue;
     }
 
-    result = result.replace(new RegExp('{{' + key + '}}', 'g'), `${value}`);
+    result = result.replaceAll(new RegExp('{{' + key + '}}', 'g'), `${value}`);
   }
 
   return result;

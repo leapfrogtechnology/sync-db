@@ -1,6 +1,6 @@
 import Mapping from '../domain/Mapping';
 
-const REGEX_VAR_EXPANSION = /\$\{([a-zA-Z]\w+)\}/g;
+const REGEX_VAR_EXPANSION = /\${([A-Za-z]\w+)}/g;
 
 /**
  * Expands the environment variables present in the string.
@@ -12,24 +12,24 @@ const REGEX_VAR_EXPANSION = /\$\{([a-zA-Z]\w+)\}/g;
  *    Input: 'Current user is ${USER} at ${HOST}.'
  *    Output: 'Current user is kabir at leapfrog.'
  *
- * @param {string} value
- * @returns {string}
+ * @param {string} value - The string to expand
+ * @returns {string} - The expanded string.
  */
 export function expandEnvVars(value: string): string {
-  return value.replace(REGEX_VAR_EXPANSION, (_, key) => process.env[key] || '');
+  return value.replaceAll(REGEX_VAR_EXPANSION, (_, key) => process.env[key] || '');
 }
 
 /**
  * Expand environment variables to be expanded that are
  * found in the values of the given map (key => value pairs).
  *
- * @param {Mapping<string>} vars
- * @returns {Mapping<string>}
+ * @param {Mapping<string>} vars - The map of key => value pairs.
+ * @returns {Mapping<string>} - The map of key => value pairs with expanded values.
  */
 export function expandEnvVarsInMap(vars: Mapping<string>): Mapping<string> {
   const entries = Object.entries(vars);
   const result = entries.reduce(
-    (acc, entry) => Object.assign({}, acc, { [entry[0]]: expandEnvVars(entry[1]) }) as Mapping<string>,
+    (acc, entry) => ({ ...acc, [entry[0]]: expandEnvVars(entry[1]) } as Mapping<string>),
     {} as Mapping<string>
   );
 

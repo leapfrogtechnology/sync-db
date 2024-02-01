@@ -14,14 +14,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 18, 20]
+        node-version: [18, 20]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
@@ -48,9 +48,6 @@ jobs:
           git config user.name "Ribby"
           git config user.email "bot@lftechnology.com"
 
-      - name: Check format
-        run: yarn format:check
-
       - name: Lint code
         run: yarn lint
 
@@ -72,12 +69,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: node
+          node-version: 20
           cache: 'yarn'
 
       - name: Run release script

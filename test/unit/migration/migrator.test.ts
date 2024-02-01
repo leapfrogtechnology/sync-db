@@ -1,9 +1,9 @@
-import * as path from 'path';
-import { describe, it } from 'mocha';
 import { expect } from 'chai';
+import { describe, it } from 'mocha';
+import * as path from 'node:path';
 
-import { write, mkdtemp } from '../../../src/util/fs';
 import * as migratorService from '../../../src/migration/service/migrator';
+import { mkdtemp, write } from '../../../src/util/fs';
 
 describe('MIGRATION: migrator', () => {
   describe('getSqlMigrationNames', async () => {
@@ -70,22 +70,22 @@ describe('MIGRATION: migrator', () => {
         {
           name: '0001_mgr',
           queries: {
-            up: { name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr1', dropOnly: false },
-            down: undefined
+            down: undefined,
+            up: { dropOnly: false, name: '0001_mgr.up.sql', sql: 'CREATE TABLE test_mgr1' }
           }
         },
         {
           name: '0002_mgr',
           queries: {
-            up: undefined,
-            down: { name: '0002_mgr.down.sql', sql: 'DROP TABLE test_mgr2', dropOnly: false }
+            down: { dropOnly: false, name: '0002_mgr.down.sql', sql: 'DROP TABLE test_mgr2' },
+            up: undefined
           }
         },
         {
           name: '0003_mgr',
           queries: {
-            up: { name: '0003_mgr.up.sql', sql: 'CREATE TABLE test_mgr3', dropOnly: false },
-            down: { name: '0003_mgr.down.sql', sql: 'DROP TABLE test_mgr3', dropOnly: false }
+            down: { dropOnly: false, name: '0003_mgr.down.sql', sql: 'DROP TABLE test_mgr3' },
+            up: { dropOnly: false, name: '0003_mgr.up.sql', sql: 'CREATE TABLE test_mgr3' }
           }
         }
       ]);

@@ -1,4 +1,4 @@
-import { promisify } from 'util';
+import { promisify } from 'node:util';
 
 /**
  * Promiser - A function that returns a promise.
@@ -13,8 +13,8 @@ export const timeout = promisify(setTimeout);
 /**
  * Run each of the promise sequentially and return their results in the same order.
  *
- * @param {Promiser<T>[]} promisers
- * @returns {Promise<T[]>}
+ * @param {Promiser<T>[]} promisers - The list of promises.
+ * @returns {Promise<T[]>} - A promise that resolves with the list of results.
  */
 export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]> {
   const result: T[] = [];
@@ -24,8 +24,8 @@ export async function runSequentially<T>(promisers: Promiser<T>[]): Promise<T[]>
       const value = await promiser();
 
       result.push(value);
-    } catch (err) {
-      const error = err as any;
+    } catch (error_) {
+      const error = error_ as any;
 
       if (error.error) {
         throw error.error;

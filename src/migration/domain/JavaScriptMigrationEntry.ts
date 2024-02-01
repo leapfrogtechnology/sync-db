@@ -1,11 +1,11 @@
 import { Knex } from 'knex';
 
 interface JavaScriptMigrationEntry {
-  name: string;
   methods: {
-    up: (db: Knex | Knex.Transaction) => Promise<any>;
     down: (db: Knex | Knex.Transaction) => Promise<any>;
+    up: (db: Knex | Knex.Transaction) => Promise<any>;
   };
+  name: string;
 }
 
 export default JavaScriptMigrationEntry;

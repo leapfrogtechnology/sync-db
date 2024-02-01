@@ -1,6 +1,0 @@
-#!/usr/bin/env node
-
-// Set CLI environment as true.
-process.env.SYNC_DB_CLI = 'true';
-
-require('../lib/commands').run().then(require('@oclif/command/flush')).catch(require('@oclif/errors/handle'));

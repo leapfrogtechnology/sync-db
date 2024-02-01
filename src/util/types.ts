@@ -1,9 +1,9 @@
 /**
  * Check if the value is an object.
- * TODO: Add tests.
+ * FIX: Add tests.
  *
- * @param {*} value
- * @returns {boolean}
+ * @param {any} value - The value to check.
+ * @returns {boolean} - True if the value is an object.
  */
 export function isObject(value: any): boolean {
   if (value === null) {

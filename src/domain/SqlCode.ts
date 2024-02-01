@@ -2,9 +2,9 @@
  * SQL source file.
  */
 interface SqlCode {
-  sql: string;
-  name: string;
   dropOnly?: boolean;
+  name: string;
+  sql: string;
 }
 
 export default SqlCode;

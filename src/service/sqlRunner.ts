@@ -1,34 +1,34 @@
 import { Knex } from 'knex';
-import * as path from 'path';
-import { reverse, keys } from 'ramda';
+import * as path from 'node:path';
+import { keys, reverse } from 'ramda';
 
-import * as fs from '../util/fs';
+import { DROP_ONLY_OBJECT_TERMINATOR } from '../constants';
 import Mapping from '../domain/Mapping';
 import SqlCode from '../domain/SqlCode';
+import SqlFileInfo from '../domain/SqlFileInfo';
+import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
+import * as fs from '../util/fs';
 import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
-import SqlFileInfo from '../domain/SqlFileInfo';
-import { DROP_ONLY_OBJECT_TERMINATOR } from '../constants';
-import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
 
 /**
  * SQL DROP statements mapping for different object types.
  */
 const dropStatementsMap: Mapping<string> = {
-  [DatabaseObjectTypes.SCHEMA]: 'DROP SCHEMA IF EXISTS',
-  [DatabaseObjectTypes.VIEW]: 'DROP VIEW IF EXISTS',
   [DatabaseObjectTypes.FUNCTION]: 'DROP FUNCTION IF EXISTS',
   [DatabaseObjectTypes.PROCEDURE]: 'DROP PROCEDURE IF EXISTS',
-  [DatabaseObjectTypes.TRIGGER]: 'DROP TRIGGER IF EXISTS'
+  [DatabaseObjectTypes.SCHEMA]: 'DROP SCHEMA IF EXISTS',
+  [DatabaseObjectTypes.TRIGGER]: 'DROP TRIGGER IF EXISTS',
+  [DatabaseObjectTypes.VIEW]: 'DROP VIEW IF EXISTS'
 };
 
 /**
  * Reads an sql file and return it's contents. If a file ends with `.drop` on the config file,
  * dropOnly is set as true, and that object would not be synchronized, only dropped.
  *
- * @param {string} sqlBasePath
- * @param {string} fileName
- * @returns {Promise<SqlCode>}
+ * @param {string} sqlBasePath - The base path for the sql files.
+ * @param {string} fileName - The name of the sql file.
+ * @returns {Promise<SqlCode>} - A promise that resolves with the sql code.
  */
 export async function resolveFile(sqlBasePath: string, fileName: string): Promise<SqlCode> {
   let name = fileName;
@@ -42,15 +42,15 @@ export async function resolveFile(sqlBasePath: string, fileName: string): Promis
   const filePath = path.resolve(sqlBasePath, name);
   const sql = await fs.read(filePath);
 
-  return { sql, name, dropOnly };
+  return { dropOnly, name, sql };
 }
 
 /**
  * Resolves a list of source files.
  *
- * @param {string} sqlBasePath
- * @param {string[]} files
- * @returns {Promise<SqlCode[]>}
+ * @param {string} sqlBasePath - The base path for the sql files.
+ * @param {string[]} files - The list of file names.
+ * @returns {Promise<SqlCode[]>} - A promise that resolves with the list of sql codes.
  */
 export async function resolveFiles(sqlBasePath: string, files: string[]): Promise<SqlCode[]> {
   const promises = files.map(filename => resolveFile(sqlBasePath, filename));
@@ -61,10 +61,10 @@ export async function resolveFiles(sqlBasePath: string, files: string[]): Promis
 /**
  * Get fully qualified object name.
  *
- * @param {string} type
- * @param {string} name
- * @param {string} [schema]
- * @returns {string}
+ * @param {string} type - The database object type.
+ * @param {string} name - The object name.
+ * @param {string} [schema] - The schema name.
+ * @returns {string} - The fully qualified object name.
  */
 export function getFQON(type: string, name: string, schema?: string): string {
   if (type === DatabaseObjectTypes.SCHEMA || !schema) {
@@ -77,8 +77,8 @@ export function getFQON(type: string, name: string, schema?: string): string {
 /**
  * Extract sql file info from the filePath to rollback the synchronization.
  *
- * @param {string} filePath
- * @returns {SqlFileInfo}
+ * @param {string} filePath - The file path.
+ * @returns {SqlFileInfo} - The sql file info.
  */
 export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   // filePath can have multiple sub directories e.g. views/dbo/abc/vw_example.sql
@@ -92,18 +92,18 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
 
   // Remove .sql and .drop (if exists) from the file name.
   const santizeFileNameRegex = /(.sql)|(.drop)/g;
-  const name = fileName.replace(santizeFileNameRegex, '');
+  const name = fileName.replaceAll(santizeFileNameRegex, '');
   const fqon = getFQON(type, name, schema);
 
-  return { name, fqon, type, schema };
+  return { fqon, name, schema, type };
 }
 
 /**
  * Get SQL DROP statement for the provided object type.
  *
- * @param {string} type   Database object type
- * @param {string} fqon   Fully qualified object name.
- * @returns {string}
+ * @param {string} type - Database object type e.g. view, function, procedure, trigger.
+ * @param {string} fqon - Fully qualified object name.
+ * @returns {string} - The SQL DROP statement.
  */
 export function getDropStatement(type: string, fqon: string): string {
   const dropStatement = dropStatementsMap[type];
@@ -120,10 +120,10 @@ export function getDropStatement(type: string, fqon: string): string {
 /**
  * Run raw queries in the transaction sequentially.
  *
- * @param {Knex} trx
- * @param {SqlCode[]} files
- * @param {string} connectionId
- * @returns {Promise<any[]>}
+ * @param {Knex} trx - The knex transaction.
+ * @param {SqlCode[]} files - The list of sql files.
+ * @param {string} connectionId - The connection id.
+ * @returns {Promise<any[]>} - A promise that resolves with the list of results.
  */
 export function runSequentially(trx: Knex, files: SqlCode[], connectionId: string): Promise<any[]> {
   const log = dbLogger(connectionId);
@@ -145,16 +145,16 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
 /**
  * Rollback SQL files sequentially in reverse order of the file list.
  *
- * @param {Knex} trx
- * @param {SqlFileInfo[]} files
- * @param {string} connectionId
- * @returns {Promise<void>}
+ * @param {Knex} trx - The knex transaction.
+ * @param {SqlFileInfo[]} files - The list of sql files.
+ * @param {string} connectionId - The connection id.
+ * @returns {Promise<void>} - A promise that resolves when the rollback is done.
  */
 export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], connectionId: string): Promise<void> {
   const log = dbLogger(connectionId);
   const sqlFiles = files.map(info => ({
-    fqon: info.fqon,
-    dropStatement: getDropStatement(info.type, info.fqon)
+    dropStatement: getDropStatement(info.type, info.fqon),
+    fqon: info.fqon
   }));
 
   for (const sql of reverse(sqlFiles)) {

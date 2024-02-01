@@ -15,15 +15,15 @@ describe('MIGRATION: KnexMigrationSource', () => {
         return this;
       }
 
-      keys(): string[] {
-        return ['mgr_001', 'mgr_002', 'mgr_003', 'mgr_004'];
-      }
-
       get(key: string) {
         return {
-          up: async () => `UP: ${key}`,
-          down: async () => `DOWN: ${key}`
+          down: async () => `DOWN: ${key}`,
+          up: async () => `UP: ${key}`
         };
+      }
+
+      keys(): string[] {
+        return ['mgr_001', 'mgr_002', 'mgr_003', 'mgr_004'];
       }
     })();
 

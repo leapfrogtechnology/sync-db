@@ -1,11 +1,11 @@
 import OperationResult from './OperationResult';
 
-interface OperationParams<T = any> {
-  only?: string;
+interface OperationParams {
   'dry-run'?: boolean;
-  onStarted?: (result: OperationResult<T>) => Promise<any>;
-  onSuccess?: (result: OperationResult<T>) => Promise<any>;
-  onFailed?: (result: OperationResult<T>) => Promise<any>;
+  onFailed?: (result: OperationResult) => void;
+  onStarted?: (result: OperationResult) => void;
+  onSuccess?: (result: OperationResult) => void;
+  only?: string;
 }
 
 export default OperationParams;

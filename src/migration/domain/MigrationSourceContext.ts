@@ -5,10 +5,10 @@ import MigrationRunner from './MigrationRunner';
  * All types of migration source types (eg: sql, javascript) implement this contract.
  */
 interface MigrationSourceContext {
-  connectionId: string;
-  keys(): string[];
-  get(name: string): MigrationRunner;
   bind(connectionId: string): MigrationSourceContext;
+  connectionId: string;
+  get(name: string): MigrationRunner;
+  keys(): string[];
 }
 
 export default MigrationSourceContext;

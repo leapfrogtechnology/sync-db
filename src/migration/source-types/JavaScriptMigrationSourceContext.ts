@@ -1,20 +1,20 @@
-import MigrationRunner from '../domain/MigrationRunner';
 import { dbLogger, log as logger } from '../../util/logger';
-import MigrationSourceContext from '../domain/MigrationSourceContext';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
+import MigrationRunner from '../domain/MigrationRunner';
+import MigrationSourceContext from '../domain/MigrationSourceContext';
 
 /**
  * JavaScript source migration context for KnexMigrationSource.
  */
 class JavaScriptMigrationContext implements MigrationSourceContext {
+  public connectionId: string;
   private list: JavaScriptMigrationEntry[];
   private log: debug.Debugger;
-  public connectionId: string;
 
   /**
    * JavaScriptMigrationContext constructor.
    *
-   * @param {JavaScriptMigrationEntry[]} list
+   * @param {JavaScriptMigrationEntry[]} list - The list of JavaScript/TypeScript migration entries.
    */
   constructor(list: JavaScriptMigrationEntry[]) {
     this.list = list;
@@ -27,7 +27,7 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
   /**
    * Bind connectionId to the context.
    *
-   * @param {string} connectionId
+   * @param {string} connectionId - The connectionId to bind.
    * @returns {MigrationSourceContext} this
    */
   bind(connectionId: string): MigrationSourceContext {
@@ -38,22 +38,13 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
   }
 
   /**
-   * Get migration keys.
-   *
-   * @returns {string[]}
-   */
-  keys(): string[] {
-    return this.list.map(({ name }) => name);
-  }
-
-  /**
    * Get the migration runner.
    *
-   * @param {string} key
-   * @returns {MigrationRunner}
+   * @param {string} key - The migration key.
+   * @returns {MigrationRunner} - The migration runner.
    */
   get(key: string): MigrationRunner {
-    // TODO: Optimize - no need to find from the list for every item you get. Map it internally.
+    // FIX: Optimize - no need to find from the list for every item you get. Map it internally.
     const entry = this.list.find(({ name }) => name === key);
 
     if (!entry) {
@@ -63,9 +54,18 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
     }
 
     return {
-      up: entry.methods.up,
-      down: entry.methods.down
+      down: entry.methods.down,
+      up: entry.methods.up
     };
+  }
+
+  /**
+   * Get migration keys.
+   *
+   * @returns {string[]} - The list of migration keys.
+   */
+  keys(): string[] {
+    return this.list.map(({ name }) => name);
   }
 }
 

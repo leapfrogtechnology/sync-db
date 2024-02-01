@@ -6,29 +6,26 @@
  * are also meant to be the public interface for the developers using it as a package.
  */
 
-import * as init from './init';
-import { log } from './util/logger';
-import { existsDir } from './util/fs';
-import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
-
 import Configuration from './domain/Configuration';
-import SynchronizeParams from './domain/SynchronizeParams';
 import ConnectionReference from './domain/ConnectionReference';
+import SynchronizeParams from './domain/SynchronizeParams';
 import OperationParams from './domain/operation/OperationParams';
 import OperationResult from './domain/operation/OperationResult';
-
-// Service
+import * as init from './init';
+import { KnexMigrationAPI, getMigrationPath, invokeMigrationApi } from './migration/service/knexMigrator';
 import { executeProcesses } from './service/execution';
-import { runSynchronize, runPrune } from './service/sync';
-import { getMigrationPath, invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
+import { runPrune, runSynchronize } from './service/sync';
+import { DatabaseConnections, mapToConnectionReferences, withTransaction } from './util/db';
+import { existsDir } from './util/fs';
+import { log } from './util/logger';
 
 /**
  * Synchronize all the configured database connections.
  *
- * @param {Configuration} config
- * @param {DatabaseConnections} conn
- * @param {SynchronizeParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config  The sync-db configuration object.
+ * @param {DatabaseConnections} conn The database connections.
+ * @param {SynchronizeParams} [options] The options for the synchronize operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function synchronize(
   config: Configuration,
@@ -52,32 +49,33 @@ export async function synchronize(
 
   const { onStarted: _, ...invokeParams } = params;
 
-  // TODO: Need to preload the SQL source code under this step.
+  // FIX: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
-    migrationPath,
+    loadMigrations: !params['skip-migration'],
     loadSqlSources: true,
-    loadMigrations: !params['skip-migration']
+    migrationPath
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        runSynchronize(trx, {
-          config,
-          params,
-          connectionId: connection.id,
-          migrateFunc: t =>
-            invokeMigrationApi(t, KnexMigrationAPI.MIGRATE_LATEST, {
-              config,
-              connectionId: connection.id,
-              knexMigrationConfig: knexMigrationConfig(connection.id),
-              params: { ...invokeParams, onSuccess: params.onMigrationSuccess, onFailed: params.onMigrationFailed }
-            })
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          runSynchronize(trx, {
+            config,
+            connectionId: connection.id,
+            migrateFunc: t =>
+              invokeMigrationApi(t, KnexMigrationAPI.MIGRATE_LATEST, {
+                config,
+                connectionId: connection.id,
+                knexMigrationConfig: knexMigrationConfig(connection.id),
+                params: { ...invokeParams, onFailed: params.onMigrationFailed, onSuccess: params.onMigrationSuccess }
+              }),
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
@@ -88,10 +86,10 @@ export async function synchronize(
  *
  * TODO: An ability to prune only a handful of objects from the last.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function prune(
   config: Configuration,
@@ -102,33 +100,34 @@ export async function prune(
 
   const params: OperationParams = { ...options };
 
-  // TODO: Need to preload the SQL source code under this step.
+  // FIX: Need to preload the SQL source code under this step.
   await init.prepare(config, { loadSqlSources: true });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        runPrune(trx, {
-          config,
-          params,
-          connectionId: connection.id
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          runPrune(trx, {
+            config,
+            connectionId: connection.id,
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
 }
 
 /**
- * Migrate Latest.
+ * Run the migrations for the given connections.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function migrateLatest(
   config: Configuration,
@@ -144,30 +143,31 @@ export async function migrateLatest(
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LATEST, {
-          config,
-          params,
-          connectionId: connection.id,
-          knexMigrationConfig: knexMigrationConfig(connection.id)
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LATEST, {
+            config,
+            connectionId: connection.id,
+            knexMigrationConfig: knexMigrationConfig(connection.id),
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
 }
 
 /**
- * Migrate Rollback.
+ * Rollback the migrations for the given connections.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function migrateRollback(
   config: Configuration,
@@ -183,30 +183,31 @@ export async function migrateRollback(
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(
-      connection,
-      trx =>
-        invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_ROLLBACK, {
-          config,
-          params,
-          connectionId: connection.id,
-          knexMigrationConfig: knexMigrationConfig(connection.id)
-        }),
-      params['dry-run']
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(
+        connection,
+        trx =>
+          invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_ROLLBACK, {
+            config,
+            connectionId: connection.id,
+            knexMigrationConfig: knexMigrationConfig(connection.id),
+            params
+          }),
+        params['dry-run']
+      )
   );
 
   return executeProcesses(processes, config);
 }
 
 /**
- * List Migrations.
+ * List the migrations for the given connections.
  *
- * @param {Configuration} config
- * @param {(DatabaseConnections)} conn
- * @param {OperationParams} [options]
- * @returns {Promise<OperationResult[]>}
+ * @param {Configuration} config The sync-db configuration object.
+ * @param {(DatabaseConnections)} conn The database connections.
+ * @param {OperationParams} [options] The options for the operation.
+ * @returns {Promise<OperationResult[]>} The results of the operation.
  */
 export async function migrateList(
   config: Configuration,
@@ -222,15 +223,16 @@ export async function migrateList(
   });
 
   const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
-  const processes = connections.map(connection => () =>
-    withTransaction(connection, trx =>
-      invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
-        config,
-        params,
-        connectionId: connection.id,
-        knexMigrationConfig: knexMigrationConfig(connection.id)
-      })
-    )
+  const processes = connections.map(
+    connection => () =>
+      withTransaction(connection, trx =>
+        invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
+          config,
+          connectionId: connection.id,
+          knexMigrationConfig: knexMigrationConfig(connection.id),
+          params
+        })
+      )
   );
 
   return executeProcesses(processes, config);
@@ -239,9 +241,9 @@ export async function migrateList(
 /**
  * Check the filter condition and apply filter if required.
  *
- * @param {ConnectionReference[]} connections
- * @param {string} [filterConnectionId]
- * @returns {ConnectionReference[]}
+ * @param {ConnectionReference[]} connections The list of connections.
+ * @param {string} [filterConnectionId] The connection id to filter.
+ * @returns {ConnectionReference[]} The filtered list of connections.
  */
 function filterConnectionsAsRequired(
   connections: ConnectionReference[],

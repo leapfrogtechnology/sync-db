@@ -1,32 +1,33 @@
 import { Knex, knex } from 'knex';
-import { dbLogger, log } from './logger';
+
 import { getConnectionId } from '../config';
 import ConnectionConfig from '../domain/ConnectionConfig';
 import ConnectionReference from '../domain/ConnectionReference';
+import { dbLogger, log } from './logger';
 
 /**
  * Database connections given by the user or the CLI frontend.
  */
-export type DatabaseConnections = ConnectionConfig[] | ConnectionConfig;
+export type DatabaseConnections = ConnectionConfig | ConnectionConfig[];
 
 /**
  * Returns true if the provided object is a knex connection instance.
  *
- * TODO: Write tests for this supporting both Knex & Knex.Transaction instances.
+ * FIX: Write tests for this supporting both Knex & Knex.Transaction instances.
  *
- * @param {any} obj
- * @returns {boolean}
+ * @param {any} obj - The object to check.
+ * @returns {boolean} - True if the provided object is a knex connection instance.
  */
 export function isKnexInstance(obj: any): obj is Knex {
-  return !!(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
+  return Boolean(obj.prototype && obj.prototype.constructor && obj.prototype.constructor.name === 'knex');
 }
 
 /**
  * Extracts the connection config params
  * using provided Knex connection instance.
  *
- * @param {Knex} db
- * @returns {Connection}
+ * @param {Knex} db - The Knex connection instance.
+ * @returns {Connection} - The connection config.
  */
 export function getConfig(db: Knex): ConnectionConfig {
   return {
@@ -40,15 +41,15 @@ export function getConfig(db: Knex): ConnectionConfig {
  * Create a new connection instance (knex) using the connection config.
  * Throws error if the config already holds a Knex's instance.
  *
- * @param {ConnectionConfig} config
- * @returns {Knex}
+ * @param {ConnectionConfig} config - The connection config.
+ * @returns {Knex} - The connection instance.
  */
 export function createInstance(config: ConnectionConfig): Knex {
   if (isKnexInstance(config.connection)) {
     throw new Error('The provided connection already contains a connection instance.');
   }
 
-  const { host, database, user } = config.connection as Knex.ConnectionConfig;
+  const { database, host, user } = config.connection as Knex.ConnectionConfig;
 
   log(`Connecting to database: ${host}/${database}`);
 
@@ -73,10 +74,10 @@ export function createInstance(config: ConnectionConfig): Knex {
  * Run a callback function with in a transaction.
  * If `dryRun` is true, transaction will not be committed.
  *
- * @param {ConnectionReference} db
- * @param {(trx: Knex.Transaction) => Promise<T>} callback
- * @param {boolean} dryRun?
- * @returns {Promise<T>}
+ * @param {ConnectionReference} db - The connection reference.
+ * @param {(trx: Knex.Transaction) => Promise<T>} callback - The callback function.
+ * @param {boolean} dryRun - True if the transaction should not be committed.
+ * @returns {Promise<T>} - A promise that resolves with the result of the callback function.
  */
 export async function withTransaction<T>(
   db: ConnectionReference,
@@ -112,8 +113,8 @@ export async function withTransaction<T>(
 /**
  * Map user provided connection(s) to the connection instances.
  *
- * @param {(DatabaseConnections)} connectionConfig
- * @returns {ConnectionReference[]}
+ * @param {(DatabaseConnections)} connectionConfig - The connection config.
+ * @returns {ConnectionReference[]} - The connection references.
  */
 export function mapToConnectionReferences(connectionConfig: DatabaseConnections): ConnectionReference[] {
   const list = Array.isArray(connectionConfig) ? connectionConfig : [connectionConfig];

@@ -1,22 +1,22 @@
 import { Knex } from 'knex';
 
-import MigrationRunner from '../domain/MigrationRunner';
 import { dbLogger, log as logger } from '../../util/logger';
-import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import MigrationRunner from '../domain/MigrationRunner';
 import MigrationSourceContext from '../domain/MigrationSourceContext';
+import SqlMigrationEntry from '../domain/SqlMigrationEntry';
 
 /**
  * SQL source migration context for KnexMigrationSource.
  */
 class SqlMigrationSourceContext implements MigrationSourceContext {
+  public connectionId: string;
   private list: SqlMigrationEntry[];
   private log: debug.Debugger;
-  public connectionId: string;
 
   /**
    * SqlMigrationContext constructor.
    *
-   * @param {SqlMigrationEntry[]} list
+   * @param {SqlMigrationEntry[]} list - The list of SQL migration entries.
    */
   constructor(list: SqlMigrationEntry[]) {
     this.list = list;
@@ -29,7 +29,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
   /**
    * Bind connectionId to the context.
    *
-   * @param {string} connectionId
+   * @param {string} connectionId - The connectionId to bind.
    * @returns {MigrationSourceContext} this
    */
   bind(connectionId: string): MigrationSourceContext {
@@ -40,22 +40,13 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
   }
 
   /**
-   * Get migration keys.
-   *
-   * @returns {string[]}
-   */
-  keys(): string[] {
-    return this.list.map(({ name }) => name);
-  }
-
-  /**
    * Get the migration runner.
    *
-   * @param {string} key
-   * @returns {MigrationRunner}
+   * @param {string} key - The migration key.
+   * @returns {MigrationRunner} - The migration runner.
    */
   get(key: string): MigrationRunner {
-    // TODO: Optimize - no need to find from the list for every item you get. Map it internally.
+    // FIX: Optimize - no need to find from the list for every item you get. Map it internally.
     const entry = this.list.find(({ name }) => name === key);
 
     if (!entry) {
@@ -67,17 +58,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
     const logMigration = this.log.extend('migration');
 
     return {
-      up: async (db: Knex) => {
-        if (entry.queries.up) {
-          logMigration(`UP - ${key}`);
-
-          return db.raw(entry.queries.up.sql);
-        }
-
-        return false;
-      },
-
-      down: async (db: Knex) => {
+      async down(db: Knex) {
         if (entry.queries.down) {
           logMigration(`DOWN - ${key}`);
 
@@ -85,8 +66,27 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
         }
 
         return false;
+      },
+
+      async up(db: Knex) {
+        if (entry.queries.up) {
+          logMigration(`UP - ${key}`);
+
+          return db.raw(entry.queries.up.sql);
+        }
+
+        return false;
       }
     };
+  }
+
+  /**
+   * Get migration keys.
+   *
+   * @returns {string[]} - The list of migration keys.
+   */
+  keys(): string[] {
+    return this.list.map(({ name }) => name);
   }
 }
 

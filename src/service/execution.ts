@@ -1,55 +1,59 @@
-import { getElapsedTime } from '../util/ts';
-import { log, dbLogger } from '../util/logger';
 import Configuration from '../domain/Configuration';
-import { Promiser, runSequentially } from '../util/promise';
-import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
+import OperationResult from '../domain/operation/OperationResult';
+import { dbLogger, log } from '../util/logger';
+import { Promiser, runSequentially } from '../util/promise';
+import { getElapsedTime } from '../util/ts';
 
 /**
  * Execute a list of processes according to the configuration.
  *
- * @param {Promiser<T>[]} processes
- * @param {Configuration} config
- * @returns {Promise<T[]>}
+ * @param {Promiser<T>[]} processes The list of processes to execute.
+ * @param {Configuration} config The sync-db configuration.
+ * @returns {Promise<T[]>} Result of the processes.
  */
 export function executeProcesses<T>(processes: Promiser<T>[], config: Configuration): Promise<T[]> {
   log(`Executing ${processes.length} processes [strategy=${config.execution}]`);
 
   switch (config.execution) {
-    case 'sequential':
+    case 'sequential': {
       return runSequentially(processes);
+    }
 
-    case 'parallel':
+    case 'parallel': {
       return Promise.all(processes.map(fn => fn()));
+    }
 
-    default:
+    default: {
       throw new Error(`Execution strategy should be "sequential" or "parallel" found: "${config.execution}".`);
+    }
   }
 }
 
 /**
- * Execute a unit operation.
+ * Executes an operation with the provided context and function.
  *
- * @param {T} context
- * @param {(options: any) => Promise<any>} func
- * @returns {Promise<OperationResult>}
+ * @template T - The type of the operation context.
+ * @param {T} context - The operation context.
+ * @param {(options: { timeStart: [number, number] }) => Promise<any>} func - The function to execute.
+ * @returns {Promise<OperationResult>} - A promise that resolves to the operation result.
  */
 export async function executeOperation<T extends OperationContext>(
   context: T,
-  func: (options: any) => Promise<any>
+  func: (options: { timeStart: [number, number] }) => Promise<any> // eslint-disable-line @typescript-eslint/no-explicit-any
 ): Promise<OperationResult> {
-  const { connectionId } = context;
+  const { connectionId, params } = context;
   const logDb = dbLogger(connectionId);
-  const result: OperationResult = { connectionId, success: false, data: null, timeElapsed: 0 };
+  const result: OperationResult = { connectionId, data: null, success: false, timeElapsed: 0 };
 
   const timeStart = process.hrtime();
 
   // Trigger onStarted handler if bound.
-  if (context.params.onStarted) {
-    await context.params.onStarted({
+  if (params.onStarted) {
+    params.onStarted({
       connectionId,
-      success: false,
       data: null,
+      success: false,
       timeElapsed: getElapsedTime(timeStart)
     });
   }
@@ -58,10 +62,10 @@ export async function executeOperation<T extends OperationContext>(
     result.data = await func({ timeStart });
 
     result.success = true;
-  } catch (e) {
+  } catch (error) {
     logDb(`Error caught for connection ${connectionId}:`);
 
-    result.error = e;
+    result.error = error;
   }
 
   result.timeElapsed = getElapsedTime(timeStart);
@@ -69,10 +73,10 @@ export async function executeOperation<T extends OperationContext>(
   logDb(`Execution completed in ${result.timeElapsed} s`);
 
   // Invoke corresponding handlers if they're sent.
-  if (result.success && context.params.onSuccess) {
-    await context.params.onSuccess(result);
-  } else if (!result.success && context.params.onFailed) {
-    await context.params.onFailed(result);
+  if (result.success && params.onSuccess) {
+    params.onSuccess(result);
+  } else if (!result.success && params.onFailed) {
+    params.onFailed(result);
   }
 
   if (result.error) {
