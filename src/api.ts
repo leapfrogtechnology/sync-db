@@ -240,31 +240,38 @@ export async function migrateList(
  * Check the filter condition and apply filter if required.
  *
  * @param {ConnectionReference[]} connections
- * @param {string} [filterConnectionId]
+ * @param {string} [filterConnectionIds]
  * @returns {ConnectionReference[]}
  */
 function filterConnectionsAsRequired(
   connections: ConnectionReference[],
-  filterConnectionId?: string
+  filterConnectionIds?: string
 ): ConnectionReference[] {
-  log(`Filter (--only=) ${filterConnectionId}`);
+  const trimmedFilterConnectionIds = filterConnectionIds?.split(',').map(id => id.trim());
+  const formattedFilterConnectionIds = trimmedFilterConnectionIds?.join(', ');
+
+  log(`Filter(s) (--only=) ${formattedFilterConnectionIds}`);
 
   // Apply no filter if the connection id is not provided.
-  if (!filterConnectionId) {
+  if (!filterConnectionIds) {
     log('Running for all connections.');
 
     return connections;
   }
 
-  const filteredList = connections.filter(connection => connection.id === filterConnectionId);
+  const filteredList = connections.filter(connection => trimmedFilterConnectionIds?.includes(connection.id));
 
   if (filteredList.length === 0) {
     const available = connections.map(({ id }) => id);
 
-    throw new Error(`No connections found for given id "${filterConnectionId}. Available ids are: ${available}`);
+    throw new Error(
+      `No connections found for given id(s) "${formattedFilterConnectionIds}. Available ids are: ${available}`
+    );
   }
 
-  log(`Running for a single connection (id = ${filterConnectionId}).`);
+  const filteredConnectionIds = filteredList.map(({ id }) => id).join(', ');
+
+  log(`Running for a filtered connection(s) (id(s) = ${filteredConnectionIds}).`);
 
   return filteredList;
 }
