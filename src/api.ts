@@ -248,9 +248,8 @@ function filterConnectionsAsRequired(
   filterConnectionIds?: string
 ): ConnectionReference[] {
   const trimmedFilterConnectionIds = Array.from(new Set(filterConnectionIds?.split(',').map(id => id.trim())));
-  const formattedFilterConnectionIds = trimmedFilterConnectionIds?.join(', ');
 
-  log(`Filter(s) (--only=) ${formattedFilterConnectionIds}`);
+  log(`Filter(s) (--only=) ${trimmedFilterConnectionIds}`);
 
   // Apply no filter if the connection id is not provided.
   if (!filterConnectionIds) {
@@ -266,15 +265,15 @@ function filterConnectionsAsRequired(
 
   if (filteredList.length === 0) {
     throw new Error(
-      `No connections found for given id(s) "${formattedFilterConnectionIds}. Available ids are: ${available}`
+      `No connections found for given id(s) "${trimmedFilterConnectionIds}. Available ids are: ${available}`
     );
   }
 
   if (invalidIds.length) {
-    log(`No connections found for given id(s) "${invalidIds.join(', ')}. Available ids are: ${available}`);
+    log(`No connections found for given id(s) "${invalidIds}. Available ids are: ${available}`);
   }
 
-  const filteredConnectionIds = filteredList.map(({ id }) => id).join(', ');
+  const filteredConnectionIds = filteredList.map(({ id }) => id);
 
   log(`Running for a filtered connection(s) (id(s) = ${filteredConnectionIds}).`);
 
