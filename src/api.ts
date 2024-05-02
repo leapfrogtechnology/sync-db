@@ -240,19 +240,19 @@ export async function migrateList(
  * Check the filter condition and apply filter if required.
  *
  * @param {ConnectionReference[]} connections
- * @param {string} [filterConnectionIds]
+ * @param {string} [connectionIds]
  * @returns {ConnectionReference[]}
  */
 function filterConnectionsAsRequired(
   connections: ConnectionReference[],
-  filterConnectionIds?: string
+  connectionIds?: string
 ): ConnectionReference[] {
-  const trimmedFilterConnectionIds = Array.from(new Set(filterConnectionIds?.split(',').map(id => id.trim())));
+  const trimmedFilterConnectionIds = Array.from(new Set(connectionIds?.split(',').map(id => id.trim())));
 
   log(`Filter(s) (--only=) ${trimmedFilterConnectionIds}`);
 
   // Apply no filter if the connection id is not provided.
-  if (!filterConnectionIds) {
+  if (!connectionIds) {
     log('Running for all connections.');
 
     return connections;
