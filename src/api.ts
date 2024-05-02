@@ -59,7 +59,7 @@ export async function synchronize(
     loadMigrations: !params['skip-migration']
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -105,7 +105,7 @@ export async function prune(
   // TODO: Need to preload the SQL source code under this step.
   await init.prepare(config, { loadSqlSources: true });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -143,7 +143,7 @@ export async function migrateLatest(
     migrationPath: getMigrationPath(config)
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -182,7 +182,7 @@ export async function migrateRollback(
     migrationPath: getMigrationPath(config)
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -221,7 +221,7 @@ export async function migrateList(
     migrationPath: getMigrationPath(config)
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
       invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
@@ -243,10 +243,7 @@ export async function migrateList(
  * @param {string} [connectionIds]
  * @returns {ConnectionReference[]}
  */
-function filterConnectionsAsRequired(
-  connections: ConnectionReference[],
-  connectionIds?: string
-): ConnectionReference[] {
+function filterConnections(connections: ConnectionReference[], connectionIds?: string): ConnectionReference[] {
   const trimmedFilterConnectionIds = Array.from(new Set(connectionIds?.split(',').map(id => id.trim())));
 
   log(`Filter(s) (--only=) ${trimmedFilterConnectionIds}`);
