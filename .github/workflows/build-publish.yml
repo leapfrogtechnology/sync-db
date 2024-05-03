@@ -78,7 +78,11 @@ jobs:
           gem --version
 
       - name: Install GitHub changelog generator
-        run: gem install github_changelog_generator
+        run: |
+          gem install github_changelog_generator --user-install
+          echo GEM_HOME=$HOME/.gem >> $GITHUB_ENV
+          echo GEM_PATH=$HOME/.gem >> $GITHUB_ENV
+          echo "PATH=$HOME/.gem/bin:$PATH" >> $GITHUB_ENV
 
       - name: Run release script
         run: ./release.sh compare_and_release
