@@ -1,5 +1,32 @@
 # Changelog
 
+## [v2.1.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.1.0) (2024-05-03)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.0.1...v2.1.0)
+
+**Closed Issues**
+
+- Move from Travis CI to GitHub Actions [\#139](https://github.com/leapfrogtechnology/sync-db/issues/139)
+
+**Changes**
+
+- Update --only flag to support multiple connection filter [\#229](https://github.com/leapfrogtechnology/sync-db/pull/229) ([samirsilwal](https://github.com/samirsilwal))
+- chore\(deps\): bump @babel/traverse from 7.9.0 to 7.23.2 [\#227](https://github.com/leapfrogtechnology/sync-db/pull/227) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump debug from 4.1.1 to 4.3.1 [\#226](https://github.com/leapfrogtechnology/sync-db/pull/226) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump get-func-name from 2.0.0 to 2.0.2 [\#223](https://github.com/leapfrogtechnology/sync-db/pull/223) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump word-wrap from 1.2.3 to 1.2.5 in /examples/node-app-pg-ts [\#221](https://github.com/leapfrogtechnology/sync-db/pull/221) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump word-wrap from 1.2.3 to 1.2.5 in /examples/node-app-pg [\#220](https://github.com/leapfrogtechnology/sync-db/pull/220) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump word-wrap from 1.2.3 to 1.2.5 in /examples/node-app-mssql [\#219](https://github.com/leapfrogtechnology/sync-db/pull/219) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump word-wrap from 1.2.3 to 1.2.5 in /examples/node-mssql-programmatic-use [\#218](https://github.com/leapfrogtechnology/sync-db/pull/218) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump word-wrap from 1.2.3 to 1.2.4 in /examples/node-app-mssql-ts [\#216](https://github.com/leapfrogtechnology/sync-db/pull/216) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump semver from 5.7.1 to 5.7.2 in /examples/node-app-mssql-ts [\#212](https://github.com/leapfrogtechnology/sync-db/pull/212) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump semver from 5.7.1 to 5.7.2 in /examples/node-app-mssql [\#211](https://github.com/leapfrogtechnology/sync-db/pull/211) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump semver from 5.7.1 to 5.7.2 in /examples/node-app-pg-ts [\#210](https://github.com/leapfrogtechnology/sync-db/pull/210) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump semver from 5.7.1 to 5.7.2 in /examples/node-mssql-programmatic-use [\#209](https://github.com/leapfrogtechnology/sync-db/pull/209) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump semver from 5.7.1 to 5.7.2 in /examples/node-app-pg [\#208](https://github.com/leapfrogtechnology/sync-db/pull/208) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump semver from 5.7.0 to 5.7.2 [\#207](https://github.com/leapfrogtechnology/sync-db/pull/207) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Convert travis file to actions [\#203](https://github.com/leapfrogtechnology/sync-db/pull/203) ([sbimochan](https://github.com/sbimochan))
+
 ## [v2.0.1](https://github.com/leapfrogtechnology/sync-db/tree/v2.0.1) (2023-06-07)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.0.0...v2.0.1)
