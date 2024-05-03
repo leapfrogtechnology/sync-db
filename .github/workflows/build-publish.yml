@@ -59,6 +59,13 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.RIBBY_GITHUB_TOKEN }}
+
+      - name: Set git user
+        run: |
+          git config user.name "Ribby"
+          git config user.email "bot@lftechnology.com"
 
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
@@ -68,7 +75,6 @@ jobs:
       - name: Install gems
         run: |
           gem install github_changelog_generator
-
 
       - name: Setup node
         uses: actions/setup-node@v3
