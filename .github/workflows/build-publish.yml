@@ -60,7 +60,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 20
@@ -72,17 +77,9 @@ jobs:
           sudo apt install hub
           hub --version
 
-      - name: Install Ruby
-        run: |
-          sudo apt install -y ruby-full
-          gem --version
-
       - name: Install GitHub changelog generator
         run: |
-          gem install github_changelog_generator --user-install
-          echo GEM_HOME=$HOME/.gem >> $GITHUB_ENV
-          echo GEM_PATH=$HOME/.gem >> $GITHUB_ENV
-          echo "PATH=$HOME/.gem/bin:$PATH" >> $GITHUB_ENV
+          gem install github_changelog_generator
 
       - name: Run release script
         run: ./release.sh compare_and_release
