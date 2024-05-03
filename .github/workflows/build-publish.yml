@@ -14,31 +14,17 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16, 18, 20]
+        node-version: [18, 20]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
-
-      - name: Install hub
-        run: |
-          sudo apt update
-          sudo apt install hub
-          hub --version
-
-      - name: Install RubyGems
-        run: |
-          sudo apt install -y ruby-full
-          gem --version
-
-      - name: Install GitHub changelog generator
-        run: gem install github_changelog_generator --user-install
 
       - name: Install dependencies
         run: yarn
@@ -72,13 +58,27 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: node
+          node-version: 20
           cache: 'yarn'
+
+      - name: Install hub
+        run: |
+          sudo apt update
+          sudo apt install hub
+          hub --version
+
+      - name: Install RubyGems
+        run: |
+          sudo apt install -y ruby-full
+          gem --version
+
+      - name: Install GitHub changelog generator
+        run: gem install github_changelog_generator --user-install
 
       - name: Run release script
         run: ./release.sh compare_and_release
