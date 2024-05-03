@@ -12,8 +12,8 @@ class Prune extends Command {
   static flags = {
     'dry-run': flags.boolean({ description: 'Dry run prune.', default: false }),
     only: flags.string({
-      helpValue: 'CONNECTION_ID',
-      description: 'Filter only a single connection.'
+      helpValue: 'CONNECTION_ID(s)',
+      description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
     }),
     'connection-resolver': flags.string({
       helpValue: 'PATH',
