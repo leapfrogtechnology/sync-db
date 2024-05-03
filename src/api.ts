@@ -59,7 +59,7 @@ export async function synchronize(
     loadMigrations: !params['skip-migration']
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -105,7 +105,7 @@ export async function prune(
   // TODO: Need to preload the SQL source code under this step.
   await init.prepare(config, { loadSqlSources: true });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -143,7 +143,7 @@ export async function migrateLatest(
     migrationPath: getMigrationPath(config)
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -182,7 +182,7 @@ export async function migrateRollback(
     migrationPath: getMigrationPath(config)
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
       connection,
@@ -221,7 +221,7 @@ export async function migrateList(
     migrationPath: getMigrationPath(config)
   });
 
-  const connections = filterConnectionsAsRequired(mapToConnectionReferences(conn), params.only);
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(connection, trx =>
       invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
@@ -240,31 +240,39 @@ export async function migrateList(
  * Check the filter condition and apply filter if required.
  *
  * @param {ConnectionReference[]} connections
- * @param {string} [filterConnectionId]
+ * @param {string} [connectionIds]
  * @returns {ConnectionReference[]}
  */
-function filterConnectionsAsRequired(
-  connections: ConnectionReference[],
-  filterConnectionId?: string
-): ConnectionReference[] {
-  log(`Filter (--only=) ${filterConnectionId}`);
+function filterConnections(connections: ConnectionReference[], connectionIds?: string): ConnectionReference[] {
+  const trimmedFilterConnectionIds = Array.from(new Set(connectionIds?.split(',').map(id => id.trim())));
+
+  log(`Filter(s) (--only=) ${trimmedFilterConnectionIds}`);
 
   // Apply no filter if the connection id is not provided.
-  if (!filterConnectionId) {
+  if (!connectionIds) {
     log('Running for all connections.');
 
     return connections;
   }
 
-  const filteredList = connections.filter(connection => connection.id === filterConnectionId);
+  const filteredList = connections.filter(connection => trimmedFilterConnectionIds?.includes(connection.id));
+
+  const available = connections.map(({ id }) => id);
+  const invalidIds = trimmedFilterConnectionIds.filter(tids => !available.includes(tids));
 
   if (filteredList.length === 0) {
-    const available = connections.map(({ id }) => id);
-
-    throw new Error(`No connections found for given id "${filterConnectionId}. Available ids are: ${available}`);
+    throw new Error(
+      `No connections found for given id(s) "${trimmedFilterConnectionIds}. Available ids are: ${available}`
+    );
   }
 
-  log(`Running for a single connection (id = ${filterConnectionId}).`);
+  if (invalidIds.length) {
+    log(`No connections found for given id(s) "${invalidIds}. Available ids are: ${available}`);
+  }
+
+  const filteredConnectionIds = filteredList.map(({ id }) => id);
+
+  log(`Running for a filtered connection(s) (id(s) = ${filteredConnectionIds}).`);
 
   return filteredList;
 }

@@ -143,7 +143,7 @@ OPTIONS
   -c, --config=config         Custom configuration file.
   --connection-resolver=PATH  Path to the connection resolver.
   --dry-run                   Dry run migration.
-  --only=CONNECTION_ID        Filter only a single connection.
+  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
 ```
 
 _See code: [src/commands/migrate-latest.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/migrate-latest.ts)_
@@ -159,7 +159,7 @@ USAGE
 OPTIONS
   -c, --config=config         Custom configuration file.
   --connection-resolver=PATH  Path to the connection resolver.
-  --only=CONNECTION_ID        Filter only a single connection.
+  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
 ```
 
 _See code: [src/commands/migrate-list.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/migrate-list.ts)_
@@ -176,7 +176,7 @@ OPTIONS
   -c, --config=config         Custom configuration file.
   --connection-resolver=PATH  Path to the connection resolver.
   --dry-run                   Dry run rollback.
-  --only=CONNECTION_ID        Filter only a single connection.
+  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
 ```
 
 _See code: [src/commands/migrate-rollback.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/migrate-rollback.ts)_
@@ -193,7 +193,7 @@ OPTIONS
   -c, --config=config         Custom configuration file.
   --connection-resolver=PATH  Path to the connection resolver.
   --dry-run                   Dry run prune.
-  --only=CONNECTION_ID        Filter only a single connection.
+  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
 ```
 
 _See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.0.1/src/commands/prune.ts)_
@@ -211,7 +211,7 @@ OPTIONS
   -f, --force                 Force synchronization.
   --connection-resolver=PATH  Path to the connection resolver.
   --dry-run                   Dry run synchronization.
-  --only=CONNECTION_ID        Filter only a single connection.
+  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
   --skip-migration            Skip running migrations.
 ```
 
