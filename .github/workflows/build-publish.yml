@@ -60,26 +60,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Ruby
+      - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'
 
-      - name: Setup Node
+      - name: Install gems
+        run: |
+          gem install github_changelog_generator
+
+
+      - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'yarn'
+
+      - name: Install node dependencies
+        run: yarn
 
       - name: Install hub
         run: |
           sudo apt update
           sudo apt install hub
           hub --version
-
-      - name: Install GitHub changelog generator
-        run: |
-          gem install github_changelog_generator
 
       - name: Run release script
         env:
