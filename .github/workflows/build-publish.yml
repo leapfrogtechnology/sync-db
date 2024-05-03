@@ -93,6 +93,7 @@ jobs:
 
       - name: Run release script
         env:
+          GITHUB_TOKEN: ${{ secrets.RIBBY_GITHUB_TOKEN }}
           RIBBY_GITHUB_TOKEN: ${{ secrets.RIBBY_GITHUB_TOKEN }}
         run: ./release.sh compare_and_release
 
