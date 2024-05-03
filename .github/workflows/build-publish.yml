@@ -72,13 +72,13 @@ jobs:
           sudo apt install hub
           hub --version
 
-      - name: Install RubyGems
+      - name: Install Ruby
         run: |
           sudo apt install -y ruby-full
           gem --version
 
       - name: Install GitHub changelog generator
-        run: gem install github_changelog_generator --user-install
+        run: gem install github_changelog_generator
 
       - name: Run release script
         run: ./release.sh compare_and_release
