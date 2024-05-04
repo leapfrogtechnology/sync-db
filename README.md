@@ -44,7 +44,7 @@ $ npm install -g @leapfrogtechnology/sync-db
 $ sync-db COMMAND
 running command...
 $ sync-db (-v|--version|version)
-@leapfrogtechnology/sync-db/2.1.0 linux-x64 node-v20.12.2
+@leapfrogtechnology/sync-db/2.1.0 darwin-arm64 node-v20.5.0
 $ sync-db --help [COMMAND]
 USAGE
   $ sync-db COMMAND

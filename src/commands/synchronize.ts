@@ -19,8 +19,8 @@ class Synchronize extends Command {
     'dry-run': flags.boolean({ description: 'Dry run synchronization.', default: false }),
     'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
     only: flags.string({
-      helpValue: 'CONNECTION_ID',
-      description: 'Filter only a single connection.'
+      helpValue: 'CONNECTION_ID(s)',
+      description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
     }),
     'connection-resolver': flags.string({
       helpValue: 'PATH',
