@@ -1,5 +1,13 @@
 # Changelog
 
+## [v2.1.1](https://github.com/leapfrogtechnology/sync-db/tree/v2.1.1) (2024-05-04)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.1.0...v2.1.1)
+
+**Changes**
+
+- Update docs to reflect connection id filtering [\#230](https://github.com/leapfrogtechnology/sync-db/pull/230) ([mesaugat](https://github.com/mesaugat))
+
 ## [v2.1.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.1.0) (2024-05-03)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.0.1...v2.1.0)
