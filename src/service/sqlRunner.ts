@@ -8,8 +8,10 @@ import SqlCode from '../domain/SqlCode';
 import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
+import { getManualSqlBasePath } from '../config';
 import { DROP_ONLY_OBJECT_TERMINATOR } from '../constants';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
+import { RunScriptContext } from '../domain/RunScriptContext';
 
 /**
  * SQL DROP statements mapping for different object types.
@@ -164,4 +166,121 @@ export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], conn
 
     log('Executed: ', sql.dropStatement);
   }
+}
+
+/**
+ * Create table to log manual script run.
+ *
+ * @param {Knex.Transaction} trx
+ * @param {string} tableName
+ * @returns {Promise<void>}
+ */
+async function createScriptLogTable(trx: Knex, tableName: string) {
+  return trx.schema.createTable(tableName, t => {
+    t.increments('id').primary().unsigned();
+    t.string('name').notNullable();
+    t.dateTime('run_time');
+  });
+}
+
+/**
+ * Filter the runn manual scripts based on log table.
+ *
+ * @param  {Knex.Transaction} trx
+ * @param {string[]} files
+ * @param {string} tableName
+ * @returns {Promise<string[]>}
+ */
+async function getFilteredScriptsToRun(trx: Knex.Transaction, files: string[], tableName: string) {
+  const data = await trx(tableName).select('name');
+
+  const totalRunscripts = data.map(sc => sc.name);
+
+  const filteredScripts = files.filter(fname => !totalRunscripts.includes(fname));
+
+  return filteredScripts;
+}
+
+/**
+ * Run manual scripts with logging.
+ *
+ * @param {Knex.Transaction} trx
+ * @param {string[]} files
+ * @param {string} connectionId
+ * @param {string} tableName
+ * @param {any} callback
+ * @returns {Promise<OperationResult[]>}
+ */
+export async function runScriptWithLog(
+  trx: Knex.Transaction,
+  files: string[],
+  connectionId: string,
+  tableName: string,
+  callback: any
+) {
+  const log = dbLogger(connectionId);
+
+  const logTableExists = await trx.schema.hasTable(tableName);
+
+  if (!logTableExists) {
+    log(`Manual query record table doesn't exists. Creating one`);
+
+    await createScriptLogTable(trx, tableName);
+  }
+
+  const filData = await getFilteredScriptsToRun(trx, files, tableName);
+
+  await callback(trx, filData);
+
+  for await (const file of filData) {
+    await trx(tableName).insert({
+      name: file,
+      run_time: new Date()
+    });
+  }
+
+  return [files.length, filData];
+}
+
+/**
+ * Get file details by extension.
+ *
+ * @param {string} filename
+ * @returns {object}
+ */
+export function getFileDetailsByExtension(filename: string) {
+  const extension = filename.split('.').slice(-1).pop();
+
+  return {
+    extension,
+    fileNames: [filename],
+    fileRelativePaths: [`${extension}/${filename}`]
+  };
+}
+
+/**
+ * Run manual scripts in SQL.
+ *
+ * @param {Knex.Transaction} trx
+ * @param {RunScriptContext} context
+ * @param {string[]} manualSql
+ * @param {string} connectionId
+ * @param {string[]} filteredScripts
+ * @returns {Promise<void>}
+ */
+export async function runSQLScripts(
+  trx: Knex.Transaction,
+  context: RunScriptContext,
+  manualSql: string[],
+  connectionId: string,
+  filteredScripts: string[]
+) {
+  const sqlBasePath = getManualSqlBasePath(context.config);
+
+  const sqlScripts = await resolveFiles(sqlBasePath, manualSql);
+
+  const filteredScriptsToRun = sqlScripts.filter(scd => !filteredScripts.includes(scd.name));
+
+  // Run the synchronization scripts.
+  await runSequentially(trx, filteredScriptsToRun, connectionId);
 }

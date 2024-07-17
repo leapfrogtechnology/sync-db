@@ -2,13 +2,16 @@ import { Knex } from 'knex';
 
 import * as sqlRunner from './sqlRunner';
 import { dbLogger } from '../util/logger';
+import { getSqlBasePath } from '../config';
 import { getElapsedTime } from '../util/ts';
-import SynchronizeContext from '../domain/SynchronizeContext';
+import { executeOperation } from './execution';
+import FileExtensions from '../enum/FileExtensions';
 import * as configInjection from './configInjection';
+import SynchronizeContext from '../domain/SynchronizeContext';
+import { RunScriptContext } from '../domain/RunScriptContext';
+import { runJSTSScripts } from '../migration/service/migrator';
 import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
-import { executeOperation } from './execution';
-import { getSqlBasePath } from '../config';
 
 /**
  * Migrate SQL on a database.
@@ -116,6 +119,50 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
     }
 
     await setup(trx, context);
+  });
+}
+
+/**
+ * Run manual scripts on the given database connection (transaction).
+ *
+ * @param {Knex.Transaction} trx
+ * @param {RunScriptContext} context
+ * @returns {Promise<OperationResult>}
+ */
+export async function runScript(trx: Knex.Transaction, context: RunScriptContext): Promise<OperationResult> {
+  return executeOperation(context, async options => {
+    const { connectionId, migrateFunc } = context;
+    const { timeStart } = options;
+    const log = dbLogger(connectionId);
+
+    const scriptFileName = context.params.file;
+
+    log(`Running manual script for - ${connectionId} - ${timeStart} `);
+
+    let filesToRun: string[] = [];
+    let manualSqlToRun: string[] = [];
+
+    let ext = FileExtensions.SQL;
+
+    if (!!scriptFileName) {
+      const { extension, fileNames, fileRelativePaths } = sqlRunner.getFileDetailsByExtension(scriptFileName);
+
+      filesToRun = fileNames;
+      ext = extension as FileExtensions;
+      manualSqlToRun = fileRelativePaths;
+    }
+
+    if (ext === FileExtensions.SQL) {
+      return migrateFunc(trx, filesToRun, connectionId, (t, filteredScripts) =>
+        sqlRunner.runSQLScripts(t, context, manualSqlToRun, connectionId, filteredScripts)
+      );
+    }
+
+    if ([FileExtensions.JS, FileExtensions.TS].includes(ext)) {
+      return migrateFunc(trx, filesToRun, connectionId, (t, filteredScripts) =>
+        runJSTSScripts(t, context, connectionId, filteredScripts, ext)
+      );
+    }
   });
 }
 
