@@ -4,6 +4,7 @@ import { bold, red, magenta, cyan } from 'chalk';
 import { runScriptAPI } from '../api';
 import { dbLogger } from '../util/logger';
 import { loadConfig, resolveConnections } from '..';
+import { validateScriptFileName } from '../util/fs';
 import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
 
@@ -17,7 +18,9 @@ class RunScript extends Command {
       description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
     }),
     file: flags.string({
+      required: true,
       helpValue: 'Script Name',
+      parse: validateScriptFileName,
       description: 'Name of the manual SQL/JS/TS script'
     }),
     'connection-resolver': flags.string({
