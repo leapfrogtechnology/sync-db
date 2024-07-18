@@ -152,7 +152,7 @@ export function copy(fromPath: string, toPath: string): Promise<void> {
 export function validateScriptFileName(filename: string): string {
   const ext = filename.split('.').pop();
 
-  if (!ext || ![FileExtensions.JS, FileExtensions.SQL, FileExtensions.JS].includes(ext as FileExtensions)) {
+  if (!ext || ![FileExtensions.TS, FileExtensions.SQL, FileExtensions.JS].includes(ext as FileExtensions)) {
     throw new Error('Invalid file name or extension');
   }
 
