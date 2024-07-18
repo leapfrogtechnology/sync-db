@@ -7,8 +7,8 @@ export interface RunScriptContext extends OperationContext {
   params: RunScriptParams;
   migrateFunc: (
     trx: Knex.Transaction,
-    files: any[],
+    files: string[],
     connectionId: string,
     runSQLScripts: (trx: Knex.Transaction, filteredScripts: string[]) => Promise<void>
-  ) => Promise<any>;
+  ) => Promise<(number | string[])[]>;
 }

@@ -17,8 +17,8 @@ class RunScript extends Command {
       description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
     }),
     file: flags.string({
-      helpValue: 'PATH',
-      description: 'Path to the manual SQL/JS/TS script'
+      helpValue: 'Script Name',
+      description: 'Name of the manual SQL/JS/TS script'
     }),
     'connection-resolver': flags.string({
       helpValue: 'PATH',
@@ -101,7 +101,7 @@ class RunScript extends Command {
       return process.exit(0);
     }
 
-    printError(`Error: Migration failed for ${failedCount} connection(s).`);
+    printError(`Error: Script failed for ${failedCount} connection(s).`);
 
     if (isDryRun) await printLine(magenta('\n• DRY RUN ENDED\n'));
 

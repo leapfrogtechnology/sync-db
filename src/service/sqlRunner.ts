@@ -208,7 +208,6 @@ async function getFilteredScriptsToRun(trx: Knex.Transaction, files: string[], t
  * @param {string[]} files
  * @param {string} connectionId
  * @param {string} tableName
- * @param {any} callback
  * @returns {Promise<OperationResult[]>}
  */
 export async function runScriptWithLog(
@@ -216,7 +215,7 @@ export async function runScriptWithLog(
   files: string[],
   connectionId: string,
   tableName: string,
-  callback: any
+  callback: (t: Knex.Transaction, filteredScript: string[]) => Promise<void>
 ) {
   const log = dbLogger(connectionId);
 
