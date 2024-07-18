@@ -45,7 +45,7 @@ export function getSqlBasePath(config: Configuration): string {
  * @param {Configuration} config
  * @returns {string}
  */
-export function getManualSqlBasePath(config: Configuration): string {
+export function getManualScriptBasePath(config: Configuration): string {
   return path.join(config.basePath, config.manual.directory);
 }
 

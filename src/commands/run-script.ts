@@ -8,17 +8,17 @@ import { printLine, printError, printInfo } from '../util/io';
 import OperationResult from '../domain/operation/OperationResult';
 
 class RunScript extends Command {
-  static description = 'Run the migrations up to the latest changes.';
+  static description = 'Run the provided manual scripts.';
 
   static flags = {
-    'dry-run': flags.boolean({ description: 'Dry run migration.', default: false }),
+    'dry-run': flags.boolean({ description: 'Dry run script.', default: false }),
     only: flags.string({
       helpValue: 'CONNECTION_ID(s)',
       description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
     }),
     file: flags.string({
       helpValue: 'PATH',
-      description: 'Path to the manual SQL query'
+      description: 'Path to the manual SQL/JS/TS script'
     }),
     'connection-resolver': flags.string({
       helpValue: 'PATH',

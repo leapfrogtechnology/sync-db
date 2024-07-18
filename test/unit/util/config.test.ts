@@ -6,7 +6,14 @@ import { it, describe } from 'mocha';
 import { mkdtemp, write } from '../../../src/util/fs';
 import Configuration from '../../../src/domain/Configuration';
 import ConnectionConfig from '../../../src/domain/ConnectionConfig';
-import { validate, getConnectionId, resolveConnectionsFromEnv, isCLI, loadConfig } from '../../../src/config';
+import {
+  validate,
+  getConnectionId,
+  resolveConnectionsFromEnv,
+  isCLI,
+  loadConfig,
+  getManualScriptBasePath
+} from '../../../src/config';
 
 describe('CONFIG:', () => {
   describe('isCLI', () => {
@@ -212,6 +219,26 @@ describe('CONFIG:', () => {
       process.chdir(cwd);
       const config = await loadConfig(path.join(cwd, 'sync-db-test.yml'));
       expect(config).to.have.property('migration');
+    });
+  });
+
+  describe('getManualScriptBasePath', () => {
+    it('should resolve correct manual script base path.', async () => {
+      const cwd = await mkdtemp();
+      await write(
+        path.join(cwd, 'sync-db.yml'),
+        yaml.stringify({
+          basePath: 'src',
+          manual: {
+            directory: 'manual',
+            tableName: 'manual_script_logs'
+          }
+        } as Configuration)
+      );
+
+      process.chdir(cwd);
+      const config = await loadConfig();
+      expect(getManualScriptBasePath(config)).to.eq('src/manual');
     });
   });
 });

@@ -8,7 +8,7 @@ import SqlCode from '../domain/SqlCode';
 import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
-import { getManualSqlBasePath } from '../config';
+import { getManualScriptBasePath } from '../config';
 import { DROP_ONLY_OBJECT_TERMINATOR } from '../constants';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
 import { RunScriptContext } from '../domain/RunScriptContext';
@@ -275,7 +275,7 @@ export async function runSQLScripts(
   connectionId: string,
   filteredScripts: string[]
 ) {
-  const sqlBasePath = getManualSqlBasePath(context.config);
+  const sqlBasePath = getManualScriptBasePath(context.config);
 
   const sqlScripts = await resolveFiles(sqlBasePath, manualSql);
 
