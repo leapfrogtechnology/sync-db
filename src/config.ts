@@ -47,7 +47,7 @@ export function getSqlBasePath(config: Configuration): string {
 export async function loadConfig(configFilename: string = CONFIG_FILENAME): Promise<Configuration> {
   log('Resolving config file.');
   const isAbsolutePath = path.isAbsolute(configFilename);
-  const filename = isAbsolutePath ? path.parse(configFilename).base : configFilename;
+  const filename = path.parse(configFilename).base;
   const match = filename.match(CONFIG_FILE_CONVENTION) || filename === CONFIG_FILENAME;
 
   if (!match) {
