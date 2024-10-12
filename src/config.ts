@@ -64,7 +64,7 @@ export async function loadConfig(configFilename: string = CONFIG_FILENAME): Prom
   validate(loaded);
 
   // Resolve the base path relative to the config file location.
-  const configFileLocation = filepath.split('/').slice(0, -1).join('/');
+  const configFileLocation = path.dirname(filepath);
   const relativeBasePath = path.join(configFileLocation, loaded.basePath);
 
   const result = {
