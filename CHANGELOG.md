@@ -1,5 +1,23 @@
 # Changelog
 
+## [v2.2.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.2.0) (2024-10-16)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.1.1...v2.2.0)
+
+**Bug Fixes**
+
+- Resolve the `basePath` relative to the `sync-db.yml` path instead of current working directory. [\#225](https://github.com/leapfrogtechnology/sync-db/issues/225)
+
+**Changes**
+
+- Update build workflow to include codecov upload step [\#238](https://github.com/leapfrogtechnology/sync-db/pull/238) ([samirsilwal](https://github.com/samirsilwal))
+- Use relative base path respective to config file [\#237](https://github.com/leapfrogtechnology/sync-db/pull/237) ([samirsilwal](https://github.com/samirsilwal))
+- chore\(deps\): bump braces from 3.0.2 to 3.0.3 in /examples/node-app-mssql [\#236](https://github.com/leapfrogtechnology/sync-db/pull/236) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump micromatch from 4.0.2 to 4.0.8 in /examples/node-app-pg [\#235](https://github.com/leapfrogtechnology/sync-db/pull/235) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump micromatch from 4.0.2 to 4.0.8 [\#234](https://github.com/leapfrogtechnology/sync-db/pull/234) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump braces from 3.0.2 to 3.0.3 in /examples/node-app-pg-ts [\#232](https://github.com/leapfrogtechnology/sync-db/pull/232) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump braces from 3.0.2 to 3.0.3 [\#231](https://github.com/leapfrogtechnology/sync-db/pull/231) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.1.1](https://github.com/leapfrogtechnology/sync-db/tree/v2.1.1) (2024-05-04)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.1.0...v2.1.1)
