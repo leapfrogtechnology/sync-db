@@ -47,7 +47,13 @@ jobs:
         run: yarn test:coverage
 
       - name: Upload coverage to Codecov
-        run: yarn codecov
+        uses: codecov/codecov-action@v4
+        with:
+          fail_ci_if_error: true 
+          directory: ./coverage
+          files: ./lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }} 
+          verbose: true
 
   publish:
     name: Publish @leapfrogtechnology/sync-db package
