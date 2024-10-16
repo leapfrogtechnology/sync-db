@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { promisify } from 'util';
+import FileExtensions from '../enum/FileExtensions';
 
 export const mkdir = promisify(fs.mkdir);
 export const readDir = promisify(fs.readdir);
@@ -140,4 +141,20 @@ export function copy(fromPath: string, toPath: string): Promise<void> {
       return resolve();
     });
   });
+}
+
+/**
+ * Validate the script filename provided from CLI.
+ *
+ * @param {string} filename
+ * @returns {string}
+ */
+export function validateScriptFileName(filename: string): string {
+  const ext = filename.split('.').pop();
+
+  if (!ext || ![FileExtensions.TS, FileExtensions.SQL, FileExtensions.JS].includes(ext as FileExtensions)) {
+    throw new Error('Invalid file name or extension');
+  }
+
+  return filename;
 }
