@@ -20,6 +20,10 @@ interface Configuration {
     tableName: string;
     sourceType: 'sql' | 'javascript' | 'typescript';
   };
+  manual: {
+    directory: string;
+    tableName: string;
+  };
 }
 
 export default Configuration;

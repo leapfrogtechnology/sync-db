@@ -123,3 +123,17 @@ export function getMigrationPath(config: Configuration): string {
 
   return migrationPath;
 }
+
+/**
+ * Get manual scripts directory path.
+ *
+ * @param {Configuration} config
+ * @returns {string}
+ */
+export function getManualScriptPath(config: Configuration): string {
+  const { basePath, manual } = config;
+
+  const scriptPath = path.isAbsolute(manual.directory) ? manual.directory : path.join(basePath, manual.directory);
+
+  return scriptPath;
+}

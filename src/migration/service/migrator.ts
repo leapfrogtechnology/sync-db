@@ -1,9 +1,12 @@
+import { Knex } from 'knex';
 import * as path from 'path';
 
 import { glob, exists } from '../../util/fs';
+import { getManualScriptPath } from './knexMigrator';
 import { resolveFile } from '../../service/sqlRunner';
 import FileExtensions from '../../enum/FileExtensions';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
+import { RunScriptContext } from '../../domain/RunScriptContext';
 import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
 
 const FILE_PATTERN_JS = /(.+).js$/;
@@ -126,4 +129,56 @@ export async function resolveJavaScriptMigrations(
   });
 
   return Promise.all(migrationPromises);
+}
+
+/**
+ * Run exposed function from manual JS/TS scripts.
+ *
+ * @param {Knex.Transaction} trx
+ * @param {RunScriptContext} context
+ * @param {string} connectionId
+ * @param {string[]} filteredScripts
+ * @param {string} extension
+ * @returns {Promise<void>}
+ */
+export async function runJSTSScripts(
+  trx: Knex.Transaction,
+  context: RunScriptContext,
+  connectionId: string,
+  filteredScripts: string[],
+  extension: string
+) {
+  const migrationNames = filteredScripts;
+
+  let mRequire: NodeRequire = require;
+
+  if (extension === FileExtensions.TS) {
+    // Transpile & execute ts files required on the fly
+    require('ts-node').register({
+      transpileOnly: true
+    });
+  } else {
+    // On the fly es6 => commonJS
+    mRequire = require('esm')(module);
+  }
+
+  const migrationPromises = migrationNames.map(async name => {
+    const { main } = mRequire(path.resolve(`${getManualScriptPath(context.config)}/${extension}`, name));
+
+    return {
+      main,
+      name
+    };
+  });
+
+  const fileFuncInfos = await Promise.all(migrationPromises);
+
+  if (!fileFuncInfos.length) {
+    return;
+  }
+
+  const func = fileFuncInfos[0].main;
+
+  // Execute the function
+  await func(trx, connectionId);
 }
