@@ -26,6 +26,10 @@ export const DEFAULT_CONFIG: Configuration = {
     directory: 'migration',
     tableName: 'knex_migrations', // Note: This is Knex's default value. Just keeping it same.
     sourceType: 'sql'
+  },
+  manual: {
+    directory: 'manual',
+    tableName: 'manual_scripts'
   }
 };
 
