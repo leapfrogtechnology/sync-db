@@ -6,12 +6,15 @@
  * are also meant to be the public interface for the developers using it as a package.
  */
 
+import { Knex } from 'knex';
+
 import * as init from './init';
 import { log } from './util/logger';
 import { existsDir } from './util/fs';
 import { withTransaction, mapToConnectionReferences, DatabaseConnections } from './util/db';
 
 import Configuration from './domain/Configuration';
+import { RunScriptParams } from './domain/RunScriptParams';
 import SynchronizeParams from './domain/SynchronizeParams';
 import ConnectionReference from './domain/ConnectionReference';
 import OperationParams from './domain/operation/OperationParams';
@@ -19,8 +22,59 @@ import OperationResult from './domain/operation/OperationResult';
 
 // Service
 import { executeProcesses } from './service/execution';
-import { runSynchronize, runPrune } from './service/sync';
-import { getMigrationPath, invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
+import { runSynchronize, runPrune, runScript } from './service/sync';
+import {
+  getManualScriptPath,
+  getMigrationPath,
+  invokeMigrationApi,
+  KnexMigrationAPI
+} from './migration/service/knexMigrator';
+import { runScriptWithLog } from './service/sqlRunner';
+
+/**
+ * Run scripts for all the configured database connections.
+ *
+ * @param {Configuration} config
+ * @param {DatabaseConnections} conn
+ * @param {RunScriptParams} options
+ * @returns {Promise<OperationResult[]>}
+ */
+export async function runScriptAPI(config: Configuration, conn: DatabaseConnections, options?: RunScriptParams) {
+  log('Run Script');
+  const scriptPath = getManualScriptPath(config);
+  const dirExist = await existsDir(scriptPath);
+
+  if (!dirExist) {
+    log('Script directory does not exist');
+  }
+
+  const params: RunScriptParams = {
+    ...options
+  };
+
+  const connections = filterConnections(mapToConnectionReferences(conn), params.only);
+
+  const processes = connections.map(connection => () =>
+    withTransaction(
+      connection,
+      trx =>
+        runScript(trx, {
+          config,
+          params,
+          connectionId: connection.id,
+          migrateFunc: (
+            t: Knex.Transaction,
+            files: string[],
+            connectionId: string,
+            runSQLScripts: (t: Knex.Transaction, filteredScript: string[]) => Promise<void>
+          ) => runScriptWithLog(t, files, connectionId, config.manual.tableName, runSQLScripts)
+        }),
+      params['dry-run']
+    )
+  );
+
+  return executeProcesses(processes, config);
+}
 
 /**
  * Synchronize all the configured database connections.

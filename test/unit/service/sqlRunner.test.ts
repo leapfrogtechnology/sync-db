@@ -69,4 +69,14 @@ describe('SERVICE: sqlRunner', () => {
       expect(() => sqlRunner.getDropStatement('views', 'test.hello_world')).to.throw(Error);
     });
   });
+
+  describe('getFileDetailsByExtension()', () => {
+    it('should return file details with extention', () => {
+      expect(sqlRunner.getFileDetailsByExtension('test.sql')).to.deep.equal({
+        extension: 'sql',
+        fileNames: ['test.sql'],
+        fileRelativePaths: ['sql/test.sql']
+      });
+    });
+  });
 });

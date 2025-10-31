@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { it, describe } from 'mocha';
 
-import { write, read, remove, exists, mkdtemp, glob, existsDir } from '../../../src/util/fs';
+import { write, read, remove, exists, mkdtemp, glob, existsDir, validateScriptFileName } from '../../../src/util/fs';
 
 describe('UTIL: fs', () => {
   let filePath: string;
@@ -112,6 +112,30 @@ describe('UTIL: fs', () => {
       const result = await glob(tmp2);
 
       expect(result).to.deep.equal([]);
+    });
+  });
+
+  describe('validateScriptFileName', () => {
+    it('should throw error for invalid file name', async () => {
+      return expect(() => validateScriptFileName('test')).to.throw('Invalid file name or extension');
+    });
+
+    it('should support only JS/TS or SQL script', () => {
+      const fname0 = validateScriptFileName('test.sql');
+      const fname1 = validateScriptFileName('test.js');
+      const fname2 = validateScriptFileName('test.ts');
+
+      assert(fname0 === 'test.sql');
+      assert(fname1 === 'test.js');
+      assert(fname2 === 'test.ts');
+
+      expect(() => validateScriptFileName('test.c')).to.throw('Invalid file name or extension');
+    });
+
+    it('should return filename if validation is successfull', () => {
+      const fname = validateScriptFileName('test.sql');
+
+      return expect(fname).to.eq('test.sql');
     });
   });
 });

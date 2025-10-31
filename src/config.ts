@@ -40,6 +40,16 @@ export function getSqlBasePath(config: Configuration): string {
 }
 
 /**
+ * Get manual scripts path from config.
+ *
+ * @param {Configuration} config
+ * @returns {string}
+ */
+export function getManualScriptBasePath(config: Configuration): string {
+  return path.join(config.basePath, config.manual.directory);
+}
+
+/**
  * Load config yaml file.
  *
  * @returns {Promise<Configuration>}
