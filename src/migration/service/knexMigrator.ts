@@ -3,6 +3,7 @@ import * as path from 'path';
 
 import { PrepareOptions } from '../../init';
 import { dbLogger, log } from '../../util/logger';
+import * as runLogger from '../../service/runLogger';
 import Configuration from '../../domain/Configuration';
 import FileExtensions from '../../enum/FileExtensions';
 import { executeOperation } from '../../service/execution';
@@ -51,18 +52,61 @@ export async function invokeMigrationApi(
 ): Promise<OperationResult> {
   return executeOperation(context, async () => {
     const func = migrationApiMap[funcName];
-
     const dbLog = dbLogger(context.connectionId);
+    let runId: string | undefined;
 
-    dbLog(`BEGIN: ${funcName}`);
+    try {
+      dbLog(`BEGIN: ${funcName}`);
 
-    const data = await func(trx, context.knexMigrationConfig);
+      // Start run log based on migration API type
+      const commandType = getCommandTypeFromMigrationAPI(funcName);
+      runId = await runLogger.startRunLog(trx, {
+        command_type: commandType,
+        connection_id: context.connectionId
+      });
 
-    dbLog(`END: ${funcName}`);
-    dbLog('Result:\n%O', data);
+      const data = await func(trx, context.knexMigrationConfig);
 
-    return data;
+      dbLog(`END: ${funcName}`);
+      dbLog('Result:\\n%O', data);
+
+      // Complete run log with success
+      await runLogger.completeRunLog(trx, runId, {
+        is_successful: true,
+        metadata: { result: data }
+      });
+
+      return data;
+    } catch (error) {
+      // Complete run log with failure
+      if (runId) {
+        await runLogger.completeRunLog(trx, runId, {
+          is_successful: false,
+          error: error.message || error.toString()
+        });
+      }
+      throw error;
+    }
   });
+}
+
+/**
+ * Map KnexMigrationAPI to CommandType for logging.
+ *
+ * @param {KnexMigrationAPI} apiFunc
+ * @returns {runLogger.CommandType}
+ */
+function getCommandTypeFromMigrationAPI(apiFunc: KnexMigrationAPI): runLogger.CommandType {
+  switch (apiFunc) {
+    case KnexMigrationAPI.MIGRATE_LATEST:
+      return runLogger.CommandType.MIGRATE_LATEST;
+    case KnexMigrationAPI.MIGRATE_ROLLBACK:
+      return runLogger.CommandType.MIGRATE_ROLLBACK;
+    case KnexMigrationAPI.MIGRATE_LIST:
+      return runLogger.CommandType.MIGRATE_LIST;
+    default:
+      return runLogger.CommandType.MIGRATE_LIST;
+  }
 }
 
 /**

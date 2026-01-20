@@ -1,14 +1,15 @@
 import { Knex } from 'knex';
 
 import * as sqlRunner from './sqlRunner';
+import * as runLogger from './runLogger';
 import { dbLogger } from '../util/logger';
+import { getSqlBasePath } from '../config';
 import { getElapsedTime } from '../util/ts';
-import SynchronizeContext from '../domain/SynchronizeContext';
+import { executeOperation } from './execution';
 import * as configInjection from './configInjection';
+import SynchronizeContext from '../domain/SynchronizeContext';
 import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
-import { executeOperation } from './execution';
-import { getSqlBasePath } from '../config';
 
 /**
  * Migrate SQL on a database.
@@ -91,31 +92,61 @@ async function teardown(trx: Knex.Transaction, context: OperationContext): Promi
  * @returns {Promise<OperationResult>}
  */
 export async function runSynchronize(trx: Knex.Transaction, context: SynchronizeContext): Promise<OperationResult> {
+  const { connectionId } = context;
+  let runId: string | undefined;
+
   return executeOperation(context, async options => {
-    const { connectionId, migrateFunc } = context;
+    const { migrateFunc } = context;
     const { timeStart } = options;
     const log = dbLogger(connectionId);
 
-    await teardown(trx, context);
-
-    // Trigger onTeardownSuccess if bound.
-    if (context.params.onTeardownSuccess) {
-      await context.params.onTeardownSuccess({
-        connectionId,
-        data: null,
-        success: true,
-        timeElapsed: getElapsedTime(timeStart)
+    try {
+      // Start run log
+      runId = await runLogger.startRunLog(trx, {
+        command_type: runLogger.CommandType.SYNCHRONIZE,
+        connection_id: connectionId,
+        metadata: {
+          skipMigration: context.params['skip-migration'],
+          force: context.params.force
+        }
       });
-    }
 
-    if (context.params['skip-migration']) {
-      log('Skipped migrations.');
-    } else {
-      log('Running migrations.');
-      await migrateFunc(trx);
-    }
+      await teardown(trx, context);
 
-    await setup(trx, context);
+      // Trigger onTeardownSuccess if bound.
+      if (context.params.onTeardownSuccess) {
+        await context.params.onTeardownSuccess({
+          connectionId,
+          data: null,
+          success: true,
+          timeElapsed: getElapsedTime(timeStart)
+        });
+      }
+
+      if (context.params['skip-migration']) {
+        log('Skipped migrations.');
+      } else {
+        log('Running migrations.');
+        await migrateFunc(trx);
+      }
+
+      await setup(trx, context);
+
+      // Complete run log with success
+      await runLogger.completeRunLog(trx, runId, {
+        is_successful: true,
+        metadata: { timeElapsed: getElapsedTime(timeStart) }
+      });
+    } catch (error) {
+      // Complete run log with failure
+      if (runId) {
+        await runLogger.completeRunLog(trx, runId, {
+          is_successful: false,
+          error: error.message || error.toString()
+        });
+      }
+      throw error;
+    }
   });
 }
 
@@ -127,5 +158,30 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
  * @returns {Promise<OperationResult>}
  */
 export async function runPrune(trx: Knex.Transaction, context: OperationContext): Promise<OperationResult> {
-  return executeOperation(context, () => teardown(trx, context));
+  const { connectionId } = context;
+  let runId: string | undefined;
+
+  return executeOperation(context, async () => {
+    try {
+      // Start run log
+      runId = await runLogger.startRunLog(trx, {
+        command_type: runLogger.CommandType.PRUNE,
+        connection_id: connectionId
+      });
+
+      await teardown(trx, context);
+
+      // Complete run log with success
+      await runLogger.completeRunLog(trx, runId, { is_successful: true });
+    } catch (error) {
+      // Complete run log with failure
+      if (runId) {
+        await runLogger.completeRunLog(trx, runId, {
+          is_successful: false,
+          error: error.message || error.toString()
+        });
+      }
+      throw error;
+    }
+  });
 }
