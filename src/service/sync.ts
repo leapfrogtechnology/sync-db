@@ -28,9 +28,10 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
   log(`Running setup.`);
 
   const filesToSync = context.params['sync-files'];
+  const isPartialSync = filesToSync && filesToSync.length > 0;
 
   // Determine which SQL files to sync
-  const sqlFilesToUse = filesToSync && filesToSync.length > 0 ? filesToSync : sql;
+  const sqlFilesToUse = isPartialSync ? filesToSync : sql;
   const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToUse);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
@@ -48,13 +49,18 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
   }
 
   // Modify SQL scripts to use CREATE OR REPLACE for idempotent operations
-  const modifiedSqlScripts = sqlScripts.map(script => ({
-    ...script,
-    sql: convertToCreateOrReplace(script.sql)
-  }));
+  let sqlScriptsToRun = sqlScripts;
+
+  if (isPartialSync) {
+    sqlScriptsToRun = sqlScripts.map(script => ({
+      ...script,
+      sql: convertToCreateOrReplace(script.sql)
+    }));
+  }
 
   // Run the synchronization scripts.
-  await sqlRunner.runSequentially(trx, modifiedSqlScripts, connectionId);
+  await sqlRunner.runSequentially(trx, sqlScriptsToRun, connectionId);
+
   if (postMigrationScripts.length > 0) {
     const postHookScripts = await sqlRunner.resolveFiles(sqlBasePath, postMigrationScripts);
 
