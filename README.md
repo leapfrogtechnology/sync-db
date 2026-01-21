@@ -207,15 +207,49 @@ USAGE
   $ sync-db synchronize
 
 OPTIONS
-  -c, --config=config         Custom configuration file.
-  -f, --force                 Force synchronization.
-  --connection-resolver=PATH  Path to the connection resolver.
-  --dry-run                   Dry run synchronization.
-  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
-  --skip-migration            Skip running migrations.
+  -c, --config=config           Custom configuration file.
+  -f, --force                   Force synchronization.
+  --connection-resolver=PATH    Path to the connection resolver.
+  --dry-run                     Dry run synchronization.
+  --only=CONNECTION_ID(s)       Filter provided connection(s). Comma separated ids eg: id1,id2
+  --skip-migration              Skip running migrations.
+  --sync-files=FILE_PATH(s)     Comma separated relative file paths to sync. When provided, skips teardown and only syncs specified files.
 ```
 
 _See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.2.0/src/commands/synchronize.ts)_
+
+### Partial Synchronization
+
+The `--sync-files` option enables partial synchronization, allowing you to sync only specific database objects without dropping and recreating everything. This is useful when you've only modified a few functions, views, or procedures.
+
+**Key behaviors when using `--sync-files`:**
+
+- **Skips teardown**: Database objects are not dropped before synchronization
+- **Selective sync**: Only the specified files are synchronized using `CREATE OR REPLACE`
+- **Faster execution**: Significantly faster as it avoids dropping and recreating all objects
+- **Relative paths**: File paths are relative to the `basePath` defined in your `sync-db.yml`
+
+**Example usage:**
+
+```bash
+# Sync only specific files (comma-separated)
+$ sync-db synchronize --sync-files=functions/dbo/fn_calculate.sql,views/dbo/vw_summary.sql
+
+# Combined with other options
+$ sync-db synchronize --sync-files=functions/dbo/fn_calculate.sql --only=dev-db --dry-run
+```
+
+**When to use partial sync:**
+
+- ✅ You've modified only a few functions, views, or procedures
+- ✅ You want faster iteration during development
+- ✅ The objects support `CREATE OR REPLACE` syntax
+
+**When to use full sync:**
+
+- ✅ You've made schema changes or added new objects
+- ✅ You need to ensure a clean state by dropping all objects
+- ✅ Running in production or for initial setup
 
 <!-- commandsstop -->
 
@@ -255,7 +289,11 @@ import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
       database: 'dbName'
     }
   });
-  const options = { force: false };
+  const options = {
+    force: false,
+    'skip-migration': false,
+    'sync-files': ['functions/dbo/fn_calculate.sql', 'views/dbo/vw_summary.sql'] // Optional: partial sync
+  };
 
   // Invoke the command.
   await synchronize(config, connection, options);
