@@ -176,7 +176,7 @@ describe('SERVICE: runLogger', () => {
       expect(whereColumn).to.equal('run_id');
       expect(whereValue).to.equal('test-run-id');
       expect(updatedData.is_successful).to.equal(true);
-      expect(JSON.stringify(updatedData.metadata)).to.equal(JSON.stringify({ files: 10 }));
+      expect(updatedData.metadata).to.equal(JSON.stringify({ files: 10 }));
     });
 
     it('should update log entry with error information', async () => {
@@ -200,6 +200,106 @@ describe('SERVICE: runLogger', () => {
 
       expect(updatedData.is_successful).to.equal(false);
       expect(updatedData.error).to.equal('Database connection failed');
+    });
+
+    it('should handle metadata serialization in complete log', async () => {
+      let updatedData: any;
+      const mockKnex = (() => ({
+        where: () => ({
+          update: async (data: any) => {
+            updatedData = data;
+          }
+        })
+      })) as any;
+
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
+      const metadata = { syncFiles: ['file1.sql', 'file2.sql'], count: 2 };
+
+      await runLogger.completeRunLog(mockConn, 'test-run-id', {
+        metadata,
+        is_successful: true
+      });
+
+      expect(updatedData.is_successful).to.equal(true);
+      expect(updatedData.metadata).to.equal(JSON.stringify(metadata));
+    });
+
+    it('should handle empty metadata in complete log', async () => {
+      let updatedData: any;
+      const mockKnex = (() => ({
+        where: () => ({
+          update: async (data: any) => {
+            updatedData = data;
+          }
+        })
+      })) as any;
+
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
+      await runLogger.completeRunLog(mockConn, 'test-run-id', {
+        is_successful: true
+      });
+
+      expect(updatedData.is_successful).to.equal(true);
+      expect(updatedData.metadata).to.equal('');
+    });
+  });
+
+  describe('startRunLog with metadata', () => {
+    it('should serialize metadata when starting run log', async () => {
+      let insertedData: any;
+      const mockKnex = ((tableName: string) => ({
+        insert: async (data: any) => {
+          insertedData = data;
+        }
+      })) as any;
+
+      mockKnex.schema = {
+        hasTable: async () => true
+      };
+
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
+      const metadata = { force: true, syncFiles: ['test.sql'] };
+
+      await runLogger.startRunLog(mockConn, {
+        metadata,
+        command_type: runLogger.CommandType.SYNCHRONIZE,
+        connection_id: 'test-db'
+      });
+
+      expect(insertedData.metadata).to.equal(JSON.stringify(metadata));
+    });
+
+    it('should handle empty metadata when starting run log', async () => {
+      let insertedData: any;
+      const mockKnex = ((tableName: string) => ({
+        insert: async (data: any) => {
+          insertedData = data;
+        }
+      })) as any;
+
+      mockKnex.schema = {
+        hasTable: async () => true
+      };
+
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
+      await runLogger.startRunLog(mockConn, {
+        command_type: runLogger.CommandType.PRUNE,
+        connection_id: 'test-db'
+      });
+
+      expect(insertedData.metadata).to.equal('');
     });
   });
 });
