@@ -96,12 +96,16 @@ describe('SERVICE: runLogger', () => {
         hasTable: async () => true
       };
 
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
       const entry = {
         command_type: runLogger.CommandType.SYNCHRONIZE,
         connection_id: 'test-db'
       };
 
-      const runId = await runLogger.startRunLog(mockKnex, entry);
+      const runId = await runLogger.startRunLog(mockConn, entry);
 
       expect(runId).to.be.a('string');
       expect(runId).to.have.lengthOf(32);
@@ -122,10 +126,14 @@ describe('SERVICE: runLogger', () => {
         hasTable: async () => true
       };
 
-      const runId1 = await runLogger.startRunLog(mockKnex, {
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
+      const runId1 = await runLogger.startRunLog(mockConn, {
         command_type: runLogger.CommandType.PRUNE
       });
-      const runId2 = await runLogger.startRunLog(mockKnex, {
+      const runId2 = await runLogger.startRunLog(mockConn, {
         command_type: runLogger.CommandType.PRUNE
       });
 
@@ -156,7 +164,11 @@ describe('SERVICE: runLogger', () => {
         };
       }) as any;
 
-      await runLogger.completeRunLog(mockKnex, 'test-run-id', {
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
+      await runLogger.completeRunLog(mockConn, 'test-run-id', {
         is_successful: true,
         metadata: { files: 10 }
       });
@@ -177,7 +189,11 @@ describe('SERVICE: runLogger', () => {
         })
       })) as any;
 
-      await runLogger.completeRunLog(mockKnex, 'error-run-id', {
+      const mockConn = {
+        connection: mockKnex
+      } as any;
+
+      await runLogger.completeRunLog(mockConn, 'error-run-id', {
         is_successful: false,
         error: 'Database connection failed'
       });

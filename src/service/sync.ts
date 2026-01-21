@@ -7,6 +7,7 @@ import { getSqlBasePath } from '../config';
 import { getElapsedTime } from '../util/ts';
 import { executeOperation } from './execution';
 import * as configInjection from './configInjection';
+import { convertToCreateOrReplace } from '../util/string';
 import SynchronizeContext from '../domain/SynchronizeContext';
 import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
@@ -26,7 +27,11 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
 
   log(`Running setup.`);
 
-  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sql);
+  const filesToSync = context.params['sync-files'];
+
+  // Determine which SQL files to sync
+  const sqlFilesToUse = filesToSync && filesToSync.length > 0 ? filesToSync : sql;
+  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToUse);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
   // Config Injection: Setup
@@ -42,9 +47,14 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
     log('PRE-SYNC: End');
   }
 
-  // Run the synchronization scripts.
-  await sqlRunner.runSequentially(trx, sqlScripts, connectionId);
+  // Modify SQL scripts to use CREATE OR REPLACE for idempotent operations
+  const modifiedSqlScripts = sqlScripts.map(script => ({
+    ...script,
+    sql: convertToCreateOrReplace(script.sql)
+  }));
 
+  // Run the synchronization scripts.
+  await sqlRunner.runSequentially(trx, modifiedSqlScripts, connectionId);
   if (postMigrationScripts.length > 0) {
     const postHookScripts = await sqlRunner.resolveFiles(sqlBasePath, postMigrationScripts);
 
@@ -100,6 +110,10 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
     const { timeStart } = options;
     const log = dbLogger(connectionId);
 
+    // Check if sync-files option is provided
+    const syncFiles = context.params['sync-files'];
+    const isPartialSync = syncFiles && syncFiles.length > 0;
+
     try {
       // Start run log
       runId = await runLogger.startRunLog(context.connection, {
@@ -107,20 +121,26 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
         connection_id: connectionId,
         metadata: {
           skipMigration: context.params['skip-migration'],
-          force: context.params.force
+          force: context.params.force,
+          syncFiles: isPartialSync ? syncFiles : undefined
         }
       });
 
-      await teardown(trx, context);
+      // Skip teardown if doing partial sync
+      if (!isPartialSync) {
+        await teardown(trx, context);
 
-      // Trigger onTeardownSuccess if bound.
-      if (context.params.onTeardownSuccess) {
-        await context.params.onTeardownSuccess({
-          connectionId,
-          data: null,
-          success: true,
-          timeElapsed: getElapsedTime(timeStart)
-        });
+        // Trigger onTeardownSuccess if bound.
+        if (context.params.onTeardownSuccess) {
+          await context.params.onTeardownSuccess({
+            connectionId,
+            data: null,
+            success: true,
+            timeElapsed: getElapsedTime(timeStart)
+          });
+        }
+      } else {
+        log(`Partial sync mode: skipping teardown for ${syncFiles.length} file(s).`);
       }
 
       if (context.params['skip-migration']) {
