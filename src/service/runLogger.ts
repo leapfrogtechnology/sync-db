@@ -81,12 +81,13 @@ export async function startRunLog(conn: ConnectionReference, entry: Partial<RunL
   await ensureRunLogsTable(knex);
 
   const runId = generateRunId();
+  const { metadata, ...restEntry } = entry;
   const logEntry = {
     run_id: runId,
     run_date: new Date(),
     is_successful: false,
-    metadata: entry.metadata ? JSON.stringify(entry.metadata) : '',
-    ...entry
+    ...restEntry,
+    metadata: metadata ? JSON.stringify(metadata) : ''
   };
 
   await knex(TABLE_NAME).insert(logEntry);
@@ -110,10 +111,14 @@ export async function completeRunLog(
   entry: Partial<RunLogEntry>
 ): Promise<void> {
   const knex = conn.connection;
+  const { metadata, ...restEntry } = entry;
 
   await knex(TABLE_NAME)
     .where('run_id', runId)
-    .update({ ...entry, metadata: entry.metadata ? JSON.stringify(entry.metadata) : '' });
+    .update({
+      ...restEntry,
+      metadata: metadata ? JSON.stringify(metadata) : ''
+    });
 
   log(`Run log completed: ${runId} - Success: ${entry.is_successful}`);
 }
