@@ -67,10 +67,12 @@ export async function synchronize(
         runSynchronize(trx, {
           config,
           params,
+          connection,
           connectionId: connection.id,
           migrateFunc: t =>
             invokeMigrationApi(t, KnexMigrationAPI.MIGRATE_LATEST, {
               config,
+              connection,
               connectionId: connection.id,
               knexMigrationConfig: knexMigrationConfig(connection.id),
               params: { ...invokeParams, onSuccess: params.onMigrationSuccess, onFailed: params.onMigrationFailed }
@@ -113,6 +115,7 @@ export async function prune(
         runPrune(trx, {
           config,
           params,
+          connection,
           connectionId: connection.id
         }),
       params['dry-run']
@@ -151,6 +154,7 @@ export async function migrateLatest(
         invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LATEST, {
           config,
           params,
+          connection,
           connectionId: connection.id,
           knexMigrationConfig: knexMigrationConfig(connection.id)
         }),
@@ -190,6 +194,7 @@ export async function migrateRollback(
         invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_ROLLBACK, {
           config,
           params,
+          connection,
           connectionId: connection.id,
           knexMigrationConfig: knexMigrationConfig(connection.id)
         }),
@@ -227,6 +232,7 @@ export async function migrateList(
       invokeMigrationApi(trx, KnexMigrationAPI.MIGRATE_LIST, {
         config,
         params,
+        connection,
         connectionId: connection.id,
         knexMigrationConfig: knexMigrationConfig(connection.id)
       })

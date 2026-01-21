@@ -60,7 +60,7 @@ export async function invokeMigrationApi(
 
       // Start run log based on migration API type
       const commandType = getCommandTypeFromMigrationAPI(funcName);
-      runId = await runLogger.startRunLog(trx, {
+      runId = await runLogger.startRunLog(context.connection, {
         command_type: commandType,
         connection_id: context.connectionId
       });
@@ -71,7 +71,7 @@ export async function invokeMigrationApi(
       dbLog('Result:\\n%O', data);
 
       // Complete run log with success
-      await runLogger.completeRunLog(trx, runId, {
+      await runLogger.completeRunLog(context.connection, runId, {
         is_successful: true,
         metadata: { result: data }
       });
@@ -80,7 +80,7 @@ export async function invokeMigrationApi(
     } catch (error) {
       // Complete run log with failure
       if (runId) {
-        await runLogger.completeRunLog(trx, runId, {
+        await runLogger.completeRunLog(context.connection, runId, {
           is_successful: false,
           error: error.message || error.toString()
         });

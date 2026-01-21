@@ -102,7 +102,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 
     try {
       // Start run log
-      runId = await runLogger.startRunLog(trx, {
+      runId = await runLogger.startRunLog(context.connection, {
         command_type: runLogger.CommandType.SYNCHRONIZE,
         connection_id: connectionId,
         metadata: {
@@ -133,14 +133,14 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
       await setup(trx, context);
 
       // Complete run log with success
-      await runLogger.completeRunLog(trx, runId, {
+      await runLogger.completeRunLog(context.connection, runId, {
         is_successful: true,
         metadata: { timeElapsed: getElapsedTime(timeStart) }
       });
     } catch (error) {
       // Complete run log with failure
       if (runId) {
-        await runLogger.completeRunLog(trx, runId, {
+        await runLogger.completeRunLog(context.connection, runId, {
           is_successful: false,
           error: error.message || error.toString()
         });
@@ -164,7 +164,7 @@ export async function runPrune(trx: Knex.Transaction, context: OperationContext)
   return executeOperation(context, async () => {
     try {
       // Start run log
-      runId = await runLogger.startRunLog(trx, {
+      runId = await runLogger.startRunLog(context.connection, {
         command_type: runLogger.CommandType.PRUNE,
         connection_id: connectionId
       });
@@ -172,11 +172,11 @@ export async function runPrune(trx: Knex.Transaction, context: OperationContext)
       await teardown(trx, context);
 
       // Complete run log with success
-      await runLogger.completeRunLog(trx, runId, { is_successful: true });
+      await runLogger.completeRunLog(context.connection, runId, { is_successful: true });
     } catch (error) {
       // Complete run log with failure
       if (runId) {
-        await runLogger.completeRunLog(trx, runId, {
+        await runLogger.completeRunLog(context.connection, runId, {
           is_successful: false,
           error: error.message || error.toString()
         });

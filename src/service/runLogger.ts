@@ -1,6 +1,7 @@
 import { Knex } from 'knex';
 import * as crypto from 'crypto';
 import { log } from '../util/logger';
+import ConnectionReference from '../domain/ConnectionReference';
 
 /**
  * Command types that can be logged.
@@ -71,18 +72,20 @@ export async function ensureRunLogsTable(knex: Knex): Promise<void> {
 /**
  * Start a run log entry.
  *
- * @param {Knex} knex
+ * @param {ConnectionReference} conn
  * @param {Partial<RunLogEntry>} entry
  * @returns {Promise<string>} runId
  */
-export async function startRunLog(knex: Knex, entry: Partial<RunLogEntry>): Promise<string> {
+export async function startRunLog(conn: ConnectionReference, entry: Partial<RunLogEntry>): Promise<string> {
+  const knex = conn.connection;
   await ensureRunLogsTable(knex);
 
   const runId = generateRunId();
-  const logEntry: Partial<RunLogEntry> = {
+  const logEntry = {
     run_id: runId,
     run_date: new Date(),
     is_successful: false,
+    metadata: entry.metadata ? JSON.stringify(entry.metadata) : '',
     ...entry
   };
 
@@ -96,13 +99,21 @@ export async function startRunLog(knex: Knex, entry: Partial<RunLogEntry>): Prom
 /**
  * Complete a run log entry with success status.
  *
- * @param {Knex} knex
+ * @param {ConnectionReference} conn
  * @param {string} runId
  * @param {Partial<RunLogEntry>} entry
  * @returns {Promise<void>}
  */
-export async function completeRunLog(knex: Knex, runId: string, entry: Partial<RunLogEntry>): Promise<void> {
-  await knex(TABLE_NAME).where('run_id', runId).update(entry);
+export async function completeRunLog(
+  conn: ConnectionReference,
+  runId: string,
+  entry: Partial<RunLogEntry>
+): Promise<void> {
+  const knex = conn.connection;
+
+  await knex(TABLE_NAME)
+    .where('run_id', runId)
+    .update({ ...entry, metadata: entry.metadata ? JSON.stringify(entry.metadata) : '' });
 
   log(`Run log completed: ${runId} - Success: ${entry.is_successful}`);
 }
