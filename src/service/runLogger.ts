@@ -113,7 +113,7 @@ export async function completeRunLog(
 
   await knex(TABLE_NAME)
     .where('run_id', runId)
-    .update({ ...entry, metadata: entry.metadata ? JSON.stringify(entry.metadata) : '' });
+    .update({ ...entry, ...(entry.metadata ? { metadata: JSON.stringify(entry.metadata) } : {}) });
 
   log(`Run log completed: ${runId} - Success: ${entry.is_successful}`);
 }
