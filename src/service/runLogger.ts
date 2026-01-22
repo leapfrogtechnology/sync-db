@@ -85,7 +85,7 @@ export async function startRunLog(conn: ConnectionReference, entry: Partial<RunL
     run_id: runId,
     run_date: new Date(),
     is_successful: false,
-    metadata: entry.metadata ? JSON.stringify(entry.metadata) : '',
+    metadata: entry.metadata ? JSON.stringify(entry.metadata) : null,
     ...entry
   };
 
