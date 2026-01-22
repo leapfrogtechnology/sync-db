@@ -127,6 +127,7 @@ export async function completeRunLog(
  */
 export async function checkIfSynchronizeRunExists(conn: ConnectionReference, connectionId: string): Promise<boolean> {
   const knex = conn.connection;
+  await ensureRunLogsTable(knex);
 
   const result = await knex(TABLE_NAME)
     .where({ connection_id: connectionId, command_type: CommandType.SYNCHRONIZE })
