@@ -168,8 +168,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 
       // Complete run log with success
       await runLogger.completeRunLog(context.connection, runId, {
-        is_successful: true,
-        metadata: { timeElapsed: getElapsedTime(timeStart) }
+        is_successful: true
       });
     } catch (error) {
       // Complete run log with failure
