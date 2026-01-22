@@ -31,32 +31,37 @@ export function interpolate(template: string, params: any = {}): string {
 }
 
 /**
- * Converts CREATE statements to CREATE OR REPLACE for supported object types.
+ * Converts CREATE statements to CREATE OR REPLACE/ALTER for supported object types.
  * Supports: VIEW, FUNCTION, PROCEDURE
+ * - PostgreSQL/MySQL/Oracle: Uses CREATE OR REPLACE
+ * - MSSQL: Uses CREATE OR ALTER (SQL Server 2016+)
  *
  * @param {string} sql - The SQL content to modify
+ * @param {string} [dbClient] - Database client type ('pg', 'mssql', 'mysql', 'oracledb')
  * @returns {string} - Modified SQL with CREATE OR REPLACE/ALTER syntax
  */
-export function convertToCreateOrReplace(sql: string): string {
+export function convertToCreateOrReplace(sql: string, dbClient?: string): string {
   if (!sql || typeof sql !== 'string') {
     return sql;
   }
 
-  // Pattern to match CREATE [object_type] with optional OR REPLACE
-  // Handles: CREATE VIEW, CREATE FUNCTION, CREATE PROCEDURE, CREATE SCHEMA
+  // Determine if we should use ALTER (MSSQL) or REPLACE (others)
+  const isMssql = dbClient === 'mssql' || dbClient === 'tedious';
+  const keyword = isMssql ? 'ALTER' : 'REPLACE';
+
+  // Pattern to match CREATE [object_type] with optional OR REPLACE/ALTER
+  // Handles: CREATE VIEW, CREATE FUNCTION, CREATE PROCEDURE
   // Case insensitive and handles whitespace variations
+  const createPattern = /\bCREATE(\s+OR\s+(REPLACE|ALTER))?\s+(VIEW|FUNCTION|PROCEDURE)\b/gi;
 
-  // For PostgreSQL and most databases: CREATE OR REPLACE works for VIEW, FUNCTION, PROCEDURE
-  const createOrReplacePattern = /\bCREATE(\s+OR\s+REPLACE)?\s+(VIEW|FUNCTION|PROCEDURE)\b/gi;
-
-  const modifiedSql = sql.replace(createOrReplacePattern, (match, orReplace, objectType) => {
-    // If OR REPLACE already exists, keep it as is
-    if (orReplace) {
+  const modifiedSql = sql.replace(createPattern, (match, orClause, replaceOrAlter, objectType) => {
+    // If OR REPLACE or OR ALTER already exists, keep it as is
+    if (orClause) {
       return match;
     }
 
-    // Add OR REPLACE
-    return `CREATE OR REPLACE ${objectType.toUpperCase()}`;
+    // Use CREATE OR ALTER for MSSQL, CREATE OR REPLACE for others
+    return `CREATE OR ${keyword} ${objectType.toUpperCase()}`;
   });
 
   return modifiedSql;

@@ -53,9 +53,10 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext, shouldR
   let sqlScriptsToRun = sqlScripts;
 
   if (shouldRunPartialSync) {
+    const dbClient = trx.client.config.client;
     sqlScriptsToRun = sqlScripts.map(script => ({
       ...script,
-      sql: convertToCreateOrReplace(script.sql)
+      sql: convertToCreateOrReplace(script.sql, dbClient)
     }));
   }
 
