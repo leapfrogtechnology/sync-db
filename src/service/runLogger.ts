@@ -117,3 +117,21 @@ export async function completeRunLog(
 
   log(`Run log completed: ${runId} - Success: ${entry.is_successful}`);
 }
+
+/**
+ * Check if a synchronize run exists for a given connection ID.
+ *
+ * @param {ConnectionReference} conn
+ * @param {string} connectionId
+ * @returns {Promise<boolean>}
+ */
+export async function checkIfSynchronizeRunExists(conn: ConnectionReference, connectionId: string): Promise<boolean> {
+  const knex = conn.connection;
+
+  const result = await knex(TABLE_NAME)
+    .where({ connection_id: connectionId, command_type: CommandType.SYNCHRONIZE })
+    .orderBy('run_date', 'desc')
+    .first();
+
+  return !!result;
+}
