@@ -72,8 +72,7 @@ export async function invokeMigrationApi(
 
       // Complete run log with success
       await runLogger.completeRunLog(context.connection, runId, {
-        is_successful: true,
-        metadata: { result: data, command_type: commandType, connection_id: context.connectionId }
+        is_successful: true
       });
 
       return data;
