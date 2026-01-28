@@ -20,7 +20,12 @@ import { checkIfSynchronizeRunExists } from './runLogger';
  * @param {SynchronizeContext} context
  * @returns {Promise<void>}
  */
-async function setup(trx: Knex.Transaction, context: SynchronizeContext, shouldRunPartialSync: boolean): Promise<void> {
+async function setup(
+  trx: Knex.Transaction,
+  context: SynchronizeContext,
+  shouldRunPartialSync: boolean,
+  filteredSql: string[]
+): Promise<void> {
   const { connectionId } = context;
   const { hooks, sql } = context.config;
   const sqlBasePath = getSqlBasePath(context.config);
@@ -28,11 +33,14 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext, shouldR
 
   log(`Running setup.`);
 
-  const filesToSync = context.params['sync-files'];
-  const isPartialSync = filesToSync && filesToSync.length > 0;
+  if (shouldRunPartialSync && filteredSql.length == 0) {
+    log('No SQL files to synchronize in partial sync after filtering. Skipping setup.');
+
+    return;
+  }
 
   // Determine which SQL files to sync
-  const sqlFilesToUse = shouldRunPartialSync && isPartialSync ? filesToSync : sql;
+  const sqlFilesToUse = shouldRunPartialSync ? filteredSql : sql;
   const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToUse);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
@@ -120,8 +128,13 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 
     // Check if sync-files option is provided
     const syncFiles = context.params['sync-files'];
-    const isPartialSync = syncFiles && syncFiles.length > 0;
     const hasAtLeastASyncRun = await checkIfSynchronizeRunExists(context.connection, connectionId);
+
+    const availableSql = context.config.sql;
+
+    // Filter sync files to only include those that are available in the config and exclude any '.drop' files
+    const filteredSql = (syncFiles || []).filter(file => availableSql.includes(file) && !file.includes('.drop'));
+    const isPartialSync = filteredSql.length > 0;
 
     // Determine if we should run partial sync:
     // - Only run partial sync if there's a previous sync AND sync-files is provided
@@ -136,13 +149,13 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
         metadata: {
           skipMigration: context.params['skip-migration'],
           force: context.params.force,
-          syncFiles: shouldRunPartialSync ? syncFiles : undefined
+          syncFiles: shouldRunPartialSync ? filteredSql : undefined
         }
       });
 
       // Skip teardown only if doing partial sync
       if (shouldRunPartialSync) {
-        log(`Partial sync mode: skipping teardown for ${syncFiles?.length} file(s).`);
+        log(`Partial sync mode: skipping teardown for ${filteredSql?.length} file(s).`);
       } else {
         await teardown(trx, context);
 
@@ -164,7 +177,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
         await migrateFunc(trx);
       }
 
-      await setup(trx, context, !!shouldRunPartialSync);
+      await setup(trx, context, !!shouldRunPartialSync, filteredSql);
 
       // Complete run log with success
       await runLogger.completeRunLog(context.connection, runId, {
