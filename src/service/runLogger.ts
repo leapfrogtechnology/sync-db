@@ -130,7 +130,7 @@ export async function checkIfSynchronizeRunExists(conn: ConnectionReference, con
   await ensureRunLogsTable(knex);
 
   const result = await knex(TABLE_NAME)
-    .where({ connection_id: connectionId, command_type: CommandType.SYNCHRONIZE })
+    .where({ connection_id: connectionId, command_type: CommandType.SYNCHRONIZE, is_successful: true })
     .orderBy('run_date', 'desc')
     .first();
 
