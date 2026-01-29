@@ -154,7 +154,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
       });
 
       // Skip teardown only if doing partial sync
-      if (shouldRunPartialSync) {
+      if (hasAtLeastASyncRun || shouldRunPartialSync) {
         log(`Partial sync mode: skipping teardown for ${filteredSql?.length} file(s).`);
       } else {
         await teardown(trx, context);
@@ -177,7 +177,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
         await migrateFunc(trx);
       }
 
-      await setup(trx, context, !!shouldRunPartialSync, filteredSql);
+      await setup(trx, context, !!hasAtLeastASyncRun, filteredSql);
 
       // Complete run log with success
       await runLogger.completeRunLog(context.connection, runId, {
