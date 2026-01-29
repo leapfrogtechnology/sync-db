@@ -155,7 +155,11 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 
       // Skip teardown only if doing partial sync
       if (hasAtLeastASyncRun || shouldRunPartialSync) {
-        log(`Partial sync mode: skipping teardown for ${filteredSql?.length} file(s).`);
+        if (filteredSql?.length) {
+          log(`Partial sync mode: skipping teardown for ${filteredSql?.length} file(s).`);
+        } else {
+          log('Skipping teardown as at least one previous synchronize run exists.');
+        }
       } else {
         await teardown(trx, context);
 
