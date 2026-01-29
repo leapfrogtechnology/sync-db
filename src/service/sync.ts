@@ -18,12 +18,7 @@ import OperationContext from '../domain/operation/OperationContext';
  * @param {SynchronizeContext} context
  * @returns {Promise<void>}
  */
-async function setup(
-  trx: Knex.Transaction,
-  context: SynchronizeContext,
-  shouldRunPartialSync: boolean,
-  filteredSql: string[]
-): Promise<void> {
+async function setup(trx: Knex.Transaction, context: SynchronizeContext, filteredSql: string[]): Promise<void> {
   const { connectionId } = context;
   const { hooks, sql } = context.config;
   const sqlBasePath = getSqlBasePath(context.config);
@@ -31,14 +26,14 @@ async function setup(
 
   log(`Running setup.`);
 
-  if (shouldRunPartialSync && filteredSql.length === 0) {
+  if (filteredSql.length === 0) {
     log('No SQL files to synchronize in partial sync after filtering. Skipping setup.');
 
     return;
   }
 
   // Determine which SQL files to sync
-  const sqlFilesToUse = shouldRunPartialSync ? filteredSql : sql;
+  const sqlFilesToUse = filteredSql.length > 0 ? filteredSql : sql;
   const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToUse);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
@@ -58,7 +53,7 @@ async function setup(
   // Modify SQL scripts to use CREATE OR REPLACE for idempotent operations
   let sqlScriptsToRun = sqlScripts;
 
-  if (shouldRunPartialSync) {
+  if (filteredSql.length > 0) {
     const dbClient = trx.client.config.client;
     sqlScriptsToRun = sqlScripts.map(script => ({
       ...script,
@@ -155,7 +150,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
       await migrateFunc(trx);
     }
 
-    await setup(trx, context, !!isPartialSync, filteredSql);
+    await setup(trx, context, filteredSql);
   });
 }
 
