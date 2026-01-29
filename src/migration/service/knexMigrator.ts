@@ -58,7 +58,7 @@ export async function invokeMigrationApi(
     const data = await func(trx, context.knexMigrationConfig);
 
     dbLog(`END: ${funcName}`);
-    dbLog('Result:\\n%O', data);
+    dbLog('Result:\n%O', data);
 
     return data;
   });

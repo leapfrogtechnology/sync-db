@@ -31,7 +31,7 @@ async function setup(
 
   log(`Running setup.`);
 
-  if (shouldRunPartialSync && filteredSql.length == 0) {
+  if (shouldRunPartialSync && filteredSql.length === 0) {
     log('No SQL files to synchronize in partial sync after filtering. Skipping setup.');
 
     return;
