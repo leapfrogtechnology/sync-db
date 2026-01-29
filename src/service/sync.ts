@@ -1,7 +1,6 @@
 import { Knex } from 'knex';
 
 import * as sqlRunner from './sqlRunner';
-import * as runLogger from './runLogger';
 import { dbLogger } from '../util/logger';
 import { getSqlBasePath } from '../config';
 import { getElapsedTime } from '../util/ts';
@@ -11,7 +10,6 @@ import { convertToCreateOrReplace } from '../util/string';
 import SynchronizeContext from '../domain/SynchronizeContext';
 import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
-import { checkIfSynchronizeRunExists } from './runLogger';
 
 /**
  * Migrate SQL on a database.
@@ -119,7 +117,6 @@ async function teardown(trx: Knex.Transaction, context: OperationContext): Promi
  */
 export async function runSynchronize(trx: Knex.Transaction, context: SynchronizeContext): Promise<OperationResult> {
   const { connectionId } = context;
-  let runId: string | undefined;
 
   return executeOperation(context, async options => {
     const { migrateFunc } = context;
@@ -128,75 +125,37 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 
     // Check if sync-files option is provided
     const syncFiles = context.params['sync-files'];
-    const hasAtLeastASyncRun = await checkIfSynchronizeRunExists(context.connection, connectionId);
-
     const availableSql = context.config.sql;
 
     // Filter sync files to only include those that are available in the config and exclude any '.drop' files
     const filteredSql = (syncFiles || []).filter(file => availableSql.includes(file) && !file.includes('.drop'));
     const isPartialSync = filteredSql.length > 0;
 
-    // Determine if we should run partial sync:
-    // - Only run partial sync if there's a previous sync AND sync-files is provided
-    // - If no previous sync exists, always run full sync (with teardown)
-    const shouldRunPartialSync = hasAtLeastASyncRun && isPartialSync;
+    // Skip teardown only if doing partial sync
+    if (isPartialSync) {
+      log(`Partial sync mode: skipping teardown for ${filteredSql?.length} file(s).`);
+    } else {
+      await teardown(trx, context);
 
-    try {
-      // Start run log
-      runId = await runLogger.startRunLog(context.connection, {
-        command_type: runLogger.CommandType.SYNCHRONIZE,
-        connection_id: connectionId,
-        metadata: {
-          skipMigration: context.params['skip-migration'],
-          force: context.params.force,
-          syncFiles: shouldRunPartialSync ? filteredSql : undefined
-        }
-      });
-
-      // Skip teardown only if doing partial sync
-      if (hasAtLeastASyncRun || shouldRunPartialSync) {
-        if (filteredSql?.length) {
-          log(`Partial sync mode: skipping teardown for ${filteredSql?.length} file(s).`);
-        } else {
-          log('Skipping teardown as at least one previous synchronize run exists.');
-        }
-      } else {
-        await teardown(trx, context);
-
-        // Trigger onTeardownSuccess if bound.
-        if (context.params.onTeardownSuccess) {
-          await context.params.onTeardownSuccess({
-            connectionId,
-            data: null,
-            success: true,
-            timeElapsed: getElapsedTime(timeStart)
-          });
-        }
-      }
-
-      if (context.params['skip-migration']) {
-        log('Skipped migrations.');
-      } else {
-        log('Running migrations.');
-        await migrateFunc(trx);
-      }
-
-      await setup(trx, context, !!hasAtLeastASyncRun, filteredSql);
-
-      // Complete run log with success
-      await runLogger.completeRunLog(context.connection, runId, {
-        is_successful: true
-      });
-    } catch (error) {
-      // Complete run log with failure
-      if (runId) {
-        await runLogger.completeRunLog(context.connection, runId, {
-          is_successful: false,
-          error: error.message || error.toString()
+      // Trigger onTeardownSuccess if bound.
+      if (context.params.onTeardownSuccess) {
+        await context.params.onTeardownSuccess({
+          connectionId,
+          data: null,
+          success: true,
+          timeElapsed: getElapsedTime(timeStart)
         });
       }
-      throw error;
     }
+
+    if (context.params['skip-migration']) {
+      log('Skipped migrations.');
+    } else {
+      log('Running migrations.');
+      await migrateFunc(trx);
+    }
+
+    await setup(trx, context, !!isPartialSync, filteredSql);
   });
 }
 
@@ -208,30 +167,5 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
  * @returns {Promise<OperationResult>}
  */
 export async function runPrune(trx: Knex.Transaction, context: OperationContext): Promise<OperationResult> {
-  const { connectionId } = context;
-  let runId: string | undefined;
-
-  return executeOperation(context, async () => {
-    try {
-      // Start run log
-      runId = await runLogger.startRunLog(context.connection, {
-        command_type: runLogger.CommandType.PRUNE,
-        connection_id: connectionId
-      });
-
-      await teardown(trx, context);
-
-      // Complete run log with success
-      await runLogger.completeRunLog(context.connection, runId, { is_successful: true });
-    } catch (error) {
-      // Complete run log with failure
-      if (runId) {
-        await runLogger.completeRunLog(context.connection, runId, {
-          is_successful: false,
-          error: error.message || error.toString()
-        });
-      }
-      throw error;
-    }
-  });
+  return executeOperation(context, () => teardown(trx, context));
 }
