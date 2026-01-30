@@ -16,6 +16,8 @@ import OperationContext from '../domain/operation/OperationContext';
  *
  * @param {Knex.Transaction} trx
  * @param {SynchronizeContext} context
+ * @param {boolean} isPartialSync
+ * @param {string[]} filteredSql
  * @returns {Promise<void>}
  */
 async function setup(
