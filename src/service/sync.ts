@@ -6,7 +6,6 @@ import { getSqlBasePath } from '../config';
 import { getElapsedTime } from '../util/ts';
 import { executeOperation } from './execution';
 import * as configInjection from './configInjection';
-import { convertToCreateOrReplace } from '../util/string';
 import SynchronizeContext from '../domain/SynchronizeContext';
 import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
@@ -57,19 +56,8 @@ async function setup(
     log('PRE-SYNC: End');
   }
 
-  // Modify SQL scripts to use CREATE OR REPLACE for idempotent operations
-  let sqlScriptsToRun = sqlScripts;
-
-  if (isPartialSync && filteredSql.length > 0) {
-    const dbClient = trx.client.config.client;
-    sqlScriptsToRun = sqlScripts.map(script => ({
-      ...script,
-      sql: convertToCreateOrReplace(script.sql, dbClient)
-    }));
-  }
-
   // Run the synchronization scripts.
-  await sqlRunner.runSequentially(trx, sqlScriptsToRun, connectionId);
+  await sqlRunner.runSequentially(trx, sqlScripts, connectionId);
 
   if (postMigrationScripts.length > 0) {
     const postHookScripts = await sqlRunner.resolveFiles(sqlBasePath, postMigrationScripts);
@@ -130,12 +118,12 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
     const availableSql = context.config.sql;
 
     // Filter sync files to only include those that are available in the config and exclude any '.drop' files
-    const filteredSql = (syncFiles || []).filter(file => availableSql.includes(file) && !file.includes('.drop'));
+    const filesToSync = (syncFiles || []).filter(file => availableSql.includes(file) && !file.includes('.drop'));
     const isPartialSync = context.params.hasOwnProperty('sync-files');
 
     // Skip teardown only if doing partial sync
     if (isPartialSync) {
-      log(`Partial sync mode: skipping teardown for ${filteredSql?.length} file(s).`);
+      log(`Partial sync mode: skipping teardown for ${filesToSync?.length} file(s).`);
     } else {
       await teardown(trx, context);
 
@@ -157,7 +145,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
       await migrateFunc(trx);
     }
 
-    await setup(trx, context, isPartialSync, filteredSql);
+    await setup(trx, context, isPartialSync, filesToSync);
   });
 }
 
