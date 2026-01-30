@@ -11,7 +11,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const filesToSync = syncFiles.filter(file => availableSql.includes(file) && !file.includes('.drop'));
 
-      void expect(filesToSync).to.deep.equal(['function/schema/test_func.sql']);
+      expect(filesToSync).to.deep.equal(['function/schema/test_func.sql']);
     });
 
     it('should exclude .drop files from sync-files list', () => {
@@ -24,7 +24,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const filesToSync = syncFiles.filter(file => availableSql.includes(file) && !file.includes('.drop'));
 
-      void expect(filesToSync).to.deep.equal(['function/schema/test_func.sql']);
+      expect(filesToSync).to.deep.equal(['function/schema/test_func.sql']);
     });
 
     it('should handle multiple valid files in sync-files', () => {
@@ -33,7 +33,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const filesToSync = syncFiles.filter(file => availableSql.includes(file) && !file.includes('.drop'));
 
-      void expect(filesToSync).to.deep.equal(syncFiles);
+      expect(filesToSync).to.deep.equal(syncFiles);
     });
 
     it('should return empty array when sync-files is empty', () => {
@@ -42,7 +42,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const filesToSync = syncFiles.filter(file => availableSql.includes(file) && !file.includes('.drop'));
 
-      void expect(filesToSync).to.be.an('array').that.is.empty;
+      expect(filesToSync).to.deep.equal([]);
     });
 
     it('should return empty array when no files match available config', () => {
@@ -51,7 +51,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const filesToSync = syncFiles.filter(file => availableSql.includes(file) && !file.includes('.drop'));
 
-      void expect(filesToSync).to.be.an('array').that.is.empty;
+      expect(filesToSync).to.deep.equal([]);
     });
   });
 
@@ -65,7 +65,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const isPartialSync = params.hasOwnProperty('sync-files');
 
-      void expect(isPartialSync).to.be.true;
+      expect(isPartialSync).to.equal(true);
     });
 
     it('should not detect partial sync when sync-files property does not exist', () => {
@@ -76,7 +76,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const isPartialSync = params.hasOwnProperty('sync-files');
 
-      void expect(isPartialSync).to.be.false;
+      expect(isPartialSync).to.equal(false);
     });
 
     it('should detect partial sync even when sync-files is empty array', () => {
@@ -88,7 +88,7 @@ describe('SERVICE: sync - sync-files logic', () => {
 
       const isPartialSync = params.hasOwnProperty('sync-files');
 
-      void expect(isPartialSync).to.be.true;
+      expect(isPartialSync).to.equal(true);
     });
   });
 });
