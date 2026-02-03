@@ -23,7 +23,7 @@ async function setup(
   trx: Knex.Transaction,
   context: SynchronizeContext,
   isPartialSync: boolean,
-  filteredSql: string[]
+  filesToSync: string[]
 ): Promise<void> {
   const { connectionId } = context;
   const { hooks, sql } = context.config;
@@ -32,15 +32,13 @@ async function setup(
 
   log(`Running setup.`);
 
-  if (isPartialSync && filteredSql.length === 0) {
-    log('No SQL files to synchronize in partial sync after filtering. Skipping setup.');
-
-    return;
+  if (isPartialSync && filesToSync.length === 0) {
+    log('No SQL files to synchronize using partial sync.');
   }
 
   // Determine which SQL files to sync
-  const sqlFilesToUse = isPartialSync && filteredSql.length > 0 ? filteredSql : sql;
-  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToUse);
+  const sqlFilesToSync = isPartialSync && filesToSync.length > 0 ? filesToSync : sql;
+  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
   // Config Injection: Setup
