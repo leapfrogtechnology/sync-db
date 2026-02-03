@@ -14,14 +14,14 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [22, 24]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'yarn'
@@ -47,12 +47,12 @@ jobs:
         run: yarn test:coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
-          fail_ci_if_error: true 
+          fail_ci_if_error: true
           directory: ./coverage
           files: ./lcov.info
-          token: ${{ secrets.CODECOV_TOKEN }} 
+          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
   publish:
@@ -83,9 +83,9 @@ jobs:
           gem install github_changelog_generator
 
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'yarn'
 
       - name: Install node dependencies
