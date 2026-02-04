@@ -37,7 +37,7 @@ async function setup(
   }
 
   // Determine which SQL files to sync
-  const sqlFilesToSync = isPartialSync && filesToSync.length > 0 ? filesToSync : sql;
+  const sqlFilesToSync = isPartialSync ? filesToSync : sql;
   const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
