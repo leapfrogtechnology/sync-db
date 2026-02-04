@@ -116,7 +116,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
     const availableSql = context.config.sql;
 
     // Filter sync files to only include those that are available in the config and exclude any '.drop' files
-    const filesToSync = (syncFiles || []).filter(file => availableSql.includes(file) && !file.includes('.drop'));
+    const filesToSync = (syncFiles || []).filter(file => availableSql.includes(file) && !file.endsWith('.drop'));
     const isPartialSync = context.params.hasOwnProperty('sync-files');
 
     // Skip teardown only if doing partial sync
