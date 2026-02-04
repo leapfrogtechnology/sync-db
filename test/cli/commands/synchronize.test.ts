@@ -14,5 +14,11 @@ describe('CLI: synchronize', () => {
       expect(stdout).contains('Synchronize');
       expect(stdout).contains(`USAGE\n  $ sync-db synchronize`);
     });
+
+    it('should include --sync-files option in help message.', async () => {
+      const { stdout } = await runCli(['synchronize', '--help'], { cwd });
+
+      expect(stdout).contains('--sync-files');
+    });
   });
 });

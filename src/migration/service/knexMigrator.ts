@@ -51,7 +51,6 @@ export async function invokeMigrationApi(
 ): Promise<OperationResult> {
   return executeOperation(context, async () => {
     const func = migrationApiMap[funcName];
-
     const dbLog = dbLogger(context.connectionId);
 
     dbLog(`BEGIN: ${funcName}`);

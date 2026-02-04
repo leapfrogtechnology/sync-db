@@ -44,7 +44,7 @@ $ npm install -g @leapfrogtechnology/sync-db
 $ sync-db COMMAND
 running command...
 $ sync-db (-v|--version|version)
-@leapfrogtechnology/sync-db/2.2.0 linux-x64 node-v20.17.0
+@leapfrogtechnology/sync-db/2.2.0 darwin-arm64 node-v22.17.0
 $ sync-db --help [COMMAND]
 USAGE
   $ sync-db COMMAND
@@ -213,6 +213,9 @@ OPTIONS
   --dry-run                   Dry run synchronization.
   --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
   --skip-migration            Skip running migrations.
+
+  --sync-files=FILE_PATH(s)   Comma separated relative file paths to sync. When provided, skips teardown and only syncs
+                              specified files.
 ```
 
 _See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.2.0/src/commands/synchronize.ts)_
@@ -255,7 +258,11 @@ import { synchronize, loadConfig } from '@leapfrogtechnology/sync-db';
       database: 'dbName'
     }
   });
-  const options = { force: false };
+  const options = {
+    force: false,
+    'skip-migration': false,
+    'sync-files': ['functions/dbo/fn_calculate.sql', 'views/dbo/vw_summary.sql'] // Optional: partial sync
+  };
 
   // Invoke the command.
   await synchronize(config, connection, options);

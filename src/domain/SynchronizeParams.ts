@@ -7,6 +7,7 @@ import OperationResult from './operation/OperationResult';
 interface SynchronizeParams extends OperationParams {
   force: boolean;
   'skip-migration': boolean;
+  'sync-files'?: string[];
   onTeardownSuccess?: (result: OperationResult) => Promise<any>;
   onMigrationSuccess?: (result: OperationResult) => Promise<any>;
   onMigrationFailed?: (result: OperationResult) => Promise<any>;

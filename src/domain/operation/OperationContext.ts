@@ -2,8 +2,8 @@ import Configuration from '../Configuration';
 import OperationParams from './OperationParams';
 
 interface OperationContext {
-  config: Configuration;
   connectionId: string;
+  config: Configuration;
   params: OperationParams;
 }
 

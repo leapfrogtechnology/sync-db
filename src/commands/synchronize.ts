@@ -18,6 +18,11 @@ class Synchronize extends Command {
     force: flags.boolean({ char: 'f', description: 'Force synchronization.' }),
     'dry-run': flags.boolean({ description: 'Dry run synchronization.', default: false }),
     'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
+    'sync-files': flags.string({
+      helpValue: 'FILE_PATH(s)',
+      description:
+        'Comma separated relative file paths to sync. When provided, skips teardown and only syncs specified files.'
+    }),
     only: flags.string({
       helpValue: 'CONNECTION_ID(s)',
       description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
@@ -143,8 +148,17 @@ class Synchronize extends Command {
 
       await printLine('Synchronizing...\n');
 
+      // Parse sync-files if provided
+      const syncFiles = parsedFlags['sync-files']
+        ? parsedFlags['sync-files']
+            .split(',')
+            .map(f => f.trim())
+            .filter(f => f.length > 0)
+        : undefined;
+
       const results = await synchronize(config, connections, {
         ...parsedFlags,
+        'sync-files': syncFiles,
         onStarted: this.onStarted,
         onTeardownSuccess: this.onPruneSuccess,
         onSuccess: this.onSuccess,

@@ -2,22 +2,29 @@ import { Knex } from 'knex';
 
 import * as sqlRunner from './sqlRunner';
 import { dbLogger } from '../util/logger';
+import { getSqlBasePath } from '../config';
 import { getElapsedTime } from '../util/ts';
-import SynchronizeContext from '../domain/SynchronizeContext';
+import { executeOperation } from './execution';
 import * as configInjection from './configInjection';
+import SynchronizeContext from '../domain/SynchronizeContext';
 import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
-import { executeOperation } from './execution';
-import { getSqlBasePath } from '../config';
 
 /**
  * Migrate SQL on a database.
  *
  * @param {Knex.Transaction} trx
  * @param {SynchronizeContext} context
+ * @param {boolean} isPartialSync
+ * @param {string[]} filesToSync
  * @returns {Promise<void>}
  */
-async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
+async function setup(
+  trx: Knex.Transaction,
+  context: SynchronizeContext,
+  isPartialSync: boolean,
+  filesToSync: string[]
+): Promise<void> {
   const { connectionId } = context;
   const { hooks, sql } = context.config;
   const sqlBasePath = getSqlBasePath(context.config);
@@ -25,7 +32,13 @@ async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promis
 
   log(`Running setup.`);
 
-  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sql);
+  if (isPartialSync && filesToSync.length === 0) {
+    log('No SQL files to synchronize using partial sync.');
+  }
+
+  // Determine which SQL files to sync
+  const sqlFilesToSync = isPartialSync ? filesToSync : sql;
+  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
   // Config Injection: Setup
@@ -91,21 +104,36 @@ async function teardown(trx: Knex.Transaction, context: OperationContext): Promi
  * @returns {Promise<OperationResult>}
  */
 export async function runSynchronize(trx: Knex.Transaction, context: SynchronizeContext): Promise<OperationResult> {
+  const { connectionId } = context;
+
   return executeOperation(context, async options => {
-    const { connectionId, migrateFunc } = context;
+    const { migrateFunc } = context;
     const { timeStart } = options;
     const log = dbLogger(connectionId);
 
-    await teardown(trx, context);
+    // Check if sync-files option is provided
+    const syncFiles = context.params['sync-files'];
+    const availableSql = context.config.sql;
 
-    // Trigger onTeardownSuccess if bound.
-    if (context.params.onTeardownSuccess) {
-      await context.params.onTeardownSuccess({
-        connectionId,
-        data: null,
-        success: true,
-        timeElapsed: getElapsedTime(timeStart)
-      });
+    // Filter sync files to only include those that are available in the config and exclude any '.drop' files
+    const filesToSync = (syncFiles || []).filter(file => availableSql.includes(file) && !file.endsWith('.drop'));
+    const isPartialSync = 'sync-files' in context.params && context.params['sync-files'] !== undefined;
+
+    // Skip teardown only if doing partial sync
+    if (isPartialSync) {
+      log(`Partial sync mode: skipping teardown for ${filesToSync?.length} file(s).`);
+    } else {
+      await teardown(trx, context);
+
+      // Trigger onTeardownSuccess if bound.
+      if (context.params.onTeardownSuccess) {
+        await context.params.onTeardownSuccess({
+          connectionId,
+          data: null,
+          success: true,
+          timeElapsed: getElapsedTime(timeStart)
+        });
+      }
     }
 
     if (context.params['skip-migration']) {
@@ -115,7 +143,7 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
       await migrateFunc(trx);
     }
 
-    await setup(trx, context);
+    await setup(trx, context, isPartialSync, filesToSync);
   });
 }
 
