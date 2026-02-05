@@ -1,5 +1,39 @@
 # Changelog
 
+## [v2.3.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.3.0) (2026-02-05)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.2.0-dynamic-sync-files...v2.3.0)
+
+**Changes**
+
+- fix: bump version to 2.3.0 [\#267](https://github.com/leapfrogtechnology/sync-db/pull/267) ([mesaugat](https://github.com/mesaugat))
+- feat: add --sync-files flag while synchronzing [\#261](https://github.com/leapfrogtechnology/sync-db/pull/261) ([samirsilwal](https://github.com/samirsilwal))
+
+## [v2.2.0-dynamic-sync-files](https://github.com/leapfrogtechnology/sync-db/tree/v2.2.0-dynamic-sync-files) (2026-01-27)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.2.0...v2.2.0-dynamic-sync-files)
+
+**Changes**
+
+- chore\(deps\): bump form-data from 4.0.0 to 4.0.4 in /examples/node-app-mssql-ts [\#258](https://github.com/leapfrogtechnology/sync-db/pull/258) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump brace-expansion from 1.1.11 to 1.1.12 in /examples/node-app-mssql [\#257](https://github.com/leapfrogtechnology/sync-db/pull/257) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump form-data from 4.0.0 to 4.0.4 in /examples/node-mssql-programmatic-use [\#256](https://github.com/leapfrogtechnology/sync-db/pull/256) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump brace-expansion from 1.1.11 to 1.1.12 in /examples/node-app-pg [\#255](https://github.com/leapfrogtechnology/sync-db/pull/255) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump tar-fs from 2.1.3 to 2.1.4 [\#254](https://github.com/leapfrogtechnology/sync-db/pull/254) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump brace-expansion from 1.1.11 to 1.1.12 in /examples/node-app-mssql-ts [\#253](https://github.com/leapfrogtechnology/sync-db/pull/253) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump brace-expansion from 1.1.11 to 1.1.12 in /examples/node-app-pg-ts [\#252](https://github.com/leapfrogtechnology/sync-db/pull/252) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump form-data from 4.0.0 to 4.0.4 in /examples/node-app-mssql [\#251](https://github.com/leapfrogtechnology/sync-db/pull/251) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump tar-fs from 2.1.2 to 2.1.3 [\#250](https://github.com/leapfrogtechnology/sync-db/pull/250) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump micromatch from 4.0.2 to 4.0.8 in /examples/node-app-mssql [\#249](https://github.com/leapfrogtechnology/sync-db/pull/249) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump micromatch from 4.0.2 to 4.0.8 in /examples/node-mssql-programmatic-use [\#248](https://github.com/leapfrogtechnology/sync-db/pull/248) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump tar-fs from 2.1.1 to 2.1.2 [\#247](https://github.com/leapfrogtechnology/sync-db/pull/247) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump cross-spawn from 6.0.5 to 6.0.6 in /examples/node-app-pg-ts [\#246](https://github.com/leapfrogtechnology/sync-db/pull/246) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump micromatch from 4.0.2 to 4.0.8 in /examples/node-app-pg-ts [\#245](https://github.com/leapfrogtechnology/sync-db/pull/245) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump cross-spawn from 6.0.5 to 6.0.6 in /examples/node-app-mssql [\#244](https://github.com/leapfrogtechnology/sync-db/pull/244) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump braces from 3.0.2 to 3.0.3 in /examples/node-mssql-programmatic-use [\#241](https://github.com/leapfrogtechnology/sync-db/pull/241) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump braces from 3.0.2 to 3.0.3 in /examples/node-app-mssql-ts [\#240](https://github.com/leapfrogtechnology/sync-db/pull/240) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump micromatch from 4.0.2 to 4.0.8 in /examples/node-app-mssql-ts [\#239](https://github.com/leapfrogtechnology/sync-db/pull/239) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.2.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.2.0) (2024-10-16)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.1.1...v2.2.0)
