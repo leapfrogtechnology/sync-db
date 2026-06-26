@@ -1,5 +1,15 @@
 # Changelog
 
+## [v2.3.1](https://github.com/leapfrogtechnology/sync-db/tree/v2.3.1) (2026-06-26)
+
+[Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.3.0...v2.3.1)
+
+**Changes**
+
+- Consider the order of the object to be synced in incremental sync [\#285](https://github.com/leapfrogtechnology/sync-db/pull/285) ([samirsilwal](https://github.com/samirsilwal))
+- chore\(deps\): bump lodash from 4.17.21 to 4.18.1 [\#276](https://github.com/leapfrogtechnology/sync-db/pull/276) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore\(deps\): bump picomatch from 2.2.2 to 2.3.2 [\#272](https://github.com/leapfrogtechnology/sync-db/pull/272) ([dependabot[bot]](https://github.com/apps/dependabot))
+
 ## [v2.3.0](https://github.com/leapfrogtechnology/sync-db/tree/v2.3.0) (2026-02-05)
 
 [Full Changelog](https://github.com/leapfrogtechnology/sync-db/compare/v2.2.0-dynamic-sync-files...v2.3.0)
