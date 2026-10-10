@@ -2,8 +2,6 @@
   "name": "node-mssql-programmatic-use",
   "description": "Sample project using Programmatic API.",
   "scripts": {
-    "lint": "eslint src/index.js",
-    "lint:fix": "eslint --fix src/index.js",
     "synchronize": "../../bin/run-dev.sh synchronize",
     "clean": "../../bin/run-dev.sh prune",
     "migrate:list": "../../bin/run-dev.sh migrate-list",
@@ -17,9 +15,5 @@
     "knex": "^3.3.0",
     "tedious": "^18.2.1"
   },
-  "license": "MIT",
-  "devDependencies": {
-    "eslint": "^6.2.2",
-    "eslint-config-leapfrog": "^2.0.1"
-  }
+  "license": "MIT"
 }
