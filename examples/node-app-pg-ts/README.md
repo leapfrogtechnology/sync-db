@@ -30,6 +30,14 @@ $ docker-compose up -d db
 $ docker-compose up app
 ```
 
+## Programmatic usage
+
+`sync-db` can also be used from code instead of the CLI. See [src/sync-db.ts](src/sync-db.ts), which loads `sync-db.yml` and the connections and runs `synchronize`:
+
+```bash
+$ yarn synchronize:programmatic
+```
+
 ## Output
 
 ```bash
