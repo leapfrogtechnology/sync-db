@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command';
+import { Command, Flags } from '@oclif/core';
 import { bold, cyan, red, green, magenta } from 'chalk';
 
 import { synchronize } from '../api';
@@ -15,23 +15,23 @@ class Synchronize extends Command {
    * Available CLI flags.
    */
   static flags = {
-    force: flags.boolean({ char: 'f', description: 'Force synchronization.' }),
-    'dry-run': flags.boolean({ description: 'Dry run synchronization.', default: false }),
-    'skip-migration': flags.boolean({ description: 'Skip running migrations.' }),
-    'sync-files': flags.string({
+    force: Flags.boolean({ char: 'f', description: 'Force synchronization.' }),
+    'dry-run': Flags.boolean({ description: 'Dry run synchronization.', default: false }),
+    'skip-migration': Flags.boolean({ description: 'Skip running migrations.' }),
+    'sync-files': Flags.string({
       helpValue: 'FILE_PATH(s)',
       description:
         'Comma separated relative file paths to sync. When provided, skips teardown and only syncs specified files.'
     }),
-    only: flags.string({
+    only: Flags.string({
       helpValue: 'CONNECTION_ID(s)',
       description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
     }),
-    'connection-resolver': flags.string({
+    'connection-resolver': Flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
     }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
     })
@@ -136,7 +136,7 @@ class Synchronize extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(Synchronize);
+    const { flags: parsedFlags } = await this.parse(Synchronize);
     const isDryRun = parsedFlags['dry-run'];
 
     try {

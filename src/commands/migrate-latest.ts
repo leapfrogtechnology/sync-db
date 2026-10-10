@@ -1,4 +1,4 @@
-import { Command, flags } from '@oclif/command';
+import { Command, Flags } from '@oclif/core';
 import { bold, red, cyan, magenta } from 'chalk';
 
 import { migrateLatest } from '../api';
@@ -11,16 +11,16 @@ class MigrateLatest extends Command {
   static description = 'Run the migrations up to the latest changes.';
 
   static flags = {
-    'dry-run': flags.boolean({ description: 'Dry run migration.', default: false }),
-    only: flags.string({
+    'dry-run': Flags.boolean({ description: 'Dry run migration.', default: false }),
+    only: Flags.string({
       helpValue: 'CONNECTION_ID(s)',
       description: 'Filter provided connection(s). Comma separated ids eg: id1,id2'
     }),
-    'connection-resolver': flags.string({
+    'connection-resolver': Flags.string({
       helpValue: 'PATH',
       description: 'Path to the connection resolver.'
     }),
-    config: flags.string({
+    config: Flags.string({
       char: 'c',
       description: 'Custom configuration file.'
     })
@@ -74,7 +74,7 @@ class MigrateLatest extends Command {
    * @returns {Promise<void>}
    */
   async run(): Promise<void> {
-    const { flags: parsedFlags } = this.parse(MigrateLatest);
+    const { flags: parsedFlags } = await this.parse(MigrateLatest);
     const isDryRun = parsedFlags['dry-run'];
     const config = await loadConfig(parsedFlags.config);
 

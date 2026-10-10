@@ -43,8 +43,8 @@ You can use `sync-db` both as a CLI utility and programmatically.
 $ npm install -g @leapfrogtechnology/sync-db
 $ sync-db COMMAND
 running command...
-$ sync-db (-v|--version|version)
-@leapfrogtechnology/sync-db/2.3.1 linux-x64 node-v22.23.0
+$ sync-db (--version|-v)
+@leapfrogtechnology/sync-db/2.3.1 darwin-arm64 node-v22.23.3
 $ sync-db --help [COMMAND]
 USAGE
   $ sync-db COMMAND
@@ -61,7 +61,6 @@ The CLI exposes a single command `sync-db` that runs synchronize operation based
 
 <!-- commands -->
 
-- [`sync-db`](#sync-db-)
 - [`sync-db help [COMMAND]`](#sync-db-help-command)
 - [`sync-db make NAME`](#sync-db-make-name)
 - [`sync-db make-publish`](#sync-db-make-publish)
@@ -70,32 +69,27 @@ The CLI exposes a single command `sync-db` that runs synchronize operation based
 - [`sync-db migrate-rollback`](#sync-db-migrate-rollback)
 - [`sync-db prune`](#sync-db-prune)
 - [`sync-db synchronize`](#sync-db-synchronize)
-
-## `sync-db`
-
-```
-USAGE
-  $ sync-db
-```
-
-_See code: [src/commands/index.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/index.ts)_
+- [`sync-db version`](#sync-db-version)
 
 ## `sync-db help [COMMAND]`
 
-display help for sync-db
+Display help for sync-db.
 
 ```
 USAGE
-  $ sync-db help [COMMAND]
+  $ sync-db help [COMMAND...] [-n]
 
 ARGUMENTS
-  COMMAND  command to show help for
+  [COMMAND...]  Command to show help for.
 
-OPTIONS
-  --all  see all commands in CLI
+FLAGS
+  -n, --nested-commands  Include all nested commands in the output.
+
+DESCRIPTION
+  Display help for sync-db.
 ```
 
-_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.2.2/src/commands/help.ts)_
+_See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/7.0.4/src/commands/help.ts)_
 
 ## `sync-db make NAME`
 
@@ -103,16 +97,19 @@ Make migration files from the template.
 
 ```
 USAGE
-  $ sync-db make NAME
+  $ sync-db make NAME [--object-name <value>] [--create] [-c <value>] [-t TYPE]
 
 ARGUMENTS
   NAME  Object or filename to generate.
 
-OPTIONS
-  -c, --config=config        Custom configuration file.
+FLAGS
+  -c, --config=<value>       Custom configuration file.
   -t, --type=TYPE            [default: migration] Type of file to generate.
-  --create                   Generate create table stub.
-  --object-name=object-name  Name of table/view/routine to migrate.
+      --create               Generate create table stub.
+      --object-name=<value>  Name of table/view/routine to migrate.
+
+DESCRIPTION
+  Make migration files from the template.
 ```
 
 _See code: [src/commands/make.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/make.ts)_
@@ -123,10 +120,13 @@ Publish migration templates files.
 
 ```
 USAGE
-  $ sync-db make-publish
+  $ sync-db make-publish [-c <value>]
 
-OPTIONS
-  -c, --config=config  Custom configuration file.
+FLAGS
+  -c, --config=<value>  Custom configuration file.
+
+DESCRIPTION
+  Publish migration templates files.
 ```
 
 _See code: [src/commands/make-publish.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/make-publish.ts)_
@@ -137,13 +137,16 @@ Run the migrations up to the latest changes.
 
 ```
 USAGE
-  $ sync-db migrate-latest
+  $ sync-db migrate-latest [--dry-run] [--only CONNECTION_ID(s)] [--connection-resolver PATH] [-c <value>]
 
-OPTIONS
-  -c, --config=config         Custom configuration file.
-  --connection-resolver=PATH  Path to the connection resolver.
-  --dry-run                   Dry run migration.
-  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+FLAGS
+  -c, --config=<value>            Custom configuration file.
+      --connection-resolver=PATH  Path to the connection resolver.
+      --dry-run                   Dry run migration.
+      --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+
+DESCRIPTION
+  Run the migrations up to the latest changes.
 ```
 
 _See code: [src/commands/migrate-latest.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/migrate-latest.ts)_
@@ -154,12 +157,15 @@ List all the migrations.
 
 ```
 USAGE
-  $ sync-db migrate-list
+  $ sync-db migrate-list [--only CONNECTION_ID(s)] [--connection-resolver PATH] [-c <value>]
 
-OPTIONS
-  -c, --config=config         Custom configuration file.
-  --connection-resolver=PATH  Path to the connection resolver.
-  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+FLAGS
+  -c, --config=<value>            Custom configuration file.
+      --connection-resolver=PATH  Path to the connection resolver.
+      --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+
+DESCRIPTION
+  List all the migrations.
 ```
 
 _See code: [src/commands/migrate-list.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/migrate-list.ts)_
@@ -170,13 +176,16 @@ Rollback migrations up to the last run batch.
 
 ```
 USAGE
-  $ sync-db migrate-rollback
+  $ sync-db migrate-rollback [--dry-run] [--only CONNECTION_ID(s)] [--connection-resolver PATH] [-c <value>]
 
-OPTIONS
-  -c, --config=config         Custom configuration file.
-  --connection-resolver=PATH  Path to the connection resolver.
-  --dry-run                   Dry run rollback.
-  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+FLAGS
+  -c, --config=<value>            Custom configuration file.
+      --connection-resolver=PATH  Path to the connection resolver.
+      --dry-run                   Dry run rollback.
+      --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+
+DESCRIPTION
+  Rollback migrations up to the last run batch.
 ```
 
 _See code: [src/commands/migrate-rollback.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/migrate-rollback.ts)_
@@ -187,13 +196,16 @@ Drop all the synchronized db objects except the ones created via migrations.
 
 ```
 USAGE
-  $ sync-db prune
+  $ sync-db prune [--dry-run] [--only CONNECTION_ID(s)] [--connection-resolver PATH] [-c <value>]
 
-OPTIONS
-  -c, --config=config         Custom configuration file.
-  --connection-resolver=PATH  Path to the connection resolver.
-  --dry-run                   Dry run prune.
-  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+FLAGS
+  -c, --config=<value>            Custom configuration file.
+      --connection-resolver=PATH  Path to the connection resolver.
+      --dry-run                   Dry run prune.
+      --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+
+DESCRIPTION
+  Drop all the synchronized db objects except the ones created via migrations.
 ```
 
 _See code: [src/commands/prune.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/prune.ts)_
@@ -204,21 +216,44 @@ Synchronize all the configured database connections.
 
 ```
 USAGE
-  $ sync-db synchronize
+  $ sync-db synchronize [-f] [--dry-run] [--skip-migration] [--sync-files FILE_PATH(s)] [--only CONNECTION_ID(s)]
+    [--connection-resolver PATH] [-c <value>]
 
-OPTIONS
-  -c, --config=config         Custom configuration file.
-  -f, --force                 Force synchronization.
-  --connection-resolver=PATH  Path to the connection resolver.
-  --dry-run                   Dry run synchronization.
-  --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
-  --skip-migration            Skip running migrations.
+FLAGS
+  -c, --config=<value>            Custom configuration file.
+  -f, --force                     Force synchronization.
+      --connection-resolver=PATH  Path to the connection resolver.
+      --dry-run                   Dry run synchronization.
+      --only=CONNECTION_ID(s)     Filter provided connection(s). Comma separated ids eg: id1,id2
+      --skip-migration            Skip running migrations.
+      --sync-files=FILE_PATH(s)   Comma separated relative file paths to sync. When provided, skips teardown and only
+                                  syncs specified files.
 
-  --sync-files=FILE_PATH(s)   Comma separated relative file paths to sync. When provided, skips teardown and only syncs
-                              specified files.
+DESCRIPTION
+  Synchronize all the configured database connections.
 ```
 
 _See code: [src/commands/synchronize.ts](https://github.com/leapfrogtechnology/sync-db/blob/v2.3.1/src/commands/synchronize.ts)_
+
+## `sync-db version`
+
+```
+USAGE
+  $ sync-db version [--json] [--verbose]
+
+FLAGS
+  --verbose  Show additional information about the CLI.
+
+GLOBAL FLAGS
+  --json  Format output as json.
+
+FLAG DESCRIPTIONS
+  --verbose  Show additional information about the CLI.
+
+    Additionally shows the architecture, node version, operating system, and versions of plugins that the CLI is using.
+```
+
+_See code: [@oclif/plugin-version](https://github.com/oclif/plugin-version/blob/3.0.4/src/commands/version.ts)_
 
 <!-- commandsstop -->
 
