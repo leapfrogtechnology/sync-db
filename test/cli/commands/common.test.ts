@@ -27,4 +27,23 @@ describe('CLI:', () => {
       expect(stdout).contains(version);
     });
   });
+
+  for (const alias of ['-v', 'version']) {
+    describe(alias, () => {
+      it('should return the CLI version.', async () => {
+        const { stdout } = await runCli([alias], { cwd });
+
+        expect(stdout).contains('@leapfrogtechnology/sync-db');
+        expect(stdout).contains(version);
+      });
+    });
+  }
+
+  describe('-h', () => {
+    it('should display the usage information.', async () => {
+      const { stdout } = await runCli(['-h'], { cwd });
+
+      expect(stdout).contains('USAGE\n  $ sync-db [COMMAND]');
+    });
+  });
 });

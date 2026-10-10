@@ -1,4 +1,4 @@
-import * as debug from 'debug';
+import debug from 'debug';
 
 export const SYNC_DB = 'sync-db';
 export const log = debug(SYNC_DB);
