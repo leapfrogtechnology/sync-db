@@ -333,6 +333,7 @@ sql:
 - **`migration`** `(array)` - Migrations specific configurations.
 
   - **`sourceType`** `(string)` - Type of migration file. Value `defaults` to sql. - **example**: javascript, typescript.
+    - TypeScript migrations are compiled on the fly with `ts-node`. With TypeScript 6+ your project needs a `tsconfig.json` (e.g. `module: nodenext`, an explicit `rootDir`) - see the [TypeScript samples](#examples).
   - **`tableName`** `(string)` - Custom name for table to store migrations meta data.
 
 - **`connectionResolver`** (`string`) - Connection resolver file name optional if connections are resolved using `connections.sync-db.json`.
