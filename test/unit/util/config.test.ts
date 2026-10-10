@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { expect } from 'chai';
-import * as yaml from 'yamljs';
+import * as yaml from 'yaml';
 import { it, describe } from 'mocha';
 
 import { mkdtemp, write } from '../../../src/util/fs';
@@ -143,6 +143,50 @@ describe('CONFIG:', () => {
       process.chdir(cwd);
       const config1 = await loadConfig('sync-db-test.yml');
       expect(config1.migration.sourceType).to.equal('typescript');
+    });
+
+    it('should parse yaml comments and quoted values.', async () => {
+      const cwd = await mkdtemp();
+
+      await write(
+        path.join(cwd, 'sync-db.yml'),
+        [
+          '# A comment',
+          'basePath: src # trailing comment',
+          'migration:',
+          "  directory: 'migration'",
+          '  sourceType: javascript'
+        ].join('\n')
+      );
+      process.chdir(cwd);
+
+      const config = await loadConfig();
+
+      expect(config.migration.directory).to.equal('migration');
+      expect(config.migration.sourceType).to.equal('javascript');
+      expect(config.basePath).to.equal(path.join(process.cwd(), 'src'));
+    });
+
+    it('should not fail on duplicate keys and use the last value.', async () => {
+      const cwd = await mkdtemp();
+
+      await write(
+        path.join(cwd, 'sync-db.yml'),
+        ['migration:', '  directory: first', '  directory: second', '  sourceType: javascript'].join('\n')
+      );
+      process.chdir(cwd);
+
+      const config = await loadConfig();
+
+      expect(config.migration.directory).to.equal('second');
+    });
+
+    it('should reject if the config file does not exist.', async () => {
+      const cwd = await mkdtemp();
+
+      process.chdir(cwd);
+
+      await expect(loadConfig()).to.be.rejectedWith('ENOENT');
     });
 
     it('should load the config file only if it matches the naming convention.', async () => {

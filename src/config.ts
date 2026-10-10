@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 import * as path from 'path';
-import * as yaml from 'yamljs';
+import * as yaml from 'yaml';
 import { mergeDeepRight } from 'ramda';
 
 import * as fs from './util/fs';
@@ -55,7 +55,7 @@ export async function loadConfig(configFilename: string = CONFIG_FILENAME): Prom
   }
 
   const filepath = isAbsolutePath ? configFilename : path.join(process.cwd(), configFilename);
-  const loadedConfig = (await yaml.load(filepath)) as Configuration;
+  const loadedConfig = yaml.parse(await fs.read(filepath), { uniqueKeys: false }) as Configuration;
 
   log('Resolved config file.');
 
