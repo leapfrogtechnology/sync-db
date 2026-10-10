@@ -1,8 +1,9 @@
 {
-  "name": "app-pg",
+  "name": "node-app-pg-ts",
   "description": "Sample project using sync-db",
   "scripts": {
     "synchronize": "../../bin/run-dev.sh synchronize",
+    "synchronize:programmatic": "ts-node src/sync-db.ts",
     "clean": "../../bin/run-dev.sh prune",
     "migrate:list": "../../bin/run-dev.sh migrate-list",
     "migrate": "../../bin/run-dev.sh migrate-latest",
@@ -17,5 +18,8 @@
     "pg": "^8.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22"
   }
 }

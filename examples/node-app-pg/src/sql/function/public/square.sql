@@ -1,8 +1,0 @@
---
--- Calculate square of a number.
---
-CREATE FUNCTION public.square(INTEGER) RETURNS INTEGER
-  AS 'SELECT $1 * $1;'
-  LANGUAGE SQL
-  IMMUTABLE
-  RETURNS NULL ON NULL INPUT;
