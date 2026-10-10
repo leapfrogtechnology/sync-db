@@ -1,9 +1,20 @@
 import 'mocha';
 import { expect } from 'chai';
+import { Client, knex, Knex } from 'knex';
 
-import { withTransaction } from '../../../src/util/db';
+import { isKnexInstance, withTransaction } from '../../../src/util/db';
 import { timeout } from '../../../src/util/promise';
 import ConnectionReference from '../../../src/domain/ConnectionReference';
+
+/**
+ * A knex client that needs no database driver, so a real knex instance
+ * can be constructed (without connecting) in tests.
+ */
+class FakeClient extends Client {
+  _driver() {
+    return {};
+  }
+}
 
 /**
  * Creates a fake connection whose `transaction()` yields a fake transaction
@@ -34,6 +45,20 @@ function createFakeConnection(calls: string[], rollbackDelay: number = 20) {
 }
 
 describe('UTIL: db', () => {
+  describe('isKnexInstance', () => {
+    it('should return true for a knex instance.', async () => {
+      const db = knex({ client: FakeClient, connection: { host: 'localhost', database: 'test' } } as Knex.Config);
+
+      expect(isKnexInstance(db)).to.equal(true);
+
+      await db.destroy();
+    });
+
+    it('should return false for a plain connection config object.', () => {
+      expect(isKnexInstance({ host: 'localhost', database: 'test' })).to.equal(false);
+    });
+  });
+
   describe('withTransaction', () => {
     it('should await the rollback to complete before resolving in dry-run mode', async () => {
       const calls: string[] = [];

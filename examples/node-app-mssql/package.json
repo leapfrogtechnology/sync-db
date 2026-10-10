@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@leapfrogtechnology/sync-db": "^2.0.0",
-    "knex": "^2.4.2",
-    "tedious": "^16.0.0"
+    "knex": "^3.3.0",
+    "tedious": "^18.2.1"
   },
   "license": "MIT",
   "devDependencies": {
