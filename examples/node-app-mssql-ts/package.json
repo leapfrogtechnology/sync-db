@@ -1,8 +1,9 @@
 {
-  "name": "node-app-mssql",
+  "name": "node-app-mssql-ts",
   "description": "Sample project using sync-db",
   "scripts": {
     "synchronize": "../../bin/run-dev.sh synchronize",
+    "synchronize:programmatic": "ts-node src/sync-db.ts",
     "clean": "../../bin/run-dev.sh prune",
     "migrate:list": "../../bin/run-dev.sh migrate-list",
     "start": "node src/index.js",
@@ -16,5 +17,8 @@
     "ts-node": "^10.9.2",
     "typescript": "^6.0.3"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^22"
+  }
 }

@@ -333,7 +333,7 @@ sql:
 - **`migration`** `(array)` - Migrations specific configurations.
 
   - **`sourceType`** `(string)` - Type of migration file. Value `defaults` to sql. - **example**: javascript, typescript.
-    - TypeScript migrations are compiled on the fly with `ts-node`. With TypeScript 6+ your project needs a `tsconfig.json` (e.g. `module: nodenext`, an explicit `rootDir`) - see the [TypeScript samples](#examples).
+    - TypeScript migrations are compiled on the fly with `ts-node`. With TypeScript 6+ your project needs a `tsconfig.json` (e.g. `module: nodenext`, an explicit `rootDir`) - see the [TypeScript samples](#examples), which include a working `tsconfig.json`.
   - **`tableName`** `(string)` - Custom name for table to store migrations meta data.
 
 - **`connectionResolver`** (`string`) - Connection resolver file name optional if connections are resolved using `connections.sync-db.json`.
@@ -381,11 +381,8 @@ await db.transaction(async trx => {
 
 ## Examples
 
-1. [Node MSSQL JavaScript Sample](examples/node-app-mssql)
-2. [Node MSSQL TypeScript Sample](examples/node-app-mssql-ts)
-3. [Node MSSQL Programmatic Usage Sample](examples/node-mssql-programmatic-use)
-4. [Node PostgreSQL JavaScript Sample](examples/node-app-pg)
-5. [Node PostgreSQL TypeScript Sample](examples/node-app-pg-ts)
+1. [Node MSSQL TypeScript Sample](examples/node-app-mssql-ts) - includes [programmatic usage](examples/node-app-mssql-ts/src/sync-db.ts)
+2. [Node PostgreSQL TypeScript Sample](examples/node-app-pg-ts) - includes [programmatic usage](examples/node-app-pg-ts/src/sync-db.ts)
 
 ## Changelog
 
