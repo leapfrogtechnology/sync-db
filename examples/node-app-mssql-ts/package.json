@@ -1,10 +1,9 @@
 {
-  "name": "node-app-mssql",
+  "name": "node-app-mssql-ts",
   "description": "Sample project using sync-db",
   "scripts": {
-    "lint": "eslint src/index.js",
-    "lint:fix": "eslint --fix src/index.js",
     "synchronize": "../../bin/run-dev.sh synchronize",
+    "synchronize:programmatic": "ts-node src/sync-db.ts",
     "clean": "../../bin/run-dev.sh prune",
     "migrate:list": "../../bin/run-dev.sh migrate-list",
     "start": "node src/index.js",
@@ -15,12 +14,11 @@
     "@leapfrogtechnology/sync-db": "^2.0.0",
     "knex": "^3.3.0",
     "tedious": "^18.2.1",
-    "ts-node": "^9.1.1",
-    "typescript": "^5.0.4"
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
   },
   "license": "MIT",
   "devDependencies": {
-    "eslint": "^6.2.2",
-    "eslint-config-leapfrog": "^2.0.1"
+    "@types/node": "^22"
   }
 }
