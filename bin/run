@@ -3,4 +3,8 @@
 // Set CLI environment as true.
 process.env.SYNC_DB_CLI = 'true';
 
-require('../lib/commands').run().then(require('@oclif/command/flush')).catch(require('@oclif/errors/handle'));
+void (async () => {
+  const oclif = await import('@oclif/core');
+
+  await oclif.execute({ dir: __dirname });
+})();
