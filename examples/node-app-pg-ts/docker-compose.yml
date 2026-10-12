@@ -9,8 +9,16 @@ services:
       POSTGRES_DB: 'testdb'
       POSTGRES_USER: 'test'
       POSTGRES_PASSWORD: 'secret'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U test -d testdb']
+      interval: 2s
+      timeout: 3s
+      retries: 30
   app:
     container_name: 'example-app'
     build: .
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       DEBUG: 'sync-db*'
