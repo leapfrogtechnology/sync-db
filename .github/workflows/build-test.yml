@@ -1,0 +1,120 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22, 24, 26]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Set Ribby as git user
+        run: |
+          git config user.name "Ribby"
+          git config user.email "bot@lftechnology.com"
+
+      - name: Check format
+        run: yarn format:check
+
+      - name: Lint code
+        run: yarn lint
+
+      - name: Build project
+        run: yarn build
+
+      - name: Test coverage
+        run: yarn test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v7
+        with:
+          fail_ci_if_error: true
+          directory: ./coverage
+          files: ./lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+
+  examples:
+    name: Example ${{ matrix.example }} (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24, 26]
+        example:
+          - node-app-pg-ts
+          - node-app-mssql-ts
+        include:
+          - example: node-app-pg-ts
+            service: db
+          - example: node-app-mssql-ts
+            service: mssql
+
+    defaults:
+      run:
+        working-directory: examples/${{ matrix.example }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
+
+      # Build and pack sync-db from this checkout so the example runs against
+      # the unreleased code instead of the version published on npm.
+      - name: Pack sync-db from source
+        working-directory: .
+        run: |
+          yarn --frozen-lockfile
+          yarn pack --filename "$RUNNER_TEMP/sync-db.tgz"
+
+      - name: Install example dependencies
+        run: |
+          yarn --frozen-lockfile
+          yarn add "$RUNNER_TEMP/sync-db.tgz" --no-lockfile
+
+      - name: Start database
+        run: docker compose up -d --wait ${{ matrix.service }}
+
+      - name: Configure connection
+        run: |
+          sed 's/"host": "${{ matrix.service }}"/"host": "localhost"/' connections.sync-db.json.example > connections.sync-db.json
+
+      - name: Synchronize (CLI)
+        run: yarn sync-db synchronize
+
+      - name: Synchronize (programmatic)
+        run: yarn synchronize:programmatic
+
+      - name: Run app
+        run: yarn start
+
+      - name: Stop database
+        if: always()
+        run: docker compose down

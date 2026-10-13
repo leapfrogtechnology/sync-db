@@ -1,7 +1,7 @@
 version: '3.3'
 services:
   db:
-    image: 'postgres:13-alpine'
+    image: 'postgres:18-alpine'
     container_name: 'example-pg'
     ports:
       - '5432:5432'
@@ -9,8 +9,16 @@ services:
       POSTGRES_DB: 'testdb'
       POSTGRES_USER: 'test'
       POSTGRES_PASSWORD: 'secret'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U test -d testdb']
+      interval: 2s
+      timeout: 3s
+      retries: 30
   app:
     container_name: 'example-app'
     build: .
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       DEBUG: 'sync-db*'

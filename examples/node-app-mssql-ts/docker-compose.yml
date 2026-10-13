@@ -3,15 +3,24 @@ version: '3.3'
 services:
   mssql:
     container_name: 'example-mssql'
-    image: 'mcr.microsoft.com/mssql/server:2017-GA-ubuntu'
+    image: 'mcr.microsoft.com/mssql/server:2022-latest'
     ports:
       - '1433:1433'
     environment:
       ACCEPT_EULA: 'Y'
-      SA_PASSWORD: 'Secret@123'
+      MSSQL_SA_PASSWORD: 'Secret@123'
+    healthcheck:
+      test: ['CMD', 'bash', '-c', 'exec 3<>/dev/tcp/localhost/1433']
+      interval: 3s
+      timeout: 3s
+      retries: 40
+      start_period: 10s
 
   app:
     container_name: 'example-app'
     environment:
       DEBUG: 'sync-db*'
     build: .
+    depends_on:
+      mssql:
+        condition: service_healthy
