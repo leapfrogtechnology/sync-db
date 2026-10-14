@@ -124,7 +124,7 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   const [type, schema] = fileParts;
 
   // Remove .sql and .drop (if exists) from the file name.
-  const santizeFileNameRegex = /(.sql)|(.drop)/g;
+  const santizeFileNameRegex = /(\.sql)|(\.drop)/g;
   const name = fileName.replace(santizeFileNameRegex, '');
   const fqon = getFQON(type, name, schema);
 
@@ -205,9 +205,9 @@ export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], conn
   const log = dbLogger(connectionId);
   const dropStatements = reverse(files).map(info => getDropStatement(info.type, info.fqon));
 
-  for (const batch of toBatches(dropStatements, DROP_BATCH_SIZE)) {
-    log(`Rolling back ${batch.split(';\n').length} object(s).`);
+  log(`Rolling back ${dropStatements.length} object(s).`);
 
+  for (const batch of toBatches(dropStatements, DROP_BATCH_SIZE)) {
     await trx.raw(batch);
 
     log('Executed: ', batch);

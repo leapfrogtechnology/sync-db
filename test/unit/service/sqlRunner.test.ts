@@ -70,6 +70,13 @@ describe('SERVICE: sqlRunner', () => {
     });
   });
 
+  describe('extractSqlFileInfo() name sanitization', () => {
+    it('should only strip the literal .sql / .drop extensions.', () => {
+      expect(sqlRunner.extractSqlFileInfo('view/dbo/mysql_view.sql').name).to.equal('mysql_view');
+      expect(sqlRunner.extractSqlFileInfo('view/dbo/vw_dropdown.sql.drop').name).to.equal('vw_dropdown');
+    });
+  });
+
   describe('toBatches()', () => {
     it('should join statements into ordered batches of the given size.', () => {
       expect(sqlRunner.toBatches(['a', 'b', 'c', 'd', 'e'], 2)).to.deep.equal(['a;\nb', 'c;\nd', 'e']);
