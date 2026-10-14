@@ -7,7 +7,29 @@
         "host": "mssql",
         "port": 1433,
         "user": "sa",
-        "database": "tempdb",
+        "database": "db1",
+        "password": "Secret@123"
+      }
+    },
+    {
+      "id": "db2",
+      "client": "mssql",
+      "connection": {
+        "host": "mssql",
+        "port": 1433,
+        "user": "sa",
+        "database": "db2",
+        "password": "Secret@123"
+      }
+    },
+    {
+      "id": "db3",
+      "client": "mssql",
+      "connection": {
+        "host": "mssql",
+        "port": 1433,
+        "user": "sa",
+        "database": "db3",
         "password": "Secret@123"
       }
     }

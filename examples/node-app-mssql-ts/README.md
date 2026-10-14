@@ -30,6 +30,10 @@ $ docker-compose up -d mssql
 $ docker-compose up app
 ```
 
+## Multiple databases
+
+The example synchronizes three databases (`db1`, `db2`, `db3`, see `connections.sync-db.json.example`). The `mssql` service creates them in its healthcheck. [sync-db.yml](sync-db.yml) sets `execution: parallel` with `concurrency: 2`, so at most two databases are synchronized at the same time. Remove `concurrency` to use the default (10), or set `execution: sequential` to go one at a time.
+
 ## Programmatic usage
 
 `sync-db` can also be used from code instead of the CLI. See [src/sync-db.ts](src/sync-db.ts), which loads `sync-db.yml` and the connections and runs `synchronize`:
