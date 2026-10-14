@@ -10,6 +10,7 @@ import MigrationSourceContext from '../domain/MigrationSourceContext';
  */
 class SqlMigrationSourceContext implements MigrationSourceContext {
   private list: SqlMigrationEntry[];
+  private entries: Map<string, SqlMigrationEntry>;
   private log: debug.Debugger;
   public connectionId: string;
 
@@ -20,6 +21,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
    */
   constructor(list: SqlMigrationEntry[]) {
     this.list = list;
+    this.entries = new Map(list.map(entry => [entry.name, entry]));
     this.log = logger;
     this.connectionId = '';
 
@@ -55,8 +57,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
    * @returns {MigrationRunner}
    */
   get(key: string): MigrationRunner {
-    // TODO: Optimize - no need to find from the list for every item you get. Map it internally.
-    const entry = this.list.find(({ name }) => name === key);
+    const entry = this.entries.get(key);
 
     if (!entry) {
       this.log(`Migration entry not found ${key}.`);

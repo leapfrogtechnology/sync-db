@@ -8,6 +8,7 @@ import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
  */
 class JavaScriptMigrationContext implements MigrationSourceContext {
   private list: JavaScriptMigrationEntry[];
+  private entries: Map<string, JavaScriptMigrationEntry>;
   private log: debug.Debugger;
   public connectionId: string;
 
@@ -18,6 +19,7 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
    */
   constructor(list: JavaScriptMigrationEntry[]) {
     this.list = list;
+    this.entries = new Map(list.map(entry => [entry.name, entry]));
     this.log = logger;
     this.connectionId = '';
 
@@ -53,8 +55,7 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
    * @returns {MigrationRunner}
    */
   get(key: string): MigrationRunner {
-    // TODO: Optimize - no need to find from the list for every item you get. Map it internally.
-    const entry = this.list.find(({ name }) => name === key);
+    const entry = this.entries.get(key);
 
     if (!entry) {
       this.log(`Migration entry not found ${key}.`);
