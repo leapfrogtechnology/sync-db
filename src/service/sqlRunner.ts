@@ -8,7 +8,7 @@ import SqlCode from '../domain/SqlCode';
 import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
-import { DROP_ONLY_OBJECT_TERMINATOR, MAX_CONCURRENT_FILE_READS } from '../constants';
+import { DROP_BATCH_SIZE, DROP_ONLY_OBJECT_TERMINATOR, MAX_CONCURRENT_FILE_READS } from '../constants';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
 
 /**
@@ -176,7 +176,25 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
 }
 
 /**
- * Rollback SQL files sequentially in reverse order of the file list.
+ * Join the statements into batches of at most `size` statements, preserving their order.
+ *
+ * @param {string[]} statements
+ * @param {number} size
+ * @returns {string[]}
+ */
+export function toBatches(statements: string[], size: number): string[] {
+  const batches: string[] = [];
+
+  for (let i = 0; i < statements.length; i += size) {
+    batches.push(statements.slice(i, i + size).join(';\n'));
+  }
+
+  return batches;
+}
+
+/**
+ * Rollback SQL files in reverse order of the file list.
+ * The DROP statements are sent in batches to save a database round trip per object.
  *
  * @param {Knex} trx
  * @param {SqlFileInfo[]} files
@@ -185,16 +203,13 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
  */
 export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], connectionId: string): Promise<void> {
   const log = dbLogger(connectionId);
-  const sqlFiles = files.map(info => ({
-    fqon: info.fqon,
-    dropStatement: getDropStatement(info.type, info.fqon)
-  }));
+  const dropStatements = reverse(files).map(info => getDropStatement(info.type, info.fqon));
 
-  for (const sql of reverse(sqlFiles)) {
-    log(`Rolling back: ${sql.fqon}`);
+  for (const batch of toBatches(dropStatements, DROP_BATCH_SIZE)) {
+    log(`Rolling back ${batch.split(';\n').length} object(s).`);
 
-    await trx.raw(sql.dropStatement);
+    await trx.raw(batch);
 
-    log('Executed: ', sql.dropStatement);
+    log('Executed: ', batch);
   }
 }
