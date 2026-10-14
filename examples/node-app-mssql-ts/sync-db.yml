@@ -1,5 +1,7 @@
 basePath: src
-execution: sequential
+# Synchronize the databases in parallel, at most 2 at a time.
+execution: parallel
+concurrency: 2
 sql:
   # Create objects in dbo schema
   - function/dbo/sum.sql
