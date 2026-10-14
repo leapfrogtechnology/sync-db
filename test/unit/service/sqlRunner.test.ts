@@ -69,4 +69,14 @@ describe('SERVICE: sqlRunner', () => {
       expect(() => sqlRunner.getDropStatement('views', 'test.hello_world')).to.throw(Error);
     });
   });
+
+  describe('toBatches()', () => {
+    it('should join statements into ordered batches of the given size.', () => {
+      expect(sqlRunner.toBatches(['a', 'b', 'c', 'd', 'e'], 2)).to.deep.equal(['a;\nb', 'c;\nd', 'e']);
+    });
+
+    it('should return no batches for no statements.', () => {
+      expect(sqlRunner.toBatches([], 2)).to.deep.equal([]);
+    });
+  });
 });
