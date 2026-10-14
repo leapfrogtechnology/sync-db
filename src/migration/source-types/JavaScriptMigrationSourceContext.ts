@@ -16,10 +16,11 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
    * JavaScriptMigrationContext constructor.
    *
    * @param {JavaScriptMigrationEntry[]} list
+   * @param {Map<string, JavaScriptMigrationEntry>} [entries] Pre-built lookup, shared between bound copies.
    */
-  constructor(list: JavaScriptMigrationEntry[]) {
+  constructor(list: JavaScriptMigrationEntry[], entries?: Map<string, JavaScriptMigrationEntry>) {
     this.list = list;
-    this.entries = new Map(list.map(entry => [entry.name, entry]));
+    this.entries = entries ?? new Map(list.map(entry => [entry.name, entry]));
     this.log = logger;
     this.connectionId = '';
 
@@ -28,15 +29,18 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
 
   /**
    * Bind connectionId to the context.
+   * Returns a new context so that connections running in parallel don't share (and overwrite) state.
    *
    * @param {string} connectionId
-   * @returns {MigrationSourceContext} this
+   * @returns {MigrationSourceContext}
    */
   bind(connectionId: string): MigrationSourceContext {
-    this.connectionId = connectionId;
-    this.log = dbLogger(connectionId);
+    const bound = new JavaScriptMigrationContext(this.list, this.entries);
 
-    return this;
+    bound.connectionId = connectionId;
+    bound.log = dbLogger(connectionId);
+
+    return bound;
   }
 
   /**

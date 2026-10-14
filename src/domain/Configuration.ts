@@ -6,6 +6,7 @@ import Mapping from './Mapping';
 interface Configuration {
   basePath: string;
   execution: 'parallel' | 'sequential';
+  concurrency?: number;
   sql: string[];
   connectionResolver: string;
   hooks: {

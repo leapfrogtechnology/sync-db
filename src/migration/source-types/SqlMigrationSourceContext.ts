@@ -18,10 +18,11 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
    * SqlMigrationContext constructor.
    *
    * @param {SqlMigrationEntry[]} list
+   * @param {Map<string, SqlMigrationEntry>} [entries] Pre-built lookup, shared between bound copies.
    */
-  constructor(list: SqlMigrationEntry[]) {
+  constructor(list: SqlMigrationEntry[], entries?: Map<string, SqlMigrationEntry>) {
     this.list = list;
-    this.entries = new Map(list.map(entry => [entry.name, entry]));
+    this.entries = entries ?? new Map(list.map(entry => [entry.name, entry]));
     this.log = logger;
     this.connectionId = '';
 
@@ -30,15 +31,18 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
 
   /**
    * Bind connectionId to the context.
+   * Returns a new context so that connections running in parallel don't share (and overwrite) state.
    *
    * @param {string} connectionId
-   * @returns {MigrationSourceContext} this
+   * @returns {MigrationSourceContext}
    */
   bind(connectionId: string): MigrationSourceContext {
-    this.connectionId = connectionId;
-    this.log = dbLogger(connectionId);
+    const bound = new SqlMigrationSourceContext(this.list, this.entries);
 
-    return this;
+    bound.connectionId = connectionId;
+    bound.log = dbLogger(connectionId);
+
+    return bound;
   }
 
   /**

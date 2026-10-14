@@ -9,6 +9,9 @@ export const NS_PER_SEC = 1e9;
 export const CONFIG_FILENAME = 'sync-db.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
+// Maximum number of connections processed at the same time with the `parallel` execution strategy.
+export const DEFAULT_CONCURRENCY = 10;
+
 export const INJECTED_CONFIG_TABLE = '__sync_db_injected_config';
 export const DEFAULT_CONFIG: Configuration = {
   basePath: 'src',

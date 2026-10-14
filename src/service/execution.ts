@@ -1,7 +1,8 @@
 import { getElapsedTime } from '../util/ts';
 import { log, dbLogger } from '../util/logger';
 import Configuration from '../domain/Configuration';
-import { Promiser, runSequentially } from '../util/promise';
+import { DEFAULT_CONCURRENCY } from '../constants';
+import { Promiser, runSequentially, runWithConcurrency } from '../util/promise';
 import OperationResult from '../domain/operation/OperationResult';
 import OperationContext from '../domain/operation/OperationContext';
 
@@ -20,7 +21,7 @@ export function executeProcesses<T>(processes: Promiser<T>[], config: Configurat
       return runSequentially(processes);
 
     case 'parallel':
-      return Promise.all(processes.map(fn => fn()));
+      return runWithConcurrency(processes, config.concurrency ?? DEFAULT_CONCURRENCY);
 
     default:
       throw new Error(`Execution strategy should be "sequential" or "parallel" found: "${config.execution}".`);
