@@ -104,5 +104,20 @@ describe('UTIL: db', () => {
         )
       ).to.be.rejectedWith('Callback failed.');
     });
+
+    it('should roll back the transaction if the callback rejects in dry-run mode', async () => {
+      const calls: string[] = [];
+      const { connection } = createFakeConnection(calls);
+
+      await withTransaction(
+        { connection, id: 'test' } as ConnectionReference,
+        async () => {
+          throw new Error('Callback failed.');
+        },
+        true
+      ).catch(() => undefined);
+
+      expect(calls).to.deep.equal(['rollback:start', 'rollback:end']);
+    });
   });
 });
