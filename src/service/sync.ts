@@ -38,7 +38,8 @@ async function setup(
 
   // Determine which SQL files to sync
   // NOTE: Filter the files from config sql so that order of the objects is maintained
-  const filesToSyncFiltered = sql.filter(f => filesToSync.includes(f));
+  const filesToSyncSet = new Set(filesToSync);
+  const filesToSyncFiltered = sql.filter(f => filesToSyncSet.has(f));
 
   const sqlFilesToSync = isPartialSync ? filesToSyncFiltered : sql;
   const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync);
@@ -116,10 +117,10 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 
     // Check if sync-files option is provided
     const syncFiles = context.params['sync-files'];
-    const availableSql = context.config.sql;
+    const availableSql = new Set(context.config.sql);
 
     // Filter sync files to only include those that are available in the config and exclude any '.drop' files
-    const filesToSync = (syncFiles || []).filter(file => availableSql.includes(file) && !file.endsWith('.drop'));
+    const filesToSync = (syncFiles || []).filter(file => availableSql.has(file) && !file.endsWith('.drop'));
     const isPartialSync = 'sync-files' in context.params && context.params['sync-files'] !== undefined;
 
     // Skip teardown only if doing partial sync
