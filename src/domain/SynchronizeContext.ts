@@ -1,5 +1,6 @@
 import { Knex } from 'knex';
 
+import { SqlSourceReader } from '../service/sqlRunner';
 import SynchronizeParams from './SynchronizeParams';
 import OperationContext from './operation/OperationContext';
 
@@ -8,6 +9,7 @@ import OperationContext from './operation/OperationContext';
  */
 interface SynchronizeContext extends OperationContext {
   params: SynchronizeParams;
+  readSource?: SqlSourceReader;
   migrateFunc: (trx: Knex.Transaction) => Promise<any>;
 }
 

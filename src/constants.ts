@@ -12,6 +12,9 @@ export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 // Maximum number of connections processed at the same time with the `parallel` execution strategy.
 export const DEFAULT_CONCURRENCY = 10;
 
+// Maximum number of SQL files read from the disk at the same time.
+export const MAX_CONCURRENT_FILE_READS = 64;
+
 export const INJECTED_CONFIG_TABLE = '__sync_db_injected_config';
 export const DEFAULT_CONFIG: Configuration = {
   basePath: 'src',
