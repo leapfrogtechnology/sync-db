@@ -1,6 +1,8 @@
 import * as path from 'path';
 
-import { glob, exists } from '../../util/fs';
+import { glob } from '../../util/fs';
+import { runWithConcurrency } from '../../util/promise';
+import { MAX_CONCURRENT_FILE_READS } from '../../constants';
 import { resolveFile } from '../../service/sqlRunner';
 import FileExtensions from '../../enum/FileExtensions';
 import SqlMigrationEntry from '../domain/SqlMigrationEntry';
@@ -21,7 +23,16 @@ const FILE_PATTERN_SQL = /(.+)\.(up|down)\.sql$/;
  * @returns {Promise<string[]>}
  */
 export async function getSqlMigrationNames(migrationPath: string): Promise<string[]> {
-  const files = await glob(migrationPath);
+  return toSqlMigrationNames(await glob(migrationPath));
+}
+
+/**
+ * Get the migration entry names from the list of file names of the migration directory.
+ *
+ * @param {string[]} files
+ * @returns {string[]}
+ */
+function toSqlMigrationNames(files: string[]): string[] {
   const migrationSet = new Set<string>();
 
   files.forEach(filename => {
@@ -66,16 +77,17 @@ export async function getJavaScriptMigrationNames(migrationPath: string, extensi
  * @returns {Promise<SqlMigrationEntry[]>}
  */
 export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMigrationEntry[]> {
-  const migrationNames = await getSqlMigrationNames(migrationPath);
-  const migrationPromises = migrationNames.map(async name => {
+  // The directory listing already tells which of the up / down files exist.
+  const files = await glob(migrationPath);
+  const available = new Set(files);
+  const migrationPromisers = toSqlMigrationNames(files).map(name => async () => {
     const upFilename = `${name}.up.sql`;
     const downFilename = `${name}.down.sql`;
 
-    const upFileExists = await exists(path.join(migrationPath, upFilename));
-    const downFileExists = await exists(path.join(migrationPath, downFilename));
-
-    const up = upFileExists ? await resolveFile(migrationPath, upFilename) : undefined;
-    const down = downFileExists ? await resolveFile(migrationPath, downFilename) : undefined;
+    const [up, down] = await Promise.all([
+      available.has(upFilename) ? resolveFile(migrationPath, upFilename) : undefined,
+      available.has(downFilename) ? resolveFile(migrationPath, downFilename) : undefined
+    ]);
 
     return {
       name,
@@ -83,7 +95,7 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
     };
   });
 
-  return Promise.all(migrationPromises);
+  return runWithConcurrency(migrationPromisers, MAX_CONCURRENT_FILE_READS);
 }
 
 /**
