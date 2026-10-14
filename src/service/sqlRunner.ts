@@ -8,7 +8,7 @@ import SqlCode from '../domain/SqlCode';
 import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
-import { DROP_ONLY_OBJECT_TERMINATOR } from '../constants';
+import { DROP_ONLY_OBJECT_TERMINATOR, MAX_CONCURRENT_FILE_READS } from '../constants';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
 
 /**
@@ -46,16 +46,49 @@ export async function resolveFile(sqlBasePath: string, fileName: string): Promis
 }
 
 /**
+ * Reads an SQL source file given the base path and the file name.
+ */
+export type SqlSourceReader = (sqlBasePath: string, fileName: string) => Promise<SqlCode>;
+
+/**
+ * Create a reader that reads every file from the disk only once and shares the result
+ * with all the callers. Useful when the same files are synchronized to many databases.
+ *
+ * @returns {SqlSourceReader}
+ */
+export function createSourceCache(): SqlSourceReader {
+  const cache = new Map<string, Promise<SqlCode>>();
+
+  return (sqlBasePath, fileName) => {
+    const key = `${sqlBasePath}\0${fileName}`;
+    let source = cache.get(key);
+
+    if (!source) {
+      source = resolveFile(sqlBasePath, fileName);
+      cache.set(key, source);
+    }
+
+    return source;
+  };
+}
+
+/**
  * Resolves a list of source files.
+ * At most MAX_CONCURRENT_FILE_READS files are read at a time to avoid running out of file descriptors.
  *
  * @param {string} sqlBasePath
  * @param {string[]} files
+ * @param {SqlSourceReader} [read]
  * @returns {Promise<SqlCode[]>}
  */
-export async function resolveFiles(sqlBasePath: string, files: string[]): Promise<SqlCode[]> {
-  const promises = files.map(filename => resolveFile(sqlBasePath, filename));
+export async function resolveFiles(
+  sqlBasePath: string,
+  files: string[],
+  read: SqlSourceReader = resolveFile
+): Promise<SqlCode[]> {
+  const promises = files.map(filename => () => read(sqlBasePath, filename));
 
-  return Promise.all(promises);
+  return promise.runWithConcurrency(promises, MAX_CONCURRENT_FILE_READS);
 }
 
 /**

@@ -27,6 +27,7 @@ async function setup(
 ): Promise<void> {
   const { connectionId } = context;
   const { hooks, sql } = context.config;
+  const { readSource } = context;
   const sqlBasePath = getSqlBasePath(context.config);
   const log = dbLogger(connectionId);
 
@@ -42,7 +43,7 @@ async function setup(
   const filesToSyncFiltered = sql.filter(f => filesToSyncSet.has(f));
 
   const sqlFilesToSync = isPartialSync ? filesToSyncFiltered : sql;
-  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync);
+  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync, readSource);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
   // Config Injection: Setup
@@ -50,7 +51,7 @@ async function setup(
   await configInjection.setup(trx, context);
 
   if (preMigrationScripts.length > 0) {
-    const preHookScripts = await sqlRunner.resolveFiles(sqlBasePath, preMigrationScripts);
+    const preHookScripts = await sqlRunner.resolveFiles(sqlBasePath, preMigrationScripts, readSource);
 
     log('PRE-SYNC: Begin');
     // Run the pre hook scripts
@@ -62,7 +63,7 @@ async function setup(
   await sqlRunner.runSequentially(trx, sqlScripts, connectionId);
 
   if (postMigrationScripts.length > 0) {
-    const postHookScripts = await sqlRunner.resolveFiles(sqlBasePath, postMigrationScripts);
+    const postHookScripts = await sqlRunner.resolveFiles(sqlBasePath, postMigrationScripts, readSource);
 
     log('POST-SYNC: Begin');
     // Run the pre hook scripts

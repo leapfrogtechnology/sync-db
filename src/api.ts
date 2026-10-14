@@ -19,6 +19,7 @@ import OperationResult from './domain/operation/OperationResult';
 
 // Service
 import { executeProcesses } from './service/execution';
+import { createSourceCache } from './service/sqlRunner';
 import { runSynchronize, runPrune } from './service/sync';
 import { getMigrationPath, invokeMigrationApi, KnexMigrationAPI } from './migration/service/knexMigrator';
 
@@ -52,13 +53,14 @@ export async function synchronize(
 
   const { onStarted: _, ...invokeParams } = params;
 
-  // TODO: Need to preload the SQL source code under this step.
   const { knexMigrationConfig } = await init.prepare(config, {
     migrationPath,
     loadSqlSources: true,
     loadMigrations: !params['skip-migration']
   });
 
+  // SQL files are read once and shared by all the connections.
+  const readSource = createSourceCache();
   const connections = filterConnections(mapToConnectionReferences(conn), params.only);
   const processes = connections.map(connection => () =>
     withTransaction(
@@ -66,6 +68,7 @@ export async function synchronize(
       trx =>
         runSynchronize(trx, {
           config,
+          readSource,
           params,
           connectionId: connection.id,
           migrateFunc: t =>
@@ -102,7 +105,6 @@ export async function prune(
 
   const params: OperationParams = { ...options };
 
-  // TODO: Need to preload the SQL source code under this step.
   await init.prepare(config, { loadSqlSources: true });
 
   const connections = filterConnections(mapToConnectionReferences(conn), params.only);
