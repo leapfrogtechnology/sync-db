@@ -80,22 +80,20 @@ export async function resolveSqlMigrations(migrationPath: string): Promise<SqlMi
   // The directory listing already tells which of the up / down files exist.
   const files = await glob(migrationPath);
   const available = new Set(files);
-  const migrationPromisers = toSqlMigrationNames(files).map(name => async () => {
-    const upFilename = `${name}.up.sql`;
-    const downFilename = `${name}.down.sql`;
+  const migrationNames = toSqlMigrationNames(files);
 
-    const [up, down] = await Promise.all([
-      available.has(upFilename) ? resolveFile(migrationPath, upFilename) : undefined,
-      available.has(downFilename) ? resolveFile(migrationPath, downFilename) : undefined
-    ]);
+  // Read the files (not the migrations) with a bounded concurrency so that up + down reads stay within the limit.
+  const readers = migrationNames.flatMap(name =>
+    [`${name}.up.sql`, `${name}.down.sql`].map(filename => async () =>
+      available.has(filename) ? resolveFile(migrationPath, filename) : undefined
+    )
+  );
+  const sources = await runWithConcurrency(readers, MAX_CONCURRENT_FILE_READS);
 
-    return {
-      name,
-      queries: { up, down }
-    };
-  });
-
-  return runWithConcurrency(migrationPromisers, MAX_CONCURRENT_FILE_READS);
+  return migrationNames.map((name, i) => ({
+    name,
+    queries: { up: sources[2 * i], down: sources[2 * i + 1] }
+  }));
 }
 
 /**
