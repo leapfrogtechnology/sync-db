@@ -27,6 +27,7 @@ async function setup(
 ): Promise<void> {
   const { connectionId } = context;
   const { hooks, sql } = context.config;
+  const { readSource } = context;
   const sqlBasePath = getSqlBasePath(context.config);
   const log = dbLogger(connectionId);
 
@@ -38,10 +39,11 @@ async function setup(
 
   // Determine which SQL files to sync
   // NOTE: Filter the files from config sql so that order of the objects is maintained
-  const filesToSyncFiltered = sql.filter(f => filesToSync.includes(f));
+  const filesToSyncSet = new Set(filesToSync);
+  const filesToSyncFiltered = sql.filter(f => filesToSyncSet.has(f));
 
   const sqlFilesToSync = isPartialSync ? filesToSyncFiltered : sql;
-  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync);
+  const sqlScripts = await sqlRunner.resolveFiles(sqlBasePath, sqlFilesToSync, readSource);
   const { pre_sync: preMigrationScripts, post_sync: postMigrationScripts } = hooks;
 
   // Config Injection: Setup
@@ -49,7 +51,7 @@ async function setup(
   await configInjection.setup(trx, context);
 
   if (preMigrationScripts.length > 0) {
-    const preHookScripts = await sqlRunner.resolveFiles(sqlBasePath, preMigrationScripts);
+    const preHookScripts = await sqlRunner.resolveFiles(sqlBasePath, preMigrationScripts, readSource);
 
     log('PRE-SYNC: Begin');
     // Run the pre hook scripts
@@ -61,7 +63,7 @@ async function setup(
   await sqlRunner.runSequentially(trx, sqlScripts, connectionId);
 
   if (postMigrationScripts.length > 0) {
-    const postHookScripts = await sqlRunner.resolveFiles(sqlBasePath, postMigrationScripts);
+    const postHookScripts = await sqlRunner.resolveFiles(sqlBasePath, postMigrationScripts, readSource);
 
     log('POST-SYNC: Begin');
     // Run the pre hook scripts
@@ -116,10 +118,10 @@ export async function runSynchronize(trx: Knex.Transaction, context: Synchronize
 
     // Check if sync-files option is provided
     const syncFiles = context.params['sync-files'];
-    const availableSql = context.config.sql;
+    const availableSql = new Set(context.config.sql);
 
     // Filter sync files to only include those that are available in the config and exclude any '.drop' files
-    const filesToSync = (syncFiles || []).filter(file => availableSql.includes(file) && !file.endsWith('.drop'));
+    const filesToSync = (syncFiles || []).filter(file => availableSql.has(file) && !file.endsWith('.drop'));
     const isPartialSync = 'sync-files' in context.params && context.params['sync-files'] !== undefined;
 
     // Skip teardown only if doing partial sync

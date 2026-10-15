@@ -8,6 +8,7 @@ import JavaScriptMigrationEntry from '../domain/JavaScriptMigrationEntry';
  */
 class JavaScriptMigrationContext implements MigrationSourceContext {
   private list: JavaScriptMigrationEntry[];
+  private entries: Map<string, JavaScriptMigrationEntry>;
   private log: debug.Debugger;
   public connectionId: string;
 
@@ -15,9 +16,11 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
    * JavaScriptMigrationContext constructor.
    *
    * @param {JavaScriptMigrationEntry[]} list
+   * @param {Map<string, JavaScriptMigrationEntry>} [entries] Pre-built lookup, shared between bound copies.
    */
-  constructor(list: JavaScriptMigrationEntry[]) {
+  constructor(list: JavaScriptMigrationEntry[], entries?: Map<string, JavaScriptMigrationEntry>) {
     this.list = list;
+    this.entries = entries ?? new Map(list.map(entry => [entry.name, entry]));
     this.log = logger;
     this.connectionId = '';
 
@@ -26,15 +29,18 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
 
   /**
    * Bind connectionId to the context.
+   * Returns a new context so that connections running in parallel don't share (and overwrite) state.
    *
    * @param {string} connectionId
-   * @returns {MigrationSourceContext} this
+   * @returns {MigrationSourceContext}
    */
   bind(connectionId: string): MigrationSourceContext {
-    this.connectionId = connectionId;
-    this.log = dbLogger(connectionId);
+    const bound = new JavaScriptMigrationContext(this.list, this.entries);
 
-    return this;
+    bound.connectionId = connectionId;
+    bound.log = dbLogger(connectionId);
+
+    return bound;
   }
 
   /**
@@ -53,8 +59,7 @@ class JavaScriptMigrationContext implements MigrationSourceContext {
    * @returns {MigrationRunner}
    */
   get(key: string): MigrationRunner {
-    // TODO: Optimize - no need to find from the list for every item you get. Map it internally.
-    const entry = this.list.find(({ name }) => name === key);
+    const entry = this.entries.get(key);
 
     if (!entry) {
       this.log(`Migration entry not found ${key}.`);

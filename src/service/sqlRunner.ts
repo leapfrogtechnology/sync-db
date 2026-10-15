@@ -8,7 +8,7 @@ import SqlCode from '../domain/SqlCode';
 import { dbLogger } from '../util/logger';
 import * as promise from '../util/promise';
 import SqlFileInfo from '../domain/SqlFileInfo';
-import { DROP_ONLY_OBJECT_TERMINATOR } from '../constants';
+import { DROP_BATCH_SIZE, DROP_ONLY_OBJECT_TERMINATOR, MAX_CONCURRENT_FILE_READS } from '../constants';
 import DatabaseObjectTypes from '../enum/DatabaseObjectTypes';
 
 /**
@@ -46,16 +46,49 @@ export async function resolveFile(sqlBasePath: string, fileName: string): Promis
 }
 
 /**
+ * Reads an SQL source file given the base path and the file name.
+ */
+export type SqlSourceReader = (sqlBasePath: string, fileName: string) => Promise<SqlCode>;
+
+/**
+ * Create a reader that reads every file from the disk only once and shares the result
+ * with all the callers. Useful when the same files are synchronized to many databases.
+ *
+ * @returns {SqlSourceReader}
+ */
+export function createSourceCache(): SqlSourceReader {
+  const cache = new Map<string, Promise<SqlCode>>();
+
+  return (sqlBasePath, fileName) => {
+    const key = `${sqlBasePath}\0${fileName}`;
+    let source = cache.get(key);
+
+    if (!source) {
+      source = resolveFile(sqlBasePath, fileName);
+      cache.set(key, source);
+    }
+
+    return source;
+  };
+}
+
+/**
  * Resolves a list of source files.
+ * At most MAX_CONCURRENT_FILE_READS files are read at a time to avoid running out of file descriptors.
  *
  * @param {string} sqlBasePath
  * @param {string[]} files
+ * @param {SqlSourceReader} [read]
  * @returns {Promise<SqlCode[]>}
  */
-export async function resolveFiles(sqlBasePath: string, files: string[]): Promise<SqlCode[]> {
-  const promises = files.map(filename => resolveFile(sqlBasePath, filename));
+export async function resolveFiles(
+  sqlBasePath: string,
+  files: string[],
+  read: SqlSourceReader = resolveFile
+): Promise<SqlCode[]> {
+  const promises = files.map(filename => () => read(sqlBasePath, filename));
 
-  return Promise.all(promises);
+  return promise.runWithConcurrency(promises, MAX_CONCURRENT_FILE_READS);
 }
 
 /**
@@ -91,7 +124,7 @@ export function extractSqlFileInfo(filePath: string): SqlFileInfo {
   const [type, schema] = fileParts;
 
   // Remove .sql and .drop (if exists) from the file name.
-  const santizeFileNameRegex = /(.sql)|(.drop)/g;
+  const santizeFileNameRegex = /(\.sql)|(\.drop)/g;
   const name = fileName.replace(santizeFileNameRegex, '');
   const fqon = getFQON(type, name, schema);
 
@@ -143,7 +176,31 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
 }
 
 /**
- * Rollback SQL files sequentially in reverse order of the file list.
+ * Join the statements into batches of at most `size` statements, preserving their order.
+ *
+ * @param {string[]} statements
+ * @param {number} size
+ * @returns {string[]}
+ */
+export function toBatches(statements: string[], size: number): string[] {
+  const batches: string[] = [];
+
+  for (let i = 0; i < statements.length; i += size) {
+    batches.push(statements.slice(i, i + size).join(';\n'));
+  }
+
+  return batches;
+}
+
+/**
+ * Knex dialects that run several statements sent in a single query.
+ * Others (e.g. MySQL, which disables `multipleStatements` by default) get one statement per query.
+ */
+const MULTI_STATEMENT_DIALECTS = ['postgresql', 'mssql'];
+
+/**
+ * Rollback SQL files in reverse order of the file list.
+ * Where the database supports it, the DROP statements are sent in batches to save a round trip per object.
  *
  * @param {Knex} trx
  * @param {SqlFileInfo[]} files
@@ -152,16 +209,14 @@ export function runSequentially(trx: Knex, files: SqlCode[], connectionId: strin
  */
 export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], connectionId: string): Promise<void> {
   const log = dbLogger(connectionId);
-  const sqlFiles = files.map(info => ({
-    fqon: info.fqon,
-    dropStatement: getDropStatement(info.type, info.fqon)
-  }));
+  const dropStatements = reverse(files).map(info => getDropStatement(info.type, info.fqon));
+  const batchSize = MULTI_STATEMENT_DIALECTS.includes((trx.client as any)?.dialect) ? DROP_BATCH_SIZE : 1;
 
-  for (const sql of reverse(sqlFiles)) {
-    log(`Rolling back: ${sql.fqon}`);
+  log(`Rolling back ${dropStatements.length} object(s).`);
 
-    await trx.raw(sql.dropStatement);
+  for (const batch of toBatches(dropStatements, batchSize)) {
+    await trx.raw(batch);
 
-    log('Executed: ', sql.dropStatement);
+    log('Executed: ', batch);
   }
 }

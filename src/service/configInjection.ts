@@ -59,26 +59,17 @@ export function convertToKeyValuePairs(vars: Mapping<string>): KeyValuePair[] {
  */
 export async function setup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const log = dbLogger(context.connectionId);
-  const { injectedConfig } = context.config;
-
-  log(`Making sure table ${INJECTED_CONFIG_TABLE} doesn't already exists.`);
-
-  const exists = await trx.schema.hasTable(INJECTED_CONFIG_TABLE);
-
-  // TODO: Think about a better solution; it shouldn't have existed in the first place.
-  if (exists) {
-    log('Warning: Table "${INJECTED_CONFIG_TABLE}" already exists. It will be dropped.');
-
-    await cleanup(trx, context);
-  }
-
-  const values = convertToKeyValuePairs(injectedConfig.vars);
+  const values = convertToKeyValuePairs(context.config.injectedConfig.vars);
 
   if (!values.length) {
-    log(`Config not available. Skipping insertion on ${INJECTED_CONFIG_TABLE} table.`);
+    log(`Config not available. Skipping setup of ${INJECTED_CONFIG_TABLE} table.`);
 
     return;
   }
+
+  // TODO: Think about a better solution; the table shouldn't have existed in the first place.
+  // A single idempotent drop instead of a hasTable check followed by a drop.
+  await trx.schema.dropTableIfExists(INJECTED_CONFIG_TABLE);
 
   // Create table
   log(`Creating table ${INJECTED_CONFIG_TABLE}.`);
@@ -103,6 +94,11 @@ export async function setup(trx: Knex.Transaction, context: SynchronizeContext):
  */
 export async function cleanup(trx: Knex.Transaction, context: SynchronizeContext): Promise<void> {
   const log = dbLogger(context.connectionId);
+
+  // The table is only created when there is config to inject.
+  if (!Object.keys(context.config.injectedConfig.vars).length) {
+    return;
+  }
 
   await trx.schema.dropTableIfExists(INJECTED_CONFIG_TABLE);
 

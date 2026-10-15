@@ -69,4 +69,48 @@ describe('SERVICE: sqlRunner', () => {
       expect(() => sqlRunner.getDropStatement('views', 'test.hello_world')).to.throw(Error);
     });
   });
+
+  describe('extractSqlFileInfo() name sanitization', () => {
+    it('should only strip the literal .sql / .drop extensions.', () => {
+      expect(sqlRunner.extractSqlFileInfo('view/dbo/mysql_view.sql').name).to.equal('mysql_view');
+      expect(sqlRunner.extractSqlFileInfo('view/dbo/vw_dropdown.sql.drop').name).to.equal('vw_dropdown');
+    });
+  });
+
+  describe('rollbackSequentially()', () => {
+    const files = ['a', 'b', 'c'].map(name => ({ name, fqon: `s.${name}`, type: 'view', schema: 's' }));
+    const run = async (dialect: string) => {
+      const queries: string[] = [];
+      const trx: any = { client: { dialect }, raw: (sql: string) => Promise.resolve(queries.push(sql)) };
+
+      await sqlRunner.rollbackSequentially(trx, files, 'test');
+
+      return queries;
+    };
+
+    it('should batch the drops in reverse order for postgresql and mssql.', async () => {
+      const expected = ['DROP VIEW IF EXISTS s.c;\nDROP VIEW IF EXISTS s.b;\nDROP VIEW IF EXISTS s.a'];
+
+      expect(await run('postgresql')).to.deep.equal(expected);
+      expect(await run('mssql')).to.deep.equal(expected);
+    });
+
+    it('should run one drop per query for other dialects (e.g. mysql).', async () => {
+      expect(await run('mysql')).to.deep.equal([
+        'DROP VIEW IF EXISTS s.c',
+        'DROP VIEW IF EXISTS s.b',
+        'DROP VIEW IF EXISTS s.a'
+      ]);
+    });
+  });
+
+  describe('toBatches()', () => {
+    it('should join statements into ordered batches of the given size.', () => {
+      expect(sqlRunner.toBatches(['a', 'b', 'c', 'd', 'e'], 2)).to.deep.equal(['a;\nb', 'c;\nd', 'e']);
+    });
+
+    it('should return no batches for no statements.', () => {
+      expect(sqlRunner.toBatches([], 2)).to.deep.equal([]);
+    });
+  });
 });

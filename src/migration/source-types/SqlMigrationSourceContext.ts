@@ -10,6 +10,7 @@ import MigrationSourceContext from '../domain/MigrationSourceContext';
  */
 class SqlMigrationSourceContext implements MigrationSourceContext {
   private list: SqlMigrationEntry[];
+  private entries: Map<string, SqlMigrationEntry>;
   private log: debug.Debugger;
   public connectionId: string;
 
@@ -17,9 +18,11 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
    * SqlMigrationContext constructor.
    *
    * @param {SqlMigrationEntry[]} list
+   * @param {Map<string, SqlMigrationEntry>} [entries] Pre-built lookup, shared between bound copies.
    */
-  constructor(list: SqlMigrationEntry[]) {
+  constructor(list: SqlMigrationEntry[], entries?: Map<string, SqlMigrationEntry>) {
     this.list = list;
+    this.entries = entries ?? new Map(list.map(entry => [entry.name, entry]));
     this.log = logger;
     this.connectionId = '';
 
@@ -28,15 +31,18 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
 
   /**
    * Bind connectionId to the context.
+   * Returns a new context so that connections running in parallel don't share (and overwrite) state.
    *
    * @param {string} connectionId
-   * @returns {MigrationSourceContext} this
+   * @returns {MigrationSourceContext}
    */
   bind(connectionId: string): MigrationSourceContext {
-    this.connectionId = connectionId;
-    this.log = dbLogger(connectionId);
+    const bound = new SqlMigrationSourceContext(this.list, this.entries);
 
-    return this;
+    bound.connectionId = connectionId;
+    bound.log = dbLogger(connectionId);
+
+    return bound;
   }
 
   /**
@@ -55,8 +61,7 @@ class SqlMigrationSourceContext implements MigrationSourceContext {
    * @returns {MigrationRunner}
    */
   get(key: string): MigrationRunner {
-    // TODO: Optimize - no need to find from the list for every item you get. Map it internally.
-    const entry = this.list.find(({ name }) => name === key);
+    const entry = this.entries.get(key);
 
     if (!entry) {
       this.log(`Migration entry not found ${key}.`);

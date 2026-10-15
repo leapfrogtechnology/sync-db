@@ -9,6 +9,15 @@ export const NS_PER_SEC = 1e9;
 export const CONFIG_FILENAME = 'sync-db.yml';
 export const CONNECTIONS_FILENAME = 'connections.sync-db.json';
 
+// Maximum number of connections processed at the same time with the `parallel` execution strategy.
+export const DEFAULT_CONCURRENCY = 10;
+
+// Maximum number of SQL files read from the disk at the same time.
+export const MAX_CONCURRENT_FILE_READS = 64;
+
+// Maximum number of DROP statements sent to the database in a single batch.
+export const DROP_BATCH_SIZE = 50;
+
 export const INJECTED_CONFIG_TABLE = '__sync_db_injected_config';
 export const DEFAULT_CONFIG: Configuration = {
   basePath: 'src',
