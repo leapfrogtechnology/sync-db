@@ -193,8 +193,14 @@ export function toBatches(statements: string[], size: number): string[] {
 }
 
 /**
+ * Knex dialects that run several statements sent in a single query.
+ * Others (e.g. MySQL, which disables `multipleStatements` by default) get one statement per query.
+ */
+const MULTI_STATEMENT_DIALECTS = ['postgresql', 'mssql'];
+
+/**
  * Rollback SQL files in reverse order of the file list.
- * The DROP statements are sent in batches to save a database round trip per object.
+ * Where the database supports it, the DROP statements are sent in batches to save a round trip per object.
  *
  * @param {Knex} trx
  * @param {SqlFileInfo[]} files
@@ -204,10 +210,11 @@ export function toBatches(statements: string[], size: number): string[] {
 export async function rollbackSequentially(trx: Knex, files: SqlFileInfo[], connectionId: string): Promise<void> {
   const log = dbLogger(connectionId);
   const dropStatements = reverse(files).map(info => getDropStatement(info.type, info.fqon));
+  const batchSize = MULTI_STATEMENT_DIALECTS.includes((trx.client as any)?.dialect) ? DROP_BATCH_SIZE : 1;
 
   log(`Rolling back ${dropStatements.length} object(s).`);
 
-  for (const batch of toBatches(dropStatements, DROP_BATCH_SIZE)) {
+  for (const batch of toBatches(dropStatements, batchSize)) {
     await trx.raw(batch);
 
     log('Executed: ', batch);
