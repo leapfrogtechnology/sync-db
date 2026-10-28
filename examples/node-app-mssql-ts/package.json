@@ -11,7 +11,7 @@
     "rollback": "../../bin/run-dev.sh migrate-rollback"
   },
   "dependencies": {
-    "@leapfrogtechnology/sync-db": "^2.0.0",
+    "@leapfrogtechnology/sync-db": "^3.0.0",
     "knex": "^3.3.0",
     "tedious": "^20.3.8",
     "ts-node": "^10.9.2",
