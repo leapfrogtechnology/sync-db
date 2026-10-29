@@ -2,23 +2,12 @@
 
 Command line utility to synchronize and version control relational database objects across databases.
 
-[![Version](https://img.shields.io/npm/v/@leapfrogtechnology/sync-db.svg?style=flat-square)](https://npmjs.org/package/@leapfrogtechnology/sync-db)
-[![Travis](https://img.shields.io/travis/com/leapfrogtechnology/sync-db.svg?style=flat-square)](https://travis-ci.com/leapfrogtechnology/sync-db)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db#contributing)
-[![LICENSE](https://img.shields.io/github/license/leapfrogtechnology/sync-db.svg?style=flat-square)](https://github.com/leapfrogtechnology/sync-db/blob/master/LICENSE)
-
 ## Installation
 
 **Using npm:**
 
 ```bash
 $ npm install @leapfrogtechnology/sync-db
-```
-
-You can install it **globally** as well.
-
-```bash
-$ npm install -g @leapfrogtechnology/sync-db
 ```
 
 ### Drivers Installation
@@ -28,7 +17,7 @@ You'll need to install the database driver specific to your project separately.
 For instance - if your project uses MSSQL, you will need to do:
 
 ```
-$ yarn add mssql
+$ yarn add tedious
 ```
 
 This utility uses [Knex](http://knexjs.org/) under the hood so these are the [supported drivers](http://knexjs.org/#Installation-node).
@@ -429,5 +418,3 @@ Create a PR updating **version** in package.json to master.
 ## License
 
 Licensed under [The MIT License](LICENSE).
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fleapfrogtechnology%2Fsync-db?ref=badge_large)
